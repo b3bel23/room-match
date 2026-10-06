@@ -363,15 +363,44 @@ body:not(.visitante) .afinidade {
     display: none;
 }
 
-.rota-modos {
+.rota-topo {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 12px;
 }
 
-.rota-modo {
-    padding: 5px 12px;
+.rota-destino {
+    margin-right: auto;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+}
+
+.rota-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--fs-xsmall);
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.rota-estimativas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    list-style: none;
+}
+
+.rota-estimativas button,
+.rota-onibus {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-tag);
+    border-radius: var(--radius-sm);
     background: var(--color-surface);
     font-size: var(--fs-xsmall);
     color: var(--color-text-primary);
@@ -383,9 +412,22 @@ body:not(.visitante) .afinidade {
     color: #fff;
 }
 
-.rota-modo:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.rota-dica,
+.rota-nota {
+    font-size: var(--fs-xsmall);
+    color: var(--color-text-muted);
+}
+
+.rota.rota-cheia {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    border-radius: 0;
+}
+
+.rota-cheia .rota-mapa {
+    flex: 1;
+    height: auto;
 }
 
 .rota-mapa {
@@ -393,7 +435,4 @@ body:not(.visitante) .afinidade {
     border-radius: var(--radius-sm);
 }
 
-.rota-resumo {
-    font-size: var(--fs-small);
-    font-weight: var(--fw-semibold);
-}
+

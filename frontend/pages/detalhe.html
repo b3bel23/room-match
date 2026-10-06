@@ -65,18 +65,26 @@
                 <div>
                     <strong>12 min · Centro</strong>
                     <span>3,8 km · EMDEC/EMTU</span>
+                    <span id="trajeto-carro"></span>
                 </div>
                 <button id="rota-abrir" class="rota-abrir" type="button" aria-expanded="false" aria-controls="rota-painel">Ver rota no mapa</button>
             </div>
 
             <div id="rota-painel" class="rota" hidden>
-                <div class="rota-modos" role="tablist" aria-label="Meio de transporte">
-                    <button class="rota-modo ativo" type="button" role="tab" aria-selected="true" data-modo="foot">A pé</button>
-                    <button class="rota-modo" type="button" role="tab" aria-selected="false" data-modo="bike">Bicicleta</button>
-                    <button class="rota-modo" type="button" role="tab" aria-selected="false" disabled title="Em breve: integração com EMDEC/EMTU">Ônibus</button>
+                <div class="rota-topo">
+                    <p id="rota-destino" class="rota-destino">Destino: Centro</p>
+                    <button id="rota-centro" class="rota-link" type="button" hidden>Voltar ao Centro</button>
+                    <button id="rota-cheia" class="rota-link" type="button" aria-pressed="false">Tela cheia</button>
                 </div>
                 <div id="rota-mapa" class="rota-mapa"></div>
-                <p id="rota-resumo" class="rota-resumo" aria-live="polite"></p>
+                <p class="rota-dica">Toque no mapa para escolher outro destino, como sua faculdade ou trabalho.</p>
+                <ul class="rota-estimativas" aria-live="polite">
+                    <li><button class="rota-modo ativo" type="button" data-modo="foot" aria-pressed="true"><span>A pé</span><strong data-tempo="foot">…</strong></button></li>
+                    <li><button class="rota-modo" type="button" data-modo="bike" aria-pressed="false"><span>Bicicleta</span><strong data-tempo="bike">…</strong></button></li>
+                    <li><button class="rota-modo" type="button" data-modo="car" aria-pressed="false"><span>Carro</span><strong data-tempo="car">…</strong></button></li>
+                    <li class="rota-onibus"><span>Ônibus</span><strong data-tempo="bus">…</strong></li>
+                </ul>
+                <p class="rota-nota">Ônibus: estimativa aproximada, sem horários reais da EMDEC/EMTU.</p>
             </div>
 
             <div class="moradores-cabecalho">

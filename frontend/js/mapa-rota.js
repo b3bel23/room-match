@@ -1,21 +1,106 @@
-// Pontos do anúncio (kitnet do Cambuí) e do destino do usuário.
-const ORIGEM = { nome: 'Imóvel', lat: -22.8981, lng: -47.0525 };
-const DESTINO = { nome: 'Centro', lat: -22.9055, lng: -47.0610 };
+// Ponto do anúncio (kitnet do Cambuí) e destino padrão.
+const ORIGEM = { lat: -22.8981, lng: -47.0525 };
+const CENTRO = { nome: 'Centro', lat: -22.9055, lng: -47.0610 };
 
 // Servidores OSRM do OpenStreetMap, um por meio de transporte.
 const SERVIDORES = {
     foot: 'https://routing.openstreetmap.de/routed-foot/route/v1/foot',
-    bike: 'https://routing.openstreetmap.de/routed-bike/route/v1/bike'
+    bike: 'https://routing.openstreetmap.de/routed-bike/route/v1/bike',
+    car: 'https://routing.openstreetmap.de/routed-car/route/v1/driving'
 };
+
+// Ônibus não tem rota calculada: estimativa a partir da distância de carro.
+const VELOCIDADE_ONIBUS_KMH = 18;
+const ESPERA_ONIBUS_MIN = 10;
 
 const botaoAbrir = document.getElementById('rota-abrir');
 const painel = document.getElementById('rota-painel');
-const resumo = document.getElementById('rota-resumo');
-const modos = [...document.querySelectorAll('.rota-modo:not([disabled])')];
+const botaoCheia = document.getElementById('rota-cheia');
+const botaoCentro = document.getElementById('rota-centro');
+const textoDestino = document.getElementById('rota-destino');
+const textoCarro = document.getElementById('trajeto-carro');
+const modos = [...document.querySelectorAll('.rota-modo')];
 
 let mapa = null;
 let linha = null;
+let marcadorDestino = null;
+let destino = CENTRO;
 let modoAtual = 'foot';
+let rotas = {};
+
+function formatarTempo(segundos) {
+    const minutos = Math.max(1, Math.round(segundos / 60));
+    if (minutos < 60) return `${minutos} min`;
+    return `${Math.floor(minutos / 60)} h ${String(minutos % 60).padStart(2, '0')} min`;
+}
+
+function formatarKm(metros) {
+    return `${(metros / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} km`;
+}
+
+async function buscarRota(modo, ponto) {
+    const coordenadas = `${ORIGEM.lng},${ORIGEM.lat};${ponto.lng},${ponto.lat}`;
+    const resposta = await fetch(`${SERVIDORES[modo]}/${coordenadas}?overview=full&geometries=geojson`);
+    return (await resposta.json()).routes[0];
+}
+
+function preencher(modo, rota) {
+    const campo = document.querySelector(`[data-tempo="${modo}"]`);
+    campo.textContent = rota ? `${formatarTempo(rota.duration)} · ${formatarKm(rota.distance)}` : 'indisponível';
+}
+
+function desenharLinha() {
+    if (linha) {
+        linha.remove();
+        linha = null;
+    }
+    const rota = rotas[modoAtual];
+    if (!rota) return;
+    linha = L.geoJSON(rota.geometry, { style: { color: '#5ea38f', weight: 5 } }).addTo(mapa);
+    mapa.fitBounds(linha.getBounds(), { padding: [40, 40] });
+}
+
+async function calcularEstimativas() {
+    Object.keys(SERVIDORES).forEach((modo) => {
+        document.querySelector(`[data-tempo="${modo}"]`).textContent = '…';
+    });
+    document.querySelector('[data-tempo="bus"]').textContent = '…';
+
+    const ponto = destino;
+    const resultados = await Promise.all(Object.keys(SERVIDORES).map(async (modo) => {
+        try {
+            return [modo, await buscarRota(modo, ponto)];
+        } catch (erro) {
+            return [modo, null];
+        }
+    }));
+    if (ponto !== destino) return;
+
+    rotas = Object.fromEntries(resultados);
+    Object.keys(SERVIDORES).forEach((modo) => preencher(modo, rotas[modo]));
+
+    const carro = rotas.car;
+    const onibus = document.querySelector('[data-tempo="bus"]');
+    if (carro) {
+        const minutos = Math.round((carro.distance / 1000 / VELOCIDADE_ONIBUS_KMH) * 60 + ESPERA_ONIBUS_MIN);
+        onibus.textContent = `~${formatarTempo(minutos * 60)} · ${formatarKm(carro.distance)}`;
+    } else {
+        onibus.textContent = 'indisponível';
+    }
+    desenharLinha();
+}
+
+function definirDestino(ponto) {
+    destino = ponto;
+    textoDestino.textContent = ponto === CENTRO ? 'Destino: Centro' : 'Destino: ponto escolhido no mapa';
+    botaoCentro.hidden = ponto === CENTRO;
+
+    if (marcadorDestino) marcadorDestino.remove();
+    marcadorDestino = L.circleMarker([ponto.lat, ponto.lng], { radius: 8, color: '#fff', weight: 2, fillColor: '#f08070', fillOpacity: 1 })
+        .bindTooltip(ponto.nome || 'Destino', { permanent: true, direction: 'top' })
+        .addTo(mapa);
+    calcularEstimativas();
+}
 
 function criarMapa() {
     mapa = L.map('rota-mapa');
@@ -24,34 +109,23 @@ function criarMapa() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(mapa);
 
-    [[ORIGEM, '#5ea38f'], [DESTINO, '#f08070']].forEach(([ponto, cor]) => {
-        L.circleMarker([ponto.lat, ponto.lng], { radius: 8, color: '#fff', weight: 2, fillColor: cor, fillOpacity: 1 })
-            .bindTooltip(ponto.nome, { permanent: true, direction: 'top' })
-            .addTo(mapa);
+    L.circleMarker([ORIGEM.lat, ORIGEM.lng], { radius: 8, color: '#fff', weight: 2, fillColor: '#5ea38f', fillOpacity: 1 })
+        .bindTooltip('Imóvel', { permanent: true, direction: 'top' })
+        .addTo(mapa);
+    mapa.fitBounds([[ORIGEM.lat, ORIGEM.lng], [CENTRO.lat, CENTRO.lng]], { padding: [40, 40] });
+
+    mapa.on('click', (evento) => {
+        definirDestino({ nome: 'Destino', lat: evento.latlng.lat, lng: evento.latlng.lng });
     });
-    mapa.fitBounds([[ORIGEM.lat, ORIGEM.lng], [DESTINO.lat, DESTINO.lng]], { padding: [40, 40] });
 }
 
-async function desenharRota() {
-    resumo.textContent = 'Calculando rota…';
-    if (linha) {
-        linha.remove();
-        linha = null;
-    }
-
-    const coordenadas = `${ORIGEM.lng},${ORIGEM.lat};${DESTINO.lng},${DESTINO.lat}`;
-    try {
-        const resposta = await fetch(`${SERVIDORES[modoAtual]}/${coordenadas}?overview=full&geometries=geojson`);
-        const rota = (await resposta.json()).routes[0];
-        linha = L.geoJSON(rota.geometry, { style: { color: '#5ea38f', weight: 5 } }).addTo(mapa);
-        mapa.fitBounds(linha.getBounds(), { padding: [40, 40] });
-
-        const minutos = Math.max(1, Math.round(rota.duration / 60));
-        const km = (rota.distance / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-        resumo.textContent = `${minutos} min · ${km} km até o ${DESTINO.nome}`;
-    } catch (erro) {
-        resumo.textContent = 'Não foi possível calcular a rota agora.';
-    }
+function alternarTelaCheia(ativar) {
+    painel.classList.toggle('rota-cheia', ativar);
+    document.body.style.overflow = ativar ? 'hidden' : '';
+    botaoCheia.textContent = ativar ? 'Sair da tela cheia' : 'Tela cheia';
+    botaoCheia.setAttribute('aria-pressed', String(ativar));
+    mapa.invalidateSize();
+    desenharLinha();
 }
 
 botaoAbrir.addEventListener('click', () => {
@@ -62,17 +136,33 @@ botaoAbrir.addEventListener('click', () => {
 
     if (abrir && mapa === null) {
         criarMapa();
-        desenharRota();
+        definirDestino(CENTRO);
     }
+    if (!abrir && painel.classList.contains('rota-cheia')) alternarTelaCheia(false);
 });
+
+botaoCheia.addEventListener('click', () => alternarTelaCheia(!painel.classList.contains('rota-cheia')));
+
+document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && painel.classList.contains('rota-cheia')) alternarTelaCheia(false);
+});
+
+botaoCentro.addEventListener('click', () => definirDestino(CENTRO));
 
 modos.forEach((modo) => {
     modo.addEventListener('click', () => {
         modoAtual = modo.dataset.modo;
         modos.forEach((item) => {
             item.classList.toggle('ativo', item === modo);
-            item.setAttribute('aria-selected', String(item === modo));
+            item.setAttribute('aria-pressed', String(item === modo));
         });
-        desenharRota();
+        desenharLinha();
     });
 });
+
+// Estimativa de carro até o Centro, mostrada no card sem precisar abrir o mapa.
+buscarRota('car', CENTRO)
+    .then((rota) => {
+        textoCarro.textContent = `${formatarTempo(rota.duration)} de carro · ${formatarKm(rota.distance)}`;
+    })
+    .catch(() => {});
