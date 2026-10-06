@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body), sans-serif;
+    color: var(--color-text-primary);
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    padding: 0 40px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+}
+
+.site-footer img {
+    height: 43px;
+}
+
+.site-footer nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: var(--fs-body);
+}
+
+.site-footer small {
+    font-size: var(--fs-small);
+    color: var(--color-text-subtle);
+}

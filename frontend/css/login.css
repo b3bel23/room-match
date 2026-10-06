@@ -1,0 +1,175 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(135deg, var(--color-surface-muted) 2%, rgba(94, 163, 143, 0.08) 102%),
+        #ecf2f2;
+}
+
+.login-main {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 72px 32px;
+}
+
+.btn-voltar {
+    position: absolute;
+    top: 72px;
+    right: 38px;
+    padding: 8px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: 999px;
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: var(--fw-bold);
+}
+
+.login-split {
+    display: flex;
+    gap: 20px;
+}
+
+.login-hero {
+    width: 620px;
+    height: 600px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 28px;
+    color: #fff;
+    background:
+        linear-gradient(to right, rgba(20, 29, 34, 0.84), rgba(46, 55, 62, 0.57)),
+        url('../assets/hero-campinas.jpg') center / cover no-repeat,
+        var(--color-background);
+}
+
+.login-hero h2 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 28px;
+    font-weight: var(--fw-bold);
+    line-height: 33.6px;
+    margin-bottom: 12px;
+}
+
+.login-hero p {
+    font-size: 14px;
+    line-height: 22.4px;
+    opacity: 0.9;
+}
+
+.login-stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.login-stats li {
+    list-style: none;
+    padding-right: 30px;
+    font-size: 16px;
+}
+
+.login-stats strong {
+    display: block;
+    font-size: 20px;
+    color: var(--color-secondary);
+}
+
+.login-card {
+    width: 460px;
+    height: 600px;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 28px;
+}
+
+.login-card h1 {
+    font-size: 28px;
+    font-weight: var(--fw-bold);
+    color: #1c2429;
+}
+
+.login-subtitle {
+    font-size: 15px;
+    color: #616e73;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field label {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: #1c2429;
+}
+
+.field input {
+    padding: 14px 16px;
+    border: 1px solid #dbe3e5;
+    border-radius: var(--radius-lg);
+    font-family: inherit;
+    font-size: 15px;
+    color: #1c2429;
+    outline: none;
+}
+
+.field input:focus {
+    border-color: var(--color-primary);
+}
+
+.field input.invalido {
+    border-color: var(--color-accent);
+}
+
+.login-erro {
+    font-size: var(--fs-body);
+    color: var(--color-accent);
+}
+
+.link-esqueci {
+    align-self: flex-end;
+    font-size: 14px;
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+}
+
+.btn-entrar {
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 16px;
+    font-weight: var(--fw-bold);
+}
+
+.login-cadastro {
+    text-align: center;
+    font-size: 14px;
+    color: #616e73;
+}
+
+.login-cadastro a {
+    margin-left: 6px;
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+}
