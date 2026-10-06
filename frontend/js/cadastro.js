@@ -112,7 +112,7 @@ function ligarSlider(campo, saida, formatar) {
 ligarSlider(
     document.getElementById('orcamento'),
     document.getElementById('orcamento-valor'),
-    (valor) => `R$ ${Number(valor).toLocaleString('pt-BR')}`
+    (valor) => `R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
 );
 ligarSlider(
     document.getElementById('limiar'),
