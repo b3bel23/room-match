@@ -97,6 +97,7 @@
 .campo input {
     height: 44px;
     padding: 13px 14px;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     font-family: inherit;
@@ -362,6 +363,7 @@
 .valor-digitado input {
     width: 130px;
     padding: 6px 10px;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     font-family: inherit;
