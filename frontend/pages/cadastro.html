@@ -30,7 +30,7 @@
 
             <section class="etapa" data-etapa="1">
                 <div class="etapa-titulo">
-                    <h1>Cadastro do <span data-papel>Morador</span></h1>
+                    <h1>Cadastro do <span data-papel>Locador</span></h1>
                     <p>Crie sua conta para encontrar a república ideal e dar match com futuros colegas.</p>
                 </div>
 
@@ -59,11 +59,11 @@
                         <p class="nota">Cis: identidade igual ao sexo de nascimento. Trans: identidade diferente. Não-binário: fora do binarismo.</p>
                     </fieldset>
 
-                    <div class="campo col-1">
+                    <div class="campo col-1" data-so-locador>
                         <label for="ocupacao">Ocupação (opcional)</label>
                         <input id="ocupacao" name="ocupacao" type="text" placeholder="Ex: Estudante, Profissional...">
                     </div>
-                    <div class="campo col-2">
+                    <div class="campo col-2" data-so-locador>
                         <label for="emprego">Emprego (opcional)</label>
                         <input id="emprego" name="emprego" type="text" placeholder="Ex: Empresa, área de trabalho">
                     </div>
@@ -73,15 +73,15 @@
                         <input id="email" name="email" type="email" placeholder="exemplo@dominio.com" autocomplete="email" required>
                     </div>
 
-                    <div class="campo col-1">
+                    <div class="campo col-1" data-so-locador>
                         <label for="faculdade">Faculdade / Universidade (opcional)</label>
                         <input id="faculdade" name="faculdade" type="text" placeholder="Ex: UNICAMP, PUC-Campinas...">
                     </div>
 
-                    <p class="nota col-full">Emprego e Faculdade são opcionais e usados apenas para calcular o tempo real de deslocamento até os imóveis.</p>
+                    <p class="nota col-full" data-so-locador>Emprego e Faculdade são opcionais e usados apenas para calcular o tempo real de deslocamento até os imóveis.</p>
 
                     <div class="foto col-full">
-                        <p class="foto-rotulo">Foto de perfil * <span class="selo-obrigatoria">Obrigatória</span></p>
+                        <p class="foto-rotulo">Foto de perfil <span class="foto-obrigatoria" data-so-locador>* <span class="selo-obrigatoria">Obrigatória</span></span></p>
                         <div class="foto-linha">
                             <div class="avatar"><img id="foto-previa" alt="Prévia da foto de perfil" hidden></div>
                             <div class="foto-info">
@@ -91,7 +91,8 @@
                             </div>
                         </div>
                         <p class="foto-dica">Use foto nítida, rosto visível, fundo neutro, boa iluminação.</p>
-                        <p class="foto-aviso">A foto é obrigatória para acessar o chat e criar anúncios. Não publique informações pessoais sensíveis. A plataforma pode remover imagens que violem os termos.</p>
+                        <p class="foto-aviso" data-so-locador>A foto é obrigatória para acessar o chat e criar anúncios. Não publique informações pessoais sensíveis. A plataforma pode remover imagens que violem os termos.</p>
+                        <p class="foto-aviso" data-so-locatario>A foto será exibida em matches e chat. Não publique informações pessoais sensíveis. A plataforma pode remover imagens que violem os termos.</p>
                     </div>
 
                     <div class="campo col-1">
@@ -113,7 +114,7 @@
             <section class="etapa" data-etapa="2" hidden>
                 <div class="etapa-titulo">
                     <h1>Preferências de convivência</h1>
-                    <p>Tags, orçamento e limiar · <span data-papel>Morador</span></p>
+                    <p>Tags, orçamento e limiar · <span data-papel>Locador</span></p>
                 </div>
 
                 <div class="tags-secao">
@@ -168,25 +169,25 @@
             <section class="etapa" data-etapa="3" hidden>
                 <div class="etapa-titulo">
                     <h1>Termos e privacidade</h1>
-                    <p>Consentimento LGPD · <span data-papel>Morador</span></p>
+                    <p>Consentimento LGPD · <span data-papel>Locador</span></p>
                 </div>
 
                 <div class="termos">
                     <h2>Termos de uso e privacidade do RoomMatch</h2>
 
                     <h3>1. O serviço</h3>
-                    <p>O RoomMatch é uma plataforma para encontrar um anúncio de moradia compartilhada e conversar com quem publicou. O Morador busca, compara e entra em contato. O locador publica o anúncio do imóvel.</p>
+                    <p>O RoomMatch é uma plataforma para encontrar um anúncio de moradia compartilhada e conversar com quem publicou. O Locatário busca, compara e entra em contato. O locador publica o anúncio do imóvel.</p>
                     <p>A plataforma mostra anúncios, o match, favoritos, chat e pedido de visita. Ela não é imobiliária, não cobra aluguel, não recebe caução e não assina o contrato de locação. Combinar a visita ou fechar o aluguel é um acordo entre as pessoas, fora do RoomMatch.</p>
 
                     <h3>2. Quem pode criar conta</h3>
-                    <p>A conta é para quem tem 18 anos ou mais. Cada pessoa informa dados verdadeiros e guarda a própria senha. Uma conta pode ser de Morador, de locador, ou dos dois.</p>
+                    <p>A conta é para quem tem 18 anos ou mais. Cada pessoa informa dados verdadeiros e guarda a própria senha. Uma conta pode ser de Locatário, de locador, ou dos dois.</p>
 
                     <h3>3. Anúncio</h3>
                     <p>Quem publica responde pelo que coloca no anúncio: fotos, descrição, vagas, endereço e valores. O total mensal é a soma de aluguel, condomínio, IPTU e contas. O tempo de deslocamento é uma estimativa até o destino informado, como a faculdade ou o trabalho. O match compara tags de convivência, total mensal e deslocamento. Esse percentual orienta a busca e não garante compatibilidade, segurança nem que o imóvel esteja disponível.</p>
                     <p>Favoritar um anúncio só organiza a sua lista. Agendar uma visita não reserva o quarto e não cria contrato.</p>
 
                     <h3>4. Dados que pedimos</h3>
-                    <p>Para a conta: nome, e-mail, senha, telefone, data de nascimento, foto, cidade, bio e gênero, quando você informar. Para o Morador: orçamento, tags e preferências de moradia. Para o locador: CPF ou CNPJ e os dados do anúncio, inclusive endereço. No uso: favoritos, mensagens e pedidos de visita.</p>
+                    <p>Para a conta: nome, e-mail, senha, telefone, data de nascimento, foto, cidade, bio e gênero, quando você informar. Para o Locatário: orçamento, tags e preferências de moradia. Para o locador: CPF ou CNPJ e os dados do anúncio, inclusive endereço. No uso: favoritos, mensagens e pedidos de visita.</p>
                     <p>A senha fica armazenada apenas como hash. Ela não é exibida e a equipe não consegue lê-la.</p>
 
                     <h3>5. Para que usamos</h3>

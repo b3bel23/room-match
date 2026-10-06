@@ -4,9 +4,16 @@ const passos = [...form.querySelectorAll('.step')];
 const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
 
-/* Tipo de usuário escolhido na tela anterior */
-const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
-document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
+/* Tipo de usuário escolhido na tela anterior: o Locatário tem um cadastro mais simples */
+const ehLocatario = new URLSearchParams(window.location.search).get('papel') === 'locatario';
+document.querySelectorAll('[data-papel]').forEach((trecho) => {
+    trecho.textContent = ehLocatario ? 'Locatário' : 'Locador';
+});
+document.querySelectorAll(ehLocatario ? '[data-so-locador]' : '[data-so-locatario]').forEach((bloco) => {
+    bloco.hidden = true;
+    bloco.querySelectorAll('input').forEach((campo) => { campo.disabled = true; });
+});
+document.getElementById('foto').required = !ehLocatario;
 
 function mostrarEtapa(indice) {
     atual = indice;
