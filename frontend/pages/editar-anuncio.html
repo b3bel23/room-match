@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar anúncio · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/editar-anuncio.css">
+</head>
+<body class="editar-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+        </nav>
+    </header>
+
+    <main class="editar-main">
+        <a class="link-voltar" href="home.html">← Voltar</a>
+
+        <form id="editar-form" class="editar-card">
+            <h1>Editar anúncio</h1>
+            <p class="editar-imovel">Quarto em república · Barão Geraldo</p>
+
+            <div class="campo">
+                <label for="titulo">Título</label>
+                <input id="titulo" type="text" value="Quarto em república · Barão Geraldo" required>
+            </div>
+            <div class="campo">
+                <label for="aluguel">Aluguel (R$)</label>
+                <input id="aluguel" type="number" min="0" step="1" inputmode="numeric" value="600" required>
+            </div>
+            <div class="campo">
+                <label for="condominio">Condomínio (R$)</label>
+                <input id="condominio" type="number" min="0" step="1" inputmode="numeric" value="120" required>
+            </div>
+            <div class="campo">
+                <label for="iptu">IPTU (R$)</label>
+                <input id="iptu" type="number" min="0" step="1" inputmode="numeric" value="45" required>
+            </div>
+            <div class="campo">
+                <label for="contas">Contas (R$)</label>
+                <input id="contas" type="number" min="0" step="1" inputmode="numeric" value="85" required>
+            </div>
+
+            <p class="editar-total">Total mensal: <strong id="editar-total">R$ 850</strong></p>
+
+            <div class="editar-acoes">
+                <a class="btn btn-secondary" href="home.html">Cancelar</a>
+                <button class="btn btn-primary" type="submit">Salvar</button>
+            </div>
+            <p id="editar-retorno" class="editar-retorno" role="status" hidden></p>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/editar-anuncio.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar anúncio · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/publicar-imovel.css">
+</head>
+<body class="publicar-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+        </nav>
+    </header>
+
+    <div class="page-bar">
+        <p class="page-bar-sub">Preencha os dados com transparência total</p>
+        <button class="btn btn-primary" type="submit" form="publicar-form">Publicar anúncio</button>
+    </div>
+
+    <main class="publicar-main">
+        <a class="link-voltar" href="home.html">← Voltar</a>
+
+        <form id="publicar-form" class="publicar-form">
+            <div class="grade">
+                <div class="campo">
+                    <label for="titulo">Título *</label>
+                    <input id="titulo" type="text" placeholder="Quarto em república · Barão Geraldo" required>
+                </div>
+                <div class="campo">
+                    <label for="tipo">Tipo de imóvel *</label>
+                    <select id="tipo" required>
+                        <option value="" selected disabled>Selecione</option>
+                        <option>Quarto em república</option>
+                        <option>Kitnet</option>
+                        <option>Apartamento</option>
+                        <option>Casa</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="endereco">Endereço *</label>
+                    <textarea id="endereco" rows="2" placeholder="R. Benedito Alves Aranha, 450 · Barão Geraldo" required></textarea>
+                </div>
+                <div class="campo">
+                    <label for="area">Área (m²) *</label>
+                    <input id="area" type="number" min="1" step="1" inputmode="numeric" placeholder="12" required>
+                </div>
+                <div class="campo">
+                    <label for="aluguel">Aluguel (R$) *</label>
+                    <input id="aluguel" type="number" min="0" step="1" inputmode="numeric" placeholder="600" required>
+                </div>
+                <div class="campo">
+                    <label for="condominio">Condomínio (R$) *</label>
+                    <input id="condominio" type="number" min="0" step="1" inputmode="numeric" placeholder="120" required>
+                </div>
+                <div class="campo">
+                    <label for="iptu">IPTU (R$) *</label>
+                    <input id="iptu" type="number" min="0" step="1" inputmode="numeric" placeholder="45" required>
+                </div>
+                <div class="campo">
+                    <label for="contas">Contas (R$) *</label>
+                    <input id="contas" type="number" min="0" step="1" inputmode="numeric" placeholder="85" required>
+                </div>
+            </div>
+
+            <section class="fotos">
+                <h2>Fotos do imóvel</h2>
+                <p class="nota">Mínimo 3 fotos · arraste ou clique para adicionar</p>
+                <div id="fotos-grade" class="fotos-grade">
+                    <label class="foto-slot foto-adicionar">
+                        <input id="fotos-entrada" class="visually-hidden" type="file" accept="image/*" multiple>
+                        <span aria-hidden="true">+</span>
+                        <span class="visually-hidden">Adicionar fotos</span>
+                    </label>
+                </div>
+            </section>
+
+            <fieldset class="classificacao">
+                <legend>Classificação do lar *</legend>
+                <div class="pilulas">
+                    <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Mista" required><span>Mista</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Feminina"><span>Feminina</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Masculina"><span>Masculina</span></label>
+                </div>
+            </fieldset>
+
+            <section class="tags-secao">
+                <div class="tags-cabecalho">
+                    <h2>Tags de convivência (mín. 3 · máx. 8)</h2>
+                    <span id="tags-contador">0 selecionadas</span>
+                </div>
+
+                <h3>Adesão</h3>
+                <div class="pilulas">
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Pet Friendly"><span>Pet Friendly</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Home Office"><span>Home Office</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="LGBTQIA+ Safe"><span>LGBTQIA+ Safe</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Aberto a Festas"><span>Aberto a Festas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Vegano/Vegetariano"><span>Vegano/Vegetariano</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Limpeza Compartilhada"><span>Limpeza Compartilhada</span></label>
+                </div>
+
+                <h3>Restrição</h3>
+                <div class="pilulas">
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno"><span>Silêncio Noturno</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Festas"><span>Sem Festas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Fumo"><span>Sem Fumo</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Pets"><span>Sem Pets</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
+                </div>
+
+                <h3>Comodidades</h3>
+                <div class="pilulas">
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Ar-condicionado"><span>Ar-condicionado</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Lavanderia"><span>Lavanderia</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Garagem"><span>Garagem</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Mobiliado"><span>Mobiliado</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Área de Lazer"><span>Área de Lazer</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Portaria 24h"><span>Portaria 24h</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Wi-Fi"><span>Wi-Fi</span></label>
+                </div>
+            </section>
+
+            <p id="publicar-retorno" class="publicar-retorno" role="status" hidden></p>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/publicar-imovel.js"></script>
+</body>
+</html>
