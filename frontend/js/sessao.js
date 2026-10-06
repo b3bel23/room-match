@@ -3,11 +3,43 @@ const CHAVE_LOGADO = 'roommatch-logado';
 const CHAVE_PAPEL = 'roommatch-papel';
 const CHAVE_VISITAS = 'roommatch-visitas';
 
-// O papel ('locador' ou 'locatario') vem do cadastro; no login, mantém o último guardado.
+// Papéis: 'locador' ou 'locatario'. A pessoa pode ter cadastro em um ou nos dois.
+const CHAVE_CONTAS = 'roommatch-contas';
+
+function papelAtual() {
+    try {
+        return localStorage.getItem(CHAVE_PAPEL) || 'locatario';
+    } catch (erro) {
+        return 'locatario';
+    }
+}
+
+function contasCadastradas() {
+    try {
+        return JSON.parse(localStorage.getItem(CHAVE_CONTAS)) || [papelAtual()];
+    } catch (erro) {
+        return [papelAtual()];
+    }
+}
+
+function trocarPapel(papel) {
+    try {
+        localStorage.setItem(CHAVE_PAPEL, papel);
+    } catch (erro) {
+        // sem armazenamento disponível: o papel não muda
+    }
+}
+
+// O cadastro registra o papel como conta e passa a usá-lo; no login, mantém o último guardado.
 function entrar(papel) {
     try {
         localStorage.setItem(CHAVE_LOGADO, '1');
-        if (papel) localStorage.setItem(CHAVE_PAPEL, papel);
+        if (papel) {
+            const contas = contasCadastradas();
+            if (!contas.includes(papel)) contas.push(papel);
+            localStorage.setItem(CHAVE_CONTAS, JSON.stringify(contas));
+            localStorage.setItem(CHAVE_PAPEL, papel);
+        }
     } catch (erro) {
         // sem armazenamento disponível: a pessoa continua como visitante
     }
@@ -30,11 +62,7 @@ function estaLogado() {
 }
 
 function ehLocador() {
-    try {
-        return localStorage.getItem(CHAVE_PAPEL) === 'locador';
-    } catch (erro) {
-        return false;
-    }
+    return papelAtual() === 'locador';
 }
 
 // Visitas que o locatário agendou neste navegador (sem backend por enquanto).

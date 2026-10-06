@@ -45,29 +45,44 @@
             <h2>Trocar tipo de conta</h2>
             <p class="conteudo-sub">Alterne entre conta de Locatário e Locador</p>
 
-            <p class="conta-atual">Tipo de conta atual: <strong id="conta-atual" class="selo-papel">Locatário</strong></p>
+            <p class="conta-atual">Tipo de conta atual: <strong id="conta-atual" class="selo-papel"></strong></p>
 
             <fieldset class="papeis conta-papeis">
                 <legend class="visually-hidden">Tipo de conta</legend>
                 <label class="papel">
-                    <input class="visually-hidden" type="radio" name="conta" value="Locatário" checked>
+                    <input class="visually-hidden" type="radio" name="conta" value="locatario">
                     <span class="papel-opcao">
                         <span class="papel-nome">Locatário</span>
                         <span class="papel-descricao">Busco um quarto ou vaga em república para morar perto da faculdade ou do meu trabalho.</span>
-                        <span class="papel-selo">Ativo</span>
+                        <span class="papel-selo papel-status"></span>
                     </span>
                 </label>
                 <label class="papel">
-                    <input class="visually-hidden" type="radio" name="conta" value="Locador">
+                    <input class="visually-hidden" type="radio" name="conta" value="locador">
                     <span class="papel-opcao">
                         <span class="papel-nome">Locador</span>
                         <span class="papel-descricao">Tenho um imóvel, apartamento ou quarto em república disponível para anunciar e alugar.</span>
-                        <span class="papel-selo">Ativo</span>
+                        <span class="papel-selo papel-status"></span>
                     </span>
                 </label>
             </fieldset>
 
-            <p class="config-aviso">💡 Ao trocar para Locador, a interface será alterada para o painel de gerenciamento de anúncios.</p>
+            <p id="conta-aviso" class="config-aviso"></p>
+
+            <div class="config-acoes">
+                <button id="conta-trocar" class="btn btn-primary" type="button" disabled>Trocar de conta</button>
+            </div>
+
+            <dialog id="conta-confirmacao" class="confirmacao" aria-labelledby="conta-confirmacao-titulo">
+                <form method="dialog">
+                    <h2 id="conta-confirmacao-titulo">Você tem certeza que quer trocar de conta?</h2>
+                    <p id="conta-confirmacao-texto" class="confirmacao-texto"></p>
+                    <div class="confirmacao-botoes">
+                        <button class="btn btn-secondary" value="cancelar">Cancelar</button>
+                        <button class="btn btn-primary" value="trocar">Trocar</button>
+                    </div>
+                </form>
+            </dialog>
         </main>
     </div>
 

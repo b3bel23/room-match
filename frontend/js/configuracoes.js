@@ -118,10 +118,58 @@ if (senhaForm) {
     });
 }
 
-/* Trocar conta — o tipo escolhido aparece como conta atual */
-const contaAtual = document.getElementById('conta-atual');
-if (contaAtual) {
-    document.querySelectorAll('input[name="conta"]').forEach((opcao) => {
-        opcao.addEventListener('change', () => { contaAtual.textContent = opcao.value; });
+/* Papel em uso: nome nos textos do perfil */
+const NOMES = { locatario: 'Locatário', locador: 'Locador' };
+const outroPapel = papelAtual() === 'locador' ? 'locatario' : 'locador';
+document.querySelectorAll('[data-papel-atual]').forEach((trecho) => { trecho.textContent = NOMES[papelAtual()]; });
+document.querySelectorAll('[data-papel-outro]').forEach((trecho) => { trecho.textContent = NOMES[outroPapel]; });
+
+/* Trocar conta — com confirmação; sem cadastro no outro papel, leva ao cadastro */
+const botaoTrocar = document.getElementById('conta-trocar');
+if (botaoTrocar) {
+    const opcoes = [...document.querySelectorAll('input[name="conta"]')];
+    const confirmacao = document.getElementById('conta-confirmacao');
+    const textoConfirmacao = document.getElementById('conta-confirmacao-texto');
+    const aviso = document.getElementById('conta-aviso');
+    const cadastradas = contasCadastradas();
+
+    document.getElementById('conta-atual').textContent = NOMES[papelAtual()];
+    opcoes.forEach((opcao) => {
+        opcao.checked = opcao.value === papelAtual();
+        opcao.closest('.papel').querySelector('.papel-status').textContent =
+            opcao.value === papelAtual() ? 'Ativo' : cadastradas.includes(opcao.value) ? 'Cadastrado' : 'Sem cadastro';
+    });
+
+    function escolhido() {
+        return opcoes.find((opcao) => opcao.checked).value;
+    }
+
+    function atualizar() {
+        const destino = escolhido();
+        botaoTrocar.disabled = destino === papelAtual();
+        aviso.textContent = cadastradas.includes(destino)
+            ? 'Ao trocar, a interface muda para a conta de ' + NOMES[destino] + '.'
+            : 'Você ainda não tem cadastro como ' + NOMES[destino] + '. Para trocar, é preciso fazer esse cadastro primeiro.';
+    }
+    opcoes.forEach((opcao) => opcao.addEventListener('change', atualizar));
+    atualizar();
+
+    botaoTrocar.addEventListener('click', () => {
+        const destino = escolhido();
+        textoConfirmacao.textContent = cadastradas.includes(destino)
+            ? 'Você vai passar a usar o RoomMatch como ' + NOMES[destino] + '.'
+            : 'Você ainda não tem cadastro como ' + NOMES[destino] + '. Vamos levar você ao cadastro.';
+        confirmacao.showModal();
+    });
+
+    confirmacao.addEventListener('close', () => {
+        if (confirmacao.returnValue !== 'trocar') return;
+        const destino = escolhido();
+        if (cadastradas.includes(destino)) {
+            trocarPapel(destino);
+            window.location.href = 'perfil.html';
+        } else {
+            window.location.href = 'cadastro.html?papel=' + destino;
+        }
     });
 }

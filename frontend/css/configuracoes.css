@@ -138,6 +138,10 @@
     color: var(--color-primary);
 }
 
+.conta-papeis .papel-selo {
+    display: inline-block;
+}
+
 .conta-papeis {
     max-width: 640px;
     margin-bottom: 16px;

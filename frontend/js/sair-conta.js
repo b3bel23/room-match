@@ -9,7 +9,7 @@ confirmacao.innerHTML = `
         <h2 id="sair-titulo">Você tem certeza que quer sair?</h2>
         <div class="confirmacao-botoes">
             <button class="btn btn-secondary" value="cancelar">Cancelar</button>
-            <button class="btn btn-primary" value="sair">Sair</button>
+            <button class="btn btn-primary btn-sair" value="sair">Sair</button>
         </div>
     </form>`;
 document.body.append(confirmacao);

@@ -203,6 +203,13 @@ button {
     gap: 12px;
 }
 
-.confirmacao .btn-primary {
+.confirmacao .btn-sair {
     background: var(--color-danger);
+}
+
+.confirmacao-texto {
+    margin: -8px 0 20px;
+    text-align: center;
+    font-size: var(--fs-body);
+    color: var(--color-text-muted);
 }
