@@ -16,3 +16,4 @@ function estaLogado() {
         return false;
     }
 }
+document.body.classList.toggle('visitante', !estaLogado());
