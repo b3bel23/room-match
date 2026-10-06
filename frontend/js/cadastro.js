@@ -124,13 +124,17 @@ orcamentoValor.addEventListener('change', () => {
 orcamentoValor.value = Number(orcamento.value).toFixed(2);
 preencherBarra(orcamento);
 
-/* Limiar de compatibilidade */
+/* Limiar de compatibilidade: também pode ser arrastado ou digitado */
 const limiar = document.getElementById('limiar');
 const limiarValor = document.getElementById('limiar-valor');
 
 limiar.addEventListener('input', () => {
-    limiarValor.textContent = `${limiar.value}%`;
+    limiarValor.value = limiar.value;
     preencherBarra(limiar);
 });
-limiarValor.textContent = `${limiar.value}%`;
+limiarValor.addEventListener('input', () => {
+    limiar.value = limiarValor.value;
+    preencherBarra(limiar);
+});
+limiarValor.value = limiar.value;
 preencherBarra(limiar);
