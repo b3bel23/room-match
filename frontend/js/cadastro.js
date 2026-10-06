@@ -32,6 +32,7 @@ form.addEventListener('click', (evento) => {
     }
     if (acao === 'finalizar') {
         // Sem backend por enquanto: o cadastro finalizado leva à tela de conta criada.
+        entrar();
         window.location.href = 'conta-criada.html';
     }
 });
