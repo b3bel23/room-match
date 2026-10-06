@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body class="login-page">
+
+    <main class="login-main">
+        <a class="btn-voltar" href="../../index.html">← Voltar</a>
+
+        <div class="login-split">
+            <section class="login-hero">
+                <h2>Moradia compatível na<br>Região de Campinas</h2>
+                <p>Matching por convivência, custo transparente e rota<br>de deslocamento até sua faculdade ou trabalho.</p>
+                <ul class="login-stats">
+                    <li><strong>847</strong>imóveis na<br>RMC</li>
+                    <li><strong>0</strong>taxas<br>ocultas</li>
+                </ul>
+            </section>
+
+            <section class="login-card">
+                <h1>Bem-vindo de volta!</h1>
+                <p class="login-subtitle">Entre na sua conta RoomMatch</p>
+
+                <form id="login-form" class="login-form" novalidate>
+                    <div class="field">
+                        <label for="login-email">E-mail</label>
+                        <input id="login-email" type="email" placeholder="maria.silva@puc.br" autocomplete="email">
+                    </div>
+                    <div class="field">
+                        <label for="login-senha">Senha</label>
+                        <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                    <p id="login-erro" class="login-erro" hidden>E-mail ou senha inválidos.</p>
+                    <a class="link-esqueci" href="#">Esqueci minha senha</a>
+                    <button type="submit" class="btn-entrar">Entrar</button>
+                </form>
+
+                <p class="login-cadastro">Não tem conta?<a href="cadastro.html">Cadastre-se</a></p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/login.js"></script>
+</body>
+</html>
