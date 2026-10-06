@@ -22,23 +22,6 @@ body:not(.visitante) .site-header .nav-logado {
     display: flex;
 }
 
-.nav-logado a.ativo {
-    font-weight: var(--fw-semibold);
-    color: var(--color-primary);
-}
-
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 12px 6px 6px;
-    border-radius: 24px;
-    background: #e6eceb;
-    font-size: var(--fs-body);
-    font-weight: var(--fw-medium);
-}
-
-.usuario-foto,
 .morador-foto {
     display: grid;
     place-items: center;
@@ -50,22 +33,6 @@ body:not(.visitante) .site-header .nav-logado {
     font-size: var(--fs-body);
     font-weight: var(--fw-bold);
     color: #fff;
-}
-
-/* Barra do título */
-.page-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 32px;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-}
-
-.page-bar h1 {
-    font-family: var(--font-heading), sans-serif;
-    font-size: var(--fs-h2);
-    font-weight: var(--fw-bold);
 }
 
 .local {
@@ -364,4 +331,8 @@ body:not(.visitante) .afinidade {
         order: -1;
         min-height: 0;
     }
+}
+
+.acoes .favoritado {
+    color: var(--color-accent);
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+</head>
+<body class="favoritos-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+        </nav>
+    </header>
+
+    <div id="vista-lista" class="vista-lista">
+        <div class="page-bar">
+            <h1>Configurações</h1>
+            <span class="page-bar-sub">Gerencie sua conta</span>
+        </div>
+
+        <div class="layout">
+            <aside class="sidebar">
+                <p class="sidebar-rotulo">Menu</p>
+                <a href="#">Perfil</a>
+                <a href="#">Preferências</a>
+                <a class="ativo" href="favoritos.html">Favoritos</a>
+                <a href="#">Segurança</a>
+                <a href="#">Termos</a>
+                <a class="sair" href="login.html">Sair da conta</a>
+            </aside>
+
+            <main class="conteudo">
+                <h2>Favoritos</h2>
+                <p id="favoritos-contagem" class="conteudo-sub"></p>
+
+                <div class="filtros">
+                    <input id="favoritos-busca" class="filtro-busca" type="search" placeholder="Buscar nos favoritos" aria-label="Buscar nos favoritos">
+                    <select id="favoritos-ordem" class="filtro-ordem" aria-label="Ordenar favoritos">
+                        <option value="recentes">Mais recentes</option>
+                        <option value="match">Maior match</option>
+                        <option value="preco">Menor preço</option>
+                    </select>
+                </div>
+
+                <div id="favoritos-lista" class="lista"></div>
+                <p id="favoritos-sem-resultado" class="sem-resultado" hidden>Nenhum favorito encontrado.</p>
+            </main>
+        </div>
+    </div>
+
+    <main id="vista-vazia" class="vista-vazia" hidden>
+        <div class="vazio-card">
+            <h1>Favoritos</h1>
+            <p>Você ainda não favoritou anúncios. Os corações do mural aparecem aqui.</p>
+            <a class="btn btn-primary" href="home.html">Explorar anúncios</a>
+        </div>
+    </main>
+
+    <template id="modelo-favorito">
+        <article class="fav-row">
+            <div class="fav-img"></div>
+            <div class="fav-corpo">
+                <h3 class="fav-titulo"></h3>
+                <p class="fav-info">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+                    <span class="fav-detalhes"></span>
+                    <strong class="fav-match"></strong>
+                </p>
+                <div class="fav-tags"></div>
+            </div>
+            <a class="btn btn-secondary" href="detalhe.html">Ver detalhes</a>
+            <button class="fav-coracao" type="button" aria-label="Remover dos favoritos">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 2.9 4.5 6.4 4.5c2 0 3.6 1.1 4.6 2.7h2c1-1.6 2.6-2.7 4.6-2.7 3.5 0 5.5 3.7 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+            </button>
+        </article>
+    </template>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/favoritos-armazenamento.js"></script>
+    <script src="../js/favoritos.js"></script>
+</body>
+</html>

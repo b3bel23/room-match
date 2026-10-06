@@ -121,3 +121,46 @@ button {
 .site-header .btn {
     padding: 9px 18px;
 }
+
+.site-header nav a.ativo:not(.btn) {
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px 6px 6px;
+    border-radius: 24px;
+    background: #e6eceb;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+}
+
+.usuario-foto {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: #fff;
+}
+
+.page-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.page-bar h1 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+}
