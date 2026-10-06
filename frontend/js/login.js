@@ -11,5 +11,9 @@ form.addEventListener('submit', (evento) => {
     senha.classList.toggle('invalido', invalido);
     erro.hidden = !invalido;
 
-    // A chamada ao backend será ligada quando o endpoint de login existir.
+    if (!invalido) {
+        // Sem backend por enquanto: o login válido leva direto à tela inicial.
+        entrar();
+        window.location.href = 'home.html';
+    }
 });

@@ -27,8 +27,13 @@ form.addEventListener('click', (evento) => {
     if (acao === 'voltar') {
         mostrarEtapa(atual - 1);
     }
-    if (acao === 'continuar' && validarEtapa() && atual < etapas.length - 1) {
+    if (acao === 'continuar' && validarEtapa()) {
         mostrarEtapa(atual + 1);
+    }
+    if (acao === 'finalizar') {
+        // Sem backend por enquanto: o cadastro finalizado leva à tela de conta criada.
+        entrar();
+        window.location.href = 'conta-criada.html';
     }
 });
 
@@ -99,23 +104,47 @@ tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
 atualizarTags();
 
 /* Etapa 2 — sliders */
-function ligarSlider(campo, saida, formatar) {
-    const atualizar = () => {
-        const porcentagem = ((campo.value - campo.min) / (campo.max - campo.min)) * 100;
-        campo.style.setProperty('--preenchimento', `${porcentagem}%`);
-        saida.textContent = formatar(campo.value);
-    };
-    campo.addEventListener('input', atualizar);
-    atualizar();
+function preencherBarra(campo) {
+    const porcentagem = ((campo.value - campo.min) / (campo.max - campo.min)) * 100;
+    campo.style.setProperty('--preenchimento', `${porcentagem}%`);
 }
 
-ligarSlider(
-    document.getElementById('orcamento'),
-    document.getElementById('orcamento-valor'),
-    (valor) => `R$ ${Number(valor).toLocaleString('pt-BR')}`
-);
-ligarSlider(
-    document.getElementById('limiar'),
-    document.getElementById('limiar-valor'),
-    (valor) => `${valor}%`
-);
+/* Orçamento: o valor pode ser arrastado na barra ou digitado no campo */
+const orcamento = document.getElementById('orcamento');
+const orcamentoValor = document.getElementById('orcamento-valor');
+
+orcamento.addEventListener('input', () => {
+    orcamentoValor.value = Number(orcamento.value).toFixed(2);
+    preencherBarra(orcamento);
+});
+orcamentoValor.addEventListener('input', () => {
+    orcamento.value = orcamentoValor.value;
+    preencherBarra(orcamento);
+});
+orcamentoValor.addEventListener('change', () => {
+    if (orcamentoValor.value !== '') {
+        orcamentoValor.value = Number(orcamentoValor.value).toFixed(2);
+    }
+});
+orcamentoValor.value = Number(orcamento.value).toFixed(2);
+preencherBarra(orcamento);
+
+/* Limiar de compatibilidade: também pode ser arrastado ou digitado */
+const limiar = document.getElementById('limiar');
+const limiarValor = document.getElementById('limiar-valor');
+
+limiar.addEventListener('input', () => {
+    limiarValor.value = limiar.value;
+    preencherBarra(limiar);
+});
+limiarValor.addEventListener('input', () => {
+    limiar.value = limiarValor.value;
+    preencherBarra(limiar);
+});
+limiarValor.value = limiar.value;
+preencherBarra(limiar);
+
+/* Etapa 3 — aceite dos termos */
+const aceite = document.getElementById('aceite');
+const finalizar = document.getElementById('finalizar');
+aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });
