@@ -175,3 +175,29 @@ button {
     font-weight: var(--fw-bold);
     color: var(--color-primary);
 }
+
+/* Confirmação de saída da conta */
+.confirmacao {
+    margin: auto;
+    padding: 28px;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: 0 12px 32px rgba(20, 29, 34, 0.2);
+}
+
+.confirmacao::backdrop {
+    background: rgba(20, 29, 34, 0.45);
+}
+
+.confirmacao h2 {
+    margin-bottom: 20px;
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h2);
+}
+
+.confirmacao-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}

@@ -13,6 +13,14 @@ function entrar(papel) {
     }
 }
 
+function sair() {
+    try {
+        localStorage.removeItem(CHAVE_LOGADO);
+    } catch (erro) {
+        // sem armazenamento disponível: nada a limpar
+    }
+}
+
 function estaLogado() {
     try {
         return localStorage.getItem(CHAVE_LOGADO) === '1';
