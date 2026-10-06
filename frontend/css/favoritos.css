@@ -52,6 +52,7 @@
 
 .sidebar a.ativo {
     font-weight: var(--fw-semibold);
+    color: var(--color-primary);
 }
 
 .sidebar a.sair {

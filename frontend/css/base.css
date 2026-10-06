@@ -191,6 +191,7 @@ button {
 }
 
 .confirmacao h2 {
+    text-align: center;
     margin-bottom: 20px;
     font-family: var(--font-heading), sans-serif;
     font-size: var(--fs-h2);
@@ -198,6 +199,10 @@ button {
 
 .confirmacao-botoes {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 12px;
+}
+
+.confirmacao .btn-primary {
+    background: var(--color-danger);
 }
