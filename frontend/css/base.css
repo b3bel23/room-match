@@ -47,3 +47,72 @@ button {
     font-size: var(--fs-small);
     color: var(--color-text-subtle);
 }
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.auth-page {
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(135deg, var(--color-surface-muted) 2%, rgba(94, 163, 143, 0.08) 102%),
+        #ecf2f2;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 33px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-header img {
+    height: 43px;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.site-header nav a:not(.btn) {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-muted);
+}
+
+.site-header .btn {
+    padding: 9px 18px;
+}

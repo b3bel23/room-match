@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+</head>
+<body class="auth-page">
+
+    <header class="site-header">
+        <a href="../../index.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="#">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="cadastro.html">Cadastrar</a>
+        </nav>
+    </header>
+
+    <main class="cadastro-main">
+        <form id="cadastro-form" class="cadastro-card" novalidate>
+            <div class="stepper">
+                <span class="step ativo"></span>
+                <span class="step"></span>
+                <span class="step"></span>
+                <span id="etapa-rotulo" class="step-rotulo">Etapa 1 de 3</span>
+            </div>
+
+            <section class="etapa" data-etapa="1">
+                <div class="etapa-titulo">
+                    <h1>Cadastro do Morador</h1>
+                    <p>Crie sua conta para encontrar a república ideal e dar match com futuros colegas.</p>
+                </div>
+
+                <div class="grade">
+                    <div class="campo col-1">
+                        <label for="nome">Nome completo *</label>
+                        <input id="nome" name="nome" type="text" placeholder="Digite seu nome completo" autocomplete="name" required>
+                    </div>
+
+                    <div class="campo col-1">
+                        <label for="telefone">Telefone de contato *</label>
+                        <input id="telefone" name="telefone" type="tel" placeholder="(19) 99999-9999" autocomplete="tel" required>
+                    </div>
+
+                    <fieldset class="genero col-full">
+                        <legend>Gênero * <span class="ajuda">?</span></legend>
+                        <div class="pilulas">
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Homem Cisgênero" required><span>Homem Cisgênero</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Mulher Cisgênero" required><span>Mulher Cisgênero</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Homem Transgênero" required><span>Homem Transgênero</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Mulher Transgênero" required><span>Mulher Transgênero</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Travesti" required><span>Travesti</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Não-binário" required><span>Não-binário</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Outro/Não informar" required><span>Outro/Não informar</span></label>
+                        </div>
+                        <p class="nota">Cis: identidade igual ao sexo de nascimento. Trans: identidade diferente. Não-binário: fora do binarismo.</p>
+                    </fieldset>
+
+                    <div class="campo col-1">
+                        <label for="ocupacao">Ocupação (opcional)</label>
+                        <input id="ocupacao" name="ocupacao" type="text" placeholder="Ex: Estudante, Profissional...">
+                    </div>
+                    <div class="campo col-2">
+                        <label for="emprego">Emprego (opcional)</label>
+                        <input id="emprego" name="emprego" type="text" placeholder="Ex: Empresa, área de trabalho">
+                    </div>
+
+                    <div class="campo col-1">
+                        <label for="email">E-mail *</label>
+                        <input id="email" name="email" type="email" placeholder="exemplo@dominio.com" autocomplete="email" required>
+                    </div>
+
+                    <div class="campo col-1">
+                        <label for="faculdade">Faculdade / Universidade (opcional)</label>
+                        <input id="faculdade" name="faculdade" type="text" placeholder="Ex: UNICAMP, PUC-Campinas...">
+                    </div>
+
+                    <p class="nota col-full">Emprego e Faculdade são opcionais e usados apenas para calcular o tempo real de deslocamento até os imóveis.</p>
+
+                    <div class="foto col-full">
+                        <p class="foto-rotulo">Foto de perfil * <span class="selo-obrigatoria">Obrigatória</span></p>
+                        <div class="foto-linha">
+                            <div class="avatar"><img id="foto-previa" alt="Prévia da foto de perfil" hidden></div>
+                            <div class="foto-info">
+                                <label for="foto" class="btn-foto">Adicionar foto</label>
+                                <input id="foto" class="visually-hidden" name="foto" type="file" accept="image/jpeg,image/png" required>
+                                <p>JPG ou PNG · máx. 5 MB · 400×400 px recomendado (mín. 200×200)</p>
+                            </div>
+                        </div>
+                        <p class="foto-dica">Use foto nítida, rosto visível, fundo neutro, boa iluminação.</p>
+                        <p class="foto-aviso">A foto é obrigatória para acessar o chat e criar anúncios. Não publique informações pessoais sensíveis. A plataforma pode remover imagens que violem os termos.</p>
+                    </div>
+
+                    <div class="campo col-1">
+                        <label for="senha">Senha *</label>
+                        <input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="new-password" required>
+                    </div>
+                    <div class="campo col-2">
+                        <label for="confirmar-senha">Confirmar Senha *</label>
+                        <input id="confirmar-senha" type="password" placeholder="••••••••" autocomplete="new-password" required>
+                    </div>
+                </div>
+
+                <div class="acoes acoes-coluna">
+                    <button type="button" class="btn btn-primary" data-acao="continuar">Continuar</button>
+                    <a class="link-voltar" href="login.html">Voltar</a>
+                </div>
+            </section>
+
+            <section class="etapa" data-etapa="2" hidden>
+                <div class="etapa-titulo">
+                    <h1>Preferências de convivência</h1>
+                    <p>Tags, orçamento e limiar · Morador</p>
+                </div>
+
+                <div class="tags-secao">
+                    <div class="tags-cabecalho">
+                        <h2>Tags de Adesão</h2>
+                        <span id="tags-contador">0 selecionadas</span>
+                    </div>
+                    <div class="pilulas">
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Pet Friendly"><span>Pet Friendly</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Home Office"><span>Home Office</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Aberto a Festas"><span>Aberto a Festas</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Vegano/Vegetariano"><span>Vegano/Vegetariano</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="LGBTQIA+ Safe"><span>LGBTQIA+ Safe</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Limpeza Compartilhada"><span>Limpeza Compartilhada</span></label>
+                    </div>
+
+                    <div class="tags-cabecalho">
+                        <h2>Tags de Restrição</h2>
+                    </div>
+                    <div class="pilulas">
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno"><span>Silêncio Noturno</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Festas"><span>Sem Festas</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Fumo"><span>Sem Fumo</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Pets"><span>Sem Pets</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
+                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
+                    </div>
+
+                    <p class="nota">Selecione mínimo 3 e máximo 8 tags no total. Tags comuns com o imóvel são destacadas no match.</p>
+                </div>
+
+                <div class="slider">
+                    <label for="orcamento">Orçamento máximo mensal</label>
+                    <output id="orcamento-valor" for="orcamento"></output>
+                    <input id="orcamento" name="orcamento" type="range" min="300" max="2500" step="50" value="900">
+                    <div class="slider-limites"><span>R$ 300</span><span>R$ 2.500</span></div>
+                </div>
+
+                <div class="slider">
+                    <label for="limiar">Limiar mínimo de compatibilidade</label>
+                    <output id="limiar-valor" for="limiar"></output>
+                    <input id="limiar" name="limiar" type="range" min="0" max="100" step="5" value="70">
+                    <div class="slider-limites"><span>0%</span><span>100%</span></div>
+                </div>
+
+                <div class="acoes acoes-linha">
+                    <button type="button" class="btn btn-secondary" data-acao="voltar">Voltar</button>
+                    <button type="button" class="btn btn-primary" data-acao="continuar">Continuar</button>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/cadastro.js"></script>
+</body>
+</html>
