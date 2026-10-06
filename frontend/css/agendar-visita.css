@@ -37,12 +37,103 @@
     color: #617075;
 }
 
+.calendario {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.calendario-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-body);
+}
+
+.calendario-nav {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-primary);
+}
+
+.calendario-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.calendario-grade {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+}
+
+.calendario-semana {
+    font-size: var(--fs-xsmall);
+    color: #617075;
+}
+
+.calendario-dia {
+    aspect-ratio: 1;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
+    cursor: pointer;
+}
+
+.calendario-dia:disabled {
+    border-color: transparent;
+    background: #eef1f2;
+    font-weight: var(--fw-regular);
+    color: #b4bcc0;
+    cursor: not-allowed;
+}
+
+.calendario-dia.selecionado {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.calendario-dia:focus-visible,
+.calendario-nav:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.calendario-vazio {
+    visibility: hidden;
+}
+
 .horarios {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 30px;
+    gap: 12px;
     border: none;
+}
+
+.horarios[hidden] {
+    display: none;
+}
+
+.horarios legend {
+    margin-bottom: 12px;
+    font-weight: var(--fw-bold);
+    color: #1f2933;
+}
+
+.horarios-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .horario span {

@@ -25,23 +25,21 @@
             <h1>Agendar visita</h1>
             <p class="agendar-imovel">Kitnet mobiliada · Cambuí · R$ 1.200/mês</p>
 
-            <fieldset class="horarios">
-                <legend class="visually-hidden">Horário da visita</legend>
-                <label class="horario">
-                    <input class="visually-hidden" type="radio" name="horario" value="Amanhã, 10h" checked>
-                    <span>Amanhã, 10h</span>
-                </label>
-                <label class="horario">
-                    <input class="visually-hidden" type="radio" name="horario" value="Amanhã, 16h">
-                    <span>Amanhã, 16h</span>
-                </label>
-                <label class="horario">
-                    <input class="visually-hidden" type="radio" name="horario" value="Sábado, 11h">
-                    <span>Sábado, 11h</span>
-                </label>
+            <div class="calendario">
+                <div class="calendario-topo">
+                    <button id="mes-anterior" class="calendario-nav" type="button" aria-label="Mês anterior">&lsaquo;</button>
+                    <strong id="mes-titulo" aria-live="polite"></strong>
+                    <button id="mes-proximo" class="calendario-nav" type="button" aria-label="Próximo mês">&rsaquo;</button>
+                </div>
+                <div id="calendario-grade" class="calendario-grade"></div>
+            </div>
+
+            <fieldset id="horarios" class="horarios" hidden>
+                <legend id="horarios-titulo">Horários disponíveis</legend>
+                <div id="horarios-lista" class="horarios-lista"></div>
             </fieldset>
 
-            <button id="agendar-confirmar" class="btn btn-primary" type="submit">Confirmar visita</button>
+            <button id="agendar-confirmar" class="btn btn-primary" type="submit" disabled>Confirmar visita</button>
             <p id="agendar-nota" class="agendar-nota">O locador recebe o pedido no chat.</p>
             <p id="agendar-retorno" class="agendar-nota" role="status" hidden></p>
         </form>
