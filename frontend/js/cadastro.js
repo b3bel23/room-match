@@ -5,15 +5,21 @@ const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
 
 /* Tipo de usuário escolhido na tela anterior: o Locador tem um cadastro mais simples */
-const ehLocador = new URLSearchParams(window.location.search).get('papel') === 'locador';
+const cadastroLocador = new URLSearchParams(window.location.search).get('papel') === 'locador';
 document.querySelectorAll('[data-papel]').forEach((trecho) => {
-    trecho.textContent = ehLocador ? 'Locador' : 'Locatário';
+    trecho.textContent = cadastroLocador ? 'Locador' : 'Locatário';
 });
-document.querySelectorAll(ehLocador ? '[data-so-locatario]' : '[data-so-locador]').forEach((bloco) => {
+document.querySelectorAll(cadastroLocador ? '[data-so-locatario]' : '[data-so-locador]').forEach((bloco) => {
     bloco.hidden = true;
     bloco.querySelectorAll('input').forEach((campo) => { campo.disabled = true; });
 });
-document.getElementById('foto').required = !ehLocador;
+document.getElementById('foto').required = !cadastroLocador;
+
+/* Locador (Figma): cartão mais estreito, com nome, e-mail e telefone antes do gênero */
+if (cadastroLocador) {
+    form.classList.add('cadastro-locador');
+    form.querySelector('.genero').before(document.getElementById('campo-email'));
+}
 
 function mostrarEtapa(indice) {
     atual = indice;
@@ -43,7 +49,7 @@ form.addEventListener('click', (evento) => {
     }
     if (acao === 'finalizar') {
         // Sem backend por enquanto: o cadastro finalizado leva à tela de conta criada.
-        entrar(ehLocador ? 'locador' : 'locatario');
+        entrar(cadastroLocador ? 'locador' : 'locatario');
         window.location.href = 'conta-criada.html';
     }
 });

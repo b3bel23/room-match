@@ -24,7 +24,12 @@
     gap: 16px;
 }
 
+.cadastro-locador {
+    max-width: 640px;
+}
+
 .etapa[hidden],
+.slider[hidden],
 .grade [hidden],
 .foto [hidden] {
     display: none;
