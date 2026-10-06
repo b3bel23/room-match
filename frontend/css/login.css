@@ -1,11 +1,3 @@
-.login-page {
-    display: flex;
-    flex-direction: column;
-    background:
-        linear-gradient(135deg, var(--color-surface-muted) 2%, rgba(94, 163, 143, 0.08) 102%),
-        #ecf2f2;
-}
-
 .login-main {
     position: relative;
     flex: 1;
