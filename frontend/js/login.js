@@ -14,6 +14,6 @@ form.addEventListener('submit', (evento) => {
     if (!invalido) {
         // Sem backend por enquanto: o login válido leva direto à tela inicial.
         entrar();
-        window.location.href = '../../index.html';
+        window.location.href = 'home.html';
     }
 });
