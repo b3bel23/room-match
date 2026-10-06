@@ -1,5 +1,4 @@
 const form = document.getElementById('cadastro-form');
-const etapas = [...form.querySelectorAll('.etapa')];
 const passos = [...form.querySelectorAll('.step')];
 const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
@@ -14,6 +13,11 @@ document.querySelectorAll(cadastroLocador ? '[data-so-locatario]' : '[data-so-lo
     bloco.querySelectorAll('input').forEach((campo) => { campo.disabled = true; });
 });
 document.getElementById('foto').required = !cadastroLocador;
+
+/* Cada papel tem a sua etapa 2: o Locatário escolhe preferências, o Locador informa o imóvel */
+const etapas = [...form.querySelectorAll('.etapa')].filter(
+    (etapa) => !etapa.matches(cadastroLocador ? '[data-so-locatario]' : '[data-so-locador]')
+);
 
 /* Locador (Figma): cartão mais estreito, com nome, e-mail e telefone antes do gênero */
 if (cadastroLocador) {
@@ -30,7 +34,7 @@ function mostrarEtapa(indice) {
 }
 
 function validarEtapa() {
-    for (const campo of etapas[atual].querySelectorAll('input')) {
+    for (const campo of etapas[atual].querySelectorAll('input, select')) {
         if (!campo.checkValidity()) {
             campo.reportValidity();
             return false;
@@ -165,3 +169,14 @@ preencherBarra(limiar);
 const aceite = document.getElementById('aceite');
 const finalizar = document.getElementById('finalizar');
 aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });
+
+/* Etapa 2 do Locador — total mensal do imóvel */
+const valores = ['aluguel', 'condominio', 'iptu', 'contas'].map((id) => document.getElementById(id));
+const totalEstimado = document.getElementById('total-estimado');
+
+function atualizarTotal() {
+    const soma = valores.reduce((total, campo) => total + (Number(campo.value) || 0), 0);
+    totalEstimado.textContent = `R$ ${soma.toLocaleString('pt-BR')}`;
+}
+valores.forEach((campo) => campo.addEventListener('input', atualizarTotal));
+

@@ -32,7 +32,7 @@
                 <div class="etapa-titulo">
                     <h1>Cadastro do <span data-papel>Locatário</span></h1>
                     <p data-so-locatario>Crie sua conta para encontrar a república ideal e dar match com futuros colegas.</p>
-                    <p data-so-locador>Crie sua conta para anunciar seu imóvel e encontrar moradores compatíveis.</p>
+                    <p data-so-locador>Crie sua conta de proprietário para anunciar vagas e gerenciar seus imóveis.</p>
                 </div>
 
                 <div class="grade">
@@ -112,10 +112,10 @@
                 </div>
             </section>
 
-            <section class="etapa" data-etapa="2" hidden>
+            <section class="etapa" data-etapa="2" data-so-locatario hidden>
                 <div class="etapa-titulo">
                     <h1>Preferências de convivência</h1>
-                    <p>Tags<span data-so-locatario>, orçamento e limiar</span> · <span data-papel>Locatário</span></p>
+                    <p>Tags, orçamento e limiar · <span data-papel>Locatário</span></p>
                 </div>
 
                 <div class="tags-secao">
@@ -147,18 +147,80 @@
                     <p class="nota">Selecione mínimo 3 e máximo 8 tags no total. Tags comuns com o imóvel são destacadas no match.</p>
                 </div>
 
-                <div class="slider" data-so-locatario>
+                <div class="slider">
                     <label for="orcamento">Orçamento máximo mensal</label>
                     <span class="valor-digitado">R$ <input id="orcamento-valor" type="number" min="0" max="100000" step="0.01" inputmode="decimal" aria-label="Orçamento máximo mensal em reais"></span>
                     <input id="orcamento" name="orcamento" type="range" min="0" max="100000" step="100" value="0">
                     <div class="slider-limites"><span>R$ 0,00</span><span>R$ 100.000,00</span></div>
                 </div>
 
-                <div class="slider" data-so-locatario>
+                <div class="slider">
                     <label for="limiar">Limiar mínimo de compatibilidade</label>
                     <span class="valor-digitado valor-curto"><input id="limiar-valor" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Limiar mínimo de compatibilidade em porcentagem"> %</span>
                     <input id="limiar" name="limiar" type="range" min="0" max="100" step="5" value="70">
                     <div class="slider-limites"><span>0%</span><span>100%</span></div>
+                </div>
+
+                <div class="acoes acoes-linha">
+                    <button type="button" class="btn btn-secondary" data-acao="voltar">Voltar</button>
+                    <button type="button" class="btn btn-primary" data-acao="continuar">Continuar</button>
+                </div>
+            </section>
+
+            <section class="etapa" data-etapa="2" data-so-locador hidden>
+                <div class="etapa-titulo">
+                    <h1>Dados do imóvel</h1>
+                    <p>Endereço, tipo e valores · Locador</p>
+                </div>
+
+                <div class="grade">
+                    <div class="campo col-1">
+                        <label for="endereco">Endereço / Bairro *</label>
+                        <input id="endereco" name="endereco" type="text" placeholder="Barão Geraldo, Campinas" autocomplete="street-address" required>
+                    </div>
+                    <div class="campo col-1">
+                        <label for="tipo">Tipo de imóvel *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="" selected disabled>República · Quarto</option>
+                            <option>República · Quarto</option>
+                            <option>Kitnet</option>
+                            <option>Apartamento</option>
+                            <option>Casa</option>
+                        </select>
+                    </div>
+
+                    <fieldset class="genero col-full">
+                        <legend>Classificação do lar *</legend>
+                        <div class="pilulas">
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Mista" required><span>Mista</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Feminina"><span>Feminina</span></label>
+                            <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Masculina"><span>Masculina</span></label>
+                        </div>
+                        <p class="nota">Obrigatório. Define o perfil de gênero do lar para fins de compatibilidade.</p>
+                    </fieldset>
+
+                    <div class="col-full rateio">
+                        <h2>Rateio transparente (R$)</h2>
+                        <p class="nota">Informe os valores mensais. Moradores verão o custo total detalhado antes do contato.</p>
+                    </div>
+                    <div class="campo col-1">
+                        <label for="aluguel">Aluguel (R$) *</label>
+                        <input id="aluguel" name="aluguel" type="number" min="0" step="1" inputmode="numeric" placeholder="600" required>
+                    </div>
+                    <div class="campo col-2">
+                        <label for="condominio">Condomínio (R$)</label>
+                        <input id="condominio" name="condominio" type="number" min="0" step="1" inputmode="numeric" placeholder="120">
+                    </div>
+                    <div class="campo col-1">
+                        <label for="iptu">IPTU (R$)</label>
+                        <input id="iptu" name="iptu" type="number" min="0" step="1" inputmode="numeric" placeholder="45">
+                    </div>
+                    <div class="campo col-2">
+                        <label for="contas">Estimativa contas (R$)</label>
+                        <input id="contas" name="contas" type="number" min="0" step="1" inputmode="numeric" placeholder="85">
+                    </div>
+
+                    <p class="total-mensal col-full">Total estimado/mês <strong id="total-estimado">R$ 0</strong></p>
                 </div>
 
                 <div class="acoes acoes-linha">

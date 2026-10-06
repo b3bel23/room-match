@@ -101,7 +101,8 @@
     color: var(--color-text-muted);
 }
 
-.campo input {
+.campo input,
+.campo select {
     height: 44px;
     padding: 13px 14px;
     background: var(--color-surface);
@@ -113,11 +114,16 @@
     outline: none;
 }
 
+.campo select {
+    padding: 0 14px;
+}
+
 .campo input::placeholder {
     color: var(--color-neutral);
 }
 
-.campo input:focus {
+.campo input:focus,
+.campo select:focus {
     border-color: var(--color-primary);
 }
 
@@ -182,6 +188,26 @@
 .nota {
     font-size: 10px;
     color: var(--color-text-subtle);
+}
+
+.rateio h2 {
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-primary);
+}
+
+.total-mensal {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+}
+
+.total-mensal strong {
+    color: var(--color-primary);
 }
 
 .foto {
