@@ -99,23 +99,38 @@ tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
 atualizarTags();
 
 /* Etapa 2 — sliders */
-function ligarSlider(campo, saida, formatar) {
-    const atualizar = () => {
-        const porcentagem = ((campo.value - campo.min) / (campo.max - campo.min)) * 100;
-        campo.style.setProperty('--preenchimento', `${porcentagem}%`);
-        saida.textContent = formatar(campo.value);
-    };
-    campo.addEventListener('input', atualizar);
-    atualizar();
+function preencherBarra(campo) {
+    const porcentagem = ((campo.value - campo.min) / (campo.max - campo.min)) * 100;
+    campo.style.setProperty('--preenchimento', `${porcentagem}%`);
 }
 
-ligarSlider(
-    document.getElementById('orcamento'),
-    document.getElementById('orcamento-valor'),
-    (valor) => `R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-);
-ligarSlider(
-    document.getElementById('limiar'),
-    document.getElementById('limiar-valor'),
-    (valor) => `${valor}%`
-);
+/* Orçamento: o valor pode ser arrastado na barra ou digitado no campo */
+const orcamento = document.getElementById('orcamento');
+const orcamentoValor = document.getElementById('orcamento-valor');
+
+orcamento.addEventListener('input', () => {
+    orcamentoValor.value = Number(orcamento.value).toFixed(2);
+    preencherBarra(orcamento);
+});
+orcamentoValor.addEventListener('input', () => {
+    orcamento.value = orcamentoValor.value;
+    preencherBarra(orcamento);
+});
+orcamentoValor.addEventListener('change', () => {
+    if (orcamentoValor.value !== '') {
+        orcamentoValor.value = Number(orcamentoValor.value).toFixed(2);
+    }
+});
+orcamentoValor.value = Number(orcamento.value).toFixed(2);
+preencherBarra(orcamento);
+
+/* Limiar de compatibilidade */
+const limiar = document.getElementById('limiar');
+const limiarValor = document.getElementById('limiar-valor');
+
+limiar.addEventListener('input', () => {
+    limiarValor.textContent = `${limiar.value}%`;
+    preencherBarra(limiar);
+});
+limiarValor.textContent = `${limiar.value}%`;
+preencherBarra(limiar);

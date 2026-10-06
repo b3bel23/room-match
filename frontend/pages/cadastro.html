@@ -147,9 +147,9 @@
 
                 <div class="slider">
                     <label for="orcamento">Orçamento máximo mensal</label>
-                    <output id="orcamento-valor" for="orcamento"></output>
-                    <input id="orcamento" name="orcamento" type="range" min="0" max="1000000" step="100" value="0">
-                    <div class="slider-limites"><span>R$ 0,00</span><span>R$ 1.000.000,00</span></div>
+                    <span class="valor-digitado">R$ <input id="orcamento-valor" type="number" min="0" max="100000" step="0.01" inputmode="decimal" aria-label="Orçamento máximo mensal em reais"></span>
+                    <input id="orcamento" name="orcamento" type="range" min="0" max="100000" step="100" value="0">
+                    <div class="slider-limites"><span>R$ 0,00</span><span>R$ 100.000,00</span></div>
                 </div>
 
                 <div class="slider">
