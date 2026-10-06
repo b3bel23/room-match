@@ -363,6 +363,48 @@
     color: var(--color-text-subtle);
 }
 
+.termos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 20px;
+    border-radius: var(--radius-md);
+    background: #e6eceb;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+}
+
+.termos h2,
+.termos h3 {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
+}
+
+.termos h3 {
+    margin-top: 4px;
+}
+
+.aceite {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--color-text-primary);
+    cursor: pointer;
+}
+
+.aceite input {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--color-primary);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 @media (max-width: 700px) {
     .cadastro-card {
         padding: 24px;

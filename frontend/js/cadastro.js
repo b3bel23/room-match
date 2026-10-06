@@ -27,8 +27,12 @@ form.addEventListener('click', (evento) => {
     if (acao === 'voltar') {
         mostrarEtapa(atual - 1);
     }
-    if (acao === 'continuar' && validarEtapa() && atual < etapas.length - 1) {
+    if (acao === 'continuar' && validarEtapa()) {
         mostrarEtapa(atual + 1);
+    }
+    if (acao === 'finalizar') {
+        // Sem backend por enquanto: o cadastro finalizado leva à tela de conta criada.
+        window.location.href = 'conta-criada.html';
     }
 });
 
@@ -119,3 +123,8 @@ ligarSlider(
     document.getElementById('limiar-valor'),
     (valor) => `${valor}%`
 );
+
+/* Etapa 3 — aceite dos termos */
+const aceite = document.getElementById('aceite');
+const finalizar = document.getElementById('finalizar');
+aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });
