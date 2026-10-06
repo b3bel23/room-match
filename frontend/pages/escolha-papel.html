@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha de papel · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/escolha-papel.css">
+</head>
+<body class="auth-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="#">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+
+    <main class="papel-main">
+        <a class="btn-voltar-pagina papel-voltar" href="home.html">← Voltar</a>
+
+        <form id="papel-form" class="papel-card">
+            <div class="papel-titulo">
+                <h1>Selecione o seu tipo de usuário</h1>
+                <p>Para fazer login/cadastro</p>
+            </div>
+
+            <fieldset class="papeis">
+                <legend class="visually-hidden">Tipo de usuário</legend>
+
+                <label class="papel">
+                    <input class="visually-hidden" type="radio" name="papel" value="morador" checked>
+                    <span class="papel-opcao">
+                        <span class="papel-icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21s-6-5.2-6-10a6 6 0 0 1 12 0"/><circle cx="11" cy="11" r="2"/><path d="M14 20v-4l4-3 4 3v4z"/></svg>
+                        </span>
+                        <span class="papel-nome">Morador</span>
+                        <span class="papel-descricao">Busco um quarto ou vaga em república para morar perto da faculdade ou do meu trabalho.</span>
+                        <span class="papel-selo">Selecionado</span>
+                    </span>
+                </label>
+
+                <label class="papel">
+                    <input class="visually-hidden" type="radio" name="papel" value="locador">
+                    <span class="papel-opcao">
+                        <span class="papel-icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>
+                        </span>
+                        <span class="papel-nome">Locador</span>
+                        <span class="papel-descricao">Tenho um imóvel, apartamento ou quarto em república disponível para anunciar e alugar.</span>
+                        <span class="papel-selo">Selecionado</span>
+                    </span>
+                </label>
+            </fieldset>
+
+            <a id="papel-continuar" class="btn btn-primary" href="cadastro.html?papel=morador">Continuar como Morador</a>
+            <a class="papel-login" href="login.html">Fazer login</a>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/escolha-papel.js"></script>
+</body>
+</html>
