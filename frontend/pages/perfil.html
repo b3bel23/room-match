@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/configuracoes.css">
+</head>
+<body class="favoritos-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <a class="usuario" href="perfil.html"><span class="usuario-foto">MS</span>Maria Silva</a>
+        </nav>
+    </header>
+
+    <div class="page-bar">
+        <h1>Configurações</h1>
+        <span class="page-bar-sub">Gerencie sua conta</span>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <p class="sidebar-rotulo">Menu</p>
+            <a class="ativo" href="perfil.html">Perfil</a>
+            <a href="preferencias.html">Preferências</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="calendario-visitas.html">Calendário de visitas</a>
+            <a href="seguranca.html">Segurança</a>
+            <a href="termos.html">Termos</a>
+            <a href="trocar-conta.html">Trocar conta</a>
+            <a class="sair" href="login.html">Sair da conta</a>
+        </aside>
+
+        <main class="conteudo">
+            <h2>Perfil</h2>
+            <p class="conteudo-sub">Dados da sua conta</p>
+
+            <form id="perfil-form" class="config-form">
+                <div class="perfil-topo">
+                    <span class="usuario-foto perfil-foto">MS</span>
+                    <div class="perfil-dados">
+                        <strong>Maria Silva</strong>
+                        <span>maria.silva@puc.br · Morador</span>
+                        <span class="nota">Estudante · PUC-Campinas</span>
+                    </div>
+                    <div class="perfil-foto-acao">
+                        <button class="btn btn-secondary" type="button">Alterar foto</button>
+                        <span class="nota">JPG ou PNG · máx. 5 MB · 400×400 px</span>
+                    </div>
+                </div>
+
+                <p class="config-aviso">Você está usando sua conta como Morador. <a href="trocar-conta.html">Troque para Locador</a> para gerenciar anúncios.</p>
+
+                <div class="campo">
+                    <label for="nome">Nome completo</label>
+                    <input id="nome" type="text" value="Maria Silva" autocomplete="name" required>
+                </div>
+                <div class="campo">
+                    <label for="email">E-mail</label>
+                    <input id="email" type="email" value="maria.silva@puc.br" autocomplete="email" required>
+                </div>
+                <div class="campo">
+                    <label for="telefone">Telefone</label>
+                    <input id="telefone" type="tel" placeholder="(19) 99999-9999" autocomplete="tel">
+                </div>
+                <div class="campo">
+                    <label for="ocupacao">Ocupação</label>
+                    <input id="ocupacao" type="text" value="Estudante">
+                </div>
+                <div class="campo">
+                    <label for="instituicao">Instituição / empresa</label>
+                    <input id="instituicao" type="text" value="PUC-Campinas">
+                </div>
+
+                <div class="config-acoes">
+                    <button class="btn btn-secondary" type="reset">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Salvar alterações</button>
+                </div>
+                <p class="config-retorno" role="status" hidden></p>
+            </form>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/configuracoes.js"></script>
+</body>
+</html>

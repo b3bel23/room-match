@@ -1,0 +1,150 @@
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 640px;
+    margin-top: 16px;
+}
+
+.config-aviso {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: #f0f7f5;
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+}
+
+.config-aviso a {
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+}
+
+.config-acoes {
+    display: flex;
+    gap: 12px;
+}
+
+.config-acoes[hidden] {
+    display: none;
+}
+
+.config-retorno {
+    font-size: var(--fs-body);
+    color: var(--color-primary);
+}
+
+.config-retorno[hidden] {
+    display: none;
+}
+
+.btn-perigo {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+/* Perfil */
+.perfil-topo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.perfil-foto {
+    width: 64px;
+    height: 64px;
+    font-size: 22px;
+}
+
+.perfil-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    font-size: var(--fs-body);
+    color: var(--color-text-muted);
+}
+
+.perfil-dados strong {
+    font-size: var(--fs-h2);
+    color: var(--color-text-primary);
+}
+
+.perfil-foto-acao {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+/* Preferências */
+.config-form .tags-secao {
+    max-width: none;
+}
+
+.config-form .tags-cabecalho h3,
+.config-form .tags-secao > h3 {
+    font-size: 15px;
+    font-weight: var(--fw-semibold);
+}
+
+.sugestao {
+    padding: 4px 14px;
+    border: 1px dashed var(--color-primary);
+    border-radius: var(--radius-tag);
+    background: var(--color-surface);
+    font-size: var(--fs-small);
+    color: var(--color-primary);
+}
+
+.sugestao:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Segurança */
+.config-perigo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    max-width: 640px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+}
+
+.config-perigo h3 {
+    font-size: 15px;
+    font-weight: var(--fw-semibold);
+}
+
+.config-perigo p {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+}
+
+/* Trocar conta */
+.conta-atual {
+    margin: 16px 0;
+    font-size: var(--fs-body);
+}
+
+.selo-papel {
+    padding: 3px 12px;
+    border-radius: var(--radius-pill);
+    background: #f0f7f5;
+    color: var(--color-primary);
+}
+
+.conta-papeis {
+    max-width: 640px;
+    margin-bottom: 16px;
+}
+
+/* Termos */
+.conteudo .termos {
+    max-width: 720px;
+    margin-top: 16px;
+}

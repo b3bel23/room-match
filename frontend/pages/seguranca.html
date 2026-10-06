@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/configuracoes.css">
+</head>
+<body class="favoritos-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <a class="usuario" href="perfil.html"><span class="usuario-foto">MS</span>Maria Silva</a>
+        </nav>
+    </header>
+
+    <div class="page-bar">
+        <h1>Configurações</h1>
+        <span class="page-bar-sub">Gerencie sua conta</span>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <p class="sidebar-rotulo">Menu</p>
+            <a href="perfil.html">Perfil</a>
+            <a href="preferencias.html">Preferências</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="calendario-visitas.html">Calendário de visitas</a>
+            <a class="ativo" href="seguranca.html">Segurança</a>
+            <a href="termos.html">Termos</a>
+            <a href="trocar-conta.html">Trocar conta</a>
+            <a class="sair" href="login.html">Sair da conta</a>
+        </aside>
+
+        <main class="conteudo">
+            <h2>Segurança</h2>
+            <p class="conteudo-sub">Senha e privacidade</p>
+
+            <form id="senha-form" class="config-form">
+                <div class="campo">
+                    <label for="senha-atual">Senha atual</label>
+                    <input id="senha-atual" type="password" autocomplete="current-password" required>
+                </div>
+                <div class="campo">
+                    <label for="senha-nova">Nova senha</label>
+                    <input id="senha-nova" type="password" autocomplete="new-password" minlength="8" required>
+                </div>
+                <div class="campo">
+                    <label for="senha-confirmar">Confirmar nova senha</label>
+                    <input id="senha-confirmar" type="password" autocomplete="new-password" required>
+                </div>
+                <p class="config-aviso">🔒 Senhas armazenadas com criptografia. Nunca são exibidas ou compartilhadas.</p>
+                <div class="config-acoes">
+                    <button class="btn btn-primary" type="submit">Alterar senha</button>
+                </div>
+                <p class="config-retorno" role="status" hidden></p>
+            </form>
+
+            <section class="config-perigo">
+                <h3>Excluir minha conta</h3>
+                <p>Remove permanentemente seus dados conforme a LGPD. Esta ação não pode ser desfeita.</p>
+                <button id="excluir-abrir" class="btn btn-perigo" type="button">Excluir conta</button>
+                <div id="excluir-confirmar" class="config-acoes" hidden>
+                    <button id="excluir-cancelar" class="btn btn-secondary" type="button">Cancelar</button>
+                    <button id="excluir-confirmado" class="btn btn-perigo" type="button">Sim, excluir minha conta</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/configuracoes.js"></script>
+</body>
+</html>

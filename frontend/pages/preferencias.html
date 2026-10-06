@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferências · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/configuracoes.css">
+</head>
+<body class="favoritos-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <a class="usuario" href="perfil.html"><span class="usuario-foto">MS</span>Maria Silva</a>
+        </nav>
+    </header>
+
+    <div class="page-bar">
+        <h1>Configurações</h1>
+        <span class="page-bar-sub">Gerencie sua conta</span>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <p class="sidebar-rotulo">Menu</p>
+            <a href="perfil.html">Perfil</a>
+            <a class="ativo" href="preferencias.html">Preferências</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="calendario-visitas.html">Calendário de visitas</a>
+            <a href="seguranca.html">Segurança</a>
+            <a href="termos.html">Termos</a>
+            <a href="trocar-conta.html">Trocar conta</a>
+            <a class="sair" href="login.html">Sair da conta</a>
+        </aside>
+
+        <main class="conteudo">
+            <h2>Preferências</h2>
+            <p id="pref-sub" class="conteudo-sub"></p>
+
+            <form id="preferencias-form" class="config-form">
+                <div class="tags-secao">
+                    <div class="tags-cabecalho">
+                        <h3 id="tags-titulo"></h3>
+                        <span class="nota">mín. 3 · máx. 8</span>
+                    </div>
+                    <div class="pilulas">
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Pet Friendly" checked><span>Pet Friendly</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Home Office" checked><span>Home Office</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Aberto a Festas"><span>Aberto a Festas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Vegano/Vegetariano"><span>Vegano/Vegetariano</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="LGBTQIA+ Safe" checked><span>LGBTQIA+ Safe</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Limpeza Compartilhada"><span>Limpeza Compartilhada</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno" checked><span>Silêncio Noturno</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Festas"><span>Sem Festas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Fumo" checked><span>Sem Fumo</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Pets"><span>Sem Pets</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
+                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
+                    </div>
+                    <p class="nota">Tags em comum são destacadas nos cards de imóveis quando há correspondência com o anúncio.</p>
+                </div>
+
+                <div class="slider">
+                    <label for="limiar">Limiar mínimo de compatibilidade</label>
+                    <span class="valor-digitado valor-curto"><input id="limiar-valor" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Limiar mínimo de compatibilidade em porcentagem"> %</span>
+                    <input id="limiar" type="range" min="0" max="100" step="5" value="70">
+                    <div class="slider-limites"><span>0%</span><span>100%</span></div>
+                </div>
+
+                <div class="tags-secao">
+                    <h3>Tags relevantes na sua região</h3>
+                    <p class="nota">Adicione tags populares entre Moradores com perfil semelhante ao seu.</p>
+                    <div class="pilulas">
+                        <button class="sugestao" type="button" data-tag="Vegano/Vegetariano">Vegano +</button>
+                        <button class="sugestao" type="button" data-tag="Limpeza Compartilhada">Limpeza Compart. +</button>
+                    </div>
+                </div>
+
+                <div class="config-acoes">
+                    <button class="btn btn-primary" type="submit">Salvar preferências</button>
+                </div>
+                <p class="config-retorno" role="status" hidden></p>
+            </form>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/configuracoes.js"></script>
+</body>
+</html>
