@@ -14,8 +14,13 @@
     padding: 24px 32px 48px;
 }
 
-.editar-main .link-voltar {
-    align-self: flex-start;
+.editar-main .btn-voltar-pagina {
+    align-self: flex-end;
+}
+
+.editar-card .campo label {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-primary);
 }
 
 .editar-card {
@@ -42,12 +47,16 @@
 }
 
 .editar-total {
-    font-size: 16px;
-    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+.editar-total {
+    font-weight: var(--fw-bold);
+    color: var(--color-primary);
 }
 
 .editar-total strong {
-    color: var(--color-primary);
+    font-weight: inherit;
 }
 
 .editar-acoes {
@@ -56,9 +65,14 @@
 }
 
 .editar-acoes .btn {
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: 9px 20px;
+    font-size: 14px;
     font-weight: var(--fw-bold);
+}
+
+.btn-cancelar {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .editar-retorno {

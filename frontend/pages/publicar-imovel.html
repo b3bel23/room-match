@@ -14,44 +14,44 @@
     <header class="site-header">
         <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
-            <a href="home.html">Explorar</a>
+            <a class="ativo" href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
             <a href="#">Mensagens</a>
             <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+            <a class="btn-voltar-pagina" href="home.html">← Voltar</a>
         </nav>
     </header>
 
     <div class="page-bar">
+        <button class="btn-publicar" type="submit" form="publicar-form">Publicar anúncio</button>
         <p class="page-bar-sub">Preencha os dados com transparência total</p>
-        <button class="btn btn-primary" type="submit" form="publicar-form">Publicar anúncio</button>
     </div>
 
     <main class="publicar-main">
-        <a class="link-voltar" href="home.html">← Voltar</a>
-
         <form id="publicar-form" class="publicar-form">
-            <div class="grade">
+            <div class="campos">
                 <div class="campo">
-                    <label for="titulo">Título *</label>
+                    <label for="titulo">Título do anúncio *</label>
                     <input id="titulo" type="text" placeholder="Quarto em república · Barão Geraldo" required>
                 </div>
                 <div class="campo">
-                    <label for="tipo">Tipo de imóvel *</label>
+                    <label for="tipo">Tipo *</label>
                     <select id="tipo" required>
-                        <option value="" selected disabled>Selecione</option>
-                        <option>Quarto em república</option>
+                        <option value="" selected disabled>República · Quarto individual</option>
+                        <option>República · Quarto individual</option>
+                        <option>República · Quarto compartilhado</option>
                         <option>Kitnet</option>
                         <option>Apartamento</option>
                         <option>Casa</option>
                     </select>
                 </div>
                 <div class="campo">
-                    <label for="endereco">Endereço *</label>
+                    <label for="endereco">Endereço / Bairro *</label>
                     <textarea id="endereco" rows="2" placeholder="R. Benedito Alves Aranha, 450 · Barão Geraldo" required></textarea>
                 </div>
                 <div class="campo">
-                    <label for="area">Área (m²) *</label>
-                    <input id="area" type="number" min="1" step="1" inputmode="numeric" placeholder="12" required>
+                    <label for="cep">CEP *</label>
+                    <input id="cep" type="text" inputmode="numeric" pattern="\d{5}-?\d{3}" placeholder="13085-000" required>
                 </div>
                 <div class="campo">
                     <label for="aluguel">Aluguel (R$) *</label>
@@ -66,7 +66,7 @@
                     <input id="iptu" type="number" min="0" step="1" inputmode="numeric" placeholder="45" required>
                 </div>
                 <div class="campo">
-                    <label for="contas">Contas (R$) *</label>
+                    <label for="contas">Estimativa contas (R$) *</label>
                     <input id="contas" type="number" min="0" step="1" inputmode="numeric" placeholder="85" required>
                 </div>
             </div>
