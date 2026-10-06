@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
+/* A interface é clara: evita campos escuros quando o navegador está em modo escuro. */
+:root {
+    color-scheme: light;
+}
+
 * {
     margin: 0;
     padding: 0;

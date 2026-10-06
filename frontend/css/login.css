@@ -124,6 +124,7 @@
 
 .field input {
     padding: 14px 16px;
+    background: var(--color-surface);
     border: 1px solid #dbe3e5;
     border-radius: var(--radius-lg);
     font-family: inherit;
