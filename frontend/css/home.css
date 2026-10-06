@@ -15,3 +15,13 @@
     filter: blur(4px);
     user-select: none;
 }
+
+/* A interface é clara: evita campos escuros quando o navegador está em modo escuro. */
+:root {
+    color-scheme: light;
+}
+
+.search-input,
+.search-input input {
+    background: #fff;
+}
