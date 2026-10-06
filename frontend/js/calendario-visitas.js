@@ -1,6 +1,8 @@
-// O calendário de visitas é uma tela de quem está logado.
+// O calendário de visitas é uma tela do locador.
 if (!estaLogado()) {
     window.location.href = 'login.html';
+} else if (!ehLocador()) {
+    window.location.href = 'minhas-visitas.html';
 }
 
 const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];

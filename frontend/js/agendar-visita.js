@@ -11,6 +11,8 @@ const DIAS_EXTENSO = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira'
 const HORARIOS_SEMANA = ['10h', '14h', '16h'];
 const HORARIOS_SABADO = ['9h', '11h'];
 
+const IMOVEL = 'Kitnet mobiliada · Cambuí';
+
 const form = document.getElementById('agendar-form');
 const confirmar = document.getElementById('agendar-confirmar');
 const nota = document.getElementById('agendar-nota');
@@ -118,7 +120,12 @@ form.addEventListener('submit', (evento) => {
     evento.preventDefault();
     if (!diaEscolhido || !horarioEscolhido) return;
 
-    // Sem backend por enquanto: o pedido não é enviado, só confirmado na tela.
+    // Sem backend por enquanto: o pedido fica guardado só neste navegador.
+    agendarVisita({
+        imovel: IMOVEL,
+        data: `${diaEscolhido.getFullYear()}-${diaEscolhido.getMonth()}-${diaEscolhido.getDate()}`,
+        hora: horarioEscolhido
+    });
     retorno.textContent = `Pedido enviado para ${descreverDia(diaEscolhido)}, às ${horarioEscolhido}. Aguarde a resposta do locador no chat.`;
     retorno.hidden = false;
     nota.hidden = true;

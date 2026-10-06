@@ -1,0 +1,40 @@
+.visitas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 560px;
+    list-style: none;
+}
+
+.visita {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+}
+
+.visita strong {
+    font-size: var(--fs-body);
+    color: var(--color-primary);
+}
+
+.visita span {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+}
+
+.visitas-vazio {
+    color: var(--color-text-muted);
+}
+
+.visitas-vazio a {
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+}
+
+.visitas-vazio[hidden] {
+    display: none;
+}

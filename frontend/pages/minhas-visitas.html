@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas visitas · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/minhas-visitas.css">
+</head>
+<body class="favoritos-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+        </nav>
+    </header>
+
+    <div class="page-bar">
+        <h1>Configurações</h1>
+        <span class="page-bar-sub">Gerencie sua conta</span>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <p class="sidebar-rotulo">Menu</p>
+            <a href="perfil.html">Perfil</a>
+            <a href="preferencias.html">Preferências</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a class="ativo" href="minhas-visitas.html">Minhas visitas</a>
+            <a href="seguranca.html">Segurança</a>
+            <a href="termos.html">Termos</a>
+            <a href="trocar-conta.html">Trocar conta</a>
+            <a class="sair" href="login.html">Sair da conta</a>
+        </aside>
+
+        <main class="conteudo">
+            <h2>Minhas visitas</h2>
+            <p class="conteudo-sub">Visitas que você agendou</p>
+
+            <ul id="visitas-lista" class="visitas-lista"></ul>
+            <p id="visitas-vazio" class="visitas-vazio" hidden>Você ainda não agendou nenhuma visita. <a href="home.html">Explorar imóveis</a></p>
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/minhas-visitas.js"></script>
+</body>
+</html>
