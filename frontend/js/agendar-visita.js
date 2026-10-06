@@ -126,12 +126,15 @@ form.addEventListener('submit', (evento) => {
         data: `${diaEscolhido.getFullYear()}-${diaEscolhido.getMonth()}-${diaEscolhido.getDate()}`,
         hora: horarioEscolhido
     });
-    retorno.textContent = `Pedido enviado para ${descreverDia(diaEscolhido)}, às ${horarioEscolhido}. Aguarde a resposta do locador no chat.`;
+    retorno.textContent = `Pedido enviado para ${descreverDia(diaEscolhido)}, às ${horarioEscolhido}. Aguarde a resposta do locador no chat. Voltando ao imóvel…`;
     retorno.hidden = false;
     nota.hidden = true;
 
     confirmar.disabled = true;
     form.querySelectorAll('input[name="horario"], .calendario button').forEach((item) => { item.disabled = true; });
+
+    setTimeout(() => { window.location.href = 'detalhe.html'; }, 3000);
 });
 
 desenharMes();
+
