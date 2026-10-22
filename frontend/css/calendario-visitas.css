@@ -1,0 +1,146 @@
+.calendario-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.calendario {
+    flex: 1;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    overflow-x: auto;
+}
+
+.calendario-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.calendario-topo h3 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+}
+
+.calendario-nav {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    font-size: 18px;
+    color: var(--color-text-muted);
+}
+
+.calendario-grade {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(96px, 1fr));
+    gap: 4px;
+}
+
+.calendario-dia-semana {
+    padding: 4px;
+    font-size: var(--fs-xsmall);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-subtle);
+    text-align: center;
+}
+
+.calendario-dia {
+    min-height: 84px;
+    padding: 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-xsmall);
+}
+
+.calendario-dia.vazio {
+    border-color: transparent;
+}
+
+.calendario-dia.hoje {
+    border-color: var(--color-primary);
+}
+
+.calendario-numero {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-muted);
+}
+
+.calendario-dia ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+    list-style: none;
+}
+
+.calendario-dia li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--fs-xsmall);
+    line-height: 1.3;
+}
+
+.ponto {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.ponto-pendente { background: var(--color-secondary); }
+.ponto-confirmada { background: var(--color-primary); }
+.ponto-remarcada { background: var(--color-accent); }
+
+.legenda {
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+}
+
+.legenda h3 {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+}
+
+.legenda ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+}
+
+.legenda li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-small);
+}
+
+.legenda p {
+    font-size: var(--fs-xsmall);
+    color: var(--color-text-muted);
+}
+
+@media (max-width: 900px) {
+    .calendario-layout {
+        flex-direction: column;
+    }
+
+    .legenda {
+        width: 100%;
+    }
+}

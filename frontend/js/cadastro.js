@@ -4,6 +4,10 @@ const passos = [...form.querySelectorAll('.step')];
 const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
 
+/* Tipo de usuário escolhido na tela anterior */
+const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
+document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
+
 function mostrarEtapa(indice) {
     atual = indice;
     etapas.forEach((etapa, i) => { etapa.hidden = i !== indice; });

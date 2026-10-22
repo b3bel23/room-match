@@ -336,3 +336,64 @@ body:not(.visitante) .afinidade {
 .acoes .favoritado {
     color: var(--color-accent);
 }
+
+/* Mapa de rota */
+.trajeto .rota-abrir {
+    margin-left: auto;
+    padding: 6px 12px;
+    border: 1px solid var(--color-primary);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-size: var(--fs-xsmall);
+    font-weight: var(--fw-semibold);
+    color: var(--color-primary);
+}
+
+.rota {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    box-shadow: 0 4px 12px rgba(20, 29, 34, 0.08);
+}
+
+.rota[hidden] {
+    display: none;
+}
+
+.rota-modos {
+    display: flex;
+    gap: 8px;
+}
+
+.rota-modo {
+    padding: 5px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-tag);
+    background: var(--color-surface);
+    font-size: var(--fs-xsmall);
+    color: var(--color-text-primary);
+}
+
+.rota-modo.ativo {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.rota-modo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rota-mapa {
+    height: 260px;
+    border-radius: var(--radius-sm);
+}
+
+.rota-resumo {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+}

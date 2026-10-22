@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar visita · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/agendar-visita.css">
+</head>
+<body class="agendar-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="#">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+        </nav>
+    </header>
+
+    <main class="agendar-main">
+        <form id="agendar-form" class="agendar-card">
+            <h1>Agendar visita</h1>
+            <p class="agendar-imovel">Kitnet mobiliada · Cambuí · R$ 1.200/mês</p>
+
+            <fieldset class="horarios">
+                <legend class="visually-hidden">Horário da visita</legend>
+                <label class="horario">
+                    <input class="visually-hidden" type="radio" name="horario" value="Amanhã, 10h" checked>
+                    <span>Amanhã, 10h</span>
+                </label>
+                <label class="horario">
+                    <input class="visually-hidden" type="radio" name="horario" value="Amanhã, 16h">
+                    <span>Amanhã, 16h</span>
+                </label>
+                <label class="horario">
+                    <input class="visually-hidden" type="radio" name="horario" value="Sábado, 11h">
+                    <span>Sábado, 11h</span>
+                </label>
+            </fieldset>
+
+            <button id="agendar-confirmar" class="btn btn-primary" type="submit">Confirmar visita</button>
+            <p id="agendar-nota" class="agendar-nota">O locador recebe o pedido no chat.</p>
+            <p id="agendar-retorno" class="agendar-nota" role="status" hidden></p>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="#">Como funciona</a>
+            <a href="#">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/sessao.js"></script>
+    <script src="../js/agendar-visita.js"></script>
+</body>
+</html>
