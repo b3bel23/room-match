@@ -4,7 +4,6 @@ const passos = [...form.querySelectorAll('.step')];
 const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
 
-/* Tipo de usuário escolhido na tela anterior */
 const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
 document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
 
@@ -26,6 +25,39 @@ function validarEtapa() {
     return true;
 }
 
+async function finalizarCadastro() {
+    if (!validarEtapa()) return;
+
+    const nome = document.getElementById('nome')?.value?.trim()
+        || document.querySelector('input[name="nome"]')?.value?.trim()
+        || document.querySelector('#cadastro-form input[type="text"]')?.value?.trim()
+        || 'Novo usuário';
+    const emailCampo = document.getElementById('email')
+        || document.querySelector('input[type="email"]');
+    const senhaCampo = document.getElementById('senha');
+    const tags = [...form.querySelectorAll('input[name="tag"]:checked')].map((t) => t.value || t.nextElementSibling?.textContent?.trim()).filter(Boolean);
+    const orcamento = Number(document.getElementById('orcamento-valor')?.value
+        || document.getElementById('orcamento')?.value) || 1000;
+    const limiar = Number(document.getElementById('limiar-valor')?.value
+        || document.getElementById('limiar')?.value) || 70;
+
+    try {
+        const dados = await RoomMatchApi.register({
+            nome,
+            email: emailCampo.value.trim(),
+            senha: senhaCampo.value,
+            papel,
+            tags,
+            orcamento,
+            limiar
+        });
+        entrar(dados.access_token, dados.user);
+        window.location.href = `conta-criada.html?papel=${papel === 'Locador' ? 'locador' : 'morador'}`;
+    } catch (falha) {
+        window.alert(falha.detail || falha.message || 'Não foi possível criar a conta.');
+    }
+}
+
 form.addEventListener('click', (evento) => {
     const acao = evento.target.dataset.acao;
     if (acao === 'voltar') {
@@ -35,15 +67,12 @@ form.addEventListener('click', (evento) => {
         mostrarEtapa(atual + 1);
     }
     if (acao === 'finalizar') {
-        // Sem backend por enquanto: o cadastro finalizado leva à tela de conta criada.
-        entrar();
-        window.location.href = 'conta-criada.html';
+        finalizarCadastro();
     }
 });
 
 form.addEventListener('submit', (evento) => evento.preventDefault());
 
-/* Etapa 1 — senhas */
 const senha = document.getElementById('senha');
 const confirmarSenha = document.getElementById('confirmar-senha');
 
@@ -55,7 +84,6 @@ function conferirSenhas() {
 senha.addEventListener('input', conferirSenhas);
 confirmarSenha.addEventListener('input', conferirSenhas);
 
-/* Etapa 1 — foto de perfil */
 const TAMANHO_MAXIMO = 5 * 1024 * 1024;
 const LADO_MINIMO = 200;
 const foto = document.getElementById('foto');
@@ -90,7 +118,6 @@ foto.addEventListener('change', () => {
     imagem.src = url;
 });
 
-/* Etapa 2 — tags */
 const TAGS_MINIMO = 3;
 const TAGS_MAXIMO = 8;
 const tags = [...form.querySelectorAll('input[name="tag"]')];
@@ -107,13 +134,11 @@ function atualizarTags() {
 tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
 atualizarTags();
 
-/* Etapa 2 — sliders */
 function preencherBarra(campo) {
     const porcentagem = ((campo.value - campo.min) / (campo.max - campo.min)) * 100;
     campo.style.setProperty('--preenchimento', `${porcentagem}%`);
 }
 
-/* Orçamento: o valor pode ser arrastado na barra ou digitado no campo */
 const orcamento = document.getElementById('orcamento');
 const orcamentoValor = document.getElementById('orcamento-valor');
 
@@ -133,7 +158,6 @@ orcamentoValor.addEventListener('change', () => {
 orcamentoValor.value = Number(orcamento.value).toFixed(2);
 preencherBarra(orcamento);
 
-/* Limiar de compatibilidade: também pode ser arrastado ou digitado */
 const limiar = document.getElementById('limiar');
 const limiarValor = document.getElementById('limiar-valor');
 
@@ -148,7 +172,6 @@ limiarValor.addEventListener('input', () => {
 limiarValor.value = limiar.value;
 preencherBarra(limiar);
 
-/* Etapa 3 — aceite dos termos */
 const aceite = document.getElementById('aceite');
 const finalizar = document.getElementById('finalizar');
 aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });

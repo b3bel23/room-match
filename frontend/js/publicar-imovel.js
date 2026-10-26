@@ -1,12 +1,10 @@
-// Publicar anúncio é uma ação de quem está logado.
-if (!estaLogado()) {
-    window.location.href = 'login.html';
+if (!requerLocador()) {
+    /* redirect */
 }
 
 const form = document.getElementById('publicar-form');
 const retorno = document.getElementById('publicar-retorno');
 
-/* Fotos: mínimo de 3 */
 const FOTOS_MINIMO = 3;
 const entradaFotos = document.getElementById('fotos-entrada');
 const grade = document.getElementById('fotos-grade');
@@ -36,7 +34,6 @@ entradaFotos.addEventListener('change', () => {
 
 validarFotos();
 
-/* Tags de convivência: mínimo 3 e máximo 8 */
 const TAGS_MINIMO = 3;
 const TAGS_MAXIMO = 8;
 const tags = [...form.querySelectorAll('input[name="tag"]')];
@@ -54,10 +51,49 @@ function atualizarTags() {
 tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
 atualizarTags();
 
-form.addEventListener('submit', (evento) => {
-    evento.preventDefault();
+function tipoCurto(valor) {
+    if (/kitnet/i.test(valor)) return 'Kitnet';
+    if (/apart/i.test(valor)) return 'Apartamento';
+    if (/casa/i.test(valor)) return 'Casa';
+    return 'República';
+}
 
-    // Sem backend por enquanto: o anúncio não é salvo, só confirmado na tela.
-    retorno.textContent = 'Anúncio publicado.';
-    retorno.hidden = false;
+function extrairBairro(endereco) {
+    const partes = String(endereco || '').split('·');
+    return (partes[partes.length - 1] || 'Campinas').trim() || 'Campinas';
+}
+
+form.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const tagsMarcadas = tags
+        .filter((t) => t.checked)
+        .map((t) => t.value || t.parentElement?.textContent?.trim())
+        .filter(Boolean);
+    const classificacao = form.querySelector('input[name="classificacao"]:checked')?.value || 'Mista';
+    const endereco = document.getElementById('endereco').value.trim();
+
+    try {
+        const criado = await RoomMatchApi.criarImovel({
+            titulo: document.getElementById('titulo').value.trim(),
+            tipo: tipoCurto(document.getElementById('tipo').value),
+            endereco,
+            bairro: extrairBairro(endereco),
+            aluguel: document.getElementById('aluguel').value,
+            condominio: document.getElementById('condominio').value,
+            iptu: document.getElementById('iptu').value,
+            contas: document.getElementById('contas').value,
+            tags: tagsMarcadas,
+            classificacao
+        });
+        retorno.textContent = 'Anúncio publicado.';
+        retorno.hidden = false;
+        window.setTimeout(() => {
+            window.location.href = `meus-imoveis.html?novo=${encodeURIComponent(criado.id)}`;
+        }, 600);
+    } catch (erro) {
+        retorno.textContent = erro.detail || erro.message;
+        retorno.hidden = false;
+    }
 });

@@ -13,10 +13,11 @@
     <header class="site-header">
         <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
-            <a class="ativo" href="home.html">Explorar</a>
-            <a href="favoritos.html">Favoritos</a>
-            <a href="#">Mensagens</a>
-            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+            <a href="home.html">Explorar</a>
+            <a class="ativo" href="favoritos.html">Favoritos</a>
+            <a href="mensagens.html">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span></span>
+            <a class="sair" href="#">Sair</a>
         </nav>
     </header>
 
@@ -27,16 +28,7 @@
         </div>
 
         <div class="layout">
-            <aside class="sidebar">
-                <p class="sidebar-rotulo">Menu</p>
-                <a href="#">Perfil</a>
-                <a href="#">Preferências</a>
-                <a class="ativo" href="favoritos.html">Favoritos</a>
-                <a href="calendario-visitas.html">Calendário de visitas</a>
-                <a href="#">Segurança</a>
-                <a href="#">Termos</a>
-                <a class="sair" href="login.html">Sair da conta</a>
-            </aside>
+            <aside class="sidebar"></aside>
 
             <main class="conteudo">
                 <h2>Favoritos</h2>
@@ -87,14 +79,21 @@
     <footer class="site-footer">
         <img src="../assets/logo.svg" alt="RoomMatch">
         <nav>
-            <a href="#">Como funciona</a>
-            <a href="#">Termos e privacidade</a>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
         </nav>
         <small>© 2026 RoomMatch</small>
     </footer>
 
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
     <script src="../js/favoritos-armazenamento.js"></script>
+    <script src="../js/imovel-fotos.js"></script>
     <script src="../js/favoritos.js"></script>
+    <script>montarSidebarConfig('favoritos.html');</script>
 </body>
 </html>

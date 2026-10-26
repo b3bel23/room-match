@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar senha · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/config.css">
+</head>
+<body class="auth-page">
+    <main class="login-main">
+        <a class="btn-voltar" href="login.html">← Voltar</a>
+        <div class="login-split">
+            <section class="login-hero">
+                <h2>Recuperação de senha</h2>
+                <p>Na demo, o link é simulado — nenhuma mensagem real é enviada.</p>
+            </section>
+            <section class="login-card">
+                <h1>Esqueci minha senha</h1>
+                <form id="recuperar-form" class="login-form">
+                    <div class="field">
+                        <label for="recuperar-email">E-mail</label>
+                        <input id="recuperar-email" type="email" required placeholder="morador@demo.com">
+                    </div>
+                    <button type="submit" class="btn-entrar">Enviar link</button>
+                    <p id="recuperar-retorno" class="config-retorno" hidden></p>
+                </form>
+            </section>
+        </div>
+    </main>
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+
+    <script>
+        document.getElementById('recuperar-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const r = document.getElementById('recuperar-retorno');
+            try {
+                const dados = await RoomMatchApi.recuperarSenha(
+                    document.getElementById('recuperar-email').value.trim()
+                );
+                r.textContent = dados.message;
+                r.classList.remove('erro');
+                r.hidden = false;
+            } catch (erro) {
+                r.textContent = erro.message;
+                r.classList.add('erro');
+                r.hidden = false;
+            }
+        });
+    </script>
+</body>
+</html>

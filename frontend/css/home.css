@@ -231,9 +231,22 @@ nav a.como-funciona {
 .card-image {
     position: relative;
     height: 190px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='180' fill='%232C6B63'/%3E%3Crect y='180' width='400' height='120' fill='%23234F49'/%3E%3Crect x='36' y='88' width='270' height='72' rx='10' fill='%238B5E3C'/%3E%3Crect x='52' y='98' width='108' height='50' rx='12' fill='%23F6F1E8'/%3E%3Crect x='168' y='98' width='108' height='50' rx='12' fill='%23F6F1E8'/%3E%3Crect x='36' y='150' width='270' height='95' rx='8' fill='%23FBF8F3'/%3E%3Cpolygon points='36,196 306,150 306,190 36,236' fill='%23B07A9E'/%3E%3Crect x='316' y='136' width='68' height='104' rx='4' fill='%236B4226'/%3E%3Crect x='326' y='146' width='48' height='30' fill='%23274B63'/%3E%3Ccircle cx='344' cy='250' r='17' fill='%232E5C8A'/%3E%3Ccircle cx='355' cy='42' r='22' fill='%231F4741'/%3E%3Crect x='8' y='214' width='14' height='28' fill='%236B4226'/%3E%3Ccircle cx='15' cy='204' r='13' fill='%233C7A5A'/%3E%3C/svg%3E");
+    background-color: #cfd9d7;
     background-size: cover;
     background-position: center;
+}
+
+.card-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(20, 29, 34, 0.45) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+.badge,
+.badge-match {
+    z-index: 2;
 }
 
 .badge {

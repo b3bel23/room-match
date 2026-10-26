@@ -1,0 +1,57 @@
+.meus-page .conteudo h2 {
+    margin-bottom: 4px;
+}
+
+.meus-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.meu-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 20px;
+    border: 1px solid var(--color-border, #e2e8eb);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.meu-thumb {
+    width: 120px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #cfd9d7 center / cover no-repeat;
+}
+
+.meu-card h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.meu-card p {
+    font-size: 13px;
+    color: var(--color-text-subtle, #94a3ad);
+}
+
+.meu-tags {
+    margin-top: 8px !important;
+}
+
+.meu-acoes {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.meus-vazia {
+    margin-top: 24px;
+    padding: 28px;
+    border: 1px dashed var(--color-border, #e2e8eb);
+    border-radius: 14px;
+    text-align: center;
+}

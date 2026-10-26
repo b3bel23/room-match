@@ -37,7 +37,10 @@
                         <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password">
                     </div>
                     <p id="login-erro" class="login-erro" hidden>E-mail ou senha inválidos.</p>
-                    <a class="link-esqueci" href="#">Esqueci minha senha</a>
+                    <p class="login-subtitle" style="margin-top:8px;font-size:12px">
+                        Demo: Morador Demo (morador@demo.com) ou Locador Demo (locador@demo.com) · senha demo123
+                    </p>
+                    <a class="link-esqueci" href="recuperar-senha.html">Esqueci minha senha</a>
                     <button type="submit" class="btn-entrar">Entrar</button>
                 </form>
 
@@ -49,13 +52,18 @@
     <footer class="site-footer">
         <img src="../assets/logo.svg" alt="RoomMatch">
         <nav>
-            <a href="#">Como funciona</a>
-            <a href="#">Termos e privacidade</a>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
         </nav>
         <small>© 2026 RoomMatch</small>
     </footer>
 
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+
     <script src="../js/login.js"></script>
 </body>
 </html>

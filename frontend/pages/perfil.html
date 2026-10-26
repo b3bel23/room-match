@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/config.css">
+</head>
+<body class="favoritos-page">
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a href="mensagens.html">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span></span>
+            <a class="sair" href="#">Sair</a>
+        </nav>
+    </header>
+    <div class="vista-lista">
+        <div class="page-bar">
+            <h1>Configurações</h1>
+            <span class="page-bar-sub">Gerencie sua conta</span>
+        </div>
+        <div class="layout">
+            <aside class="sidebar"></aside>
+            <main class="conteudo">
+                <h2>Perfil</h2>
+                <p class="conteudo-sub">Dados básicos da conta</p>
+                <form id="perfil-form" class="config-form">
+                    <label>Nome<input id="perfil-nome" type="text" required></label>
+                    <label>E-mail<input id="perfil-email" type="email" disabled></label>
+                    <label>Papel<input id="perfil-papel" type="text" disabled></label>
+                    <button class="btn btn-primary" type="submit">Salvar</button>
+                    <p id="perfil-retorno" class="config-retorno" hidden></p>
+                </form>
+            </main>
+        </div>
+    </div>
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/perfil.js"></script>
+</body>
+</html>

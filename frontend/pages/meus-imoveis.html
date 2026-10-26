@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus anúncios · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/meus-imoveis.css">
+</head>
+<body class="favoritos-page meus-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a class="ativo" href="meus-imoveis.html">Meus anúncios</a>
+            <span class="usuario"><span class="usuario-foto">MS</span></span>
+        </nav>
+    </header>
+
+    <div class="vista-lista">
+        <div class="page-bar">
+            <h1>Meus anúncios</h1>
+            <span class="page-bar-sub">Gerencie as vagas publicadas</span>
+        </div>
+
+        <div class="layout">
+            <aside class="sidebar"></aside>
+
+            <main class="conteudo">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div>
+                        <h2>Anúncios</h2>
+                        <p id="meus-contagem" class="conteudo-sub"></p>
+                    </div>
+                    <a class="btn btn-primary" href="publicar-imovel.html">Novo anúncio</a>
+                </div>
+
+                <div id="meus-lista" class="meus-lista"></div>
+                <div id="meus-vazia" class="meus-vazia" hidden>
+                    <p>Você ainda não publicou nenhum imóvel.</p>
+                    <a class="btn btn-primary" href="publicar-imovel.html" style="margin-top:12px">Publicar anúncio</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="meus-imoveis.html">Meus anúncios</a>
+            <a href="publicar-imovel.html">Publicar</a>
+            <a href="mensagens.html">Interessados</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/imovel-fotos.js"></script>
+    <script src="../js/meus-imoveis.js"></script>
+    <script>montarSidebarConfig('meus-imoveis.html');</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensagens · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/mensagens.css">
+</head>
+<body class="mensagens-page">
+
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="home.html">Explorar</a>
+            <a href="favoritos.html">Favoritos</a>
+            <a class="ativo" href="mensagens.html">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MS</span></span>
+            <a class="sair" href="#">Sair</a>
+        </nav>
+    </header>
+
+    <div class="chat-layout">
+        <aside class="chat-lista">
+            <h2>Conversas</h2>
+            <div id="chat-itens" class="chat-itens"></div>
+        </aside>
+
+        <section class="chat-thread">
+            <div class="chat-thread-topo">
+                <h2 id="chat-titulo">Selecione uma conversa</h2>
+            </div>
+            <div id="chat-mensagens" class="chat-mensagens">
+                <p class="chat-vazio">Escolha uma conversa à esquerda ou inicie pelo anúncio.</p>
+            </div>
+            <form id="chat-form" class="chat-composer" hidden>
+                <input id="chat-texto" type="text" placeholder="Escreva uma mensagem…" autocomplete="off" required>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </form>
+        </section>
+
+        <aside class="chat-info">
+            <h2 style="font-size:16px">Imóvel</h2>
+            <div id="chat-imovel-foto" class="chat-imovel-foto" aria-hidden="true"></div>
+            <p id="chat-imovel-titulo">—</p>
+            <p id="chat-imovel-meta" style="color:#94a3ad;font-size:13px"></p>
+            <a id="chat-imovel-link" class="btn btn-secondary" href="home.html">Ver anúncio</a>
+            <a id="chat-agendar-link" class="btn btn-primary" href="agendar-visita.html">Agendar visita</a>
+        </aside>
+    </div>
+
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/imovel-fotos.js"></script>
+    <script src="../js/mensagens.js"></script>
+</body>
+</html>

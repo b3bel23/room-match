@@ -14,15 +14,15 @@
     <header class="site-header">
         <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav class="nav-visitante">
-            <a href="#">Como funciona</a>
+            <a href="como-funciona.html">Como funciona</a>
             <a class="btn btn-secondary" href="login.html">Entrar</a>
             <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
         </nav>
         <nav class="nav-logado">
             <a class="ativo" href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
-            <a href="#">Mensagens</a>
-            <span class="usuario"><span class="usuario-foto">MS</span>Maria Silva</span>
+            <a href="mensagens.html">Mensagens</a>
+            <span class="usuario"><span class="usuario-foto">MD</span></span>
         </nav>
     </header>
 
@@ -37,11 +37,13 @@
     <main class="detalhe">
         <section class="info">
             <h2>Kitnet mobiliada · Cambuí</h2>
-            <div class="tags">
-                <span class="tag tag-destaque">Silêncio</span>
-                <span class="tag">Wi-Fi</span>
-                <span class="tag">Mobiliado</span>
-            </div>
+            <div class="tags"></div>
+
+            <p id="imovel-descricao" class="imovel-descricao"></p>
+
+            <ul id="imovel-comodidades" class="imovel-comodidades" aria-label="Comodidades"></ul>
+
+            <p id="imovel-resumo" class="imovel-resumo"></p>
 
             <div class="rateio">
                 <h3>Rateio transparente</h3>
@@ -49,6 +51,7 @@
                 <div class="rateio-linha"><span>Cond.</span><span>R$ 150</span></div>
                 <div class="rateio-linha"><span>IPTU</span><span>R$ 40</span></div>
                 <div class="rateio-linha"><span>Contas</span><span>R$ 30</span></div>
+                <p id="contas-detalhe" class="contas-detalhe"></p>
                 <div class="rateio-total"><span class="tag-destaque">Total mensal</span><strong>R$ 1.200</strong></div>
 
                 <div class="bloqueio bloqueio-rateio">
@@ -85,24 +88,12 @@
             </div>
 
             <div class="restrito">
-                <ul class="moradores">
-                    <li class="morador">
-                        <span class="morador-foto foto-1">J</span>
-                        <div><strong>João</strong><span>28 anos · Homem Cis · Eng. de Software</span></div>
-                    </li>
-                    <li class="morador">
-                        <span class="morador-foto foto-2">A</span>
-                        <div><strong>Ana</strong><span>24 anos · Mulher Cis · Med. Veterinária</span></div>
-                    </li>
-                    <li class="morador">
-                        <span class="morador-foto foto-3">P</span>
-                        <div><strong>Pedro</strong><span>22 anos · Homem Cis · Economia - UNICAMP</span></div>
-                    </li>
-                </ul>
+                <ul id="moradores-lista" class="moradores"></ul>
+                <p id="moradores-vazio" class="moradores-vazio" hidden>Imóvel individual — sem moradores no mesmo cômodo.</p>
 
                 <div class="acoes">
                     <button id="favoritar" class="btn btn-secondary" type="button">♥ Favoritar</button>
-                    <a class="btn btn-primary" href="#">Conversar com locador</a>
+                    <a class="btn btn-primary btn-conversar" href="#conversar">Conversar com locador</a>
                     <a class="btn btn-secondary" href="agendar-visita.html">Agendar visita</a>
                 </div>
 
@@ -126,21 +117,28 @@
                 <button class="miniatura" type="button" aria-label="Foto 3"></button>
                 <button class="miniatura" type="button" aria-label="Foto 4"></button>
             </div>
+            <p id="galeria-legenda" class="galeria-legenda"></p>
         </section>
     </main>
 
     <footer class="site-footer">
         <img src="../assets/logo.svg" alt="RoomMatch">
         <nav>
-            <a href="#">Como funciona</a>
-            <a href="#">Termos e privacidade</a>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
         </nav>
         <small>© 2026 RoomMatch</small>
     </footer>
 
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="../js/favoritos-armazenamento.js"></script>
+    <script src="../js/imovel-fotos.js"></script>
     <script src="../js/detalhe.js"></script>
     <script src="../js/mapa-rota.js"></script>
 </body>

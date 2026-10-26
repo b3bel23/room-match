@@ -76,6 +76,58 @@ body:not(.visitante) .detalhe {
     font-weight: var(--fw-bold);
 }
 
+.imovel-descricao {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    margin: 8px 0 4px;
+}
+
+.imovel-comodidades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-small);
+    color: var(--color-text);
+}
+
+.imovel-comodidades li::before {
+    content: '✓ ';
+    color: var(--color-primary);
+    font-weight: var(--fw-bold);
+}
+
+.imovel-resumo {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    margin-bottom: 8px;
+}
+
+.contas-detalhe {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+    margin: 4px 0 8px;
+    padding: 0 2px;
+}
+
+.moradores-vazio {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    margin: 8px 0 12px;
+}
+
+.galeria-legenda {
+    padding: 10px 12px 14px;
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
 .tags {
     display: flex;
     gap: 8px;
@@ -288,10 +340,21 @@ body:not(.visitante) .detalhe {
     height: 320px;
     padding: 16px;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    background: #cfd9d7;
+    background: #cfd9d7 center / cover no-repeat;
+}
+
+.galeria-principal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to top, rgba(20, 29, 34, 0.35) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .afinidade {
+    position: relative;
+    z-index: 1;
     display: none;
     font-size: var(--fs-body);
     font-weight: var(--fw-bold);
@@ -313,7 +376,7 @@ body:not(.visitante) .afinidade {
     height: 52px;
     border: 2px solid transparent;
     border-radius: 6px;
-    background: #cfd9d7;
+    background: #cfd9d7 center / cover no-repeat;
     cursor: pointer;
 }
 

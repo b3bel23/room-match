@@ -1,6 +1,5 @@
-// O calendário de visitas é uma tela de quem está logado.
-if (!estaLogado()) {
-    window.location.href = 'login.html';
+if (!requerAuth()) {
+    /* redirect */
 }
 
 const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -11,38 +10,33 @@ const STATUS = {
     remarcada: 'Remarcada / alterada'
 };
 
-// Sem backend por enquanto: visitas de exemplo, em dias a partir de hoje.
-const REPUBLICA = 'Quarto em república · Barão Geraldo';
-const KITNET = 'Kitnet mobiliada · Cambuí';
-const VISITAS = [
-    { dias: 1, hora: '10h', nome: 'Ana Souza', imovel: REPUBLICA, status: 'confirmada' },
-    { dias: 1, hora: '16h', nome: 'Bruno Lima', imovel: KITNET, status: 'pendente' },
-    { dias: 3, hora: '11h', nome: 'Carla Dias', imovel: REPUBLICA, status: 'remarcada' },
-    { dias: 6, hora: '14h', nome: 'Diego Alves', imovel: KITNET, status: 'confirmada' },
-    { dias: 9, hora: '9h', nome: 'Elisa Rocha', imovel: REPUBLICA, status: 'pendente' }
-];
-
 const hoje = new Date();
 const grade = document.getElementById('calendario-grade');
 const titulo = document.getElementById('mes-titulo');
 const filtroImovel = document.getElementById('calendario-imovel');
 let mes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+let visitas = [];
 
 function chave(data) {
     return `${data.getFullYear()}-${data.getMonth()}-${data.getDate()}`;
 }
 
+function dataDaVisita(visita) {
+    const [y, m, d] = String(visita.data).split('-').map(Number);
+    return new Date(y, m - 1, d);
+}
+
 function visitasPorDia() {
     const porDia = {};
-    VISITAS.forEach((visita) => {
-        if (filtroImovel.value && visita.imovel !== filtroImovel.value) return;
-        const data = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + visita.dias);
+    visitas.forEach((visita) => {
+        if (filtroImovel.value && visita.imovel_titulo !== filtroImovel.value) return;
+        const data = dataDaVisita(visita);
         (porDia[chave(data)] ||= []).push(visita);
     });
     return porDia;
 }
 
-function criarDia(numero, visitas, ehHoje) {
+function criarDia(numero, listaVisitas, ehHoje) {
     const dia = document.createElement('div');
     dia.className = `calendario-dia${ehHoje ? ' hoje' : ''}`;
 
@@ -51,17 +45,20 @@ function criarDia(numero, visitas, ehHoje) {
     rotulo.textContent = numero;
     dia.append(rotulo);
 
-    if (visitas.length) {
+    if (listaVisitas.length) {
         const lista = document.createElement('ul');
-        visitas.forEach((visita) => {
+        listaVisitas.forEach((visita) => {
             const item = document.createElement('li');
             const ponto = document.createElement('span');
             ponto.className = `ponto ponto-${visita.status}`;
-            ponto.title = STATUS[visita.status];
+            ponto.title = STATUS[visita.status] || visita.status;
             const oculto = document.createElement('span');
             oculto.className = 'visually-hidden';
-            oculto.textContent = `${STATUS[visita.status]}: `;
-            item.append(ponto, oculto, `${visita.nome} · ${visita.hora}`);
+            oculto.textContent = `${STATUS[visita.status] || visita.status}: `;
+            const rotulo = (typeof ehLocador === 'function' && ehLocador())
+                ? `${visita.nome} · ${visita.hora}`
+                : `${visita.imovel_titulo || 'Visita'} · ${visita.hora}`;
+            item.append(ponto, oculto, rotulo);
             lista.append(item);
         });
         dia.append(lista);
@@ -95,6 +92,25 @@ function desenhar() {
     }
 }
 
+function popularFiltro() {
+    const titulos = [...new Set(visitas.map((v) => v.imovel_titulo).filter(Boolean))];
+    const valorAtual = filtroImovel.value;
+    filtroImovel.replaceChildren(new Option('Todos os imóveis', ''));
+    titulos.forEach((t) => filtroImovel.append(new Option(t, t)));
+    filtroImovel.value = valorAtual;
+}
+
+async function carregar() {
+    try {
+        const dados = await RoomMatchApi.listarVisitas();
+        visitas = dados.items || [];
+        popularFiltro();
+        desenhar();
+    } catch (erro) {
+        titulo.textContent = erro.message;
+    }
+}
+
 document.getElementById('mes-anterior').addEventListener('click', () => {
     mes = new Date(mes.getFullYear(), mes.getMonth() - 1, 1);
     desenhar();
@@ -105,4 +121,4 @@ document.getElementById('mes-proximo').addEventListener('click', () => {
 });
 filtroImovel.addEventListener('change', desenhar);
 
-desenhar();
+carregar();

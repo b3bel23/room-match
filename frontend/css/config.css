@@ -1,0 +1,66 @@
+.config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 520px;
+    margin-top: 16px;
+}
+
+.config-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.config-form input,
+.config-form select {
+    padding: 12px 14px;
+    border: 1px solid var(--color-border, #e2e8eb);
+    border-radius: 10px;
+    font: inherit;
+    background: #fff;
+}
+
+.config-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.config-tags label {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #e2e8eb;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.config-retorno {
+    margin-top: 8px;
+    color: #5ea38f;
+    font-size: 14px;
+}
+
+.config-retorno.erro {
+    color: #c0392b;
+}
+
+.conteudo-prosa {
+    max-width: 720px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    line-height: 1.5;
+    color: #4a5568;
+}
+
+.conteudo-prosa h3 {
+    margin-top: 8px;
+    color: #141d22;
+}

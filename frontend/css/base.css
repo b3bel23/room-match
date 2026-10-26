@@ -86,6 +86,13 @@ button {
     color: #fff;
 }
 
+.btn-disabled,
+a.btn-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
 .btn-secondary {
     background: var(--color-surface);
     border-color: var(--color-border);

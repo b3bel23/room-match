@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como funciona · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/config.css">
+</head>
+<body class="auth-page">
+    <header class="site-header">
+        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a class="ativo" href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+    <main class="conteudo" style="max-width:800px;margin:40px auto;padding:0 24px">
+        <h1 style="font-family:var(--font-heading),sans-serif;margin-bottom:12px">Como funciona o RoomMatch</h1>
+        <div class="conteudo-prosa">
+            <h3>Visão Morador (busca moradia)</h3>
+            <p>Mural com match · Favoritos · Minhas visitas · Mensagens com locadores · Preferências de busca (orçamento + limiar + tags).</p>
+            <h3>Visão Locador (publica vagas)</h3>
+            <p>Painel Meus anúncios · Publicar/Editar · Agenda de visitas recebidas · Interessados (chat) · Regras da casa. Sem favoritos e sem mural de busca.</p>
+            <h3>Contas demo</h3>
+            <p><strong>Morador Demo</strong> — <code>morador@demo.com</code> / <code>demo123</code>
+            → entra no mural<br>
+            <strong>Locador Demo</strong> — <code>locador@demo.com</code> / <code>demo123</code>
+            → entra no painel de anúncios</p>
+            <p><a class="btn btn-primary" href="escolha-papel.html">Começar agora</a></p>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <img src="../assets/logo.svg" alt="RoomMatch">
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+</body>
+</html>

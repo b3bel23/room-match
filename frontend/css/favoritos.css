@@ -137,7 +137,7 @@
     height: 80px;
     flex-shrink: 0;
     border-radius: var(--radius-sm);
-    background: #cfd9d7;
+    background: #cfd9d7 center / cover no-repeat;
 }
 
 .fav-corpo {
