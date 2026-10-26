@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Locador · Publicar Anúncio">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<g id="component/header/nav">
+<circle cx="1320" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1320" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Perfil</text>
+<circle cx="1376" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1376" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Config</text>
+</g></g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Publicar Anúncio</text>
+</g><g id="component/input/titulo">
+<text x="32" y="144" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Título</text>
+<rect x="32" y="152" width="760" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="46" y="180" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">Quarto em república</text>
+</g><g id="component/input/end">
+<text x="32" y="224" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Endereço / Bairro</text>
+<rect x="32" y="232" width="760" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="46" y="260" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">Barão Geraldo</text>
+</g><g id="component/input/aluguel">
+<text x="32" y="304" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Aluguel</text>
+<rect x="32" y="312" width="372" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="46" y="340" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 600</text>
+</g><g id="component/input/cond">
+<text x="412" y="304" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Condomínio</text>
+<rect x="412" y="312" width="372" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="426" y="340" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 120</text>
+</g><g id="component/input/iptu">
+<text x="32" y="384" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">IPTU</text>
+<rect x="32" y="392" width="372" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="46" y="420" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 45</text>
+</g><g id="component/input/contas">
+<text x="412" y="384" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Contas (est.)</text>
+<rect x="412" y="392" width="372" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="426" y="420" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 85</text>
+</g><g id="content/fotos">
+<text x="840" y="144" font-size="14" font-weight="600" fill="#141D22">Fotos do imóvel</text>
+<rect x="840" y="160" width="536" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB" stroke-dasharray="8 4"/>
+<text x="1108" y="304" text-anchor="middle" font-size="14" fill="#94A3AD">+ Adicionar fotos</text>
+</g>
+<g id="content/tags">
+<text x="840" y="464" font-size="14" font-weight="600" fill="#141D22">Tags de convivência</text>
+<g id="component/tag/Pet Friendly">
+<rect x="840" y="480" width="112" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="896" y="501" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Pet Friendly</text>
+</g><g id="component/tag/Silêncio">
+<rect x="980" y="480" width="88" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1024" y="501" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Silêncio</text>
+</g><g id="component/tag/Home Office">
+<rect x="1120" y="480" width="105" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1172" y="501" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Home Office</text>
+</g></g><g id="component/button/publicar">
+<rect x="32" y="820" width="200" height="48" rx="10" fill="#5EA38F" />
+<text x="132" y="849" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Publicar</text>
+</g></svg>

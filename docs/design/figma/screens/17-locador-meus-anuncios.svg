@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Locador · Meus Anúncios">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<g id="component/header/nav">
+<circle cx="1320" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1320" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Perfil</text>
+<circle cx="1376" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1376" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Config</text>
+</g></g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Meus Anúncios</text>
+</g><g id="component/button/pub">
+<rect x="1260" y="72" width="148" height="36" rx="10" fill="#5EA38F" />
+<text x="1334" y="95" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">+ Publicar</text>
+</g><g id="component/card-horizontal/anuncio-0">
+<rect x="32" y="136" width="1376" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="44" y="148" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="152" y="172" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="152" y="194" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="152" y="216" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="204" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="227" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><g id="component/card-horizontal/anuncio-1">
+<rect x="32" y="272" width="1376" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="44" y="284" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="152" y="308" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="152" y="330" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="152" y="352" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="340" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="363" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><g id="component/card-horizontal/anuncio-2">
+<rect x="32" y="408" width="1376" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="44" y="420" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="152" y="444" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="152" y="466" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="152" y="488" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="476" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="499" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g></svg>

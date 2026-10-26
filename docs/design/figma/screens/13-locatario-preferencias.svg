@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Compartilhado · Config · Preferências">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<g id="component/header/nav">
+<circle cx="1320" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1320" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Perfil</text>
+<circle cx="1376" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1376" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Config</text>
+</g></g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Configurações</text>
+</g><g id="component/sidebar">
+<rect x="0" y="112" width="220" height="788" fill="#FFFFFF"/>
+<line x1="220" y1="112" x2="220" y2="900" stroke="#E2E8EB"/>
+<text x="24" y="140" font-family="DM Sans,sans-serif" font-size="10" letter-spacing="3" fill="#94A3AD">MENU</text>
+
+<g id="component/sidebar/item-perfil">
+<rect x="12" y="160" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="185" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Perfil</text>
+</g>
+
+<g id="component/sidebar/item-pref">
+<rect x="12" y="208" width="196" height="40" rx="8" fill="#F4F6F7" stroke="#5EA38F" stroke-width="2"/>
+<text x="24" y="233" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Preferências</text>
+</g>
+
+<g id="component/sidebar/item-fav">
+<rect x="12" y="256" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="281" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Favoritos</text>
+</g>
+
+<g id="component/sidebar/item-seg">
+<rect x="12" y="304" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="329" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Segurança</text>
+</g>
+
+<g id="component/sidebar/item-termos">
+<rect x="12" y="352" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="377" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Termos de Privacidade</text>
+</g>
+
+<g id="component/button/sidebar-logout">
+<rect x="12" y="828" width="196" height="40" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="110" y="853" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#4A5568">Sair da conta</text>
+</g>
+</g><g id="content/preferencias">
+<text x="252" y="144" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Preferências</text>
+<text x="252" y="168" font-size="12" fill="#4A5568">Suas tags de convivência · 5/12</text>
+<g id="component/tag/Pet Friendly">
+<rect x="252" y="192" width="112" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="308" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Pet Friendly</text>
+</g><g id="component/tag/Silêncio Noturno">
+<rect x="392" y="192" width="140" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="462" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Silêncio Noturno</text>
+</g><g id="component/tag/Home Office">
+<rect x="532" y="192" width="105" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="584" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Home Office</text>
+</g><g id="component/tag/LGBTQIA+ Safe">
+<rect x="672" y="192" width="119" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="731" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">LGBTQIA+ Safe</text>
+</g><g id="component/tag/Vegetariano">
+<rect x="812" y="192" width="105" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="864" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Vegetariano</text>
+</g><g id="component/input/orc">
+<text x="252" y="268" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Orçamento máximo</text>
+<rect x="252" y="276" width="400" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="266" y="304" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 900</text>
+</g><g id="component/input/limiar">
+<text x="672" y="268" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Limiar mínimo</text>
+<rect x="672" y="276" width="200" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="686" y="304" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">70%</text>
+</g><text x="252" y="356" font-size="13" font-weight="600" fill="#141D22">Em alta na sua região</text>
+<g id="component/tag/420 Friendly">
+<rect x="252" y="372" width="112" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="308" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">420 Friendly</text>
+</g><g id="component/tag/Sem Festas">
+<rect x="382" y="372" width="98" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="431" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Sem Festas</text>
+</g><g id="component/tag/Pet Friendly">
+<rect x="512" y="372" width="112" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="568" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Pet Friendly</text>
+</g><g id="component/tag/Vegano">
+<rect x="642" y="372" width="88" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="686" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Vegano</text>
+</g><g id="component/button/save">
+<rect x="1280" y="820" width="120" height="40" rx="10" fill="#5EA38F" />
+<text x="1340" y="845" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">SALVAR</text>
+</g></g></svg>

@@ -1,0 +1,110 @@
+{
+  "RoomMatch/Web": {
+    "color": {
+      "primary": {
+        "value": "#5EA38F",
+        "type": "color"
+      },
+      "secondary": {
+        "value": "#FBB050",
+        "type": "color"
+      },
+      "accent": {
+        "value": "#F08070",
+        "type": "color"
+      },
+      "background": {
+        "value": "#141D22",
+        "type": "color"
+      },
+      "surface": {
+        "value": "#FFFFFF",
+        "type": "color"
+      },
+      "surface-muted": {
+        "value": "#F4F6F7",
+        "type": "color"
+      },
+      "border": {
+        "value": "#E2E8EB",
+        "type": "color"
+      },
+      "text-primary": {
+        "value": "#141D22",
+        "type": "color"
+      },
+      "text-muted": {
+        "value": "#4A5568",
+        "type": "color"
+      }
+    },
+    "font": {
+      "brand": {
+        "value": "Comfortaa",
+        "type": "fontFamilies"
+      },
+      "ui": {
+        "value": "DM Sans",
+        "type": "fontFamilies"
+      }
+    },
+    "frame": {
+      "desktop-width": {
+        "value": "1440",
+        "type": "sizing"
+      },
+      "desktop-height": {
+        "value": "900",
+        "type": "sizing"
+      },
+      "sidebar-width": {
+        "value": "220",
+        "type": "sizing"
+      },
+      "header-height": {
+        "value": "64",
+        "type": "sizing"
+      }
+    },
+    "spacing": {
+      "xs": {
+        "value": "4",
+        "type": "spacing"
+      },
+      "sm": {
+        "value": "8",
+        "type": "spacing"
+      },
+      "md": {
+        "value": "16",
+        "type": "spacing"
+      },
+      "lg": {
+        "value": "24",
+        "type": "spacing"
+      },
+      "xl": {
+        "value": "32",
+        "type": "spacing"
+      },
+      "2xl": {
+        "value": "48",
+        "type": "spacing"
+      }
+    },
+    "radius": {
+      "sm": {
+        "value": "8",
+        "type": "borderRadius"
+      },
+      "md": {
+        "value": "12",
+        "type": "borderRadius"
+      },
+      "pill": {
+        "value": "999",
+        "type": "borderRadius"
+      }
+    }
+  }
+}

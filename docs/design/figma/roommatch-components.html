@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<title>RoomMatch — Components</title>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --menthe: #5EA38F;
+  --nectarine: #FBB050;
+  --salmon: #F08070;
+  --slate: #141D22;
+  --white: #FFFFFF;
+  --gray100: #F4F6F7;
+  --gray200: #E2E8EB;
+  --gray400: #94A3AD;
+  --gray600: #4A5568;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; padding: 48px; background: #1a1a1a; color: #fff; }
+.page { display: flex; flex-wrap: wrap; gap: 32px; max-width: 1600px; }
+.section { background: var(--gray100); border-radius: 12px; padding: 24px; min-width: 320px; }
+.section h2 { font-family: Comfortaa, sans-serif; color: var(--slate); font-size: 14px; margin-bottom: 16px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+
+/* component/button/primary */
+.component-button-primary {
+  background: var(--menthe); color: #fff; border: none;
+  padding: 12px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+.component-button-secondary {
+  background: var(--white); color: var(--slate);
+  border: 1px solid var(--gray200);
+  padding: 12px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+}
+.component-button-danger {
+  background: var(--salmon); color: #fff; border: none;
+  padding: 12px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+}
+.component-button-ghost {
+  background: var(--white); color: var(--gray600);
+  border: 1px dashed var(--gray200);
+  padding: 12px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+}
+
+/* component/tag */
+.component-tag {
+  display: inline-block; padding: 6px 16px; border-radius: 16px;
+  font-size: 12px; border: 1px solid var(--gray200);
+  background: var(--white); color: var(--slate);
+}
+.component-tag-active {
+  background: var(--salmon); color: #fff; border-color: var(--salmon);
+}
+
+/* component/badge-afinidade */
+.component-badge-afinidade {
+  display: inline-block; background: var(--menthe); color: #fff;
+  padding: 6px 14px; border-radius: 16px;
+  font-size: 13px; font-weight: 700;
+}
+
+/* component/input */
+.component-input-group { display: flex; flex-direction: column; gap: 6px; }
+.component-input-label { font-size: 12px; font-weight: 500; color: var(--gray600); }
+.component-input {
+  width: 280px; height: 44px; padding: 0 14px;
+  border: 1px solid var(--gray200); border-radius: 8px;
+  font-size: 14px; color: var(--gray400); background: var(--white);
+}
+
+/* component/card-imovel */
+.component-card-imovel {
+  width: 280px; background: var(--white);
+  border: 1px solid var(--gray200); border-radius: 12px; overflow: hidden;
+}
+.component-card-imovel-img {
+  height: 154px; background: var(--gray200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--gray600); position: relative;
+}
+.component-card-imovel-body { padding: 16px; }
+.component-card-imovel-price { font-size: 16px; font-weight: 700; color: var(--menthe); margin-top: 8px; }
+
+/* component/header */
+.component-header {
+  width: 1440px; height: 64px; background: var(--white);
+  border-bottom: 1px solid var(--gray200);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.component-header-logo { font-family: Comfortaa, sans-serif; font-size: 22px; font-weight: 700; color: var(--menthe); }
+.component-header-nav { display: flex; gap: 32px; align-items: center; }
+.component-header-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gray200); }
+
+/* Colors */
+.swatch { width: 80px; height: 48px; border-radius: 8px; }
+.swatch-label { font-size: 11px; color: var(--slate); margin-top: 4px; }
+</style>
+</head>
+<body>
+<h1 style="font-family:Comfortaa;color:#5EA38F;margin-bottom:32px;font-size:24px">
+  RoomMatch · Component Library (Web)
+</h1>
+<div class="page">
+
+  <div class="section" data-component="colors">
+    <h2>Colors</h2>
+    <div class="row">
+      <div><div class="swatch" style="background:#5EA38F"></div><div class="swatch-label">Menthe</div></div>
+      <div><div class="swatch" style="background:#FBB050"></div><div class="swatch-label">Nectarine</div></div>
+      <div><div class="swatch" style="background:#F08070"></div><div class="swatch-label">Salmon</div></div>
+      <div><div class="swatch" style="background:#141D22"></div><div class="swatch-label">Slate</div></div>
+    </div>
+  </div>
+
+  <div class="section" data-component="buttons">
+    <h2>Buttons</h2>
+    <div class="row">
+      <button class="component-button-primary">Primary</button>
+      <button class="component-button-secondary">Secondary</button>
+      <button class="component-button-danger">Danger</button>
+      <button class="component-button-ghost">Ghost</button>
+    </div>
+  </div>
+
+  <div class="section" data-component="tags">
+    <h2>Tags & Badge</h2>
+    <div class="row">
+      <span class="component-tag component-tag-active">Pet Friendly</span>
+      <span class="component-tag">Silêncio</span>
+      <span class="component-tag">Home Office</span>
+      <span class="component-badge-afinidade">85% afinidade</span>
+    </div>
+  </div>
+
+  <div class="section" data-component="inputs">
+    <h2>Input</h2>
+    <div class="component-input-group">
+      <label class="component-input-label">Label</label>
+      <input class="component-input" placeholder="Placeholder" readonly/>
+    </div>
+  </div>
+
+  <div class="section" data-component="card-imovel">
+    <h2>Card Imóvel</h2>
+    <div class="component-card-imovel">
+      <div class="component-card-imovel-img">
+        img placeholder
+        <span class="component-badge-afinidade" style="position:absolute;top:12px;right:12px">85%</span>
+      </div>
+      <div class="component-card-imovel-body">
+        <div style="height:8px;width:120px;background:#E2E8EB;border-radius:4px;margin-bottom:8px"></div>
+        <div style="height:6px;width:80px;background:#E2E8EB;border-radius:3px"></div>
+        <div class="component-card-imovel-price">R$ 850/mês</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-component="header" style="min-width:100%;padding:0;overflow:hidden">
+    <h2 style="padding:24px 24px 0">Header</h2>
+    <header class="component-header">
+      <span class="component-header-logo">RoomMatch</span>
+      <nav class="component-header-nav">
+        <div style="text-align:center"><div class="component-header-avatar"></div><span style="font-size:10px;color:#4A5568">Perfil</span></div>
+        <div style="text-align:center"><div class="component-header-avatar"></div><span style="font-size:10px;color:#4A5568">Config</span></div>
+      </nav>
+    </header>
+  </div>
+
+</div>
+</body>
+</html>

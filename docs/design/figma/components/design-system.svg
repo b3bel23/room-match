@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" data-screen="Design System Components">
+<rect width="1200" height="600" fill="#F4F6F7"/>
+<text x="24" y="36" font-family="Comfortaa,sans-serif" font-size="20" font-weight="700" fill="#141D22">RoomMatch · Design System</text>
+<g id="color-menthe">
+<rect x="24" y="60" width="120" height="60" rx="8" fill="#5EA38F"/>
+<text x="24" y="140" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Menthe / Primary</text>
+<text x="24" y="154" font-family="DM Sans,sans-serif" font-size="9" fill="#4A5568">#5EA38F</text>
+</g>
+<g id="color-nectarine">
+<rect x="164" y="60" width="120" height="60" rx="8" fill="#FBB050"/>
+<text x="164" y="140" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Nectarine / Secondary</text>
+<text x="164" y="154" font-family="DM Sans,sans-serif" font-size="9" fill="#4A5568">#FBB050</text>
+</g>
+<g id="color-salmon">
+<rect x="304" y="60" width="120" height="60" rx="8" fill="#F08070"/>
+<text x="304" y="140" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Salmon / Accent</text>
+<text x="304" y="154" font-family="DM Sans,sans-serif" font-size="9" fill="#4A5568">#F08070</text>
+</g>
+<g id="color-slate">
+<rect x="444" y="60" width="120" height="60" rx="8" fill="#141D22"/>
+<text x="444" y="140" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Slate / Background</text>
+<text x="444" y="154" font-family="DM Sans,sans-serif" font-size="9" fill="#4A5568">#141D22</text>
+</g>
+<g id="btn-primary">
+<rect x="24" y="180" width="140" height="44" rx="12" fill="#5EA38F"/>
+<text x="94" y="207" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Primary</text>
+</g>
+<g id="btn-secondary">
+<rect x="180" y="180" width="140" height="44" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="250" y="207" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Secondary</text>
+</g>
+<g id="tag-0">
+<rect x="24" y="250" width="100" height="28" rx="14" fill="#F08070" stroke="#F08070"/>
+<text x="74" y="268" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#FFFFFF">Pet Friendly</text>
+</g>
+<g id="tag-1">
+<rect x="144" y="250" width="100" height="28" rx="14" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="194" y="268" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Silêncio</text>
+</g>
+<g id="tag-2">
+<rect x="264" y="250" width="100" height="28" rx="14" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="314" y="268" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#141D22">Home Office</text>
+</g>
+<g id="badge-afinidade">
+<rect x="24" y="300" width="64" height="28" rx="14" fill="#5EA38F"/>
+<text x="56" y="318" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">85%</text>
+</g>
+<g id="typography">
+<text x="24" y="370" font-family="Comfortaa,sans-serif" font-size="24" font-weight="700" fill="#141D22">Comfortaa — Título</text>
+<text x="24" y="400" font-family="DM Sans,sans-serif" font-size="14" fill="#141D22">DM Sans — Corpo e UI</text>
+<text x="24" y="424" font-family="DM Sans,sans-serif" font-size="11" fill="#4A5568">Rateio · Filtros · Tags</text>
+</g>
+<g id="card-imovel-preview">
+<rect x="400" y="60" width="280" height="380" rx="16" fill="#FFFFFF"/>
+<rect x="400" y="60" width="280" height="180" rx="16" fill="#E2E8EB"/>
+<rect x="416" y="256" width="64" height="28" rx="14" fill="#5EA38F"/>
+<text x="448" y="274" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">85%</text>
+<text x="416" y="310" font-family="Comfortaa,sans-serif" font-size="14" font-weight="700" fill="#141D22">Quarto · República</text>
+<text x="416" y="334" font-family="DM Sans,sans-serif" font-size="18" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="header-component">
+<rect x="720" y="60" width="390" height="56" fill="#FFFFFF"/>
+<text x="740" y="94" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<circle cx="1060" cy="88" r="16" fill="#E2E8EB"/>
+<circle cx="1090" cy="88" r="16" fill="#E2E8EB"/>
+</g>
+<g id="input-field">
+<text x="720" y="150" font-family="DM Sans,sans-serif" font-size="11" fill="#4A5568">Label</text>
+<rect x="720" y="156" width="280" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="732" y="182" font-family="DM Sans,sans-serif" font-size="12" fill="#94A3AD">Placeholder</text>
+</g>
+</svg>

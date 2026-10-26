@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<title>RoomMatch MVP Hi-Fi · Web 1440×900</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+:root {
+  --menthe:#5EA38F; --nectarine:#FBB050; --salmon:#F08070;
+  --slate:#141D22; --white:#fff; --g100:#F4F6F7; --g200:#E2E8EB;
+  --g400:#94A3AD; --g600:#4A5568;
+  --shadow:0 4px 24px rgba(20,29,34,.08);
+  --shadow-lg:0 12px 40px rgba(20,29,34,.12);
+  --r:12px; --r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;font-family:'DM Sans',sans-serif;padding:56px}
+.canvas{position:relative}
+.badge-fixed{position:fixed;top:16px;right:16px;background:var(--menthe);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:99;box-shadow:var(--shadow)}
+
+.screen{position:absolute;width:1440px;height:900px;background:var(--g100);overflow:hidden;border-radius:12px;box-shadow:0 0 0 1px #333}
+.screen-label{position:absolute;top:-30px;left:0;font-size:11px;color:#888;font-weight:600;letter-spacing:.3px}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 32px;background:var(--white);border-bottom:1px solid var(--g200)}
+.hdr-logo{display:flex;align-items:center;gap:10px;font-family:Comfortaa,sans-serif;font-size:20px;font-weight:700;color:var(--menthe)}
+.hdr-nav{display:flex;align-items:center;gap:20px}
+.hdr-link{font-size:13px;color:var(--g600);font-weight:500}
+.hdr-link.active{color:var(--menthe);font-weight:600}
+.hdr-user{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;background:var(--g100);border-radius:24px}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.avatar-sm{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;border:none;font-family:inherit;cursor:pointer}
+.btn-primary{background:var(--menthe);color:#fff}
+.btn-secondary{background:var(--white);color:var(--slate);border:1px solid var(--g200)}
+.btn-salmon{background:var(--salmon);color:#fff}
+.btn-ghost{background:transparent;color:var(--g600);border:1px dashed var(--g200)}
+.btn-sm{padding:8px 16px;font-size:12px}
+.btn-lg{padding:14px 28px;font-size:14px}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;padding:5px 12px;border-radius:16px;font-size:11px;font-weight:500;border:1px solid var(--g200);background:var(--white);color:var(--slate)}
+.tag-on{background:var(--salmon);color:#fff;border-color:var(--salmon)}
+.tag-menthe{background:rgba(94,163,143,.12);color:var(--menthe);border-color:rgba(94,163,143,.3)}
+.badge-pct{background:var(--menthe);color:#fff;padding:5px 12px;border-radius:16px;font-size:12px;font-weight:700}
+.badge-pct-high{background:linear-gradient(135deg,var(--menthe),#4a8a78)}
+
+/* Cards */
+.card{background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(226,232,235,.6);transition:transform .2s}
+.card-img{height:180px;position:relative;background-size:cover;background-position:center}
+.card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(20,29,34,.5) 0%,transparent 50%)}
+.card-body{padding:16px}
+.card-title{font-family:Comfortaa,sans-serif;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:4px;line-height:1.3}
+.card-loc{font-size:11px;color:var(--g600);display:flex;align-items:center;gap:4px;margin-bottom:10px}
+.card-price{font-size:18px;font-weight:700;color:var(--menthe)}
+.card-price small{font-size:11px;font-weight:400;color:var(--g600)}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--g200)}
+.card-route{font-size:11px;color:var(--g600);display:flex;align-items:center;gap:4px}
+
+/* Sidebar */
+.layout{display:flex;height:calc(900px - 64px)}
+.sidebar{width:240px;background:var(--white);border-right:1px solid var(--g200);padding:20px 12px;display:flex;flex-direction:column}
+.sidebar-label{font-size:9px;letter-spacing:2px;color:var(--g400);padding:0 12px 12px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13px;color:var(--slate);margin-bottom:2px;font-weight:500}
+.sidebar-item.on{background:rgba(94,163,143,.1);color:var(--menthe);font-weight:600;border-left:3px solid var(--menthe);margin-left:-3px}
+.sidebar-item.dim{opacity:.45}
+.content{flex:1;padding:28px 32px;overflow:hidden}
+
+/* Forms */
+.form-title{font-family:Comfortaa,sans-serif;font-size:22px;font-weight:700;color:var(--slate);margin-bottom:4px}
+.form-sub{font-size:13px;color:var(--g600);margin-bottom:24px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--g600);margin-bottom:6px}
+.field input,.field select{width:100%;height:44px;padding:0 14px;border:1px solid var(--g200);border-radius:var(--r-sm);font-size:14px;font-family:inherit;color:var(--slate);background:var(--white)}
+.field input::placeholder{color:var(--g400)}
+.stepper{display:flex;align-items:center;gap:8px;margin-bottom:28px}
+.step{width:48px;height:5px;border-radius:3px;background:var(--g200)}
+.step.done{background:var(--menthe)}
+.step-label{font-size:12px;color:var(--g600);margin-left:8px}
+
+/* Hero strip */
+.hero{background:linear-gradient(135deg,var(--slate) 0%,#1e2d35 50%,var(--menthe) 100%);padding:28px 32px;color:#fff}
+.hero h1{font-family:Comfortaa,sans-serif;font-size:26px;font-weight:700;margin-bottom:6px}
+.hero p{font-size:14px;opacity:.85;max-width:520px;line-height:1.5}
+.hero-stats{display:flex;gap:32px;margin-top:20px}
+.hero-stat strong{display:block;font-size:22px;font-weight:700;color:var(--nectarine)}
+.hero-stat span{font-size:11px;opacity:.7}
+
+/* Filters */
+.filters{display:flex;gap:10px;align-items:center;padding:16px 32px;background:var(--white);border-bottom:1px solid var(--g200);flex-wrap:wrap}
+.chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--g200);background:var(--white);color:var(--slate)}
+.chip.on{background:var(--slate);color:#fff;border-color:var(--slate)}
+.filter-input{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--g200);border-radius:var(--r-sm);font-size:12px;color:var(--g400);background:var(--g100);min-width:160px}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+
+/* Detail page */
+.detail{display:flex;gap:28px;padding:24px 32px;height:calc(900px - 64px - 120px)}
+.detail-gallery{flex:1.2;border-radius:var(--r);overflow:hidden;position:relative;background:var(--g200)}
+.detail-main{height:320px;background-size:cover;background-position:center;position:relative}
+.detail-thumbs{display:flex;gap:8px;padding:12px;background:var(--white)}
+.detail-thumb{width:72px;height:52px;border-radius:6px;background-size:cover;background-position:center;border:2px solid transparent}
+.detail-thumb.on{border-color:var(--menthe)}
+.detail-info{flex:1;max-width:420px}
+.detail-info h2{font-family:Comfortaa,sans-serif;font-size:22px;font-weight:700;color:var(--slate);margin-bottom:6px}
+.rateio{background:var(--white);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin:16px 0}
+.rateio h3{font-size:12px;font-weight:600;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.rateio-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--g100)}
+.rateio-row:last-child{border:none;font-weight:700;color:var(--menthe);font-size:16px;padding-top:10px}
+.morador{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--g100)}
+.morador:last-child{border:none}
+.morador-info strong{display:block;font-size:13px;color:var(--slate)}
+.morador-info span{font-size:11px;color:var(--g600)}
+
+/* Chat */
+.chat-wrap{display:flex;height:calc(900px - 64px)}
+.chat-list{width:300px;background:var(--white);border-right:1px solid var(--g200);display:flex;flex-direction:column}
+.chat-list-hdr{padding:16px 16px 12px;font-size:15px;font-weight:600;color:var(--slate);display:flex;justify-content:space-between;align-items:center}
+.chat-search{margin:0 12px 12px;padding:10px 14px;background:var(--g100);border-radius:20px;font-size:12px;color:var(--g400);display:flex;align-items:center;gap:8px}
+.chat-item{display:flex;gap:10px;padding:12px 16px;cursor:pointer;border-left:3px solid transparent}
+.chat-item.on{background:rgba(94,163,143,.08);border-left-color:var(--menthe)}
+.chat-item-body{flex:1;min-width:0}
+.chat-item-name{font-size:13px;font-weight:600;color:var(--slate)}
+.chat-item-preview{font-size:11px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.chat-item-meta{text-align:right;font-size:10px;color:var(--g400)}
+.chat-unread{background:var(--salmon);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:4px;margin-left:auto}
+.chat-main{flex:1;display:flex;flex-direction:column;background:var(--g100)}
+.chat-main-hdr{padding:14px 20px;background:var(--white);border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:12px}
+.chat-msgs{flex:1;padding:20px;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:65%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.45}
+.msg-in{background:var(--white);color:var(--slate);align-self:flex-start;border-bottom-left-radius:4px;box-shadow:var(--shadow)}
+.msg-out{background:var(--menthe);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--g400);margin-top:4px}
+.msg-out .msg-time{color:rgba(255,255,255,.7);text-align:right}
+.chat-input-bar{padding:14px 20px;background:var(--white);border-top:1px solid var(--g200);display:flex;gap:10px;align-items:center}
+.chat-input{flex:1;height:44px;padding:0 18px;border:1px solid var(--g200);border-radius:22px;font-size:13px;font-family:inherit;color:var(--g400)}
+.chat-info{width:340px;background:var(--white);border-left:1px solid var(--g200);padding:20px;overflow:hidden}
+.chat-info-img{height:120px;border-radius:var(--r-sm);background-size:cover;margin-bottom:14px}
+
+/* Auth */
+.auth-center{display:flex;align-items:center;justify-content:center;height:calc(900px - 64px);background:linear-gradient(135deg,var(--g100) 0%,rgba(94,163,143,.08) 100%)}
+.auth-card{width:440px;background:var(--white);border-radius:20px;padding:40px;box-shadow:var(--shadow-lg)}
+.auth-visual{width:440px;background:linear-gradient(145deg,var(--menthe),var(--slate));border-radius:20px;padding:40px;color:#fff;display:flex;flex-direction:column;justify-content:center}
+.auth-visual h2{font-family:Comfortaa,sans-serif;font-size:28px;font-weight:700;margin-bottom:12px;line-height:1.2}
+.auth-visual p{font-size:14px;opacity:.9;line-height:1.6}
+.auth-visual-stats{margin-top:32px;display:flex;gap:24px}
+.auth-visual-stats div strong{display:block;font-size:20px;color:var(--nectarine)}
+
+/* Blur overlay */
+.blur-layer{position:absolute;inset:64px 0 0;background:rgba(20,29,34,.88);display:flex;align-items:center;justify-content:center;z-index:10;backdrop-filter:blur(8px)}
+.blur-box{text-align:center;color:#fff;max-width:400px}
+.blur-box h2{font-family:Comfortaa,sans-serif;font-size:28px;margin-bottom:10px}
+.blur-box p{font-size:14px;opacity:.8;margin-bottom:28px;line-height:1.5}
+.blur-box .btn{margin:0 6px}
+
+/* Page title bar */
+.page-bar{padding:14px 32px;background:var(--white);border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+.page-bar h1{font-family:Comfortaa,sans-serif;font-size:18px;font-weight:700;color:var(--slate)}
+.page-bar span{font-size:12px;color:var(--g600)}
+
+/* Favoritos list */
+.fav-row{display:flex;gap:16px;padding:16px;background:var(--white);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--shadow);align-items:center;border:1px solid var(--g200)}
+.fav-img{width:100px;height:80px;border-radius:var(--r-sm);background-size:cover;flex-shrink:0}
+.fav-body{flex:1}
+.fav-body h3{font-size:14px;font-weight:600;color:var(--slate);margin-bottom:4px}
+.fav-body p{font-size:12px;color:var(--g600)}
+
+/* Publish form */
+.publish-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 32px}
+.publish-photos{grid-column:1/-1;background:var(--white);border-radius:var(--r);padding:24px;border:2px dashed var(--g200);text-align:center}
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.photo-slot{height:100px;border-radius:var(--r-sm);background-size:cover;position:relative}
+.photo-slot.add{background:var(--g100);display:flex;align-items:center;justify-content:center;color:var(--g400);font-size:24px;border:1px dashed var(--g200)}
+
+.section-title{font-family:Comfortaa,sans-serif;font-size:18px;font-weight:700;color:var(--slate);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--g600);margin-bottom:20px}
+.tag-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tag-grid .tag{cursor:pointer}
+.tag-grid .tag-on{cursor:pointer}
+.plus-note{font-size:10px;color:var(--g400);font-style:italic;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="badge-fixed">RoomMatch Hi-Fi · 19 telas · 1440×900 · html.to.design</div>
+<div class="canvas" style="width:3008px;height:9720px">
+<section class="screen" data-name="Locatário · Mural" style="left:0px;top:0px"><span class="screen-label">Locatário · Mural</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="hero">
+      <h1>Encontre moradia compatível na RMC</h1>
+      <p>Matching por convivência, rateio transparente e tempo até sua faculdade ou trabalho.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>847</strong><span>imóveis ativos</span></div>
+        <div class="hero-stat"><strong>92%</strong><span>match médio</span></div>
+        <div class="hero-stat"><strong>32 min</strong><span>desloc. médio GTFS</span></div>
+      </div>
+    </div>
+    <div class="filters">
+      <span class="chip on">Todos</span>
+      <span class="chip">Apart.</span>
+      <span class="chip">Kitnet</span>
+      <span class="chip">Casa</span>
+      <span class="chip">República</span>
+      <span class="filter-input"><svg width="16" height="16" fill="none" stroke="#94A3AD" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg> Barão Geraldo, Campinas</span>
+      <span class="filter-input">Até R$ 1.200</span>
+      <span class="filter-input">Pet Friendly</span>
+      <span class="btn btn-primary btn-sm">Buscar match</span>
+    </div>
+    <div class="grid"><article class="card"><div class="card-img" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"><span class="badge-pct badge-pct-high" style="position:absolute;top:12px;right:12px;z-index:2">92% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">República</span></div><div class="card-body"><div class="card-title">Quarto em república · Barão Geraldo</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas</div><div class="card-price">R$ 850<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">Pet Friendly</span><span class="tag">Silêncio Noturno</span><span class="tag">Home Office</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 28 min · PUC-Campinas</span><span style="font-size:11px;color:var(--g400)">12 m²</span></div></div></article><article class="card"><div class="card-img" style="background:linear-gradient(135deg,#FBB050 0%,#e8953a 50%,#5EA38F 100%)"><span class="badge-pct" style="position:absolute;top:12px;right:12px;z-index:2">78% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">Kitnet</span></div><div class="card-body"><div class="card-title">Kitnet mobiliada · Cambuí</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Cambuí, Campinas</div><div class="card-price">R$ 1.200<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">LGBTQIA+ Safe</span><span class="tag">Vegetariano</span><span class="tag">Home Office</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 18 min · UNICAMP</span><span style="font-size:11px;color:var(--g400)">28 m²</span></div></div></article><article class="card"><div class="card-img" style="background:linear-gradient(160deg,#F08070 0%,#c45a4d 45%,#141D22 100%)"><span class="badge-pct badge-pct-high" style="position:absolute;top:12px;right:12px;z-index:2">88% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">Casa</span></div><div class="card-body"><div class="card-title">Quarto casa compartilhada · Sousas</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Sousas, Campinas</div><div class="card-price">R$ 720<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">Pet Friendly</span><span class="tag">Sem Festas</span><span class="tag">420 Friendly</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 35 min · PUC-Campinas</span><span style="font-size:11px;color:var(--g400)">14 m²</span></div></div></article><article class="card"><div class="card-img" style="background:linear-gradient(120deg,#667eea 0%,#764ba2 60%,#141D22 100%)"><span class="badge-pct" style="position:absolute;top:12px;right:12px;z-index:2">81% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">Apart.</span></div><div class="card-body"><div class="card-title">Quarto suite · Taquaral</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Taquaral, Campinas</div><div class="card-price">R$ 980<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">Silêncio Noturno</span><span class="tag">Home Office</span><span class="tag">LGBTQIA+ Safe</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 22 min · PUCC</span><span style="font-size:11px;color:var(--g400)">16 m²</span></div></div></article><article class="card"><div class="card-img" style="background:linear-gradient(145deg,#11998e 0%,#38ef7d 50%,#141D22 100%)"><span class="badge-pct badge-pct-high" style="position:absolute;top:12px;right:12px;z-index:2">95% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">República</span></div><div class="card-body"><div class="card-title">Vaga república estudantil · Guanabara</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Guanabara, Campinas</div><div class="card-price">R$ 650<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">Vegetariano</span><span class="tag">Silêncio Noturno</span><span class="tag">Home Office</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 15 min · UNICAMP</span><span style="font-size:11px;color:var(--g400)">11 m²</span></div></div></article><article class="card"><div class="card-img" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 50%,#5EA38F 100%)"><span class="badge-pct" style="position:absolute;top:12px;right:12px;z-index:2">74% match</span><span class="tag tag-menthe" style="position:absolute;top:12px;left:12px;z-index:2">Apart.</span></div><div class="card-body"><div class="card-title">Quarto amplo · Nova Campinas</div><div class="card-loc"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Nova Campinas, Campinas</div><div class="card-price">R$ 1.100<small>/mês total</small></div><div class="card-tags"><span class="tag tag-on">Pet Friendly</span><span class="tag">Social Moderado</span></div><div class="card-meta"><span class="card-route"><svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg> 25 min · PUC-Campinas</span><span style="font-size:11px;color:var(--g400)">18 m²</span></div></div></article></div>
+    </section><section class="screen" data-name="Locatário · Imóvel (logado)" style="left:1504px;top:0px"><span class="screen-label">Locatário · Imóvel (logado)</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="page-bar"><h1>Detalhes do imóvel</h1>
+      <span><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas</span></div>
+    <div class="detail" style="position:relative">
+      <div class="detail-gallery">
+        <div class="detail-main" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)">
+          <span class="badge-pct badge-pct-high" style="position:absolute;top:16px;left:16px">92% afinidade</span>
+        </div>
+        <div class="detail-thumbs"><div class="detail-thumb on" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div></div>
+      </div>
+      <div class="detail-info">
+        <h2>Quarto em república · Barão Geraldo</h2>
+        <div style="display:flex;gap:8px;margin-bottom:12px"><span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio Noturno</span><span class="tag tag-on">Home Office</span></div>
+        <div class="rateio"><h3>Rateio transparente</h3><div class="rateio-row"><span>Aluguel</span><span>R$ 600</span></div><div class="rateio-row"><span>Cond.</span><span>R$ 120</span></div><div class="rateio-row"><span>IPTU</span><span>R$ 45</span></div><div class="rateio-row"><span>Contas</span><span>R$ 85</span></div><div class="rateio-row"><span>Total mensal</span><span>R$ 850</span></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px;background:var(--white);border-radius:var(--r-sm);margin-bottom:16px;box-shadow:var(--shadow)">
+          <svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg><div><strong style="font-size:13px;color:var(--slate)">28 min · PUC-Campinas</strong>
+          <div style="font-size:11px;color:var(--g600)">3,8 km · EMDEC/EMTU GTFS</div></div></div>
+        <div style="margin-bottom:16px"><strong style="font-size:13px;color:var(--slate)">Moradores atuais</strong><div class="morador"><div class="avatar" style="background:#5EA38F">JS</div><div class="morador-info"><strong>João Santos</strong><span>Eng. Software · 28 anos</span></div></div><div class="morador"><div class="avatar" style="background:#F08070">AC</div><div class="morador-info"><strong>Ana Costa</strong><span>Med. Veterinária · 24 anos</span></div></div><div class="morador"><div class="avatar" style="background:#FBB050">PL</div><div class="morador-info"><strong>Pedro Lima</strong><span>Estudante Econ. · 22 anos</span></div></div></div>
+        <div style='display:flex;gap:10px'><span class='btn btn-secondary'>♥ Favoritar</span><span class='btn btn-primary'>Conversar com locador</span></div>
+      </div>
+      
+    </div>
+    </section><section class="screen" data-name="Locatário · Imóvel (blur)" style="left:0px;top:972px"><span class="screen-label">Locatário · Imóvel (blur)</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="page-bar"><h1>Detalhes do imóvel</h1>
+      <span><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas</span></div>
+    <div class="detail" style="position:relative">
+      <div class="detail-gallery">
+        <div class="detail-main" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)">
+          <span class="badge-pct badge-pct-high" style="position:absolute;top:16px;left:16px">92% afinidade</span>
+        </div>
+        <div class="detail-thumbs"><div class="detail-thumb on" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div><div class="detail-thumb" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div></div>
+      </div>
+      <div class="detail-info">
+        <h2>Quarto em república · Barão Geraldo</h2>
+        <div style="display:flex;gap:8px;margin-bottom:12px"><span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio Noturno</span><span class="tag tag-on">Home Office</span></div>
+        <div class="rateio"><h3>Rateio transparente</h3><div class="rateio-row"><span>Aluguel</span><span>R$ 600</span></div><div class="rateio-row"><span>Cond.</span><span>R$ 120</span></div><div class="rateio-row"><span>IPTU</span><span>R$ 45</span></div><div class="rateio-row"><span>Contas</span><span>R$ 85</span></div><div class="rateio-row"><span>Total mensal</span><span>R$ 850</span></div></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px;background:var(--white);border-radius:var(--r-sm);margin-bottom:16px;box-shadow:var(--shadow)">
+          <svg width="16" height="16" fill="none" stroke="#5EA38F" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><circle cx="4" cy="14" r="1.5"/><circle cx="12" cy="14" r="1.5"/></svg><div><strong style="font-size:13px;color:var(--slate)">28 min · PUC-Campinas</strong>
+          <div style="font-size:11px;color:var(--g600)">3,8 km · EMDEC/EMTU GTFS</div></div></div>
+        <div style="margin-bottom:16px"><strong style="font-size:13px;color:var(--slate)">Moradores atuais</strong><div class="morador"><div class="avatar" style="background:#5EA38F">JS</div><div class="morador-info"><strong>João Santos</strong><span>Eng. Software · 28 anos</span></div></div><div class="morador"><div class="avatar" style="background:#F08070">AC</div><div class="morador-info"><strong>Ana Costa</strong><span>Med. Veterinária · 24 anos</span></div></div><div class="morador"><div class="avatar" style="background:#FBB050">PL</div><div class="morador-info"><strong>Pedro Lima</strong><span>Estudante Econ. · 22 anos</span></div></div></div>
+        
+      </div>
+      <div class="blur-layer"><div class="blur-box"><h2>Cadastre-se para ver o rateio completo</h2><p>Transparência total: aluguel, condomínio, IPTU e contas estimadas — sem taxas ocultas.</p><span class="btn btn-primary btn-lg">Criar conta grátis</span><span class="btn btn-secondary btn-lg">Já tenho conta</span></div></div>
+    </div>
+    </section><section class="screen" data-name="Auth · Entrar ou cadastrar" style="left:1504px;top:972px"><span class="screen-label">Auth · Entrar ou cadastrar</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center" style="gap:0;padding:40px">
+      <div style="display:flex;gap:0;box-shadow:var(--shadow-lg);border-radius:20px;overflow:hidden">
+        <div class="auth-visual">
+          <h2>Moradia compatível na Região de Campinas</h2>
+          <p>Matching por convivência, custo transparente e rota GTFS até sua faculdade ou trabalho.</p>
+          <div class="auth-visual-stats">
+            <div><strong>3</strong><span>ODS impactados</span></div>
+            <div><strong>847</strong><span>imóveis na RMC</span></div>
+            <div><strong>0</strong><span>taxas ocultas</span></div>
+          </div>
+        </div>
+        <div class="auth-card">
+        <div class="form-title">Comece agora</div>
+        <div class="form-sub">Cadastro gratuito · leva menos de 5 min</div>
+        <span class="btn btn-primary btn-lg" style="width:100%;margin-bottom:12px">Sou locatário — busco moradia</span>
+        <span class="btn btn-secondary btn-lg" style="width:100%;margin-bottom:20px">Sou locador — tenho vaga</span>
+        <p style="text-align:center;font-size:13px;color:var(--g600)">Já tem conta? <strong style="color:var(--menthe)">Entrar</strong></p>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Auth · Login" style="left:0px;top:1944px"><span class="screen-label">Auth · Login</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center" style="gap:0;padding:40px">
+      <div style="display:flex;gap:0;box-shadow:var(--shadow-lg);border-radius:20px;overflow:hidden">
+        <div class="auth-visual">
+          <h2>Moradia compatível na Região de Campinas</h2>
+          <p>Matching por convivência, custo transparente e rota GTFS até sua faculdade ou trabalho.</p>
+          <div class="auth-visual-stats">
+            <div><strong>3</strong><span>ODS impactados</span></div>
+            <div><strong>847</strong><span>imóveis na RMC</span></div>
+            <div><strong>0</strong><span>taxas ocultas</span></div>
+          </div>
+        </div>
+        <div class="auth-card">
+        <div class="form-title">Bem-vinda de volta</div>
+        <div class="form-sub">Entre na sua conta RoomMatch</div>
+        <div class="field"><label>E-mail</label><input value="maria.silva@puc.br"/></div>
+        <div class="field"><label>Senha</label><input type="password" value="••••••••"/></div>
+        <div style="text-align:right;margin-bottom:20px"><span style="font-size:12px;color:var(--menthe);font-weight:500">Esqueci minha senha</span></div>
+        <span class="btn btn-primary btn-lg" style="width:100%">Entrar</span>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--g600)">Não tem conta? <strong style="color:var(--menthe)">Cadastre-se</strong></p>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locatário · Cadastro dados" style="left:1504px;top:1944px"><span class="screen-label">Locatário · Cadastro dados</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step"></div><div class="step"></div><span class="step-label">Etapa 1 de 3</span></div>
+        <div class="form-title">Dados pessoais</div>
+        <div class="form-sub">Nome e contato · Locatário</div>
+        <div class="field"><label>Nome completo</label><input value="Maria Silva"/></div><div class="field"><label>E-mail</label><input value="maria.silva@puc.br"/></div><div class="field"><label>Telefone</label><input value="(19) 99876-5432"/></div><div class="field"><label>Ocupação / Instituição</label><input value="Estudante · PUC-Campinas"/></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          
+          <span class="btn btn-primary" style="flex:1">Continuar</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locatário · Cadastro preferências" style="left:0px;top:2916px"><span class="screen-label">Locatário · Cadastro preferências</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step done"></div><div class="step"></div><span class="step-label">Etapa 2 de 3</span></div>
+        <div class="form-title">Preferências de convivência</div>
+        <div class="form-sub">Tags, orçamento e limiar · Locatário</div>
+        <div class="tag-grid"><span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio Noturno</span><span class="tag tag-on">Home Office</span><span class="tag">LGBTQIA+ Safe</span><span class="tag">Vegetariano</span><span class="tag">Sem Festas</span></div><p style="font-size:11px;color:var(--g600);margin-bottom:16px">5 de 12 tags selecionadas</p><div class="field"><label>Orçamento máximo (R$)</label><input value="900"/></div><div class="field"><label>Limiar de compatibilidade (%)</label><input value="70"/></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <span class='btn btn-secondary'>Voltar</span>
+          <span class="btn btn-primary" style="flex:1">Continuar</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locatário · Cadastro termos" style="left:1504px;top:2916px"><span class="screen-label">Locatário · Cadastro termos</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step done"></div><div class="step done"></div><span class="step-label">Etapa 3 de 3</span></div>
+        <div class="form-title">Termos e privacidade</div>
+        <div class="form-sub">Consentimento LGPD · Locatário</div>
+        
+        <div style="background:var(--g100);border-radius:var(--r-sm);padding:16px;height:200px;overflow:hidden;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:16px">
+          Ao utilizar o RoomMatch, você concorda com o tratamento de dados pessoais conforme a LGPD...
+          O simulador de auxílios possui caráter orientativo. A plataforma não atua como imobiliária...
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate)">
+          <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--menthe)"/>
+          Li e aceito os termos de uso e política de privacidade
+        </label>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <span class='btn btn-secondary'>Voltar</span>
+          <span class="btn btn-primary" style="flex:1">Finalizar cadastro</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Cadastro dados" style="left:0px;top:3888px"><span class="screen-label">Locador · Cadastro dados</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step"></div><div class="step"></div><span class="step-label">Etapa 1 de 3</span></div>
+        <div class="form-title">Dados pessoais</div>
+        <div class="form-sub">Nome e contato · Locador</div>
+        <div class="field"><label>Nome completo</label><input value="João Santos"/></div><div class="field"><label>E-mail</label><input value="joao.santos@gmail.com"/></div><div class="field"><label>Telefone</label><input value="(19) 98765-4321"/></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          
+          <span class="btn btn-primary" style="flex:1">Continuar</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Cadastro imóvel" style="left:1504px;top:3888px"><span class="screen-label">Locador · Cadastro imóvel</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step done"></div><div class="step"></div><span class="step-label">Etapa 2 de 3</span></div>
+        <div class="form-title">Dados do imóvel</div>
+        <div class="form-sub">Endereço e rateio inicial · Locador</div>
+        <div class="field"><label>Endereço / Bairro</label><input value="Barão Geraldo, Campinas"/></div><div class="field"><label>Tipo de imóvel</label><input value="República · Quarto"/></div><div class="field"><label>Aluguel (R$)</label><input value="600"/></div><div class="field"><label>Condomínio + IPTU (R$)</label><input value="165"/></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <span class='btn btn-secondary'>Voltar</span>
+          <span class="btn btn-primary" style="flex:1">Continuar</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Cadastro termos" style="left:0px;top:4860px"><span class="screen-label">Locador · Cadastro termos</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Como funciona</span><span class="btn btn-secondary btn-sm">Entrar</span><span class="btn btn-primary btn-sm">Cadastrar</span></div></header>
+    <div class="auth-center">
+      <div class="auth-card" style="width:520px">
+        <div class="stepper"><div class="step done"></div><div class="step done"></div><div class="step done"></div><span class="step-label">Etapa 3 de 3</span></div>
+        <div class="form-title">Termos e privacidade</div>
+        <div class="form-sub">Consentimento LGPD · Locador</div>
+        
+        <div style="background:var(--g100);border-radius:var(--r-sm);padding:16px;height:200px;overflow:hidden;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:16px">
+          Ao utilizar o RoomMatch, você concorda com o tratamento de dados pessoais conforme a LGPD...
+          O simulador de auxílios possui caráter orientativo. A plataforma não atua como imobiliária...
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate)">
+          <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--menthe)"/>
+          Li e aceito os termos de uso e política de privacidade
+        </label>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <span class='btn btn-secondary'>Voltar</span>
+          <span class="btn btn-primary" style="flex:1">Finalizar cadastro</span>
+        </div>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Config · Perfil" style="left:1504px;top:4860px"><span class="screen-label">Config · Perfil</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="page-bar"><h1>Configurações</h1><span>Gerencie sua conta</span></div>
+    <div class="layout"><aside class="sidebar"><div class="sidebar-label">MENU</div><div class="sidebar-item on">Perfil</div><div class="sidebar-item">Preferências</div><div class="sidebar-item">Favoritos</div><div class="sidebar-item">Segurança</div><div class="sidebar-item">Termos</div><div style="flex:1"></div><div class="sidebar-item dim" style="color:var(--salmon)">Sair da conta</div></aside><div class="content">
+    <div class="section-title">Perfil</div>
+    <div class="section-sub">Dados da sua conta</div>
+    <div style="display:flex;gap:20px;align-items:center;margin-bottom:28px">
+      <div class="avatar" style="width:72px;height:72px;font-size:22px;background:#5EA38F">MS</div>
+      <div><strong style="font-size:18px;color:var(--slate)">Maria Silva</strong>
+      <div style="font-size:13px;color:var(--g600)">maria.silva@puc.br · Locatária</div>
+      <div style="font-size:12px;color:var(--menthe);margin-top:4px">Estudante · PUC-Campinas</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px">
+      <div class="field"><label>Nome completo</label><input value="Maria Silva"/></div>
+      <div class="field"><label>Telefone</label><input value="(19) 99876-5432"/></div>
+      <div class="field"><label>Instituição</label><input value="PUC-Campinas"/></div>
+      <div class="field"><label>Ocupação</label><input value="Estudante de Ciência de Dados"/></div>
+      <div class="field"><label>Renda / Orçamento</label><input value="R$ 900/mês"/></div>
+    </div>
+    <div style="margin-top:24px;display:flex;gap:10px;justify-content:flex-end;max-width:640px">
+      <span class="btn btn-secondary">Cancelar</span><span class="btn btn-primary">Salvar alterações</span>
+    </div></div></div>
+    </section><section class="screen" data-name="Config · Preferências" style="left:0px;top:5832px"><span class="screen-label">Config · Preferências</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="page-bar"><h1>Configurações</h1><span>Gerencie sua conta</span></div>
+    <div class="layout"><aside class="sidebar"><div class="sidebar-label">MENU</div><div class="sidebar-item">Perfil</div><div class="sidebar-item on">Preferências</div><div class="sidebar-item">Favoritos</div><div class="sidebar-item">Segurança</div><div class="sidebar-item">Termos</div><div style="flex:1"></div><div class="sidebar-item dim" style="color:var(--salmon)">Sair da conta</div></aside><div class="content">
+    <div class="section-title">Preferências</div>
+    <div class="section-sub">Suas tags de convivência · 5/12</div>
+    <p style="font-size:13px;font-weight:600;color:var(--slate);margin-bottom:10px">Suas tags</p>
+    <div class="tag-grid"><span class="tag tag-on">Pet Friendly ✕</span><span class="tag tag-on">Silêncio Noturno ✕</span><span class="tag tag-on">Home Office ✕</span><span class="tag tag-on">LGBTQIA+ Safe ✕</span><span class="tag tag-on">Vegetariano ✕</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:560px;margin-bottom:24px">
+      <div class="field"><label>Orçamento máximo mensal</label><input value="R$ 900"/></div>
+      <div class="field"><label>Limiar de compatibilidade</label><input value="70%"/></div>
+    </div>
+    <p style="font-size:13px;font-weight:600;color:var(--slate);margin-bottom:10px">Em alta na sua região</p>
+    <div class="tag-grid"><span class="tag">420 Friendly +</span><span class="tag">Sem Festas +</span><span class="tag">Pet Friendly +</span><span class="tag">Vegano +</span><span class="tag">Social Moderado +</span></div>
+    <div style="display:flex;justify-content:flex-end;max-width:640px;margin-top:16px">
+      <span class="btn btn-primary">Salvar preferências</span>
+    </div></div></div>
+    </section><section class="screen" data-name="Config · Favoritos" style="left:1504px;top:5832px"><span class="screen-label">Config · Favoritos</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Explorar</span><span class="hdr-link active">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="page-bar"><h1>Configurações</h1><span>Gerencie sua conta</span></div>
+    <div class="layout"><aside class="sidebar"><div class="sidebar-label">MENU</div><div class="sidebar-item">Perfil</div><div class="sidebar-item">Preferências</div><div class="sidebar-item on">Favoritos</div><div class="sidebar-item">Segurança</div><div class="sidebar-item">Termos</div><div style="flex:1"></div><div class="sidebar-item dim" style="color:var(--salmon)">Sair da conta</div></aside><div class="content">
+    <div class="section-title">Favoritos</div>
+    <div class="section-sub">4 imóveis salvos</div>
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <div class="filter-input" style="flex:1"><svg width="16" height="16" fill="none" stroke="#94A3AD" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg> Buscar nos favoritos</div>
+      <div class="filter-input">Mais recentes ▾</div>
+    </div>
+    
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div>
+          <div class="fav-body">
+            <h3>Quarto em república · Barão Geraldo</h3>
+            <p><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas · R$ 850/mês · <strong style="color:var(--menthe)">92% match</strong></p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag tag-on">Pet Friendly</span><span class="tag">Silêncio Noturno</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Ver detalhes</span>
+          <span style="padding:8px"><svg width="18" height="18" fill="#F08070" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+        </div>
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(135deg,#FBB050 0%,#e8953a 50%,#5EA38F 100%)"></div>
+          <div class="fav-body">
+            <h3>Kitnet mobiliada · Cambuí</h3>
+            <p><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Cambuí, Campinas · R$ 1.200/mês · <strong style="color:var(--menthe)">78% match</strong></p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag tag-on">LGBTQIA+ Safe</span><span class="tag">Vegetariano</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Ver detalhes</span>
+          <span style="padding:8px"><svg width="18" height="18" fill="#F08070" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+        </div>
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(160deg,#F08070 0%,#c45a4d 45%,#141D22 100%)"></div>
+          <div class="fav-body">
+            <h3>Quarto casa compartilhada · Sousas</h3>
+            <p><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Sousas, Campinas · R$ 720/mês · <strong style="color:var(--menthe)">88% match</strong></p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag tag-on">Pet Friendly</span><span class="tag">Sem Festas</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Ver detalhes</span>
+          <span style="padding:8px"><svg width="18" height="18" fill="#F08070" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+        </div>
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(120deg,#667eea 0%,#764ba2 60%,#141D22 100%)"></div>
+          <div class="fav-body">
+            <h3>Quarto suite · Taquaral</h3>
+            <p><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Taquaral, Campinas · R$ 980/mês · <strong style="color:var(--menthe)">81% match</strong></p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag tag-on">Silêncio Noturno</span><span class="tag">Home Office</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Ver detalhes</span>
+          <span style="padding:8px"><svg width="18" height="18" fill="#F08070" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+        </div>
+    <p class="plus-note">[Plus v2] Comparador lado a lado — até 3 imóveis (RF37)</p></div></div>
+    </section><section class="screen" data-name="Config · Segurança" style="left:0px;top:6804px"><span class="screen-label">Config · Segurança</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="page-bar"><h1>Configurações</h1><span>Gerencie sua conta</span></div>
+    <div class="layout"><aside class="sidebar"><div class="sidebar-label">MENU</div><div class="sidebar-item">Perfil</div><div class="sidebar-item">Preferências</div><div class="sidebar-item">Favoritos</div><div class="sidebar-item on">Segurança</div><div class="sidebar-item">Termos</div><div style="flex:1"></div><div class="sidebar-item dim" style="color:var(--salmon)">Sair da conta</div></aside><div class="content">
+    <div class="section-title">Segurança</div>
+    <div class="section-sub">Senha e privacidade · LGPD</div>
+    <div style="max-width:400px">
+      <div class="field"><label>Senha atual</label><input type="password" value="••••••••"/></div>
+      <div class="field"><label>Nova senha</label><input type="password" value="••••••••"/></div>
+      <div class="field"><label>Confirmar nova senha</label><input type="password" value="••••••••"/></div>
+      <span class="btn btn-primary">Alterar senha</span>
+    </div>
+    <div style="margin-top:40px;padding:20px;background:rgba(240,128,112,.08);border-radius:var(--r);max-width:480px;border:1px solid rgba(240,128,112,.2)">
+      <strong style="font-size:13px;color:var(--salmon)">Excluir minha conta</strong>
+      <p style="font-size:12px;color:var(--g600);margin-top:6px;line-height:1.5">Remove permanentemente seus dados conforme a LGPD. Esta ação não pode ser desfeita.</p>
+      <span class="btn btn-salmon btn-sm" style="margin-top:12px">Excluir conta</span>
+    </div></div></div>
+    </section><section class="screen" data-name="Locatário · Chat" style="left:1504px;top:6804px"><span class="screen-label">Locatário · Chat</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link active">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#5EA38F">MS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">Maria Silva</span></div></div></header>
+    <div class="chat-wrap">
+      <div class="chat-list">
+        <div class="chat-list-hdr">Mensagens <span style="font-size:18px;color:var(--menthe)">+</span></div>
+        <div class="chat-search"><svg width="16" height="16" fill="none" stroke="#94A3AD" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg> buscar conversa</div>
+        <div style="font-size:9px;letter-spacing:1px;color:var(--g400);padding:0 16px 8px">FIXADAS</div>
+        
+        <div class="chat-item on">
+          <div class="avatar-sm" style="background:#5EA38F">JS</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">João Santos · 92%</div>
+            <div class="chat-item-preview">Posso te mostrar o imóvel amanhã...</div>
+          </div>
+          <div class="chat-item-meta">14:45
+          <div class='chat-unread'>2</div></div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">AC</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Ana Costa · 78%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">PL</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Pedro Lima · 85%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">RF</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Rita Ferreira · 71%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-main-hdr">
+          <div class="avatar-sm" style="background:#FBB050">JS</div>
+          <div><strong style="font-size:14px;color:var(--slate)">João Santos</strong>
+          <div style="font-size:11px;color:var(--menthe)">online · 92% afinidade</div></div>
+        </div>
+        <div class="chat-msgs"><div style="text-align:center;font-size:10px;color:var(--g400);margin-bottom:8px">HOJE</div><div class="msg msg-in">Oi Maria! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?<div class="msg-time">14:32</div></div><div class="msg msg-out">Oi João! Pode sim, funciona perfeito. O condomínio aceita pet pequeno mesmo?<div class="msg-time">14:38</div></div><div class="msg msg-in">Sim! Temos um gato e o condomínio é pet friendly. Te mando fotos do quarto por aqui.<div class="msg-time">14:41</div></div><div class="msg msg-out">Ótimo! E sobre o rateio das contas, a estimativa de R$ 85 inclui internet?<div class="msg-time">14:45</div></div></div>
+        <div class="chat-input-bar">
+          <input class="chat-input" value="Escreva uma mensagem..." readonly/>
+          <span class="btn btn-primary" style="width:44px;height:44px;border-radius:50%;padding:0"><svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></span>
+        </div>
+      </div>
+      <div class="chat-info">
+        <div style="font-size:13px;font-weight:600;color:var(--slate);margin-bottom:12px">Info do imóvel</div>
+        <div class="chat-info-img" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div>
+        <strong style="font-size:14px;color:var(--slate)">Quarto em república · Barão Geraldo</strong>
+        <div style="font-size:12px;color:var(--g600);margin:6px 0 14px"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas</div>
+        <div class="rateio" style="padding:12px;margin:0 0 14px"><h3 style="margin-bottom:8px">Rateio</h3><div class="rateio-row"><span>Aluguel</span><span style="font-weight:600">R$ 600</span></div><div class="rateio-row"><span>Cond.</span><span style="font-weight:600">R$ 120</span></div><div class="rateio-row"><span>IPTU</span><span style="font-weight:600">R$ 45</span></div>
+        <div class="rateio-row"><span>Total</span><span style="color:var(--menthe)">R$ 850</span></div></div>
+        <p style="font-size:11px;font-weight:600;color:var(--slate);margin-bottom:8px">TAGS EM COMUM</p>
+        <div class="tag-grid" style="margin-bottom:16px">
+          <span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio</span>
+        </div>
+        <span class="btn btn-primary" style="width:100%">Ver imóvel</span>
+        <p class="plus-note">[Plus] Compartilhar WhatsApp (RF36)</p>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Meus Anúncios" style="left:0px;top:7776px"><span class="screen-label">Locador · Meus Anúncios</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#FBB050">JS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">João Santos</span></div></div></header>
+    <div class="page-bar">
+      <h1>Meus Anúncios</h1>
+      <span class="btn btn-primary btn-sm">+ Publicar novo anúncio</span>
+    </div>
+    <div style="padding:24px 32px">
+      <div style="display:flex;gap:16px;margin-bottom:24px">
+        <div style="flex:1;background:var(--white);padding:16px 20px;border-radius:var(--r);box-shadow:var(--shadow)">
+          <strong style="font-size:22px;color:var(--menthe)">3</strong><span style="font-size:12px;color:var(--g600);display:block">anúncios ativos</span></div>
+        <div style="flex:1;background:var(--white);padding:16px 20px;border-radius:var(--r);box-shadow:var(--shadow)">
+          <strong style="font-size:22px;color:var(--salmon)">7</strong><span style="font-size:12px;color:var(--g600);display:block">candidatos esta semana</span></div>
+        <div style="flex:1;background:var(--white);padding:16px 20px;border-radius:var(--r);box-shadow:var(--shadow)">
+          <strong style="font-size:22px;color:var(--nectarine)">88%</strong><span style="font-size:12px;color:var(--g600);display:block">afinidade média</span></div>
+      </div>
+      
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%);width:120px;height:96px"></div>
+          <div class="fav-body">
+            <h3>Quarto em república · Barão Geraldo</h3>
+            <p>R$ 850/mês · <span style="color:var(--menthe);font-weight:600">Ativo</span> · 3 candidatos · 92% match médio</p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag">Pet Friendly</span><span class="tag">Silêncio Noturno</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Editar</span>
+          <span class="btn btn-primary btn-sm">Ver candidatos</span>
+        </div>
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(135deg,#FBB050 0%,#e8953a 50%,#5EA38F 100%);width:120px;height:96px"></div>
+          <div class="fav-body">
+            <h3>Kitnet mobiliada · Cambuí</h3>
+            <p>R$ 1.200/mês · <span style="color:var(--menthe);font-weight:600">Ativo</span> · 2 candidatos · 78% match médio</p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag">LGBTQIA+ Safe</span><span class="tag">Vegetariano</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Editar</span>
+          <span class="btn btn-primary btn-sm">Ver candidatos</span>
+        </div>
+        <div class="fav-row">
+          <div class="fav-img" style="background:linear-gradient(160deg,#F08070 0%,#c45a4d 45%,#141D22 100%);width:120px;height:96px"></div>
+          <div class="fav-body">
+            <h3>Quarto casa compartilhada · Sousas</h3>
+            <p>R$ 720/mês · <span style="color:var(--menthe);font-weight:600">Ativo</span> · 1 candidatos · 88% match médio</p>
+            <div class="card-tags" style="margin-top:6px"><span class="tag">Pet Friendly</span><span class="tag">Sem Festas</span></div>
+          </div>
+          <span class="btn btn-secondary btn-sm">Editar</span>
+          <span class="btn btn-primary btn-sm">Ver candidatos</span>
+        </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Publicar" style="left:1504px;top:7776px"><span class="screen-label">Locador · Publicar</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link active">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#FBB050">JS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">João Santos</span></div></div></header>
+    <div class="page-bar"><h1>Publicar Anúncio</h1><span>Preencha os dados com transparência total</span></div>
+    <div class="publish-grid">
+      <div class="field"><label>Título do anúncio</label><input value="Quarto em república · Barão Geraldo"/></div>
+      <div class="field"><label>Tipo</label><input value="República · Quarto individual"/></div>
+      <div class="field"><label>Endereço / Bairro</label><input value="R. Benedito Alves Aranha, 450 · Barão Geraldo"/></div>
+      <div class="field"><label>CEP</label><input value="13085-000"/></div>
+      <div class="field"><label>Aluguel (R$)</label><input value="600"/></div>
+      <div class="field"><label>Condomínio (R$)</label><input value="120"/></div>
+      <div class="field"><label>IPTU (R$)</label><input value="45"/></div>
+      <div class="field"><label>Estimativa contas (R$)</label><input value="85"/></div>
+      <div class="publish-photos">
+        <strong style="color:var(--slate)">Fotos do imóvel</strong>
+        <p style="font-size:12px;color:var(--g600);margin-top:4px">Mínimo 3 fotos · arraste ou clique para adicionar</p>
+        <div class="photo-grid">
+          <div class="photo-slot" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div>
+          <div class="photo-slot" style="background:linear-gradient(160deg,#F08070 0%,#c45a4d 45%,#141D22 100%)"></div>
+          <div class="photo-slot" style="background:linear-gradient(135deg,#FBB050 0%,#e8953a 50%,#5EA38F 100%)"></div>
+          <div class="photo-slot add">+</div>
+        </div>
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="font-size:12px;font-weight:500;color:var(--g600)">Tags de convivência do imóvel</label>
+        <div class="tag-grid" style="margin-top:8px">
+          <span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio Noturno</span>
+          <span class="tag tag-on">Home Office</span><span class="tag">420 Friendly</span>
+          <span class="tag">Sem Festas</span><span class="tag">+ adicionar</span>
+        </div>
+      </div>
+      <div style="grid-column:1/-1;display:flex;gap:12px">
+        <span class="btn btn-secondary">Salvar rascunho</span>
+        <span class="btn btn-primary">Publicar anúncio</span>
+      </div>
+    </div>
+    </section><section class="screen" data-name="Locador · Chat candidatos" style="left:0px;top:8748px"><span class="screen-label">Locador · Chat candidatos</span>
+    <header class="hdr"><div class="hdr-logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="14" r="8" stroke="#5EA38F" stroke-width="2.5"/><circle cx="18" cy="14" r="8" stroke="#FBB050" stroke-width="2.5"/></svg> RoomMatch</div><div class="hdr-nav"><span class="hdr-link">Explorar</span><span class="hdr-link">Favoritos</span><span class="hdr-link active">Mensagens</span><div class="hdr-user"><div class="avatar" style="background:#FBB050">JS</div><span style="font-size:13px;font-weight:500;color:var(--slate)">João Santos</span></div></div></header>
+    <div class="chat-wrap">
+      <div class="chat-list">
+        <div class="chat-list-hdr">Mensagens <span style="font-size:18px;color:var(--menthe)">+</span></div>
+        <div class="chat-search"><svg width="16" height="16" fill="none" stroke="#94A3AD" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg> buscar conversa</div>
+        <div style="font-size:9px;letter-spacing:1px;color:var(--g400);padding:0 16px 8px">FIXADAS</div>
+        
+        <div class="chat-item on">
+          <div class="avatar-sm" style="background:#5EA38F">JS</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">João Santos · 92%</div>
+            <div class="chat-item-preview">Posso te mostrar o imóvel amanhã...</div>
+          </div>
+          <div class="chat-item-meta">14:45
+          <div class='chat-unread'>2</div></div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">AC</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Ana Costa · 78%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">PL</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Pedro Lima · 85%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar-sm" style="background:#FBB050">RF</div>
+          <div class="chat-item-body">
+            <div class="chat-item-name">Rita Ferreira · 71%</div>
+            <div class="chat-item-preview">Olá! Vi seu anúncio...</div>
+          </div>
+          <div class="chat-item-meta">ontem
+          </div>
+        </div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-main-hdr">
+          <div class="avatar-sm" style="background:#FBB050">JS</div>
+          <div><strong style="font-size:14px;color:var(--slate)">Maria Silva</strong>
+          <div style="font-size:11px;color:var(--menthe)">online · 92% afinidade</div></div>
+        </div>
+        <div class="chat-msgs"><div style="text-align:center;font-size:10px;color:var(--g400);margin-bottom:8px">HOJE</div><div class="msg msg-in">Oi Maria! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?<div class="msg-time">14:32</div></div><div class="msg msg-out">Oi João! Pode sim, funciona perfeito. O condomínio aceita pet pequeno mesmo?<div class="msg-time">14:38</div></div><div class="msg msg-in">Sim! Temos um gato e o condomínio é pet friendly. Te mando fotos do quarto por aqui.<div class="msg-time">14:41</div></div><div class="msg msg-out">Ótimo! E sobre o rateio das contas, a estimativa de R$ 85 inclui internet?<div class="msg-time">14:45</div></div></div>
+        <div class="chat-input-bar">
+          <input class="chat-input" value="Escreva uma mensagem..." readonly/>
+          <span class="btn btn-primary" style="width:44px;height:44px;border-radius:50%;padding:0"><svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></span>
+        </div>
+      </div>
+      <div class="chat-info">
+        <div style="font-size:13px;font-weight:600;color:var(--slate);margin-bottom:12px">Info do imóvel</div>
+        <div class="chat-info-img" style="background:linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)"></div>
+        <strong style="font-size:14px;color:var(--slate)">Quarto em república · Barão Geraldo</strong>
+        <div style="font-size:12px;color:var(--g600);margin:6px 0 14px"><svg width="14" height="14" fill="none" stroke="#5EA38F" stroke-width="2"><path d="M12 6c0 4-6 10-6 10S0 10 0 6a6 6 0 1112 0z"/><circle cx="6" cy="6" r="2"/></svg> Barão Geraldo, Campinas</div>
+        <div class="rateio" style="padding:12px;margin:0 0 14px"><h3 style="margin-bottom:8px">Rateio</h3><div class="rateio-row"><span>Aluguel</span><span style="font-weight:600">R$ 600</span></div><div class="rateio-row"><span>Cond.</span><span style="font-weight:600">R$ 120</span></div><div class="rateio-row"><span>IPTU</span><span style="font-weight:600">R$ 45</span></div>
+        <div class="rateio-row"><span>Total</span><span style="color:var(--menthe)">R$ 850</span></div></div>
+        <p style="font-size:11px;font-weight:600;color:var(--slate);margin-bottom:8px">TAGS EM COMUM</p>
+        <div class="tag-grid" style="margin-bottom:16px">
+          <span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio</span>
+        </div>
+        <span class="btn btn-primary" style="width:100%">Ver imóvel</span>
+        <p class="plus-note">[Plus] Compartilhar WhatsApp (RF36)</p>
+      </div>
+    </div>
+    </section>
+</div>
+</body>
+</html>

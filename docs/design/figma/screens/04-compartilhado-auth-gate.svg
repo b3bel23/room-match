@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Compartilhado · Entrar ou cadastrar">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+</g><g id="component/auth-card">
+<rect x="480" y="180" width="480" height="480" rx="16" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="720" y="228" text-anchor="middle" font-family="Comfortaa,sans-serif" font-size="24" font-weight="700" fill="#141D22">Bem-vindo ao RoomMatch</text>
+<text x="720" y="256" text-anchor="middle" font-size="14" fill="#4A5568">Encontre moradia compatível na RMC</text>
+<g id="component/button/criar">
+<rect x="512" y="300" width="416" height="48" rx="10" fill="#5EA38F" />
+<text x="720" y="329" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Criar conta</text>
+</g><g id="component/button/entrar">
+<rect x="512" y="364" width="416" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="720" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Entrar</text>
+</g></g></svg>

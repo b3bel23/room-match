@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Locatário · Imóvel expandido (blur)">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+</g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Detalhes do imóvel</text>
+</g><g id="content-main">
+<rect x="32" y="136" width="680" height="320" rx="12" fill="#E2E8EB"/>
+<text x="372" y="296" text-anchor="middle" font-size="14" fill="#4A5568">Galeria de fotos</text>
+</g>
+<g id="content-info">
+<text x="744" y="160" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#141D22">Quarto em república</text>
+<text x="744" y="188" font-family="DM Sans,sans-serif" font-size="13" fill="#4A5568">Barão Geraldo · Campinas</text>
+<g id="component/badge-afinidade">
+<rect x="744" y="200" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="780" y="221" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<text x="744" y="256" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Rateio transparente</text>
+<text x="744" y="276" font-size="13" fill="#4A5568">Aluguel</text>
+<text x="1392" y="276" text-anchor="end" font-size="13" font-weight="600" fill="#141D22">R$ 600</text>
+<text x="744" y="304" font-size="13" fill="#4A5568">Condomínio</text>
+<text x="1392" y="304" text-anchor="end" font-size="13" font-weight="600" fill="#141D22">R$ 120</text>
+<text x="744" y="332" font-size="13" fill="#4A5568">IPTU</text>
+<text x="1392" y="332" text-anchor="end" font-size="13" font-weight="600" fill="#141D22">R$ 45</text>
+<text x="744" y="360" font-size="13" fill="#4A5568">Contas (est.)</text>
+<text x="1392" y="360" text-anchor="end" font-size="13" font-weight="600" fill="#141D22">R$ 85</text>
+<text x="744" y="396" font-size="20" font-weight="700" fill="#5EA38F">Total: R$ 850/mês</text>
+<text x="744" y="426" font-size="12" fill="#4A5568">32 min até PUC · 4,2 km (GTFS)</text>
+<g id="component/tag/Pet Friendly">
+<rect x="744" y="440" width="112" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
+<text x="800" y="461" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Pet Friendly</text>
+</g><g id="component/tag/Silêncio">
+<rect x="864" y="440" width="88" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="908" y="461" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Silêncio</text>
+</g></g><g id="content-moradores">
+<text x="32" y="476" font-size="14" font-weight="600" fill="#141D22">Moradores atuais</text>
+<circle cx="52" cy="512" r="20" fill="#E2E8EB"/>
+<text x="80" y="516" font-size="12" fill="#141D22">Morador 1</text>
+<circle cx="252" cy="512" r="20" fill="#E2E8EB"/>
+<text x="280" y="516" font-size="12" fill="#141D22">Morador 2</text>
+<circle cx="452" cy="512" r="20" fill="#E2E8EB"/>
+<text x="480" y="516" font-size="12" fill="#141D22">Morador 3</text>
+</g><g id="blur-overlay">
+<rect x="0" y="64" width="1440" height="836" fill="rgba(20,29,34,0.85)"/>
+<text x="720" y="410" text-anchor="middle" font-family="Comfortaa,sans-serif" font-size="24" fill="#FFFFFF">Cadastre-se para ver detalhes</text>
+<g id="component/button/cta">
+<rect x="620" y="458" width="200" height="48" rx="10" fill="#5EA38F" />
+<text x="720" y="487" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Criar conta</text>
+</g>
+<g id="component/button/login">
+<rect x="620" y="518" width="200" height="48" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="720" y="547" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Entrar</text>
+</g>
+</g></svg>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Locatário · Mural (Web)">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<g id="component/header/nav">
+<circle cx="1320" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1320" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Perfil</text>
+<circle cx="1376" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1376" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Config</text>
+</g></g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Encontre sua moradia ideal</text>
+</g><g id="component/category-tab/Apart.">
+<rect x="32" y="136" width="108" height="40" rx="8" fill="#141D22" stroke="#E2E8EB"/>
+<text x="86" y="162" text-anchor="middle" font-size="13" fill="#FFFFFF">Apart.</text>
+</g><g id="component/category-tab/Kitnet">
+<rect x="152" y="136" width="108" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="206" y="162" text-anchor="middle" font-size="13" fill="#141D22">Kitnet</text>
+</g><g id="component/category-tab/Casa">
+<rect x="272" y="136" width="108" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="326" y="162" text-anchor="middle" font-size="13" fill="#141D22">Casa</text>
+</g><g id="component/category-tab/República">
+<rect x="392" y="136" width="108" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="446" y="162" text-anchor="middle" font-size="13" fill="#141D22">República</text>
+</g><g id="component/filter-bar">
+<rect x="32" y="192" width="1240" height="48" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="48" y="204" width="160" height="24" rx="4" fill="#E2E8EB"/>
+<rect x="224" y="204" width="120" height="24" rx="4" fill="#E2E8EB"/>
+<rect x="360" y="204" width="120" height="24" rx="4" fill="#E2E8EB"/>
+</g>
+<g id="component/button/match">
+<rect x="1288" y="196" width="120" height="40" rx="10" fill="#5EA38F" />
+<text x="1348" y="221" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">MATCH</text>
+</g><g id="component/card-grid">
+<g id="component/card-imovel/card-0-0">
+<rect x="32" y="264" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="32" y="264" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="242" y="341" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="364" y="276" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="400" y="297" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="48" y="430" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="48" y="446" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="48" y="528" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="component/card-imovel/card-0-1">
+<rect x="476" y="264" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="476" y="264" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="686" y="341" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="808" y="276" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="844" y="297" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="492" y="430" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="492" y="446" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="492" y="528" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="component/card-imovel/card-0-2">
+<rect x="920" y="264" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="920" y="264" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="1130" y="341" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="1252" y="276" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="1288" y="297" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="936" y="430" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="936" y="446" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="936" y="528" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="component/card-imovel/card-1-0">
+<rect x="32" y="568" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="32" y="568" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="242" y="645" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="364" y="580" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="400" y="601" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="48" y="734" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="48" y="750" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="48" y="832" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="component/card-imovel/card-1-1">
+<rect x="476" y="568" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="476" y="568" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="686" y="645" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="808" y="580" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="844" y="601" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="492" y="734" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="492" y="750" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="492" y="832" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+<g id="component/card-imovel/card-1-2">
+<rect x="920" y="568" width="420" height="280" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="920" y="568" width="420" height="154" rx="12" fill="#E2E8EB"/>
+<text x="1130" y="645" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">img placeholder</text>
+<g id="component/badge-afinidade">
+<rect x="1252" y="580" width="72" height="32" rx="16" fill="#5EA38F"/>
+<text x="1288" y="601" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">85% afinidade</text>
+</g>
+<rect x="936" y="734" width="120" height="8" rx="4" fill="#E2E8EB"/>
+<rect x="936" y="750" width="80" height="6" rx="3" fill="#E2E8EB"/>
+<text x="936" y="832" font-family="DM Sans,sans-serif" font-size="16" font-weight="700" fill="#5EA38F">R$ 850/mês</text>
+</g>
+</g></svg>

@@ -352,6 +352,8 @@ RoomMatch/
 │
 ├── 📂 docs/
 │   ├── README.md
+│   ├── design/
+│   │   └── figma/              # Kit editável para Figma (SVG + HTML + tokens)
 │   ├── requisitos-funcionais.md
 │   ├── requisitos-nao-funcionais.md
 │   ├── modelo-de-dados.md
@@ -443,7 +445,7 @@ Desenvolvimento modular, priorizando as funcionalidades essenciais do MVP e expa
 
 Ações prioritárias do grupo de trabalho:
 
-- [ ] **Wireframes (Figma):** desenhar protótipos de alta fidelidade mobile-first
+- [ ] **Wireframes (Figma):** importar kit em `docs/design/figma/` e evoluir protótipos mobile-first
 - [ ] **Modelo Relacional:** validar entidades, chaves e relacionamentos do banco
 - [ ] **Integração GTFS:** mapear linhas da EMDEC/EMTU para testes de rotas
 - [ ] Validação dos requisitos com usuários do público-alvo

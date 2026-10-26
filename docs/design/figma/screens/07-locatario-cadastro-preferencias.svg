@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Locatário · Cadastro · Preferências">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+</g><g id="component/stepper">
+<rect x="440" y="120" width="48" height="6" rx="3" fill="#5EA38F"/>
+<rect x="496" y="120" width="48" height="6" rx="3" fill="#5EA38F"/>
+<rect x="552" y="120" width="48" height="6" rx="3" fill="#E2E8EB"/>
+<text x="624" y="125" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Etapa 2/3</text>
+</g><text x="440" y="160" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#141D22">Preferências</text>
+<g id="component/input/f0">
+<text x="440" y="192" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Tags de convivência</text>
+<rect x="440" y="200" width="560" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="454" y="228" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">Selecione abaixo</text>
+</g><g id="component/input/f1">
+<text x="440" y="268" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Orçamento máximo</text>
+<rect x="440" y="276" width="560" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="454" y="304" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">R$ 900</text>
+</g><g id="component/input/f2">
+<text x="440" y="344" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A5568">Limiar de compatibilidade</text>
+<rect x="440" y="352" width="560" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="454" y="380" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">70%</text>
+</g><g id="component/button/continuar">
+<rect x="440" y="436" width="560" height="48" rx="10" fill="#5EA38F" />
+<text x="720" y="465" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Continuar</text>
+</g></svg>

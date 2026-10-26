@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" data-screen="Compartilhado · Config · Favoritos">
+<rect id="bg" width="1440" height="900" fill="#F4F6F7"/>
+<g id="component/header">
+<rect x="0" y="0" width="1440" height="64" fill="#FFFFFF"/>
+<line x1="0" y1="64" x2="1440" y2="64" stroke="#E2E8EB"/>
+<text x="32" y="40" font-family="Comfortaa,sans-serif" font-size="22" font-weight="700" fill="#5EA38F">RoomMatch</text>
+<g id="component/header/nav">
+<circle cx="1320" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1320" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Perfil</text>
+<circle cx="1376" cy="32" r="18" fill="#E2E8EB"/>
+<text x="1376" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A5568">Config</text>
+</g></g><g id="component/page-title">
+<rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
+<text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Configurações</text>
+</g><g id="component/sidebar">
+<rect x="0" y="112" width="220" height="788" fill="#FFFFFF"/>
+<line x1="220" y1="112" x2="220" y2="900" stroke="#E2E8EB"/>
+<text x="24" y="140" font-family="DM Sans,sans-serif" font-size="10" letter-spacing="3" fill="#94A3AD">MENU</text>
+
+<g id="component/sidebar/item-perfil">
+<rect x="12" y="160" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="185" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Perfil</text>
+</g>
+
+<g id="component/sidebar/item-pref">
+<rect x="12" y="208" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="233" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Preferências</text>
+</g>
+
+<g id="component/sidebar/item-fav">
+<rect x="12" y="256" width="196" height="40" rx="8" fill="#F4F6F7" stroke="#5EA38F" stroke-width="2"/>
+<text x="24" y="281" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Favoritos</text>
+</g>
+
+<g id="component/sidebar/item-seg">
+<rect x="12" y="304" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="329" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Segurança</text>
+</g>
+
+<g id="component/sidebar/item-termos">
+<rect x="12" y="352" width="196" height="40" rx="8" fill="#FFFFFF" />
+<text x="24" y="377" font-family="DM Sans,sans-serif" font-size="13" fill="#141D22">Termos de Privacidade</text>
+</g>
+
+<g id="component/button/sidebar-logout">
+<rect x="12" y="828" width="196" height="40" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="110" y="853" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#4A5568">Sair da conta</text>
+</g>
+</g><g id="content/favoritos">
+<text x="252" y="144" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Favoritos</text>
+<text x="252" y="168" font-size="12" fill="#4A5568">Imóveis que você favoritou</text>
+<g id="component/search-bar">
+<rect x="252" y="184" width="320" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
+<text x="268" y="210" font-size="13" fill="#94A3AD">Buscar imóvel</text>
+</g>
+<g id="component/card-horizontal/fav-0">
+<rect x="252" y="244" width="1156" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="264" y="256" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="372" y="280" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="372" y="302" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="372" y="324" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="312" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="335" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><g id="component/card-horizontal/fav-1">
+<rect x="252" y="372" width="1156" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="264" y="384" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="372" y="408" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="372" y="430" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="372" y="452" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="440" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="463" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><g id="component/card-horizontal/fav-2">
+<rect x="252" y="500" width="1156" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="264" y="512" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="372" y="536" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="372" y="558" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="372" y="580" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="568" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="591" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><g id="component/card-horizontal/fav-3">
+<rect x="252" y="628" width="1156" height="112" rx="12" fill="#FFFFFF" stroke="#E2E8EB"/>
+<rect x="264" y="640" width="88" height="88" rx="8" fill="#E2E8EB"/>
+<text x="372" y="664" font-family="DM Sans,sans-serif" font-size="15" font-weight="600" fill="#141D22">Quarto · Barão Geraldo</text>
+<text x="372" y="686" font-family="DM Sans,sans-serif" font-size="12" fill="#4A5568">Campinas · SP</text>
+<text x="372" y="708" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#5EA38F">R$ 850/mês · 85% afinidade</text>
+<g id="component/button/ver-detalhes">
+<rect x="1268" y="696" width="120" height="36" rx="10" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
+<text x="1328" y="719" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="600" fill="#141D22">Ver detalhes</text>
+</g>
+</g><text x="252" y="852" font-size="11" fill="#94A3AD">[Plus] Comparador 3 imóveis — RF37</text>
+</g></svg>
