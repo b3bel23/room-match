@@ -1,0 +1,107 @@
+.sobre-page .vista-lista {
+    max-width: 920px;
+}
+
+.sobre-hero-bloco {
+    margin-bottom: 22px;
+    padding: 22px 20px;
+    border-radius: var(--radius-lg);
+    background:
+        linear-gradient(120deg, rgba(26, 61, 50, 0.92), rgba(63, 143, 122, 0.78)),
+        url('../assets/campinas/taquaral.jpg') center / cover no-repeat;
+    color: #fff;
+}
+
+.sobre-hero-bloco h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-heading), sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+    font-weight: var(--fw-bold);
+}
+
+.sobre-hero-bloco p {
+    margin: 0;
+    max-width: 48ch;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.sobre-secoes {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sobre-secao {
+    padding: 18px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+}
+
+.sobre-secao h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h2);
+    color: var(--color-text-primary);
+}
+
+.sobre-secao p {
+    margin: 0;
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--color-text-muted);
+}
+
+.sobre-secao p + p {
+    margin-top: 10px;
+}
+
+.sobre-valores {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.sobre-valor {
+    padding: 14px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-muted);
+}
+
+.sobre-valor strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: var(--fs-small);
+    color: var(--color-primary-hover);
+}
+
+.sobre-valor span {
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+}
+
+.sobre-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.sobre-cta .btn {
+    min-height: var(--tap-min);
+}
+
+@media (max-width: 720px) {
+    .sobre-valores {
+        grid-template-columns: 1fr;
+    }
+
+    .sobre-cta .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

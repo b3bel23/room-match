@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v6';
+    const CHAVE_DB = 'roommatch-mock-db-v7';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -180,14 +180,15 @@
         })
     ];
 
-    // Personas do catálogo (anúncios/match). Sem senha no repo — login só via cadastro.
+    // Contas de teste do mock (só front estático; não são produção).
     const SEED_USERS = [
         {
             id: 'u-morador',
-            email: 'catalogo.morador@roommatch.local',
-            nome: 'Morador Catálogo',
+            email: 'morador@demo.com',
+            senha: 'demo123',
+            nome: 'Morador Demo',
             papel: 'Morador',
-            telefone: '',
+            telefone: '(19) 98888-1001',
             genero: 'Não-binário',
             ocupacao: 'estudante',
             emprego: 'estudante-sem-vinculo',
@@ -199,10 +200,11 @@
         },
         {
             id: 'u-locador',
-            email: 'catalogo.locador@roommatch.local',
-            nome: 'Locador Catálogo',
+            email: 'locador@demo.com',
+            senha: 'demo123',
+            nome: 'Locador Demo',
             papel: 'Locador',
-            telefone: '',
+            telefone: '(19) 97777-2002',
             genero: 'Mulher Cisgênero',
             ocupacao: 'cbo-2',
             emprego: 'autonomo',
@@ -372,8 +374,7 @@
                 preservados.push({
                     ...seed,
                     id: existente.id || seed.id,
-                    // Seed nunca traz senha; contas reais só via register.
-                    senha: existente.senha || '',
+                    senha: existente.senha || seed.senha || '',
                     tags: existente.tags?.length ? existente.tags : seed.tags,
                     orcamento: existente.orcamento ?? seed.orcamento,
                     limiar: existente.limiar ?? seed.limiar,
@@ -990,6 +991,11 @@
         normalizarTag,
         reset() {
             localStorage.removeItem(CHAVE_DB);
-        }
+        },
+        /** Contas de teste do mock (não usar em API real). */
+        demoAccounts: Object.freeze([
+            { email: 'morador@demo.com', senha: 'demo123', papel: 'Morador' },
+            { email: 'locador@demo.com', senha: 'demo123', papel: 'Locador' }
+        ])
     };
 }(window));

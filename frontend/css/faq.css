@@ -1,0 +1,121 @@
+.faq-page .vista-lista {
+    max-width: 920px;
+}
+
+.faq-intro {
+    margin: 0 0 20px;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+.faq-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.faq-item {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    overflow: hidden;
+}
+
+.faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-primary);
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: '+';
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-hover);
+    font-size: 18px;
+    font-weight: var(--fw-bold);
+    line-height: 1;
+}
+
+.faq-item[open] summary::after {
+    content: '–';
+}
+
+.faq-item summary:hover {
+    background: var(--color-surface-muted);
+}
+
+.faq-item summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+}
+
+.faq-item .faq-resposta {
+    padding: 0 16px 16px;
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--color-text-muted);
+}
+
+.faq-item .faq-resposta p + p {
+    margin-top: 10px;
+}
+
+.faq-item .faq-resposta a {
+    color: var(--color-primary-hover);
+    font-weight: var(--fw-medium);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.faq-cta {
+    margin-top: 28px;
+    padding: 20px 18px;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-soft);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.faq-cta p {
+    margin: 0;
+    font-size: var(--fs-body);
+    color: var(--color-text-primary);
+}
+
+.faq-cta .btn {
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .faq-cta {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .faq-cta .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

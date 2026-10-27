@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/config.css">
+    <link rel="stylesheet" href="../css/faq.css">
+</head>
+<body class="auth-page favoritos-page faq-page">
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="ativo" href="faq.html">FAQ</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+        <nav class="nav-logado">
+            <a href="home.html">Explorar</a>
+            <a class="ativo" href="faq.html">FAQ</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
+            <a class="sair" href="#">Sair</a>
+        </nav>
+    </header>
+
+    <div class="vista-lista">
+        <div class="page-bar">
+            <h1>Perguntas frequentes</h1>
+            <span class="page-bar-sub">Respostas rápidas sobre o RoomMatch</span>
+        </div>
+        <div class="layout">
+            <aside class="sidebar"></aside>
+            <main class="conteudo">
+                <p class="faq-intro">
+                    Dúvidas sobre cadastro, match, chat, visitas e privacidade.
+                    Para o passo a passo completo, veja também
+                    <a href="como-funciona.html">Como funciona</a>.
+                </p>
+
+                <div class="faq-lista">
+                    <details class="faq-item" open>
+                        <summary>O que é o RoomMatch?</summary>
+                        <div class="faq-resposta">
+                            <p>É uma plataforma para achar moradia compartilhada compatível na região metropolitana de Campinas — ou anunciar uma vaga. O foco é convivência (hábitos/tags), custo mensal transparente e tempo até faculdade ou trabalho.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Qual a diferença entre Morador e Locador?</summary>
+                        <div class="faq-resposta">
+                            <p><strong>Morador</strong> busca anúncios, favorita, conversa e agenda visita.</p>
+                            <p><strong>Locador</strong> publica e edita anúncios, recebe interessados e gerencia visitas.</p>
+                            <p>Você escolhe o tipo no cadastro e pode alterar depois em Perfil.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Como funciona o percentual de match?</summary>
+                        <div class="faq-resposta">
+                            <p>O match compara as tags do seu perfil com as do anúncio:</p>
+                            <p>match% = (tags em comum ÷ tags do seu perfil) × 100.</p>
+                            <p>Nas Preferências você define o limiar mínimo e o orçamento máximo. O chat só libera se o match atingir o limiar e o preço couber no orçamento.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Por que não consigo abrir o chat?</summary>
+                        <div class="faq-resposta">
+                            <p>Em geral o anúncio está acima do seu orçamento ou abaixo do limiar de compatibilidade. Ajuste em <a href="preferencias.html">Preferências</a> ou escolha outro imóvel. Visitantes precisam entrar na conta.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Como agendar uma visita?</summary>
+                        <div class="faq-resposta">
+                            <p>Só o Morador agenda, e apenas a partir do chat com o locador (quando o match permite conversar). Abra a conversa e use o atalho de agendar visita.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>O total mensal inclui o quê?</summary>
+                        <div class="faq-resposta">
+                            <p>Aluguel + condomínio + IPTU + contas estimadas. O anúncio deve mostrar o rateio transparente antes de você conversar.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Preciso de conta para ver anúncios?</summary>
+                        <div class="faq-resposta">
+                            <p>Não. Visitantes veem o mural. Para favoritar, conversar, agendar visita ou publicar, é preciso cadastrar e entrar.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Como testo a demo sem criar conta?</summary>
+                        <div class="faq-resposta">
+                            <p>Use as contas de teste do mock:</p>
+                            <p>Morador — <code>morador@demo.com</code> / <code>demo123</code></p>
+                            <p>Locador — <code>locador@demo.com</code> / <code>demo123</code></p>
+                            <p>Também dá para criar uma conta nova pelo cadastro.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>Meus dados ficam onde? Vocês usam cookies?</summary>
+                        <div class="faq-resposta">
+                            <p>Nesta demo estática, login e preferências ficam no navegador (localStorage). O banner de cookies pede seu consentimento na primeira visita. Detalhes em <a href="termos.html">Termos e privacidade</a>.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>O RoomMatch fecha o contrato de aluguel?</summary>
+                        <div class="faq-resposta">
+                            <p>Não. A plataforma aproxima perfis e organiza contato/visita. Negociação, caução e contrato são combinados entre as pessoas, fora do RoomMatch.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="faq-cta">
+                    <p>Ainda com dúvida? Fale com o suporte ou veja o passo a passo.</p>
+                    <a class="btn btn-primary" href="contato.html">Falar com suporte</a>
+                    <a class="btn btn-secondary" href="como-funciona.html">Como funciona</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="faq.html">FAQ</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script>
+        if (estaLogado()) montarSidebarConfig('faq.html');
+        else document.querySelector('.sidebar').innerHTML = '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a href="como-funciona.html">Como funciona</a><a class="ativo" href="faq.html">FAQ</a><a href="login.html">Entrar</a>';
+    </script>
+</body>
+</html>
