@@ -1,10 +1,31 @@
 /**
  * Liga navegação global da demo: Mensagens, config, Como funciona, Termos, Sair.
+ * Também carrega o banner de cookies (LGPD) em todas as páginas.
  */
 (function () {
     const MAPA = [
         ['a[href="#"]:not(.sair)', null],
     ];
+
+    function garantirCookieConsent() {
+        if (document.querySelector('script[data-rm-cookies]')) return;
+        const base = document.querySelector('script[src*="chrome.js"]')?.getAttribute('src') || '../js/chrome.js';
+        const raizJs = base.replace(/chrome\.js(\?.*)?$/, '');
+        const raizCss = raizJs.replace(/\/js\/?$/, '/css/');
+
+        if (!document.querySelector('link[data-rm-cookies]')) {
+            const css = document.createElement('link');
+            css.rel = 'stylesheet';
+            css.href = `${raizCss}cookie-consent.css`;
+            css.dataset.rmCookies = '1';
+            document.head.appendChild(css);
+        }
+
+        const script = document.createElement('script');
+        script.src = `${raizJs}cookie-consent.js`;
+        script.dataset.rmCookies = '1';
+        document.body.appendChild(script);
+    }
 
     function trocar(seletorTexto, href) {
         document.querySelectorAll('a').forEach((a) => {
@@ -71,9 +92,14 @@
         });
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', aplicar);
-    } else {
+    function boot() {
         aplicar();
+        garantirCookieConsent();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
     }
 }());
