@@ -2,16 +2,7 @@
 
 from __future__ import annotations
 
-import importlib.util
-from pathlib import Path
-
-_SPEC = importlib.util.spec_from_file_location(
-    "matching_service",
-    Path(__file__).resolve().parents[1] / "app" / "services" / "matching.service.py",
-)
-matching = importlib.util.module_from_spec(_SPEC)
-assert _SPEC.loader is not None
-_SPEC.loader.exec_module(matching)
+from app.services import matching_service as matching
 
 match_percent = matching.match_percent
 avaliar_elegibilidade_chat = matching.avaliar_elegibilidade_chat
@@ -102,3 +93,42 @@ def test_match_medio_personalizado():
         {"tags": ["Home Office"], "match_percent": 78},
     ]
     assert match_medio(MORADOR_TAGS, imoveis) == round((100 + 33) / 2)
+
+
+# --- camada de banco, com sessão falsa (não precisa de Postgres) ---
+
+from types import SimpleNamespace
+from unittest.mock import MagicMock
+
+
+def _db_com_moradores(moradores):
+    """Sessão falsa: query(...).filter(...).all() devolve integrantes; get() devolve o usuário."""
+    integrantes = [SimpleNamespace(id_pessoa=i) for i in moradores]
+    db = MagicMock()
+    db.query.return_value.filter.return_value.all.return_value = integrantes
+    db.get.side_effect = lambda _model, pk: SimpleNamespace(tags_convivencia=moradores[pk])
+    return db
+
+
+def test_tags_do_imovel_une_moradores_sem_duplicar():
+    db = _db_com_moradores({1: ["Pet Friendly", "Home Office"], 2: ["pet friendly", "Vegetariano"]})
+    assert matching.tags_do_imovel(db, 10) == ["Pet Friendly", "Home Office", "Vegetariano"]
+
+
+def test_tags_do_imovel_sem_moradores_e_vazio():
+    assert matching.tags_do_imovel(_db_com_moradores({}), 10) == []
+
+
+def test_tags_do_locatario_usa_estilo_de_vida_e_cai_no_perfil():
+    db = MagicMock()
+    db.get.return_value = SimpleNamespace(tags_convivencia=["Pet Friendly"])
+    com_estilo = SimpleNamespace(id_locatario=1, tags_estilo_vida=["Home Office"])
+    sem_estilo = SimpleNamespace(id_locatario=1, tags_estilo_vida=None)
+    assert matching.tags_do_locatario(db, com_estilo) == ["Home Office"]
+    assert matching.tags_do_locatario(db, sem_estilo) == ["Pet Friendly"]
+
+
+def test_match_para_post_integra_as_pecas():
+    db = _db_com_moradores({1: ["Pet Friendly", "Home Office"]})
+    locatario = SimpleNamespace(id_locatario=9, tags_estilo_vida=["Pet Friendly", "Festas"])
+    assert matching.match_para_post(db, locatario, 10) == 50

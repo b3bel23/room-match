@@ -9,6 +9,12 @@ from __future__ import annotations
 
 from typing import Iterable, Mapping, Optional, Sequence
 
+from sqlalchemy.orm import Session
+
+from app.models.integrante_imovel import IntegranteImovel
+from app.models.locatario import Locatario
+from app.models.usuario import Usuario
+
 
 def normalizar_tag(tag: str) -> str:
     t = (tag or "").strip().lower()
@@ -92,3 +98,35 @@ def match_medio(
             seed_match=imovel.get(seed_key),
         )
     return int(round(total / len(lista)))
+
+
+def tags_do_imovel(db: Session, id_imovel: int) -> list[str]:
+    """Tags de convivência do imóvel: união das tags dos moradores atuais."""
+    integrantes = (
+        db.query(IntegranteImovel)
+        .filter(
+            IntegranteImovel.id_imovel == id_imovel,
+            IntegranteImovel.status_moradia == "ativo",
+        )
+        .all()
+    )
+    tags: dict[str, str] = {}
+    for integrante in integrantes:
+        morador = db.get(Usuario, integrante.id_pessoa)
+        for tag in (morador.tags_convivencia or []) if morador else []:
+            tags.setdefault(normalizar_tag(tag), tag)
+    return list(tags.values())
+
+
+def tags_do_locatario(db: Session, locatario: Locatario) -> list[str]:
+    """Tags usadas na busca: estilo de vida do locatário; se vazio, as do perfil."""
+    if locatario.tags_estilo_vida:
+        return list(locatario.tags_estilo_vida)
+    usuario = db.get(Usuario, locatario.id_locatario)
+    return list(usuario.tags_convivencia or []) if usuario else []
+
+
+def match_para_post(db: Session, locatario: Locatario, id_imovel: int) -> int:
+    return match_percent(
+        tags_do_locatario(db, locatario), tags_do_imovel(db, id_imovel)
+    )
