@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v8';
+    const CHAVE_DB = 'roommatch-mock-db-v9';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -29,9 +29,9 @@
                 'Cozinha e área de refeições'
             ],
             moradores_atuais: [
-                { iniciais: 'JS', nome: 'João Santos', linha: 'Eng. Software · 28 anos', estilo: 'foto-1' },
-                { iniciais: 'AC', nome: 'Ana Costa', linha: 'Med. Veterinária · 24 anos', estilo: 'foto-2' },
-                { iniciais: 'PL', nome: 'Pedro Lima', linha: 'Estudante Econ. · 22 anos', estilo: 'foto-3' }
+                { iniciais: 'M1', nome: 'Morador Fake 01', linha: 'Ocupação mock · 28 anos', estilo: 'foto-1' },
+                { iniciais: 'M2', nome: 'Morador Fake 02', linha: 'Ocupação mock · 24 anos', estilo: 'foto-2' },
+                { iniciais: 'M3', nome: 'Morador Fake 03', linha: 'Estudante mock · 22 anos', estilo: 'foto-3' }
             ]
         },
         'kitnet-cambui': {
@@ -63,8 +63,8 @@
                 'Quintal e área verde'
             ],
             moradores_atuais: [
-                { iniciais: 'MR', nome: 'Marina Rocha', linha: 'Designer · 26 anos', estilo: 'foto-2' },
-                { iniciais: 'TF', nome: 'Tiago Ferreira', linha: 'Estudante Eng. · 23 anos', estilo: 'foto-3' }
+                { iniciais: 'M4', nome: 'Morador Fake 04', linha: 'Ocupação mock · 26 anos', estilo: 'foto-2' },
+                { iniciais: 'M5', nome: 'Morador Fake 05', linha: 'Estudante mock · 23 anos', estilo: 'foto-3' }
             ]
         },
         'suite-taquaral': {
@@ -81,8 +81,8 @@
                 'Varanda do apartamento'
             ],
             moradores_atuais: [
-                { iniciais: 'LC', nome: 'Laura Campos', linha: 'Medicina · 25 anos', estilo: 'foto-2' },
-                { iniciais: 'BF', nome: 'Beatriz Freitas', linha: 'Arquitetura · 24 anos', estilo: 'foto-3' }
+                { iniciais: 'M6', nome: 'Morador Fake 06', linha: 'Ocupação mock · 25 anos', estilo: 'foto-2' },
+                { iniciais: 'M7', nome: 'Morador Fake 07', linha: 'Ocupação mock · 24 anos', estilo: 'foto-3' }
             ]
         }
     };
@@ -180,15 +180,15 @@
         })
     ];
 
-    // Contas de teste do mock (só front estático; não são produção).
+    // Contas de teste do mock (só front estático; dados 100% fictícios).
     const SEED_USERS = [
         {
             id: 'u-morador',
             email: 'morador@demo.com',
             senha: 'demo123',
-            nome: 'Marina Souza',
+            nome: 'Morador Exemplo Mock',
             papel: 'Morador',
-            telefone: '(19) 98888-1001',
+            telefone: '(99) 99999-9999',
             genero: 'Não-binário',
             ocupacao: 'estudante',
             emprego: 'estudante-sem-vinculo',
@@ -202,9 +202,9 @@
             id: 'u-locador',
             email: 'locador@demo.com',
             senha: 'demo123',
-            nome: 'Ana Ribeiro',
+            nome: 'Locador Exemplo Mock',
             papel: 'Locador',
-            telefone: '(19) 97777-2002',
+            telefone: '(99) 98888-8888',
             genero: 'Mulher Cisgênero',
             ocupacao: 'cbo-2',
             emprego: 'autonomo',
@@ -294,7 +294,7 @@
                     id: 'v1',
                     imovel_id: 'republica-barao',
                     usuario_id: 'u-morador',
-                    nome: 'Marina Souza',
+                    nome: 'Morador Exemplo Mock',
                     data: offsetIso(1),
                     hora: '18h',
                     status: 'confirmada'
@@ -303,7 +303,7 @@
                     id: 'v2',
                     imovel_id: 'kitnet-cambui',
                     usuario_id: 'u-morador',
-                    nome: 'Marina Souza',
+                    nome: 'Morador Exemplo Mock',
                     data: offsetIso(1),
                     hora: '10h',
                     status: 'pendente'
@@ -318,13 +318,13 @@
                         {
                             id: 'm1',
                             autor_id: 'u-locador',
-                            texto: 'Oi, Marina! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?',
+                            texto: 'Oi! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h? Meu contato mock: (99) 98888-8888.',
                             em: agoraIso()
                         },
                         {
                             id: 'm2',
                             autor_id: 'u-morador',
-                            texto: 'Oi, Ana! Pode sim. O condomínio aceita pet pequeno mesmo?',
+                            texto: 'Oi! Pode sim. O condomínio aceita pet pequeno mesmo? Meu telefone mock: (99) 99999-9999.',
                             em: agoraIso()
                         },
                         {
@@ -371,6 +371,8 @@
                 (u) => u.id === seed.id || u.email === seed.email
             );
             if (existente) {
+                // Contas seed: identidade sempre fictícia do seed (preenchida).
+                // Prefs/senha/foto do navegador podem permanecer.
                 preservados.push({
                     ...seed,
                     id: existente.id || seed.id,
@@ -378,14 +380,14 @@
                     tags: existente.tags?.length ? existente.tags : seed.tags,
                     orcamento: existente.orcamento ?? seed.orcamento,
                     limiar: existente.limiar ?? seed.limiar,
-                    nome: existente.nome || seed.nome,
-                    telefone: existente.telefone || seed.telefone,
-                    genero: existente.genero || seed.genero,
-                    ocupacao: existente.ocupacao ?? seed.ocupacao,
-                    emprego: existente.emprego ?? seed.emprego,
-                    faculdade: existente.faculdade ?? seed.faculdade,
+                    nome: seed.nome,
+                    telefone: seed.telefone,
+                    genero: seed.genero,
+                    ocupacao: seed.ocupacao,
+                    emprego: seed.emprego,
+                    faculdade: seed.faculdade,
                     foto_url: existente.foto_url || seed.foto_url || '',
-                    email: existente.email || seed.email,
+                    email: seed.email,
                     papel: PAPEIS_UI.includes(existente.papel) ? existente.papel : seed.papel
                 });
             } else {
