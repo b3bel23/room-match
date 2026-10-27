@@ -16,7 +16,16 @@ function mostrarEtapa(indice) {
 }
 
 function validarEtapa() {
+    if (atual === 0) {
+        if (!fotoDataUrl) {
+            foto?.setCustomValidity('Adicione uma foto de perfil.');
+            foto?.reportValidity();
+            return false;
+        }
+        foto?.setCustomValidity('');
+    }
     for (const campo of etapas[atual].querySelectorAll('input')) {
+        if (campo.id === 'foto') continue;
         if (!campo.checkValidity()) {
             campo.reportValidity();
             return false;
@@ -42,13 +51,12 @@ async function finalizarCadastro() {
         || document.getElementById('limiar')?.value) || 70;
 
     const genero = form.querySelector('input[name="genero"]:checked')?.value || '';
-    let foto_url = '';
-    if (previa?.src && !previa.hidden) {
-        try {
-            foto_url = previa.src.startsWith('data:') ? previa.src : '';
-        } catch (erro) {
-            foto_url = '';
-        }
+    const foto_url = fotoDataUrl || '';
+    if (!foto_url) {
+        foto?.setCustomValidity('Adicione uma foto de perfil.');
+        foto?.reportValidity();
+        mostrarEtapa(0);
+        return;
     }
 
     const payload = {
@@ -113,34 +121,77 @@ const TAMANHO_MAXIMO = 5 * 1024 * 1024;
 const LADO_MINIMO = 200;
 const foto = document.getElementById('foto');
 const previa = document.getElementById('foto-previa');
+const avatar = previa?.closest('.avatar');
+const btnFoto = document.querySelector('label.btn-foto[for="foto"]');
+let fotoDataUrl = '';
 
-foto.addEventListener('change', () => {
-    const arquivo = foto.files[0];
+function limparPreviaFoto() {
+    fotoDataUrl = '';
+    if (previa) {
+        previa.removeAttribute('src');
+        previa.hidden = true;
+    }
+    avatar?.classList.remove('com-foto');
+    if (btnFoto) btnFoto.textContent = 'Adicionar foto';
+}
+
+function mostrarPreviaFoto(dataUrl) {
+    fotoDataUrl = dataUrl;
+    if (!previa) return;
+    previa.src = dataUrl;
+    previa.hidden = false;
+    avatar?.classList.add('com-foto');
+    if (btnFoto) btnFoto.textContent = 'Trocar foto';
+}
+
+function lerArquivoComoDataUrl(arquivo) {
+    return new Promise((resolve, reject) => {
+        const leitor = new FileReader();
+        leitor.onload = () => resolve(String(leitor.result || ''));
+        leitor.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
+        leitor.readAsDataURL(arquivo);
+    });
+}
+
+function validarDimensoes(dataUrl) {
+    return new Promise((resolve, reject) => {
+        const imagem = new Image();
+        imagem.onload = () => {
+            if (imagem.naturalWidth < LADO_MINIMO || imagem.naturalHeight < LADO_MINIMO) {
+                reject(new Error('A foto deve ter no mínimo 200×200 px.'));
+                return;
+            }
+            resolve(dataUrl);
+        };
+        imagem.onerror = () => reject(new Error('Imagem inválida.'));
+        imagem.src = dataUrl;
+    });
+}
+
+foto?.addEventListener('change', async () => {
+    const arquivo = foto.files?.[0];
+    foto.value = '';
     foto.setCustomValidity('');
-    previa.hidden = true;
-    if (!arquivo) return;
-
-    if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
-        foto.setCustomValidity('Use uma imagem JPG ou PNG.');
-        return;
-    }
-    if (arquivo.size > TAMANHO_MAXIMO) {
-        foto.setCustomValidity('A foto deve ter no máximo 5 MB.');
+    if (!arquivo) {
+        limparPreviaFoto();
         return;
     }
 
-    const url = URL.createObjectURL(arquivo);
-    const imagem = new Image();
-    imagem.onload = () => {
-        if (imagem.naturalWidth < LADO_MINIMO || imagem.naturalHeight < LADO_MINIMO) {
-            foto.setCustomValidity('A foto deve ter no mínimo 200×200 px.');
-            URL.revokeObjectURL(url);
-            return;
+    try {
+        if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
+            throw new Error('Use uma imagem JPG ou PNG.');
         }
-        previa.src = url;
-        previa.hidden = false;
-    };
-    imagem.src = url;
+        if (arquivo.size > TAMANHO_MAXIMO) {
+            throw new Error('A foto deve ter no máximo 5 MB.');
+        }
+        const dataUrl = await validarDimensoes(await lerArquivoComoDataUrl(arquivo));
+        mostrarPreviaFoto(dataUrl);
+        foto.setCustomValidity('');
+    } catch (erro) {
+        limparPreviaFoto();
+        foto.setCustomValidity(erro.message || 'Não foi possível usar esta foto.');
+        foto.reportValidity();
+    }
 });
 
 const TAGS_MINIMO = 3;
