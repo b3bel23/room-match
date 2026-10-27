@@ -11,9 +11,11 @@ from typing import Iterable, Mapping, Optional, Sequence
 
 from sqlalchemy.orm import Session
 
-from app.models.integrante_imovel import IntegranteImovel
+from app.models.imovel_tag import ImovelTag
 from app.models.locatario import Locatario
+from app.models.tag import Tag
 from app.models.usuario import Usuario
+from app.models.usuario_tag import UsuarioTag
 
 
 def normalizar_tag(tag: str) -> str:
@@ -100,33 +102,49 @@ def match_medio(
     return int(round(total / len(lista)))
 
 
-def tags_do_imovel(db: Session, id_imovel: int) -> list[str]:
-    """Tags de convivência do imóvel: união das tags dos moradores atuais."""
-    integrantes = (
-        db.query(IntegranteImovel)
-        .filter(
-            IntegranteImovel.id_imovel == id_imovel,
-            IntegranteImovel.status_moradia == "ativo",
-        )
+def tags_por_imovel(db: Session, ids_imovel: Sequence[int]) -> dict[int, list[str]]:
+    """Tags (tabela imovel_tags) de vários imóveis numa única consulta."""
+    resultado: dict[int, list[str]] = {i: [] for i in ids_imovel}
+    if not resultado:
+        return resultado
+    linhas = (
+        db.query(ImovelTag.id_imovel, Tag.nome)
+        .join(Tag, Tag.id_tag == ImovelTag.id_tag)
+        .filter(ImovelTag.id_imovel.in_(list(resultado)))
         .all()
     )
-    tags: dict[str, str] = {}
-    for integrante in integrantes:
-        morador = db.get(Usuario, integrante.id_pessoa)
-        for tag in (morador.tags_convivencia or []) if morador else []:
-            tags.setdefault(normalizar_tag(tag), tag)
-    return list(tags.values())
+    for id_imovel, nome in linhas:
+        resultado[id_imovel].append(nome)
+    return resultado
 
 
-def tags_do_locatario(db: Session, locatario: Locatario) -> list[str]:
-    """Tags usadas na busca: estilo de vida do locatário; se vazio, as do perfil."""
-    if locatario.tags_estilo_vida:
+def tags_do_imovel(db: Session, id_imovel: int) -> list[str]:
+    return tags_por_imovel(db, [id_imovel])[id_imovel]
+
+
+def tags_do_usuario(
+    db: Session, usuario: Usuario, locatario: Optional[Locatario] = None
+) -> list[str]:
+    """Tags do usuário para o match, da fonte mais específica para a mais genérica:
+    usuario_tags (relacional) -> tags_estilo_vida do locatário -> tags_convivencia do perfil.
+    """
+    nomes = [
+        nome
+        for (nome,) in db.query(Tag.nome)
+        .join(UsuarioTag, UsuarioTag.id_tag == Tag.id_tag)
+        .filter(UsuarioTag.id_usuario == usuario.id_usuario)
+        .all()
+    ]
+    if nomes:
+        return nomes
+    if locatario is not None and locatario.tags_estilo_vida:
         return list(locatario.tags_estilo_vida)
-    usuario = db.get(Usuario, locatario.id_locatario)
-    return list(usuario.tags_convivencia or []) if usuario else []
+    return list(usuario.tags_convivencia or [])
 
 
-def match_para_post(db: Session, locatario: Locatario, id_imovel: int) -> int:
-    return match_percent(
-        tags_do_locatario(db, locatario), tags_do_imovel(db, id_imovel)
-    )
+def tags_correspondentes(
+    user_tags: Optional[Sequence[str]], imovel_tags: Optional[Sequence[str]]
+) -> list[str]:
+    """Tags do imóvel que o usuário também tem (comparação normalizada)."""
+    do_usuario = {normalizar_tag(t) for t in (user_tags or []) if t}
+    return [t for t in (imovel_tags or []) if normalizar_tag(t) in do_usuario]
