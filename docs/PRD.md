@@ -80,3 +80,45 @@ excluir a conta.
 - `genero`, `ocupacao`, `emprego` e `faculdade` são aceitos mas **não persistidos**: o banco
   não tem essas colunas (exigem migração Alembic). A resposta devolve vazio.
 - Os dados de Locador exigem CPF/CNPJ, que o front ainda não coleta na troca de papel.
+
+### Anúncios do locador e fotos (KAN-34)
+
+**Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar
+no Postgres/Supabase e com o front em modo `live`.
+
+**O que faz:** o locador publica, edita, pausa e remove anúncios (imóvel, endereço, post e
+tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
+
+**Endpoints** (contrato em `docs/frontend/papeis-e-rotas-api-v1.md`; todos exigem Locador)
+- `GET /imoveis/meus`: anúncios da conta, sem os removidos.
+- `POST /imoveis`: publica. Aceita o que o formulário envia: `titulo`, `tipo`, `endereco`
+  (texto livre "Rua X, 450 · Bairro"), `bairro`, `aluguel`, `condominio`, `iptu`, `contas`,
+  `tags` e `classificacao`; também os campos estruturados (`rua`, `numero`, `cidade`,
+  `estado`, `cep`, `latitude`, `longitude`), `descricao`, `area_m2`, `quartos`, `vagas`.
+- `PATCH /imoveis/{id}`: edita só o que foi enviado; também `status_anuncio` (`ativo` ou
+  `pausado`). Só o dono.
+- `DELETE /imoveis/{id}`: remoção lógica (`status_anuncio = removido`). Só o dono.
+- `POST /imoveis/{id}/fotos`: upload multipart, campo `fotos`. `DELETE
+  /imoveis/{id}/fotos/{id_imagem}` remove uma. As respostas trazem `fotos` e `fotos_ids`.
+
+**Regras de negócio**
+- `aluguel` deve ser maior que 0; valores em branco (`""`) valem 0 em condomínio, IPTU e
+  contas; no PATCH, `""` também zera o valor, como no mock.
+- Endereço: rua e bairro são obrigatórios (422). Cidade e estado assumem Campinas/SP quando
+  não informados, porque o produto só atende Campinas por enquanto.
+- Remoção é lógica: preserva favoritos, conversas e visitas. Reduz o contador de anúncios
+  do locador e marca o imóvel como indisponível.
+- Fotos: JPEG, PNG ou WebP identificados pelo conteúdo do arquivo (não pelo Content-Type);
+  até 5 MB cada e 10 por imóvel; falha em qualquer arquivo não grava nenhum.
+- Pausar um anúncio o tira do mural, mas ele continua em `/imoveis/meus`.
+
+**Divergências e pendências**
+- `classificacao` (Mista/Masculina/Feminina) é aceita mas **não persistida**: não há coluna.
+- Fotos ficam em disco local (`backend/uploads/`, servido em `/uploads`). Em produção
+  (Supabase/hospedagem sem disco persistente) precisa migrar para storage em nuvem; a coluna
+  `url_imagem` já aceita URL absoluta.
+- `GET /imoveis` e `GET /imoveis/{id}` (leitura pública) continuam em `matches.py` (KAN-35).
+  `/imoveis/meus` precisa ser registrado antes de `/imoveis/{id}`; há teste para isso.
+- Correção: `Imovel.endereco` era uma lista (o `uselist=False` estava só no lado
+  `EnderecoImovel.imovel`); passou a ser um único objeto. Sem isso o mural quebrava no
+  banco real.

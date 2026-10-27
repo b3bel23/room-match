@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app.core.database import Base
 
@@ -18,4 +18,5 @@ class EnderecoImovel(Base):
     latitude = Column(Numeric(9, 6))
     longitude = Column(Numeric(9, 6))
 
-    imovel = relationship("Imovel", backref="endereco", uselist=False)
+    # uselist=False no backref: Imovel.endereco é um único objeto (1:1), não uma lista.
+    imovel = relationship("Imovel", backref=backref("endereco", uselist=False))
