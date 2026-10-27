@@ -114,7 +114,7 @@ Aliases aceitos no mock: `orcamento` ≡ `orcamento_maximo`,
 ## Checklist “mostra o que precisa” na demo
 
 - [ ] Servir `frontend/` por HTTP (não `file://`).
-- [ ] Criar conta (cadastro) e Entrar — sem senhas no repositório.
+- [ ] Login teste: `morador@demo.com` / `locador@demo.com` · `demo123` (ou criar conta).
 - [ ] Locatário → mural; locador → meus anúncios (só chrome/UI).
 - [ ] Se algo parecer “velho”: `RoomMatchMock.reset()` + hard refresh.
 - [ ] Fotos: pasta `assets/imoveis/{id}/1.jpg`…`4.jpg` presentes no deploy.
