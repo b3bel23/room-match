@@ -196,6 +196,8 @@ foto?.addEventListener('change', async () => {
         if (typeof RoomMatchFaceCheck === 'undefined') {
             throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
         }
+        foto.setCustomValidity('Verificando rosto na foto…');
+        foto.reportValidity();
         await RoomMatchFaceCheck.exigirRosto(dataUrl);
         mostrarPreviaFoto(dataUrl);
         foto.setCustomValidity('');
@@ -205,6 +207,10 @@ foto?.addEventListener('change', async () => {
         foto.reportValidity();
     }
 });
+
+if (typeof RoomMatchFaceCheck !== 'undefined') {
+    RoomMatchFaceCheck.aquecer();
+}
 
 const TAGS_MINIMO = 3;
 const TAGS_MAXIMO = 8;

@@ -122,6 +122,7 @@ inputFoto?.addEventListener('change', async () => {
         if (typeof RoomMatchFaceCheck === 'undefined') {
             throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
         }
+        mostrarRetorno('Verificando rosto na foto…', false);
         await RoomMatchFaceCheck.exigirRosto(dataUrl);
         fotoUrlAtual = dataUrl;
         avatar.style.backgroundImage = `url("${dataUrl}")`;
@@ -132,6 +133,10 @@ inputFoto?.addEventListener('change', async () => {
         mostrarRetorno(erro.message || 'Não foi possível usar esta foto.', true);
     }
 });
+
+if (typeof RoomMatchFaceCheck !== 'undefined') {
+    RoomMatchFaceCheck.aquecer();
+}
 
 btnRemoverFoto?.addEventListener('click', () => {
     fotoUrlAtual = '';
