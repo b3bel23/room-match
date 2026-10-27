@@ -29,11 +29,42 @@
             <aside class="sidebar"></aside>
             <main class="conteudo">
                 <h2>Segurança</h2>
-                <p class="conteudo-sub">Altere a senha da sua conta.</p>
-                <form id="senha-form" class="config-form">
-                    <label>Senha atual<input id="senha-atual" type="password" required></label>
-                    <label>Nova senha<input id="senha-nova" type="password" minlength="6" required></label>
-                    <label>Confirmar nova senha<input id="senha-confirma" type="password" minlength="6" required></label>
+                <p class="conteudo-sub">Altere a senha da sua conta. A verificação de força aparece enquanto você digita.</p>
+                <form id="senha-form" class="config-form" novalidate>
+                    <label for="senha-atual">Senha atual *
+                        <div class="senha-linha">
+                            <input id="senha-atual" type="password" autocomplete="current-password" required>
+                            <button type="button" class="senha-olho" data-olho-para="senha-atual" aria-label="Mostrar senha" aria-pressed="false">
+                                <svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </label>
+
+                    <label for="senha-nova">Nova senha *
+                        <div class="senha-linha">
+                            <input id="senha-nova" type="password" autocomplete="new-password" required minlength="6" aria-describedby="senha-nova-forca-texto">
+                            <button type="button" class="senha-olho" data-olho-para="senha-nova" aria-label="Mostrar senha" aria-pressed="false">
+                                <svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div class="senha-forca" id="senha-nova-forca" hidden>
+                            <div class="senha-forca-barra" aria-hidden="true">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <p class="senha-forca-texto" id="senha-nova-forca-texto">Força da senha</p>
+                        </div>
+                    </label>
+
+                    <label for="senha-confirma">Confirmar nova senha *
+                        <div class="senha-linha">
+                            <input id="senha-confirma" type="password" autocomplete="new-password" required minlength="6">
+                            <button type="button" class="senha-olho" data-olho-para="senha-confirma" aria-label="Mostrar senha" aria-pressed="false">
+                                <svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <p class="senha-match" id="senha-confirma-match" hidden></p>
+                    </label>
+
                     <button class="btn btn-primary" type="submit">Atualizar senha</button>
                     <p id="senha-retorno" class="config-retorno" hidden></p>
                 </form>
@@ -55,6 +86,7 @@
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
     <script src="../js/page-motion.js"></script>
+    <script src="../js/senha-ui.js"></script>
     <script src="../js/seguranca.js"></script>
 </body>
 </html>
