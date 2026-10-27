@@ -7,6 +7,44 @@
         ['a[href="#"]:not(.sair)', null],
     ];
 
+    function garantirFaqNosMenus() {
+        const jaTem = (nav) => [...nav.querySelectorAll('a')].some((a) => {
+            const href = (a.getAttribute('href') || '').toLowerCase();
+            return href.includes('faq.html') || (a.textContent || '').trim().toLowerCase() === 'faq';
+        });
+
+        document.querySelectorAll('.site-footer nav').forEach((nav) => {
+            if (jaTem(nav)) return;
+            const link = document.createElement('a');
+            link.href = 'faq.html';
+            link.textContent = 'FAQ';
+            const termos = [...nav.querySelectorAll('a')].find((a) =>
+                /termos/i.test(a.textContent || '')
+            );
+            if (termos) nav.insertBefore(link, termos);
+            else nav.appendChild(link);
+        });
+
+        document.querySelectorAll('.nav-visitante, .nav-logado').forEach((nav) => {
+            if (jaTem(nav)) return;
+            const link = document.createElement('a');
+            link.href = 'faq.html';
+            link.textContent = 'FAQ';
+            const ancora = [...nav.querySelectorAll('a')].find((a) =>
+                /como funciona/i.test(a.textContent || '')
+            );
+            if (ancora && ancora.nextSibling) {
+                ancora.parentNode.insertBefore(link, ancora.nextSibling);
+            } else if (ancora) {
+                ancora.after(link);
+            } else {
+                const btn = nav.querySelector('.btn');
+                if (btn) nav.insertBefore(link, btn);
+                else nav.appendChild(link);
+            }
+        });
+    }
+
     function garantirCookieConsent() {
         if (document.querySelector('script[data-rm-cookies]')) return;
         const base = document.querySelector('script[src*="chrome.js"]')?.getAttribute('src') || '../js/chrome.js';
@@ -94,6 +132,7 @@
 
     function boot() {
         aplicar();
+        garantirFaqNosMenus();
         garantirCookieConsent();
     }
 

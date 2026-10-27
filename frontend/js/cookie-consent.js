@@ -84,6 +84,7 @@
                     <button type="button" class="rm-cookie-btn-pri" data-acao="aceitar">Aceitar tudo</button>
                 </div>
                 <div class="rm-cookie-links">
+                    <a href="faq.html">FAQ</a>
                     <a href="termos.html">Termos de uso</a>
                     <a href="termos.html#privacidade">Aviso de privacidade</a>
                 </div>
