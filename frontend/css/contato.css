@@ -131,6 +131,20 @@
     color: var(--color-text-subtle);
 }
 
+.contato-equipe {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.contato-equipe li {
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+}
+
 .contato-atalhos {
     margin-top: 8px;
     padding: 16px;

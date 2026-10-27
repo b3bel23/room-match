@@ -92,6 +92,28 @@
     color: var(--color-text-muted);
 }
 
+.sobre-equipe {
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.sobre-equipe li {
+    font-size: var(--fs-body);
+    line-height: 1.45;
+    color: var(--color-text-muted);
+}
+
+.sobre-equipe a,
+.sobre-secao a {
+    color: var(--color-primary-hover);
+    font-weight: var(--fw-medium);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
 .sobre-cta {
     display: flex;
     flex-wrap: wrap;

@@ -42,7 +42,7 @@
         if (btn) btn.disabled = true;
         guardarTicket(dados);
         mostrar(
-            `Pedido ${dados.id} registrado. Nossa equipe de suporte responde em até 1 dia útil neste e-mail: ${dados.email}.`,
+            `Pedido ${dados.id} registrado. Retornaremos em ${dados.email}. Você também pode acompanhar pelo GitHub: github.com/silverwying/room-match/issues`,
             false
         );
         form.reset();
