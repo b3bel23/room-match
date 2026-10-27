@@ -115,6 +115,28 @@
         document.body.appendChild(script);
     }
 
+    /** Garante verificador de telefone BR em cadastro/perfil. */
+    function garantirTelefoneUi() {
+        const precisa = document.querySelector(
+            'input[data-tel-br], input#telefone, input#perfil-telefone, input[name="telefone"][type="tel"]'
+        );
+        if (!precisa) return;
+        if (document.querySelector('script[src*="telefone-ui.js"]')) {
+            if (typeof RoomMatchTelefone !== 'undefined') RoomMatchTelefone.ligarPagina();
+            return;
+        }
+        const { raizJs } = raizScripts();
+        const script = document.createElement('script');
+        script.src = `${raizJs}telefone-ui.js`;
+        script.dataset.rmTelUi = '1';
+        script.onload = () => {
+            if (typeof RoomMatchTelefone !== 'undefined') {
+                RoomMatchTelefone.ligarPagina();
+            }
+        };
+        document.body.appendChild(script);
+    }
+
     function trocar(seletorTexto, href) {
         document.querySelectorAll('a').forEach((a) => {
             const t = (a.textContent || '').trim().toLowerCase();
@@ -185,6 +207,7 @@
         garantirLinksAjudaNosMenus();
         garantirCookieConsent();
         garantirFaceCheck();
+        garantirTelefoneUi();
     }
 
     if (document.readyState === 'loading') {

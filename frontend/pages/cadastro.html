@@ -50,10 +50,11 @@
                             Telefone de contato *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre telefone">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Usado para contato sobre visitas. Prefira WhatsApp com DDD.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Usado para contato sobre visitas. Informe um celular brasileiro real com DDD (WhatsApp). Números fictícios como (99) 99999-9999 são rejeitados.</span>
                             </span>
                         </label>
-                        <input id="telefone" name="telefone" type="tel" placeholder="(99) 99999-9999" autocomplete="tel" required>
+                        <input id="telefone" name="telefone" type="tel" data-tel-br="1" placeholder="(19) 9XXXX-XXXX" autocomplete="tel" required>
+                        <p id="telefone-status" class="face-check-status info">Use DDD brasileiro + número real (celular preferencial).</p>
                     </div>
 
                     <fieldset class="genero col-full">
@@ -329,6 +330,7 @@
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
     <script src="../js/senha-ui.js"></script>
+    <script src="../js/telefone-ui.js"></script>
     <script src="../js/face-check.js"></script>
     <script src="../js/page-motion.js"></script>
     <script src="../js/tip.js"></script>

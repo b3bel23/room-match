@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v9';
+    const CHAVE_DB = 'roommatch-mock-db-v10';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -188,7 +188,7 @@
             senha: 'demo123',
             nome: 'Morador Exemplo Mock',
             papel: 'Morador',
-            telefone: '(99) 99999-9999',
+            telefone: '(19) 99471-2830',
             genero: 'Não-binário',
             ocupacao: 'estudante',
             emprego: 'estudante-sem-vinculo',
@@ -204,7 +204,7 @@
             senha: 'demo123',
             nome: 'Locador Exemplo Mock',
             papel: 'Locador',
-            telefone: '(99) 98888-8888',
+            telefone: '(19) 98852-7164',
             genero: 'Mulher Cisgênero',
             ocupacao: 'cbo-2',
             emprego: 'autonomo',
@@ -318,13 +318,13 @@
                         {
                             id: 'm1',
                             autor_id: 'u-locador',
-                            texto: 'Oi! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h? Meu contato mock: (99) 98888-8888.',
+                            texto: 'Oi! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?',
                             em: agoraIso()
                         },
                         {
                             id: 'm2',
                             autor_id: 'u-morador',
-                            texto: 'Oi! Pode sim. O condomínio aceita pet pequeno mesmo? Meu telefone mock: (99) 99999-9999.',
+                            texto: 'Oi! Pode sim. O condomínio aceita pet pequeno mesmo?',
                             em: agoraIso()
                         },
                         {
@@ -443,6 +443,22 @@
         e.status = status;
         e.detail = detail;
         return e;
+    }
+
+    /** Valida telefone BR quando RoomMatchTelefone estiver carregado. */
+    function exigirTelefoneBr(valor) {
+        if (typeof global.RoomMatchTelefone === 'undefined') {
+            const digitos = String(valor || '').replace(/\D/g, '');
+            if (digitos.length < 10) {
+                throw erro(400, 'Informe um telefone brasileiro com DDD.');
+            }
+            return String(valor || '').trim();
+        }
+        const resultado = global.RoomMatchTelefone.validar(valor);
+        if (!resultado.ok) {
+            throw erro(400, resultado.mensagem || 'Telefone inválido.');
+        }
+        return resultado.formatado || String(valor || '').trim();
     }
 
     /** Normaliza aliases de tags para comparação estável. */
@@ -598,13 +614,14 @@
             if (db.users.some((u) => u.email === email)) {
                 throw erro(409, 'Este e-mail já está em uso.');
             }
+            const telefone = exigirTelefoneBr(body.telefone);
             const novo = {
                 id: `u-${Date.now()}`,
                 email,
                 senha,
                 nome,
                 papel,
-                telefone: String(body.telefone || '').trim(),
+                telefone,
                 genero: String(body.genero || '').trim(),
                 ocupacao: String(body.ocupacao || '').trim(),
                 emprego: String(body.emprego || '').trim(),
@@ -846,6 +863,10 @@
                         throw erro(400, 'Tipo de perfil inválido. Use Morador ou Locador.');
                     }
                     db.users[idx].papel = papel;
+                    return;
+                }
+                if (campo === 'telefone') {
+                    db.users[idx].telefone = exigirTelefoneBr(body.telefone);
                     return;
                 }
                 db.users[idx][campo] = String(body[campo] ?? '').trim();

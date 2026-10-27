@@ -51,7 +51,8 @@
                     </label>
 
                     <label for="perfil-telefone">Telefone de contato *
-                        <input id="perfil-telefone" name="telefone" type="tel" autocomplete="tel" placeholder="(99) 99999-9999" required>
+                        <input id="perfil-telefone" name="telefone" type="tel" data-tel-br="1" autocomplete="tel" placeholder="(19) 9XXXX-XXXX" required>
+                        <p id="perfil-telefone-status" class="face-check-status info">Use DDD brasileiro + número real (celular preferencial).</p>
                     </label>
 
                     <label for="perfil-genero">Gênero *
@@ -122,6 +123,7 @@
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
     <script src="../js/page-motion.js"></script>
+    <script src="../js/telefone-ui.js"></script>
     <script src="../js/face-check.js"></script>
     <script src="../js/classificacoes-br.js"></script>
     <script src="../js/universidades-sp.js"></script>
