@@ -1,5 +1,5 @@
 /**
- * Liga navegação global da demo: Mensagens, config, Como funciona, Termos, Sair.
+ * Liga navegação global: Mensagens, config, Como funciona, Termos, Sair.
  * Também carrega o banner de cookies (LGPD) em todas as páginas.
  */
 (function () {

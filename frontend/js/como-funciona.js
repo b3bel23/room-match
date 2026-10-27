@@ -1,5 +1,5 @@
 /**
- * Interações da página Como funciona: papéis, accordion, match ao vivo, copiar demo.
+ * Interações da página Como funciona: papéis, accordion e match ao vivo.
  */
 (function () {
     const IMOVEL_TAGS = ['Pet Friendly', 'Silêncio Noturno', 'Home Office'];

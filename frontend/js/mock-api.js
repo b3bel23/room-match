@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v7';
+    const CHAVE_DB = 'roommatch-mock-db-v8';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -186,7 +186,7 @@
             id: 'u-morador',
             email: 'morador@demo.com',
             senha: 'demo123',
-            nome: 'Morador Demo',
+            nome: 'Marina Souza',
             papel: 'Morador',
             telefone: '(19) 98888-1001',
             genero: 'Não-binário',
@@ -202,7 +202,7 @@
             id: 'u-locador',
             email: 'locador@demo.com',
             senha: 'demo123',
-            nome: 'Locador Demo',
+            nome: 'Ana Ribeiro',
             papel: 'Locador',
             telefone: '(19) 97777-2002',
             genero: 'Mulher Cisgênero',
@@ -294,7 +294,7 @@
                     id: 'v1',
                     imovel_id: 'republica-barao',
                     usuario_id: 'u-morador',
-                    nome: 'Morador Demo',
+                    nome: 'Marina Souza',
                     data: offsetIso(1),
                     hora: '18h',
                     status: 'confirmada'
@@ -303,7 +303,7 @@
                     id: 'v2',
                     imovel_id: 'kitnet-cambui',
                     usuario_id: 'u-morador',
-                    nome: 'Morador Demo',
+                    nome: 'Marina Souza',
                     data: offsetIso(1),
                     hora: '10h',
                     status: 'pendente'
@@ -318,13 +318,13 @@
                         {
                             id: 'm1',
                             autor_id: 'u-locador',
-                            texto: 'Oi, Morador Demo! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?',
+                            texto: 'Oi, Marina! Vi que você curtiu o quarto em Barão Geraldo. Posso te mostrar o imóvel amanhã às 18h?',
                             em: agoraIso()
                         },
                         {
                             id: 'm2',
                             autor_id: 'u-morador',
-                            texto: 'Oi, Locador Demo! Pode sim. O condomínio aceita pet pequeno mesmo?',
+                            texto: 'Oi, Ana! Pode sim. O condomínio aceita pet pequeno mesmo?',
                             em: agoraIso()
                         },
                         {

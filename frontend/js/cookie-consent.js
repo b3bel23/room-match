@@ -60,9 +60,10 @@
                 <h2 id="rm-cookie-titulo">Usamos cookies e tecnologias semelhantes</h2>
                 <p>
                     O RoomMatch usa cookies e armazenamento local para manter sua sessão,
-                    lembrar preferências, medir uso da demo e melhorar a busca por moradia
-                    compatível. Parte do processamento pode envolver serviços de terceiros.
-                    Você escolhe o que autorizar — o essencial para o site funcionar permanece ativo.
+                    lembrar preferências, entender o uso da plataforma e melhorar a busca
+                    por moradia compatível. Parte do processamento pode envolver serviços
+                    de terceiros. Você escolhe o que autorizar — o essencial para o site
+                    funcionar permanece ativo.
                 </p>
                 <div class="rm-cookie-config" id="rm-cookie-config" hidden>
                     <label>
@@ -75,7 +76,7 @@
                     </label>
                     <label>
                         <input type="checkbox" id="rm-cookie-ana" checked>
-                        <span><strong>Analíticos</strong>Entender como a demo é usada (agregado, sem vender dados).</span>
+                        <span><strong>Analíticos</strong>Entender como a plataforma é usada (agregado, sem vender dados).</span>
                     </label>
                 </div>
                 <div class="rm-cookie-acoes">

@@ -365,7 +365,6 @@
     color: var(--color-text-primary);
 }
 
-/* Demo accounts */
 .cf-demo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
