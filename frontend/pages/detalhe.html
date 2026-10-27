@@ -79,6 +79,13 @@
                     <button class="rota-modo" type="button" role="tab" aria-selected="false" data-modo="bike">Bicicleta</button>
                     <button class="rota-modo" type="button" role="tab" aria-selected="false" disabled title="Em breve: integração com EMDEC/EMTU">Ônibus</button>
                 </div>
+                <form id="rota-busca" class="rota-busca" role="search">
+                    <label class="visually-hidden" for="rota-busca-campo">Calcular distância até outro lugar</label>
+                    <input id="rota-busca-campo" type="search" placeholder="Faculdade, trabalho ou endereço" autocomplete="off" required>
+                    <button type="submit" class="rota-busca-botao" aria-label="Buscar lugar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+                    </button>
+                </form>
                 <div id="rota-mapa" class="rota-mapa"></div>
                 <p id="rota-resumo" class="rota-resumo" aria-live="polite"></p>
             </div>
