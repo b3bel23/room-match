@@ -178,6 +178,40 @@
     gap: 6px;
 }
 
+.senha-linha {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.senha-linha input {
+    width: 100%;
+    padding-right: 44px;
+}
+
+.senha-olho {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+
+.senha-olho:hover,
+.senha-olho:focus-visible,
+.senha-olho[aria-pressed="true"] {
+    color: var(--color-primary-hover);
+    background: var(--color-surface-muted);
+}
+
 .field label {
     font-size: var(--fs-body);
     font-weight: var(--fw-bold);

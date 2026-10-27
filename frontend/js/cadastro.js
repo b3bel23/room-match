@@ -23,6 +23,8 @@ function validarEtapa() {
             return false;
         }
         foto?.setCustomValidity('');
+        atualizarForcaSenha();
+        conferirSenhas();
     }
     for (const campo of etapas[atual].querySelectorAll('input')) {
         if (campo.id === 'foto') continue;
@@ -108,14 +110,89 @@ form.addEventListener('submit', (evento) => evento.preventDefault());
 
 const senha = document.getElementById('senha');
 const confirmarSenha = document.getElementById('confirmar-senha');
+const forcaBox = document.getElementById('senha-forca');
+const forcaTexto = document.getElementById('senha-forca-texto');
+const matchTexto = document.getElementById('senha-match');
+
+function classificarSenha(valor) {
+    const s = String(valor || '');
+    if (!s) return { nivel: '', rotulo: '' };
+    let pontos = 0;
+    if (s.length >= 6) pontos += 1;
+    if (s.length >= 10) pontos += 1;
+    if (/[a-z]/.test(s) && /[A-Z]/.test(s)) pontos += 1;
+    if (/\d/.test(s)) pontos += 1;
+    if (/[^A-Za-z0-9]/.test(s)) pontos += 1;
+
+    if (s.length < 6 || pontos <= 1) {
+        return { nivel: 'fraca', rotulo: 'Senha fraca — use ao menos 6 caracteres.' };
+    }
+    if (pontos <= 3) {
+        return { nivel: 'media', rotulo: 'Senha média — dá para melhorar com letras, números e símbolos.' };
+    }
+    return { nivel: 'forte', rotulo: 'Senha forte.' };
+}
+
+function atualizarForcaSenha() {
+    if (!senha || !forcaBox || !forcaTexto) return;
+    const { nivel, rotulo } = classificarSenha(senha.value);
+    forcaBox.hidden = !senha.value;
+    forcaBox.classList.remove('fraca', 'media', 'forte');
+    if (nivel) forcaBox.classList.add(nivel);
+    forcaTexto.textContent = rotulo || 'Força da senha';
+
+    if (senha.value && senha.value.length < 6) {
+        senha.setCustomValidity('A senha deve ter ao menos 6 caracteres.');
+    } else if (senha.value && nivel === 'fraca') {
+        senha.setCustomValidity('Escolha uma senha um pouco mais forte (mínimo 6 caracteres, com mais variedade).');
+    } else {
+        senha.setCustomValidity('');
+    }
+}
 
 function conferirSenhas() {
+    if (!senha || !confirmarSenha) return;
+    const iguais = senha.value === confirmarSenha.value;
     confirmarSenha.setCustomValidity(
-        senha.value === confirmarSenha.value ? '' : 'As senhas não coincidem.'
+        !confirmarSenha.value || iguais ? '' : 'As senhas não coincidem.'
     );
+    if (matchTexto) {
+        if (!confirmarSenha.value) {
+            matchTexto.hidden = true;
+            matchTexto.textContent = '';
+            matchTexto.classList.remove('ok', 'erro');
+        } else {
+            matchTexto.hidden = false;
+            matchTexto.textContent = iguais ? 'As senhas coincidem.' : 'As senhas não coincidem.';
+            matchTexto.classList.toggle('ok', iguais);
+            matchTexto.classList.toggle('erro', !iguais);
+        }
+    }
 }
-senha.addEventListener('input', conferirSenhas);
-confirmarSenha.addEventListener('input', conferirSenhas);
+
+const ICONE_OLHO = '<svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const ICONE_OLHO_OFF = '<svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.8 21.8 0 0 1 5.06-5.94"/><path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.9 21.9 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+
+function ligarOlhoSenha() {
+    document.querySelectorAll('.senha-olho[data-olho-para]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const alvo = document.getElementById(btn.dataset.olhoPara);
+            if (!alvo) return;
+            const mostrar = alvo.type === 'password';
+            alvo.type = mostrar ? 'text' : 'password';
+            btn.setAttribute('aria-pressed', mostrar ? 'true' : 'false');
+            btn.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+            btn.innerHTML = mostrar ? ICONE_OLHO_OFF : ICONE_OLHO;
+        });
+    });
+}
+
+senha?.addEventListener('input', () => {
+    atualizarForcaSenha();
+    conferirSenhas();
+});
+confirmarSenha?.addEventListener('input', conferirSenhas);
+ligarOlhoSenha();
 
 const TAMANHO_MAXIMO = 5 * 1024 * 1024;
 const LADO_MINIMO = 200;
