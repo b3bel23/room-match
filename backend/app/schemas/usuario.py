@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 class UsuarioBase(BaseModel):
     nome: str
@@ -13,7 +13,8 @@ class UsuarioBase(BaseModel):
     tags_convivencia: Optional[List[str]] = None
 
 class UsuarioCreate(UsuarioBase):
-    senha: str
+    # bcrypt considera no máximo 72 bytes da senha
+    senha: str = Field(min_length=8, max_length=72)
 
 class UsuarioOut(UsuarioBase):
     id_usuario: int
