@@ -48,6 +48,22 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
 
+### Mapa de rota no detalhe do imóvel (KAN-59)
+
+**Status:** parcial. Mapa e acesso por login prontos; falta a rota de ônibus.
+
+**O que faz:** quem está logado vê, no detalhe do imóvel, o tempo e a distância até o
+destino e abre um mapa com a rota a pé ou de bicicleta.
+
+**Regras de negócio e decisões**
+- Visitante (sem login ou cadastro) não vê o card de distância nem o mapa; a tela mostra
+  só o convite para criar conta ("Cadastre-se para ver mais informações").
+- Rota calculada no navegador com o OSRM do OpenStreetMap; mapa com Leaflet.
+
+**Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, `mapa-rota.js`).
+
+**Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40).
+
 ### Perfil do usuário e troca de modo (KAN-33)
 
 **Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar

@@ -211,6 +211,10 @@ function preencher(imovel) {
         el.hidden = estaLogado();
     });
 
+    document.querySelectorAll('.trajeto').forEach((el) => {
+        el.hidden = !estaLogado();
+    });
+
     montarAcoesPorPapel(imovel);
 }
 
