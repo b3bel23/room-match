@@ -193,6 +193,10 @@ foto?.addEventListener('change', async () => {
             throw new Error('A foto deve ter no máximo 5 MB.');
         }
         const dataUrl = await validarDimensoes(await lerArquivoComoDataUrl(arquivo));
+        if (typeof RoomMatchFaceCheck === 'undefined') {
+            throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
+        }
+        await RoomMatchFaceCheck.exigirRosto(dataUrl);
         mostrarPreviaFoto(dataUrl);
         foto.setCustomValidity('');
     } catch (erro) {

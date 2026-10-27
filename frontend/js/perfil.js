@@ -119,11 +119,15 @@ inputFoto?.addEventListener('change', async () => {
             throw new Error('A foto deve ter no máximo 5 MB.');
         }
         const dataUrl = await validarDimensoes(await lerArquivoComoDataUrl(arquivo));
+        if (typeof RoomMatchFaceCheck === 'undefined') {
+            throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
+        }
+        await RoomMatchFaceCheck.exigirRosto(dataUrl);
         fotoUrlAtual = dataUrl;
         avatar.style.backgroundImage = `url("${dataUrl}")`;
         avatar.textContent = '';
         avatar.classList.add('com-foto');
-        mostrarRetorno('Nova foto pronta. Clique em Salvar perfil para aplicar.', false);
+        mostrarRetorno('Rosto detectado. Clique em Salvar perfil para aplicar.', false);
     } catch (erro) {
         mostrarRetorno(erro.message || 'Não foi possível usar esta foto.', true);
     }
