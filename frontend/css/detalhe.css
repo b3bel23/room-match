@@ -385,6 +385,37 @@ body:not(.visitante) .afinidade {
     text-decoration: underline;
 }
 
+.rota-busca {
+    display: flex;
+    gap: 8px;
+}
+
+.rota-busca input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-size: var(--fs-small);
+}
+
+.rota-busca-lupa {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.rota-busca-lupa svg {
+    width: 18px;
+    height: 18px;
+}
+
 .rota-estimativas {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

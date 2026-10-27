@@ -19,6 +19,9 @@ const botaoCheia = document.getElementById('rota-cheia');
 const botaoCentro = document.getElementById('rota-centro');
 const textoDestino = document.getElementById('rota-destino');
 const textoCarro = document.getElementById('trajeto-carro');
+const formBusca = document.getElementById('rota-busca');
+const campoBusca = document.getElementById('rota-busca-campo');
+const erroBusca = document.getElementById('rota-busca-erro');
 const modos = [...document.querySelectorAll('.rota-modo')];
 
 let mapa = null;
@@ -42,6 +45,13 @@ async function buscarRota(modo, ponto) {
     const coordenadas = `${ORIGEM.lng},${ORIGEM.lat};${ponto.lng},${ponto.lat}`;
     const resposta = await fetch(`${SERVIDORES[modo]}/${coordenadas}?overview=full&geometries=geojson`);
     return (await resposta.json()).routes[0];
+}
+
+// Busca no OpenStreetMap (Nominatim), dando preferência à região de Campinas.
+async function buscarLugar(texto) {
+    const parametros = new URLSearchParams({ format: 'json', limit: '1', countrycodes: 'br', viewbox: '-47.35,-22.6,-46.7,-23.15', q: texto });
+    const resposta = await fetch(`https://nominatim.openstreetmap.org/search?${parametros}`);
+    return (await resposta.json())[0];
 }
 
 function preencher(modo, rota) {
@@ -92,7 +102,7 @@ async function calcularEstimativas() {
 
 function definirDestino(ponto) {
     destino = ponto;
-    textoDestino.textContent = ponto === CENTRO ? 'Destino: Centro' : 'Destino: ponto escolhido no mapa';
+    textoDestino.textContent = `Destino: ${ponto.rotulo || ponto.nome}`;
     botaoCentro.hidden = ponto === CENTRO;
 
     if (marcadorDestino) marcadorDestino.remove();
@@ -115,7 +125,7 @@ function criarMapa() {
     mapa.fitBounds([[ORIGEM.lat, ORIGEM.lng], [CENTRO.lat, CENTRO.lng]], { padding: [40, 40] });
 
     mapa.on('click', (evento) => {
-        definirDestino({ nome: 'Destino', lat: evento.latlng.lat, lng: evento.latlng.lng });
+        definirDestino({ nome: 'Destino', rotulo: 'ponto escolhido no mapa', lat: evento.latlng.lat, lng: evento.latlng.lng });
     });
 }
 
@@ -148,6 +158,21 @@ document.addEventListener('keydown', (evento) => {
 });
 
 botaoCentro.addEventListener('click', () => definirDestino(CENTRO));
+
+formBusca.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    erroBusca.hidden = true;
+    try {
+        const lugar = await buscarLugar(campoBusca.value.trim());
+        if (!lugar) {
+            erroBusca.hidden = false;
+            return;
+        }
+        definirDestino({ nome: lugar.display_name.split(',')[0], lat: Number(lugar.lat), lng: Number(lugar.lon) });
+    } catch (erro) {
+        erroBusca.hidden = false;
+    }
+});
 
 modos.forEach((modo) => {
     modo.addEventListener('click', () => {

@@ -76,6 +76,13 @@
                     <button id="rota-centro" class="rota-link" type="button" hidden>Voltar ao Centro</button>
                     <button id="rota-cheia" class="rota-link" type="button" aria-pressed="false">Tela cheia</button>
                 </div>
+                <form id="rota-busca" class="rota-busca" role="search">
+                    <input id="rota-busca-campo" type="search" placeholder="Buscar endereço, faculdade ou trabalho" aria-label="Buscar destino" required>
+                    <button class="rota-busca-lupa" type="submit" aria-label="Calcular distância até este local">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+                    </button>
+                </form>
+                <p id="rota-busca-erro" class="rota-dica" role="alert" hidden>Não encontramos esse local. Tente outro endereço.</p>
                 <div id="rota-mapa" class="rota-mapa"></div>
                 <p class="rota-dica">Toque no mapa para escolher outro destino, como sua faculdade ou trabalho.</p>
                 <ul class="rota-estimativas" aria-live="polite">
