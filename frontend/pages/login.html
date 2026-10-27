@@ -10,16 +10,25 @@
 </head>
 <body class="auth-page">
 
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+
     <main class="login-main">
         <a class="btn-voltar" href="home.html">← Voltar</a>
 
         <div class="login-split">
-            <section class="login-hero">
-                <h2>Moradia compatível na<br>Região de Campinas</h2>
-                <p>Matching por convivência, custo transparente e rota<br>de deslocamento até sua faculdade ou trabalho.</p>
+            <section class="login-hero" aria-label="Campinas">
+                <img class="login-hero-logo" src="../assets/logo.svg" alt="RoomMatch">
+                <h2>Encontre moradia compatível na<br>região metropolitana de Campinas</h2>
+                <p>Combinação por convivência, rateio transparente e tempo até sua faculdade ou trabalho.</p>
                 <ul class="login-stats">
-                    <li><strong>847</strong>imóveis na<br>RMC</li>
-                    <li><strong>0</strong>taxas<br>ocultas</li>
+                    <li><strong>4</strong>imóveis ativos</li>
                 </ul>
             </section>
 
@@ -30,16 +39,13 @@
                 <form id="login-form" class="login-form" novalidate>
                     <div class="field">
                         <label for="login-email">E-mail</label>
-                        <input id="login-email" type="email" placeholder="maria.silva@puc.br" autocomplete="email">
+                        <input id="login-email" type="email" placeholder="seu@email.com" autocomplete="email">
                     </div>
                     <div class="field">
                         <label for="login-senha">Senha</label>
                         <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password">
                     </div>
                     <p id="login-erro" class="login-erro" hidden>E-mail ou senha inválidos.</p>
-                    <p class="login-subtitle" style="margin-top:8px;font-size:12px">
-                        Demo: Morador Demo (morador@demo.com) ou Locador Demo (locador@demo.com) · senha demo123
-                    </p>
                     <a class="link-esqueci" href="recuperar-senha.html">Esqueci minha senha</a>
                     <button type="submit" class="btn-entrar">Entrar</button>
                 </form>
@@ -50,12 +56,12 @@
     </main>
 
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
         </nav>
-        <small>© 2026 RoomMatch</small>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
     </footer>
 
     <script src="../js/mock-api.js"></script>
@@ -63,7 +69,7 @@
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
-
+    <script src="../js/page-motion.js"></script>
     <script src="../js/login.js"></script>
 </body>
 </html>

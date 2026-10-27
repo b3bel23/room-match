@@ -66,10 +66,16 @@ function renderThread(conv) {
         imovelLink.textContent = 'Ver anúncio';
     }
     if (imovelFoto) {
-        const url = conv.imovel_capa
-            || (typeof ImovelFotos !== 'undefined' ? ImovelFotos.capa({ id: conv.imovel_id }) : '');
-        if (url && typeof ImovelFotos !== 'undefined') {
-            ImovelFotos.aplicarFundo(imovelFoto, url);
+        if (typeof ImovelFotos !== 'undefined' && conv.imovel_id) {
+            ImovelFotos.iniciarCarrossel(
+                imovelFoto,
+                ImovelFotos.lista({ id: conv.imovel_id, capa: conv.imovel_capa }),
+                { intervalo: 3600 }
+            );
+            imovelFoto.hidden = false;
+        } else if (conv.imovel_capa) {
+            imovelFoto.style.backgroundImage = `url("${conv.imovel_capa}")`;
+            imovelFoto.style.backgroundSize = 'cover';
             imovelFoto.hidden = false;
         } else {
             imovelFoto.style.backgroundImage = '';

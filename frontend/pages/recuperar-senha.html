@@ -10,19 +10,31 @@
     <link rel="stylesheet" href="../css/config.css">
 </head>
 <body class="auth-page">
+
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+
     <main class="login-main">
         <a class="btn-voltar" href="login.html">← Voltar</a>
         <div class="login-split">
-            <section class="login-hero">
+            <section class="login-hero login-hero-rua" aria-label="Rua de Campinas">
+                <img class="login-hero-logo" src="../assets/logo.svg" alt="RoomMatch">
                 <h2>Recuperação de senha</h2>
-                <p>Na demo, o link é simulado — nenhuma mensagem real é enviada.</p>
+                <p>Enviaremos um link para redefinir sua senha.</p>
             </section>
             <section class="login-card">
                 <h1>Esqueci minha senha</h1>
+                <p class="login-subtitle">Informe o e-mail da sua conta</p>
                 <form id="recuperar-form" class="login-form">
                     <div class="field">
                         <label for="recuperar-email">E-mail</label>
-                        <input id="recuperar-email" type="email" required placeholder="morador@demo.com">
+                        <input id="recuperar-email" type="email" required placeholder="seu@email.com">
                     </div>
                     <button type="submit" class="btn-entrar">Enviar link</button>
                     <p id="recuperar-retorno" class="config-retorno" hidden></p>
@@ -30,12 +42,22 @@
             </section>
         </div>
     </main>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
+    </footer>
+
     <script src="../js/mock-api.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
-
+    <script src="../js/page-motion.js"></script>
     <script>
         document.getElementById('recuperar-form').addEventListener('submit', async (e) => {
             e.preventDefault();

@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v4';
+    const CHAVE_DB = 'roommatch-mock-db-v5';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -159,7 +159,7 @@
         }),
         imovelSeed({
             id: 'suite-taquaral',
-            titulo: 'Quarto suite · Taquaral',
+            titulo: 'Quarto suíte · Taquaral',
             tipo: 'Apartamento',
             bairro: 'Taquaral',
             cidade: 'Campinas',
@@ -187,6 +187,12 @@
             senha: 'demo123',
             nome: 'Morador Demo',
             papel: 'Morador',
+            telefone: '(19) 98888-1001',
+            genero: 'Não-binário',
+            ocupacao: 'estudante',
+            emprego: 'estudante-sem-vinculo',
+            faculdade: 'unicamp-campinas',
+            foto_url: '',
             tags: ['Pet Friendly', 'Silêncio Noturno', 'Home Office'],
             orcamento: 1200,
             limiar: 70
@@ -197,13 +203,31 @@
             senha: 'demo123',
             nome: 'Locador Demo',
             papel: 'Locador',
+            telefone: '(19) 97777-2002',
+            genero: 'Mulher Cisgênero',
+            ocupacao: 'cbo-2',
+            emprego: 'autonomo',
+            faculdade: 'puc-campinas-campus1',
+            foto_url: '',
             tags: ['Pet Friendly', 'Sem Festas', 'Silêncio Noturno'],
             orcamento: 5000,
             limiar: 60
         }
     ];
 
-    const EMAILS_DEMO = SEED_USERS.map((u) => u.email);
+    const CAMPOS_PERFIL = [
+        'nome',
+        'telefone',
+        'genero',
+        'ocupacao',
+        'emprego',
+        'faculdade',
+        'foto_url',
+        'email',
+        'papel'
+    ];
+
+    const PAPEIS_UI = Object.freeze(['Morador', 'Locador']);
 
     function iniciais(nome) {
         return String(nome || '?')
@@ -223,9 +247,14 @@
             email: user.email,
             nome: user.nome,
             papel: user.papel,
-            // Schema: locatario | locador (API futura pode usar estes)
             papel_schema: user.papel === 'Locador' ? 'locador' : 'locatario',
             iniciais: iniciais(user.nome),
+            telefone: user.telefone || '',
+            genero: user.genero || '',
+            ocupacao: user.ocupacao || '',
+            emprego: user.emprego || '',
+            faculdade: user.faculdade || '',
+            foto_url: user.foto_url || '',
             tags: user.tags || [],
             orcamento: orcamento_maximo,
             limiar: limiar_compatibilidade,
@@ -333,22 +362,43 @@
     }
 
     function sincronizarUsuariosDemo(db) {
+        const emailsSeed = new Set(SEED_USERS.map((u) => u.email));
         const preservados = [];
+
         SEED_USERS.forEach((seed) => {
-            const existente = db.users.find((u) => u.email === seed.email);
+            const existente = db.users.find(
+                (u) => u.id === seed.id || u.email === seed.email
+            );
             if (existente) {
                 preservados.push({
                     ...seed,
-                    id: existente.id,
-                    senha: existente.senha,
+                    id: existente.id || seed.id,
+                    senha: existente.senha || seed.senha,
                     tags: existente.tags?.length ? existente.tags : seed.tags,
                     orcamento: existente.orcamento ?? seed.orcamento,
-                    limiar: existente.limiar ?? seed.limiar
+                    limiar: existente.limiar ?? seed.limiar,
+                    nome: existente.nome || seed.nome,
+                    telefone: existente.telefone || seed.telefone,
+                    genero: existente.genero || seed.genero,
+                    ocupacao: existente.ocupacao ?? seed.ocupacao,
+                    emprego: existente.emprego ?? seed.emprego,
+                    faculdade: existente.faculdade ?? seed.faculdade,
+                    foto_url: existente.foto_url || seed.foto_url || '',
+                    email: existente.email || seed.email,
+                    papel: PAPEIS_UI.includes(existente.papel) ? existente.papel : seed.papel
                 });
             } else {
                 preservados.push({ ...seed });
             }
         });
+
+        // Contas criadas fora do seed (quando o register estiver liberado)
+        db.users.forEach((u) => {
+            if (!emailsSeed.has(u.email) && !preservados.some((p) => p.id === u.id)) {
+                preservados.push(u);
+            }
+        });
+
         db.users = preservados;
     }
 
@@ -486,10 +536,14 @@
                 `${i.titulo} ${i.bairro} ${i.cidade} ${i.endereco || ''}`.toLowerCase().includes(bairro));
         }
         if (tag) {
-            items = items.filter((i) => i.tags.some((t) => t.toLowerCase().includes(tag)));
+            items = items.filter((i) => (i.tags || []).some((t) => {
+                const nt = normalizarTag(t);
+                const nq = normalizarTag(tag);
+                return nt === nq || nt.includes(nq) || nq.includes(nt);
+            }));
         }
-        if (precoMax > 0) {
-            items = items.filter((i) => i.preco <= precoMax);
+        if (Number.isFinite(precoMax) && precoMax > 0) {
+            items = items.filter((i) => Number(i.preco) <= precoMax);
         }
         return items;
     }
@@ -526,7 +580,7 @@
         if (m === 'POST' && pathname === '/auth/register') {
             throw erro(
                 403,
-                'Na demo existem apenas as contas Morador Demo (morador@demo.com) e Locador Demo (locador@demo.com). Use Entrar.'
+                'Cadastro temporariamente indisponível. Se você já tem conta, use Entrar.'
             );
         }
 
@@ -706,16 +760,50 @@
         if (m === 'PATCH' && pathname === '/me') {
             if (!user) throw erro(401, 'Não autenticado.');
             const idx = db.users.findIndex((u) => u.id === user.id);
-            if (body.nome && !EMAILS_DEMO.includes(db.users[idx].email)) {
-                db.users[idx].nome = String(body.nome).trim();
-            }
+            if (idx < 0) throw erro(401, 'Não autenticado.');
+
+            CAMPOS_PERFIL.forEach((campo) => {
+                if (body[campo] === undefined) return;
+                if (campo === 'email') {
+                    const email = String(body.email || '').trim().toLowerCase();
+                    if (!email || !email.includes('@')) {
+                        throw erro(400, 'Informe um e-mail válido.');
+                    }
+                    const conflito = db.users.some(
+                        (u, i) => i !== idx && u.email === email
+                    );
+                    if (conflito) throw erro(409, 'Este e-mail já está em uso.');
+                    db.users[idx].email = email;
+                    return;
+                }
+                if (campo === 'foto_url') {
+                    db.users[idx].foto_url = String(body.foto_url || '');
+                    return;
+                }
+                if (campo === 'papel') {
+                    const papel = String(body.papel || '').trim();
+                    if (!PAPEIS_UI.includes(papel)) {
+                        throw erro(400, 'Tipo de perfil inválido. Use Morador ou Locador.');
+                    }
+                    db.users[idx].papel = papel;
+                    return;
+                }
+                db.users[idx][campo] = String(body[campo] ?? '').trim();
+            });
+
             if (Array.isArray(body.tags)) db.users[idx].tags = body.tags;
+            // Schema: orcamento_maximo / limiar_compatibilidade (aliases legados: orcamento / limiar)
             if (body.orcamento_maximo !== undefined || body.orcamento !== undefined) {
-                db.users[idx].orcamento = Number(body.orcamento_maximo ?? body.orcamento);
+                const v = Number(body.orcamento_maximo ?? body.orcamento);
+                db.users[idx].orcamento = v;
+                db.users[idx].orcamento_maximo = v;
             }
             if (body.limiar_compatibilidade !== undefined || body.limiar !== undefined) {
-                db.users[idx].limiar = Number(body.limiar_compatibilidade ?? body.limiar);
+                const v = Number(body.limiar_compatibilidade ?? body.limiar);
+                db.users[idx].limiar = v;
+                db.users[idx].limiar_compatibilidade = v;
             }
+            // id, senha e campos desconhecidos nunca entram por este PATCH.
             salvarDb(db);
             return publico(db.users[idx]);
         }
@@ -740,8 +828,8 @@
             return {
                 ok: true,
                 message: existe
-                    ? 'Enviamos um link de recuperação para o e-mail informado (demo).'
-                    : 'Se o e-mail existir, enviaremos o link de recuperação (demo).'
+                    ? 'Enviamos um link de recuperação para o e-mail informado.'
+                    : 'Se o e-mail existir, enviaremos o link de recuperação.'
             };
         }
 

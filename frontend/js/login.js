@@ -3,6 +3,10 @@ const email = document.getElementById('login-email');
 const senha = document.getElementById('login-senha');
 const erro = document.getElementById('login-erro');
 
+if (typeof estaLogado === 'function' && estaLogado()) {
+    window.location.replace(typeof paginaInicial === 'function' ? paginaInicial() : 'home.html');
+}
+
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
 

@@ -12,7 +12,7 @@
 <body class="publicar-page">
 
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a class="ativo" href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
@@ -24,18 +24,24 @@
 
     <div class="page-bar">
         <button class="btn-publicar" type="submit" form="publicar-form">Publicar anúncio</button>
-        <p class="page-bar-sub">Preencha os dados com transparência total</p>
+        <span class="label-com-tip page-bar-sub">
+            Novo anúncio
+            <span class="tip">
+                <button type="button" class="tip-btn" aria-label="Ajuda para publicar">?</button>
+                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Preencha valores com transparência: o total mensal é a soma de aluguel, condomínio, imposto predial e contas.</span>
+            </span>
+        </span>
     </div>
 
     <main class="publicar-main">
         <form id="publicar-form" class="publicar-form">
             <div class="campos">
                 <div class="campo">
-                    <label for="titulo">Título do anúncio *</label>
+                    <label class="label-com-tip" for="titulo">Título do anúncio *</label>
                     <input id="titulo" type="text" placeholder="Quarto em república · Barão Geraldo" required>
                 </div>
                 <div class="campo">
-                    <label for="tipo">Tipo *</label>
+                    <label class="label-com-tip" for="tipo">Tipo *</label>
                     <select id="tipo" required>
                         <option value="" selected disabled>República · Quarto individual</option>
                         <option>República · Quarto individual</option>
@@ -46,34 +52,51 @@
                     </select>
                 </div>
                 <div class="campo">
-                    <label for="endereco">Endereço / Bairro *</label>
+                    <label class="label-com-tip" for="endereco">
+                        Endereço / Bairro *
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre endereço">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Inclua rua e bairro na região metropolitana de Campinas. Aparece no detalhe do anúncio e no cálculo de deslocamento.</span>
+                        </span>
+                    </label>
                     <textarea id="endereco" rows="2" placeholder="R. Benedito Alves Aranha, 450 · Barão Geraldo" required></textarea>
                 </div>
                 <div class="campo">
-                    <label for="cep">CEP *</label>
+                    <label class="label-com-tip" for="cep">CEP *</label>
                     <input id="cep" type="text" inputmode="numeric" pattern="\d{5}-?\d{3}" placeholder="13085-000" required>
                 </div>
                 <div class="campo">
-                    <label for="aluguel">Aluguel (R$) *</label>
+                    <label class="label-com-tip" for="aluguel">Aluguel (R$) *</label>
                     <input id="aluguel" type="number" min="0" step="1" inputmode="numeric" placeholder="600" required>
                 </div>
                 <div class="campo">
-                    <label for="condominio">Condomínio (R$) *</label>
+                    <label class="label-com-tip" for="condominio">Condomínio (R$) *</label>
                     <input id="condominio" type="number" min="0" step="1" inputmode="numeric" placeholder="120" required>
                 </div>
                 <div class="campo">
-                    <label for="iptu">IPTU (R$) *</label>
+                    <label class="label-com-tip" for="iptu">Imposto predial (R$) *</label>
                     <input id="iptu" type="number" min="0" step="1" inputmode="numeric" placeholder="45" required>
                 </div>
                 <div class="campo">
-                    <label for="contas">Estimativa contas (R$) *</label>
+                    <label class="label-com-tip" for="contas">
+                        Estimativa contas (R$) *
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre contas">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Média de luz, água, gás, internet etc. dividida pelos moradores, se for o caso.</span>
+                        </span>
+                    </label>
                     <input id="contas" type="number" min="0" step="1" inputmode="numeric" placeholder="85" required>
                 </div>
             </div>
 
             <section class="fotos">
-                <h2>Fotos do imóvel</h2>
-                <p class="nota">Mínimo 3 fotos · arraste ou clique para adicionar</p>
+                <h2 class="label-com-tip">
+                    Fotos do imóvel
+                    <span class="tip">
+                        <button type="button" class="tip-btn" aria-label="Ajuda sobre fotos">?</button>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mínimo 3 fotos. Clique em + para adicionar. Prefira ambientes bem iluminados.</span>
+                    </span>
+                </h2>
                 <div id="fotos-grade" class="fotos-grade">
                     <label class="foto-slot foto-adicionar">
                         <input id="fotos-entrada" class="visually-hidden" type="file" accept="image/*" multiple>
@@ -84,7 +107,13 @@
             </section>
 
             <fieldset class="classificacao">
-                <legend>Classificação do lar *</legend>
+                <legend class="label-com-tip">
+                    Classificação do lar *
+                    <span class="tip">
+                        <button type="button" class="tip-btn" aria-label="Ajuda sobre classificação">?</button>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Indica o perfil da casa (mista, feminina ou masculina) para filtrar buscas.</span>
+                    </span>
+                </legend>
                 <div class="pilulas">
                     <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Mista" required><span>Mista</span></label>
                     <label class="pilula"><input class="visually-hidden" type="radio" name="classificacao" value="Feminina"><span>Feminina</span></label>
@@ -94,7 +123,13 @@
 
             <section class="tags-secao">
                 <div class="tags-cabecalho">
-                    <h2>Tags de convivência (mín. 3 · máx. 8)</h2>
+                    <h2 class="label-com-tip">
+                        Tags de convivência
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre tags">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Escolha de 3 a 8 tags. Elas entram no cálculo de match com o morador.</span>
+                        </span>
+                    </h2>
                     <span id="tags-contador">0 selecionadas</span>
                 </div>
 
@@ -136,7 +171,7 @@
     </main>
 
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -149,7 +184,8 @@
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
-
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/tip.js"></script>
     <script src="../js/publicar-imovel.js"></script>
 </body>
 </html>

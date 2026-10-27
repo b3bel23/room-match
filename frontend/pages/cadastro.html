@@ -11,8 +11,8 @@
 <body class="auth-page">
 
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
-        <nav>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
             <a href="como-funciona.html">Como funciona</a>
             <a class="btn btn-secondary" href="login.html">Entrar</a>
             <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
@@ -30,23 +30,40 @@
 
             <section class="etapa" data-etapa="1">
                 <div class="etapa-titulo">
-                    <h1>Cadastro do <span data-papel>Morador</span></h1>
-                    <p>Crie sua conta para encontrar a república ideal e dar match com futuros colegas.</p>
+                    <h1 class="label-com-tip">
+                        Cadastro do <span data-papel>Morador</span>
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Sobre este cadastro">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Crie sua conta para encontrar moradia compatível ou anunciar uma vaga na região metropolitana de Campinas.</span>
+                        </span>
+                    </h1>
                 </div>
 
                 <div class="grade">
                     <div class="campo col-1">
-                        <label for="nome">Nome completo *</label>
+                        <label class="label-com-tip" for="nome">Nome completo *</label>
                         <input id="nome" name="nome" type="text" placeholder="Digite seu nome completo" autocomplete="name" required>
                     </div>
 
                     <div class="campo col-1">
-                        <label for="telefone">Telefone de contato *</label>
+                        <label class="label-com-tip" for="telefone">
+                            Telefone de contato *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre telefone">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Usado para contato sobre visitas. Prefira WhatsApp com DDD.</span>
+                            </span>
+                        </label>
                         <input id="telefone" name="telefone" type="tel" placeholder="(19) 99999-9999" autocomplete="tel" required>
                     </div>
 
                     <fieldset class="genero col-full">
-                        <legend>Gênero * <span class="ajuda">?</span></legend>
+                        <legend class="label-com-tip">
+                            Gênero *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre gênero">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Cis: identidade igual ao sexo de nascimento. Trans: identidade diferente. Não-binário: fora do binarismo. Você pode escolher “Outro/Não informar”.</span>
+                            </span>
+                        </legend>
                         <div class="pilulas">
                             <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Homem Cisgênero" required><span>Homem Cisgênero</span></label>
                             <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Mulher Cisgênero" required><span>Mulher Cisgênero</span></label>
@@ -56,50 +73,80 @@
                             <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Não-binário" required><span>Não-binário</span></label>
                             <label class="pilula"><input class="visually-hidden" type="radio" name="genero" value="Outro/Não informar" required><span>Outro/Não informar</span></label>
                         </div>
-                        <p class="nota">Cis: identidade igual ao sexo de nascimento. Trans: identidade diferente. Não-binário: fora do binarismo.</p>
                     </fieldset>
 
                     <div class="campo col-1">
-                        <label for="ocupacao">Ocupação (opcional)</label>
-                        <input id="ocupacao" name="ocupacao" type="text" placeholder="Ex: Estudante, Profissional...">
+                        <label class="label-com-tip" for="ocupacao">
+                            Ocupação
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre ocupação">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Use os grupos da Classificação Brasileira de Ocupações (CBO), o padrão do Ministério do Trabalho.</span>
+                            </span>
+                        </label>
+                        <select id="ocupacao" name="ocupacao"></select>
                     </div>
                     <div class="campo col-2">
-                        <label for="emprego">Emprego (opcional)</label>
-                        <input id="emprego" name="emprego" type="text" placeholder="Ex: Empresa, área de trabalho">
+                        <label class="label-com-tip" for="emprego">
+                            Situação de emprego
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre situação de emprego">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Informe seu vínculo atual (CLT, autônomo, estágio, estudante sem vínculo etc.), no padrão de cadastros brasileiros.</span>
+                            </span>
+                        </label>
+                        <select id="emprego" name="emprego"></select>
                     </div>
 
                     <div class="campo col-1">
-                        <label for="email">E-mail *</label>
+                        <label class="label-com-tip" for="email">
+                            E-mail *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre e-mail">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Será seu login na plataforma.</span>
+                            </span>
+                        </label>
                         <input id="email" name="email" type="email" placeholder="exemplo@dominio.com" autocomplete="email" required>
                     </div>
 
                     <div class="campo col-1">
-                        <label for="faculdade">Faculdade / Universidade (opcional)</label>
-                        <input id="faculdade" name="faculdade" type="text" placeholder="Ex: UNICAMP, PUC-Campinas...">
+                        <label class="label-com-tip" for="faculdade">
+                            Faculdade / Universidade
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre faculdade">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Escolha a universidade e o campus em São Paulo (referência e-MEC/MEC). Use “Outra IES” para centro universitário, faculdade ou instituto.</span>
+                            </span>
+                        </label>
+                        <select id="faculdade" name="faculdade"></select>
                     </div>
 
-                    <p class="nota col-full">Emprego e Faculdade são opcionais e usados apenas para calcular o tempo real de deslocamento até os imóveis.</p>
-
                     <div class="foto col-full">
-                        <p class="foto-rotulo">Foto de perfil * <span class="selo-obrigatoria">Obrigatória</span></p>
+                        <p class="foto-rotulo label-com-tip">
+                            Foto de perfil *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre foto de perfil">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatória para chat e anúncios. JPG ou PNG, máx. 5 MB (recomendado 400×400). Use foto nítida, rosto visível. Não publique dados sensíveis.</span>
+                            </span>
+                        </p>
                         <div class="foto-linha">
                             <div class="avatar"><img id="foto-previa" alt="Prévia da foto de perfil" hidden></div>
                             <div class="foto-info">
                                 <label for="foto" class="btn-foto">Adicionar foto</label>
                                 <input id="foto" class="visually-hidden" name="foto" type="file" accept="image/jpeg,image/png" required>
-                                <p>JPG ou PNG · máx. 5 MB · 400×400 px recomendado (mín. 200×200)</p>
                             </div>
                         </div>
-                        <p class="foto-dica">Use foto nítida, rosto visível, fundo neutro, boa iluminação.</p>
-                        <p class="foto-aviso">A foto é obrigatória para acessar o chat e criar anúncios. Não publique informações pessoais sensíveis. A plataforma pode remover imagens que violem os termos.</p>
                     </div>
 
                     <div class="campo col-1">
-                        <label for="senha">Senha *</label>
+                        <label class="label-com-tip" for="senha">
+                            Senha *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre senha">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Use pelo menos 6 caracteres.</span>
+                            </span>
+                        </label>
                         <input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="new-password" required>
                     </div>
                     <div class="campo col-2">
-                        <label for="confirmar-senha">Confirmar Senha *</label>
+                        <label class="label-com-tip" for="confirmar-senha">Confirmar senha *</label>
                         <input id="confirmar-senha" type="password" placeholder="••••••••" autocomplete="new-password" required>
                     </div>
                 </div>
@@ -112,13 +159,24 @@
 
             <section class="etapa" data-etapa="2" hidden>
                 <div class="etapa-titulo">
-                    <h1>Preferências de convivência</h1>
-                    <p>Tags, orçamento e limiar · <span data-papel>Morador</span></p>
+                    <h1 class="label-com-tip">
+                        Preferências de convivência
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Sobre preferências">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Tags, orçamento e limiar definem o match e quando o chat é liberado.</span>
+                        </span>
+                    </h1>
                 </div>
 
                 <div class="tags-secao">
                     <div class="tags-cabecalho">
-                        <h2>Tags de Adesão</h2>
+                        <h2 class="label-com-tip">
+                            Tags de adesão
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags de adesão">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Hábitos ou valores que você busca na casa (ex.: pet friendly, home office).</span>
+                            </span>
+                        </h2>
                         <span id="tags-contador">0 selecionadas</span>
                     </div>
                     <div class="pilulas">
@@ -132,7 +190,13 @@
                     </div>
 
                     <div class="tags-cabecalho">
-                        <h2>Tags de Restrição</h2>
+                        <h2 class="label-com-tip">
+                            Tags de restrição
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags de restrição">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Limites que importam para você (ex.: silêncio noturno, sem festas). Escolha de 3 a 8 tags no total — adesão + restrição.</span>
+                            </span>
+                        </h2>
                     </div>
                     <div class="pilulas">
                         <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno"><span>Silêncio Noturno</span></label>
@@ -142,19 +206,29 @@
                         <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
                         <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
                     </div>
-
-                    <p class="nota">Selecione mínimo 3 e máximo 8 tags no total. Tags comuns com o imóvel são destacadas no match.</p>
                 </div>
 
                 <div class="slider">
-                    <label for="orcamento">Orçamento máximo mensal</label>
+                    <label class="label-com-tip" for="orcamento">
+                        Orçamento máximo mensal
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre orçamento">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Total mensal que você topa pagar (aluguel, condomínio, imposto predial e contas). O chat só libera se o anúncio couber nesse valor.</span>
+                        </span>
+                    </label>
                     <span class="valor-digitado">R$ <input id="orcamento-valor" type="number" min="0" max="100000" step="0.01" inputmode="decimal" aria-label="Orçamento máximo mensal em reais"></span>
                     <input id="orcamento" name="orcamento" type="range" min="0" max="100000" step="100" value="0">
                     <div class="slider-limites"><span>R$ 0,00</span><span>R$ 100.000,00</span></div>
                 </div>
 
                 <div class="slider">
-                    <label for="limiar">Limiar mínimo de compatibilidade</label>
+                    <label class="label-com-tip" for="limiar">
+                        Limiar mínimo de compatibilidade
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre limiar">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Match mínimo (%) para liberar o chat. Ex.: 70% exige bastante afinidade de tags com o anúncio.</span>
+                        </span>
+                    </label>
                     <span class="valor-digitado valor-curto"><input id="limiar-valor" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Limiar mínimo de compatibilidade em porcentagem"> %</span>
                     <input id="limiar" name="limiar" type="range" min="0" max="100" step="5" value="70">
                     <div class="slider-limites"><span>0%</span><span>100%</span></div>
@@ -168,8 +242,13 @@
 
             <section class="etapa" data-etapa="3" hidden>
                 <div class="etapa-titulo">
-                    <h1>Termos e privacidade</h1>
-                    <p>Consentimento LGPD · <span data-papel>Morador</span></p>
+                    <h1 class="label-com-tip">
+                        Termos e privacidade
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Sobre o aceite">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Leia e aceite para concluir. O tratamento de dados segue a Lei Geral de Proteção de Dados (consentimento e execução do serviço).</span>
+                        </span>
+                    </h1>
                 </div>
 
                 <div class="termos">
@@ -183,7 +262,7 @@
                     <p>A conta é para quem tem 18 anos ou mais. Cada pessoa informa dados verdadeiros e guarda a própria senha. Uma conta pode ser de Morador, de locador, ou dos dois.</p>
 
                     <h3>3. Anúncio</h3>
-                    <p>Quem publica responde pelo que coloca no anúncio: fotos, descrição, vagas, endereço e valores. O total mensal é a soma de aluguel, condomínio, IPTU e contas. O tempo de deslocamento é uma estimativa até o destino informado, como a faculdade ou o trabalho. O match compara tags de convivência, total mensal e deslocamento. Esse percentual orienta a busca e não garante compatibilidade, segurança nem que o imóvel esteja disponível.</p>
+                    <p>Quem publica responde pelo que coloca no anúncio: fotos, descrição, vagas, endereço e valores. O total mensal é a soma de aluguel, condomínio, imposto predial e contas. O tempo de deslocamento é uma estimativa até o destino informado, como a faculdade ou o trabalho. A afinidade compara hábitos de convivência, total mensal e deslocamento. Esse percentual orienta a busca e não garante compatibilidade, segurança nem que o imóvel esteja disponível.</p>
                     <p>Favoritar um anúncio só organiza a sua lista. Agendar uma visita não reserva o quarto e não cria contrato.</p>
 
                     <h3>4. Dados que pedimos</h3>
@@ -218,7 +297,7 @@
     </main>
 
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -231,7 +310,10 @@
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
-
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/tip.js"></script>
+    <script src="../js/classificacoes-br.js"></script>
+    <script src="../js/universidades-sp.js"></script>
     <script src="../js/cadastro.js"></script>
 </body>
 </html>

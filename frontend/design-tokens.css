@@ -1,16 +1,28 @@
 :root {
-  /* Cores - Room Match (extraído do Figma) */
-  --color-primary: #5ea38f;
-  --color-secondary: #fbb050;
-  --color-accent: #f08070;
+  /* Cores — contraste WCAG AA em superfície clara */
+  --color-primary: #3f8f7a;
+  --color-primary-hover: #347865;
+  --color-primary-soft: #e4f2ed;
+  --color-secondary: #e59a2e;
+  --color-secondary-text: #8a5a0a;
+  --color-accent: #d45b4c;
+  --color-accent-hover: #b8483b;
   --color-background: #141d22;
   --color-surface: #ffffff;
-  --color-surface-muted: #f4f6f7;
-  --color-border: #e2e8eb;
+  --color-surface-muted: #eef2f4;
+  --color-border: #c5ced6;
+  --color-border-strong: #9aa8b3;
   --color-text-primary: #141d22;
-  --color-text-muted: #4a5568;
-  --color-text-subtle: #94a3ad;
-  --color-neutral: #757575;
+  --color-text-muted: #3a4553;
+  --color-text-subtle: #5c6b78;
+  --color-neutral: #5c6b78;
+  --color-on-primary: #ffffff;
+  --color-on-dark: #f5f7f8;
+  --color-on-dark-muted: #d5dce2;
+  --color-focus: #2f6f5f;
+  --color-danger: #b42318;
+  --color-danger-bg: #fef3f2;
+  --color-success: #3f8f7a;
 
   /* Tipografia */
   --font-heading: 'Comfortaa', sans-serif;
@@ -18,10 +30,10 @@
 
   --fs-hero: 26px;
   --fs-h2: 18px;
-  --fs-card-title: 14px;
-  --fs-body: 13px;
-  --fs-small: 12px;
-  --fs-xsmall: 11px;
+  --fs-card-title: 15px;
+  --fs-body: 14px;
+  --fs-small: 13px;
+  --fs-xsmall: 12px;
 
   --fw-regular: 400;
   --fw-medium: 500;
@@ -34,4 +46,9 @@
   --radius-lg: 12px;
   --radius-pill: 20px;
   --radius-tag: 16px;
+
+  /* Interação */
+  --shadow-focus: 0 0 0 3px rgba(63, 143, 122, 0.35);
+  --shadow-card: 0 1px 3px rgba(20, 29, 34, 0.08);
+  --tap-min: 44px;
 }

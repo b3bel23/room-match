@@ -11,10 +11,43 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    width: 100%;
+    overflow-x: clip;
+}
+
 body {
     font-family: var(--font-body), sans-serif;
+    font-size: var(--fs-body);
+    line-height: 1.5;
     color: var(--color-text-primary);
+    background: var(--color-surface-muted);
+    width: 100%;
+    max-width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+}
+
+img,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Percentuais e métricas nunca quebram (ex.: 85% → 85 / %) */
+.stat-number,
+.badge-match,
+.afinidade,
+.fav-match,
+.cf-match-ring,
+.percentual,
+[data-nowrap] {
+    white-space: nowrap;
 }
 
 a {
@@ -27,30 +60,118 @@ button {
     cursor: pointer;
 }
 
-.site-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 72px;
-    padding: 0 40px;
-    background: var(--color-surface);
-    border-top: 1px solid var(--color-border);
+:focus {
+    outline: none;
 }
 
-.site-footer img {
-    height: 43px;
+:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    box-shadow: var(--shadow-focus);
+}
+
+::placeholder {
+    color: var(--color-text-subtle);
+    opacity: 1;
+}
+
+input,
+select,
+textarea {
+    color: var(--color-text-primary);
+    font: inherit;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.campo input:focus-visible,
+.campo select:focus-visible,
+.campo textarea:focus-visible {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+/* Sticky footer: miolo cresce; rodapé cola no fim da viewport
+   quando o conteúdo é curto (sem “flutuar” no meio). */
+.page-content,
+main.cadastro-main,
+main.login-main,
+main.papel-main,
+main.agendar-main,
+main.conta-criada-main,
+.vista-lista,
+.chat-layout {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: 1 0 auto;
+}
+
+.site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 28px;
+    min-height: 64px;
+    height: auto;
+    padding: 16px 32px;
+    margin-top: auto;
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.site-footer img,
+.site-footer .logo img {
+    display: block;
+    height: 36px;
+    width: auto;
+}
+
+.site-footer .brand-text {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary);
 }
 
 .site-footer nav {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 28px;
+    justify-content: center;
+    gap: 16px 28px;
     font-size: var(--fs-body);
+}
+
+.site-footer nav a {
+    color: var(--color-text-muted);
+    font-weight: var(--fw-medium);
+}
+
+.site-footer nav a:hover,
+.site-footer nav a:focus-visible {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .site-footer small {
     font-size: var(--fs-small);
-    color: var(--color-text-subtle);
+    color: var(--color-text-muted);
+}
+
+.site-header .logo img,
+a.logo img {
+    display: block;
+    height: 43px;
+    width: auto;
+    max-width: none;
 }
 
 .visually-hidden {
@@ -60,6 +181,10 @@ button {
     overflow: hidden;
     clip: rect(0 0 0 0);
     white-space: nowrap;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 .auth-page {
@@ -74,20 +199,30 @@ button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    min-height: 40px;
+    padding: 10px 20px;
     border: 1px solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--fs-body);
     font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-primary {
     background: var(--color-primary);
-    color: #fff;
+    border-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
 }
 
 .btn-disabled,
-a.btn-disabled {
+a.btn-disabled,
+.btn:disabled {
     opacity: 0.55;
     cursor: not-allowed;
     pointer-events: auto;
@@ -95,34 +230,55 @@ a.btn-disabled {
 
 .btn-secondary {
     background: var(--color-surface);
-    border-color: var(--color-border);
+    border-color: var(--color-border-strong);
     color: var(--color-text-primary);
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary-hover);
+    background: var(--color-primary-soft);
 }
 
 .site-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px 20px;
     height: 64px;
-    padding: 0 33px;
+    padding: 0 clamp(16px, 3vw, 33px);
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    width: 100%;
+    max-width: 100%;
 }
 
 .site-header img {
+    display: block;
     height: 43px;
+    width: auto;
+    max-width: none;
 }
 
 .site-header nav {
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .site-header nav a:not(.btn) {
     font-size: var(--fs-body);
     font-weight: var(--fw-medium);
     color: var(--color-text-muted);
+    padding: 6px 2px;
+}
+
+.site-header nav a:not(.btn):hover {
+    color: var(--color-text-primary);
 }
 
 .site-header .btn {
@@ -131,7 +287,105 @@ a.btn-disabled {
 
 .site-header nav a.ativo:not(.btn) {
     font-weight: var(--fw-semibold);
-    color: var(--color-primary);
+    color: var(--color-primary-hover);
+    box-shadow: inset 0 -2px 0 var(--color-primary);
+}
+
+/* Visitante × logado (home, detalhe, etc.)
+   Páginas só com .nav-visitante (login/recuperar) mantêm o menu público. */
+.site-header .nav-logado {
+    display: none;
+}
+
+body:not(.visitante) .site-header .nav-visitante:not(:only-of-type) {
+    display: none;
+}
+
+body:not(.visitante) .site-header .nav-logado {
+    display: flex;
+}
+
+.site-header a.nav-usuario,
+.site-header span.nav-usuario {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    flex-shrink: 0;
+}
+
+.site-header a.sair {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
+}
+
+.site-header a.sair:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .site-footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 16px;
+    }
+
+    .site-footer nav {
+        order: 0;
+    }
+}
+
+@media (max-width: 720px) {
+    .site-header {
+        height: auto;
+        min-height: 64px;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .site-header .logo {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .site-header nav {
+        gap: 10px 12px;
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .site-header .btn {
+        padding: 8px 14px;
+        min-height: 40px;
+    }
+
+    .page-bar {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .page-bar h1 {
+        font-size: clamp(16px, 4.5vw, 18px);
+        min-width: 0;
+        word-break: break-word;
+    }
+
+    .site-footer small {
+        max-width: 100%;
+        text-align: center;
+        line-height: 1.4;
+    }
 }
 
 .usuario {
@@ -161,15 +415,24 @@ a.btn-disabled {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 32px;
+    gap: 12px;
+    padding: 14px clamp(16px, 3vw, 32px);
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 100%;
 }
 
 .page-bar h1 {
     font-family: var(--font-heading), sans-serif;
     font-size: var(--fs-h2);
     font-weight: var(--fw-bold);
+    color: var(--color-text-primary);
+}
+
+.page-bar-sub {
+    color: var(--color-text-muted);
+    font-weight: var(--fw-medium);
 }
 
 .btn-voltar-pagina {
@@ -181,4 +444,166 @@ a.btn-disabled {
     font-size: 14px;
     font-weight: var(--fw-bold);
     color: var(--color-primary);
+}
+
+/* Tooltips de ajuda (formulários) */
+.label-com-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tip {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.tip-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: 50%;
+    background: var(--color-surface-muted);
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: var(--fw-bold);
+    font-family: inherit;
+    line-height: 1;
+    cursor: help;
+}
+
+.tip-btn:hover,
+.tip-btn:focus-visible,
+.tip.aberto .tip-btn {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary-hover);
+    outline: none;
+}
+
+.tip-panel {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    z-index: 50;
+    width: max-content;
+    max-width: min(260px, 70vw);
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--color-text-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(20, 29, 34, 0.18);
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.tip-panel[hidden] {
+    display: block !important;
+}
+
+.tip-panel::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border: 5px solid transparent;
+    border-top-color: var(--color-text-primary);
+}
+
+.tip:hover .tip-panel,
+.tip:focus-within .tip-panel,
+.tip.aberto .tip-panel {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tip-panel.tip-baixo {
+    bottom: auto;
+    top: calc(100% + 8px);
+}
+
+.tip-panel.tip-baixo::after {
+    top: auto;
+    bottom: 100%;
+    border-top-color: transparent;
+    border-bottom-color: var(--color-text-primary);
+}
+
+/* Transições leves entre páginas */
+html.js-motion body {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+html.js-motion body.pagina-pronta {
+    opacity: 1;
+    transform: none;
+}
+
+html.js-motion body.pagina-saindo {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js-motion body,
+    html.js-motion body.pagina-pronta,
+    html.js-motion body.pagina-saindo {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* Carrossel de fotos (cards, headers, galeria) */
+.foto-carrossel {
+    position: relative;
+    overflow: hidden;
+    background-color: #cfd9d7;
+}
+
+.foto-carrossel .foto-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity 0.85s ease, transform 1.2s ease;
+}
+
+.foto-carrossel .foto-slide.ativo {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 1;
+}
+
+/* Em heróis com texto por cima, o slide não pode cobrir o conteúdo */
+.hero.foto-carrossel > .foto-slide,
+.hero.foto-carrossel > .foto-slide.ativo,
+.page-hero.foto-carrossel > .foto-slide,
+.page-hero.foto-carrossel > .foto-slide.ativo {
+    z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .foto-carrossel .foto-slide {
+        transition: none;
+        transform: none;
+    }
 }

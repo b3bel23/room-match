@@ -41,20 +41,45 @@ async function finalizarCadastro() {
     const limiar = Number(document.getElementById('limiar-valor')?.value
         || document.getElementById('limiar')?.value) || 70;
 
+    const genero = form.querySelector('input[name="genero"]:checked')?.value || '';
+    let foto_url = '';
+    if (previa?.src && !previa.hidden) {
+        try {
+            foto_url = previa.src.startsWith('data:') ? previa.src : '';
+        } catch (erro) {
+            foto_url = '';
+        }
+    }
+
+    const payload = {
+        nome,
+        email: emailCampo.value.trim(),
+        senha: senhaCampo.value,
+        papel,
+        papel_schema: papel === 'Locador' ? 'locador' : 'locatario',
+        telefone: document.getElementById('telefone')?.value.trim() || '',
+        genero,
+        ocupacao: document.getElementById('ocupacao')?.value || '',
+        emprego: document.getElementById('emprego')?.value || '',
+        faculdade: document.getElementById('faculdade')?.value || '',
+        foto_url,
+        tags,
+        orcamento_maximo: orcamento,
+        limiar_compatibilidade: limiar
+    };
+
     try {
-        const dados = await RoomMatchApi.register({
-            nome,
-            email: emailCampo.value.trim(),
-            senha: senhaCampo.value,
-            papel,
-            tags,
-            orcamento,
-            limiar
-        });
+        const dados = await RoomMatchApi.register(payload);
         entrar(dados.access_token, dados.user);
         window.location.href = `conta-criada.html?papel=${papel === 'Locador' ? 'locador' : 'morador'}`;
     } catch (falha) {
-        window.alert(falha.detail || falha.message || 'Não foi possível criar a conta.');
+        const msg = falha.detail || falha.message || 'Não foi possível criar a conta.';
+        if (falha.status === 403) {
+            const ir = window.confirm(`${msg}\n\nAbrir a tela de Entrar?`);
+            if (ir) window.location.href = 'login.html';
+            return;
+        }
+        window.alert(msg);
     }
 }
 
@@ -175,3 +200,11 @@ preencherBarra(limiar);
 const aceite = document.getElementById('aceite');
 const finalizar = document.getElementById('finalizar');
 aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });
+
+if (typeof RoomMatchClassificacoes !== 'undefined') {
+    RoomMatchClassificacoes.preencherSelect(document.getElementById('ocupacao'), 'ocupacao', '');
+    RoomMatchClassificacoes.preencherSelect(document.getElementById('emprego'), 'emprego', '');
+}
+if (typeof RoomMatchUniversidadesSp !== 'undefined') {
+    RoomMatchUniversidadesSp.preencherSelect(document.getElementById('faculdade'), '');
+}

@@ -1,10 +1,12 @@
 .papel-main {
     position: relative;
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 72px 32px;
+    padding: 48px clamp(16px, 3vw, 32px) 56px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .papel-voltar {
@@ -138,9 +140,16 @@
 @media (max-width: 700px) {
     .papeis {
         grid-template-columns: 1fr;
+        width: 100%;
     }
 
     .papel-card {
-        padding: 28px 20px;
+        padding: 28px 16px;
+        width: 100%;
+    }
+
+    .papel-main {
+        padding-inline: 16px;
+        width: 100%;
     }
 }

@@ -1,9 +1,27 @@
 .conta-criada-main {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 48px 32px;
+    padding: 48px clamp(16px, 3vw, 32px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .conta-criada-card {
+        padding: 28px 16px;
+    }
+
+    .conta-criada-card h1 {
+        font-size: clamp(22px, 6vw, 28px);
+    }
+
+    .btn-conta {
+        width: 100%;
+        min-height: var(--tap-min);
+        text-align: center;
+    }
 }
 
 .conta-criada-card {
@@ -22,17 +40,17 @@
     font-family: var(--font-heading), sans-serif;
     font-size: 28px;
     font-weight: var(--fw-bold);
-    color: #1f2933;
+    color: var(--color-text-primary);
 }
 
 .conta-criada-texto {
     font-size: 15px;
-    color: #617075;
+    color: var(--color-text-muted);
 }
 
 .conta-criada-nota {
     font-size: var(--fs-card-title);
-    color: #617075;
+    color: var(--color-text-muted);
 }
 
 .btn-conta {

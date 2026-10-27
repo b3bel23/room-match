@@ -12,7 +12,7 @@
 <body class="detalhe-page">
 
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav class="nav-visitante">
             <a href="como-funciona.html">Como funciona</a>
             <a class="btn btn-secondary" href="login.html">Entrar</a>
@@ -22,7 +22,8 @@
             <a class="ativo" href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
             <a href="mensagens.html">Mensagens</a>
-            <span class="usuario"><span class="usuario-foto">MD</span></span>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
+            <a class="sair" href="#">Sair</a>
         </nav>
     </header>
 
@@ -49,7 +50,7 @@
                 <h3>Rateio transparente</h3>
                 <div class="rateio-linha"><span>Aluguel</span><span>R$ 980</span></div>
                 <div class="rateio-linha"><span>Cond.</span><span>R$ 150</span></div>
-                <div class="rateio-linha"><span>IPTU</span><span>R$ 40</span></div>
+                <div class="rateio-linha"><span>Imposto predial</span><span>R$ 40</span></div>
                 <div class="rateio-linha"><span>Contas</span><span>R$ 30</span></div>
                 <p id="contas-detalhe" class="contas-detalhe"></p>
                 <div class="rateio-total"><span class="tag-destaque">Total mensal</span><strong>R$ 1.200</strong></div>
@@ -94,7 +95,6 @@
                 <div class="acoes">
                     <button id="favoritar" class="btn btn-secondary" type="button">♥ Favoritar</button>
                     <a class="btn btn-primary btn-conversar" href="#conversar">Conversar com locador</a>
-                    <a class="btn btn-secondary" href="agendar-visita.html">Agendar visita</a>
                 </div>
 
                 <div class="bloqueio bloqueio-moradores">
@@ -109,7 +109,7 @@
 
         <section class="galeria">
             <div class="galeria-principal">
-                <span class="afinidade">78% match</span>
+                <span class="afinidade">78%</span>
             </div>
             <div class="galeria-miniaturas">
                 <button class="miniatura ativa" type="button" aria-label="Foto 1"></button>
@@ -122,7 +122,7 @@
     </main>
 
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -135,6 +135,7 @@
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="../js/favoritos-armazenamento.js"></script>

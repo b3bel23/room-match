@@ -3,83 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room Match</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Room Match · Moradia na região metropolitana de Campinas</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/home.css">
 </head>
-<body>
+<body class="home-page visitante">
 
-    <header>
-        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="Room Match" width="62"></a>
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav class="nav-visitante">
-            <a class="como-funciona" href="como-funciona.html">Como funciona</a>
-            <a href="login.html"><button class="btn-entrar">Entrar</button></a>
-            <a href="escolha-papel.html"><button class="btn-cadastrar">Cadastrar</button></a>
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
         </nav>
         <nav class="nav-logado">
             <a class="ativo" href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
             <a href="mensagens.html">Mensagens</a>
-            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">IB</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
             <a class="sair" href="#">Sair</a>
         </nav>
     </header>
 
-    <section class="hero">
-        <h1>Encontre moradia compatível na RMC</h1>
-        <p>Matching por convivência, rateio transparente e tempo até sua faculdade ou trabalho.</p>
-        <div class="stats">
-            <div>
-                <span class="stat-number">847</span>
-                <span class="stat-label">imóveis ativos</span>
+    <div class="page-content">
+        <section class="hero" aria-label="Campinas e Região Metropolitana">
+            <div class="hero-inner">
+                <img class="hero-logo" src="../assets/logo.svg" alt="RoomMatch">
+                <h1>A moradia certa, com as pessoas certas, na região metropolitana de Campinas</h1>
+                <p class="hero-lead">Combine hábitos, veja o custo real do mês e chegue mais rápido na faculdade ou no trabalho.</p>
+                <div class="stats" aria-label="Indicadores">
+                    <div data-stat="imoveis">
+                        <span class="stat-number">4</span>
+                        <span class="stat-label">imóveis ativos</span>
+                    </div>
+                    <!-- Só para quem está logado -->
+                    <div class="stat-logado" data-stat="match" hidden>
+                        <span class="stat-number">—</span>
+                        <span class="stat-label">afinidade média</span>
+                    </div>
+                    <div class="stat-logado" data-stat="deslocamento" hidden>
+                        <span class="stat-number">—</span>
+                        <span class="stat-label">deslocamento médio</span>
+                    </div>
+                </div>
             </div>
-            <div>
-                <span class="stat-number">92%</span>
-                <span class="stat-label">match médio</span>
+        </section>
+
+        <div class="cta-banner">
+            Crie sua conta ou faça login para ver seu match personalizado e salvar favoritos.
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-pills" role="group" aria-label="Tipo de imóvel">
+                <button class="pill active" type="button">Todos</button>
+                <button class="pill" type="button">Apart.</button>
+                <button class="pill" type="button">Kitnet</button>
+                <button class="pill" type="button">Casa</button>
+                <button class="pill" type="button">República</button>
             </div>
-            <div>
-                <span class="stat-number">32 min</span>
-                <span class="stat-label">deslocamento médio</span>
+
+            <div class="filter-controles">
+                <div class="search-input">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input id="filtro-bairro" type="search" placeholder="Bairro ou cidade" aria-label="Buscar por bairro ou cidade">
+                </div>
+
+                <div class="filtro-valor" role="group" aria-labelledby="filtro-valor-label">
+                    <div class="filtro-valor-cabecalho">
+                        <span id="filtro-valor-label">Valor máximo mensal</span>
+                        <strong id="filtro-valor-texto">Sem limite</strong>
+                    </div>
+                    <input
+                        id="filtro-preco"
+                        type="range"
+                        min="500"
+                        max="2500"
+                        step="50"
+                        value="2500"
+                        aria-valuemin="500"
+                        aria-valuemax="2500"
+                        aria-valuenow="2500"
+                        aria-label="Valor máximo mensal do total do imóvel"
+                    >
+                    <div class="filtro-valor-limites" aria-hidden="true">
+                        <span>R$ 500</span>
+                        <span>R$ 2.500</span>
+                    </div>
+                </div>
+
+                <div class="filtro-select-wrap">
+                    <label class="visually-hidden" for="filtro-tag">Hábito de convivência</label>
+                    <select id="filtro-tag" class="filtro-select" aria-label="Filtrar por hábito de convivência">
+                        <option value="">Todos os hábitos</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary btn-buscar" type="button">Buscar</button>
             </div>
         </div>
-    </section>
 
-    <div class="cta-banner">
-        Crie sua conta ou faça login para ver seu match personalizado ou salvar favoritos!
+        <div class="properties" aria-live="polite"></div>
     </div>
 
-    <div class="filter-bar">
-        <button class="pill active">Todos</button>
-        <button class="pill">Apart.</button>
-        <button class="pill">Kitnet</button>
-        <button class="pill">Casa</button>
-        <button class="pill">República</button>
-
-        <div class="search-input">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Barão Geraldo, Campinas">
-        </div>
-        <div class="search-input">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Até R$ 1.200">
-        </div>
-        <div class="search-input">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Pet Friendly">
-        </div>
-
-        <button class="btn-buscar">Buscar match</button>
-    </div>
-
-    <div class="properties" aria-live="polite"></div>
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
+    </footer>
 
     <script src="../js/mock-api.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/tags-catalogo.js"></script>
     <script src="../js/imovel-fotos.js"></script>
     <script src="../js/home.js"></script>
 </body>

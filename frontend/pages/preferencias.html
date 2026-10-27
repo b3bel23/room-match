@@ -11,7 +11,7 @@
 </head>
 <body class="favoritos-page">
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
@@ -28,17 +28,44 @@
         <div class="layout">
             <aside class="sidebar"></aside>
             <main class="conteudo">
-                <h2>Preferências</h2>
-                <p class="conteudo-sub">Campos do schema <code>locatario</code></p>
+                <h2 class="label-com-tip">
+                    Preferências
+                    <span class="tip">
+                        <button type="button" class="tip-btn" aria-label="Sobre preferências">?</button>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Os mesmos campos do cadastro (etapa 2): orçamento máximo, limiar de afinidade e hábitos de convivência. Vale para morador e locador.</span>
+                    </span>
+                </h2>
                 <form id="pref-form" class="config-form">
-                    <label>orcamento_maximo (R$)
+                    <label for="pref-orcamento">
+                        <span class="label-com-tip">
+                            Orçamento máximo (R$)
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre orçamento">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Campo orcamento_maximo. Total mensal que você topa. Chat só libera se o anúncio couber neste valor.</span>
+                            </span>
+                        </span>
                         <input id="pref-orcamento" name="orcamento_maximo" type="number" min="0" step="50" required>
                     </label>
-                    <label>limiar_compatibilidade (%)
+
+                    <label for="pref-limiar">
+                        <span class="label-com-tip">
+                            Limiar de compatibilidade (%)
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre limiar">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Campo limiar_compatibilidade. Match mínimo para liberar conversa com o locador.</span>
+                            </span>
+                        </span>
                         <input id="pref-limiar" name="limiar_compatibilidade" type="number" min="0" max="100" required>
                     </label>
+
                     <div>
-                        <p style="font-size:13px;font-weight:600;margin-bottom:8px">tags (usuario_tag / convivência)</p>
+                        <p class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
+                            Tags de convivência
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Tags usadas no cálculo do match com o anúncio. Escolha as que representam sua rotina.</span>
+                            </span>
+                        </p>
                         <div id="pref-tags" class="config-tags"></div>
                     </div>
                     <button class="btn btn-primary" type="submit">Salvar</button>
@@ -48,7 +75,7 @@
         </div>
     </div>
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -61,6 +88,8 @@
     <script src="../js/papel-ui.js"></script>
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/tip.js"></script>
     <script src="../js/tags-catalogo.js"></script>
     <script src="../js/preferencias.js"></script>
 </body>

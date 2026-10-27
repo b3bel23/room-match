@@ -4,10 +4,16 @@ if (typeof ehLocador === 'function' && ehLocador()) {
 
 const grade = document.querySelector('.properties');
 const pills = [...document.querySelectorAll('.filter-bar .pill')];
-const inputs = [...document.querySelectorAll('.filter-bar .search-input input')];
+const inputBairro = document.getElementById('filtro-bairro');
+const inputPreco = document.getElementById('filtro-preco');
+const textoPreco = document.getElementById('filtro-valor-texto');
+const selectTag = document.getElementById('filtro-tag');
 const botaoBuscar = document.querySelector('.filter-bar .btn-buscar');
 
+const PRECO_MIN = Number(inputPreco?.min) || 500;
+const PRECO_MAX = Number(inputPreco?.max) || 2500;
 let tipoAtivo = 'Todos';
+let debouncePreco = null;
 
 function formatarPreco(valor) {
     return Number(valor).toLocaleString('pt-BR');
@@ -22,22 +28,41 @@ function busSvg() {
 }
 
 function montarCard(imovel) {
-    const card = document.createElement('div');
+    const card = document.createElement('article');
     card.className = 'card';
-    card.addEventListener('click', () => {
+    card.tabIndex = 0;
+    card.setAttribute('role', 'link');
+    card.setAttribute('aria-label', imovel.titulo || 'Ver anúncio');
+
+    const irDetalhe = () => {
         window.location.href = `detalhe.html?id=${encodeURIComponent(imovel.id)}`;
+    };
+    card.addEventListener('click', irDetalhe);
+    card.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter' || evento.key === ' ') {
+            evento.preventDefault();
+            irDetalhe();
+        }
     });
 
+    const logado = typeof estaLogado === 'function' && estaLogado();
     const match = imovel.match_percent ?? imovel.match;
     const tags = (imovel.tags || []).slice(0, 3)
-        .map((t, i) => `<span class="tag${i === 0 ? '' : ''}">${t}</span>`)
+        .map((t) => `<span class="tag">${t}</span>`)
         .join('');
 
-    const capaUrl = typeof ImovelFotos !== 'undefined' ? ImovelFotos.capa(imovel) : '';
+    const badgeMatch = logado
+        ? `<span class="badge-match" title="${match}% de afinidade">${match}%</span>`
+        : '';
+    const rodapeExtra = logado
+        ? `<span class="commute">${busSvg()} ${imovel.deslocamento_min || '—'} min · ${imovel.destino || ''}</span>`
+        : '';
+
+    const fotos = typeof ImovelFotos !== 'undefined' ? ImovelFotos.lista(imovel) : [];
     card.innerHTML = `
-        <div class="card-image"${capaUrl ? ` style="background-image:url('${capaUrl}')"` : ''}>
+        <div class="card-image" aria-hidden="true">
             <span class="badge">${imovel.badge || imovel.tipo || ''}</span>
-            <span class="badge-match">${match}% match</span>
+            ${badgeMatch}
         </div>
         <div class="card-body">
             <div class="card-title">${imovel.titulo}</div>
@@ -45,37 +70,83 @@ function montarCard(imovel) {
             <div class="card-price">R$ ${formatarPreco(imovel.preco)}<span>/mês total</span></div>
             <div class="amenities">${tags}</div>
             <div class="card-footer">
-                <span class="commute">${busSvg()} ${imovel.deslocamento_min || '—'} min · ${imovel.destino || ''}</span>
+                ${rodapeExtra}
                 <span>${imovel.area_m2 || '—'} m²</span>
             </div>
         </div>
     `;
+
+    const imagem = card.querySelector('.card-image');
+    if (imagem && typeof ImovelFotos !== 'undefined') {
+        ImovelFotos.iniciarCarrossel(imagem, fotos);
+    }
+
     return card;
 }
 
+function preencherSelectTags() {
+    if (!selectTag) return;
+    const atual = selectTag.value;
+    const opcoes = (typeof RoomMatchTags !== 'undefined' && RoomMatchTags.CONVIVENCIA)
+        ? RoomMatchTags.CONVIVENCIA
+        : [
+            'Pet Friendly', 'Home Office', 'Silêncio Noturno', 'Sem Festas',
+            'Sem Fumo', 'LGBTQIA+ Safe', 'Vegetariano', '420 Friendly', 'Sem Pets', 'Mobiliado'
+        ];
+    selectTag.replaceChildren(new Option('Todos os hábitos', ''));
+    opcoes.forEach((tag) => selectTag.append(new Option(tag, tag)));
+    if ([...selectTag.options].some((o) => o.value === atual)) {
+        selectTag.value = atual;
+    }
+}
+
+function atualizarSliderValor() {
+    if (!inputPreco || !textoPreco) return;
+    const valor = Number(inputPreco.value);
+    const min = Number(inputPreco.min) || PRECO_MIN;
+    const max = Number(inputPreco.max) || PRECO_MAX;
+    const pct = max === min ? 100 : ((valor - min) / (max - min)) * 100;
+    inputPreco.style.setProperty('--preenchimento', `${pct}%`);
+    inputPreco.setAttribute('aria-valuenow', String(valor));
+
+    if (valor >= max) {
+        textoPreco.textContent = 'Sem limite';
+    } else {
+        textoPreco.textContent = `Até R$ ${formatarPreco(valor)}`;
+    }
+}
+
 function lerFiltros() {
-    const precoBruto = (inputs[1]?.value || '').replace(/[^\d]/g, '');
+    const valor = Number(inputPreco?.value);
+    const noLimite = !Number.isFinite(valor) || valor >= PRECO_MAX;
+    const tipo = tipoAtivo === 'Todos' ? '' : tipoAtivo.replace(/\.$/, '');
     return {
-        tipo: tipoAtivo === 'Todos' ? '' : tipoAtivo.replace(/\.$/, ''),
-        bairro: inputs[0]?.value.trim() || '',
-        preco_max: precoBruto || '',
-        tag: inputs[2]?.value.trim() || ''
+        tipo,
+        bairro: (inputBairro?.value || '').trim(),
+        preco_max: noLimite ? '' : String(valor),
+        tag: selectTag?.value || ''
     };
 }
 
 async function carregar() {
     if (!grade) return;
-    grade.innerHTML = '<p class="cta-banner" style="grid-column:1/-1">Carregando imóveis…</p>';
+    grade.innerHTML = '<p class="cta-banner filtro-status" style="grid-column:1/-1">Carregando imóveis…</p>';
     try {
-        const { items } = await RoomMatchApi.listarImoveis(lerFiltros());
+        const filtros = lerFiltros();
+        const { items } = await RoomMatchApi.listarImoveis(filtros);
         if (!items.length) {
-            grade.innerHTML = '<p class="cta-banner" style="grid-column:1/-1">Nenhum imóvel com esses filtros.</p>';
+            grade.innerHTML = '<p class="cta-banner filtro-status" style="grid-column:1/-1">Nenhum imóvel com esses filtros. Ajuste valor, hábito ou tipo.</p>';
             return;
         }
         grade.replaceChildren(...items.map(montarCard));
     } catch (erro) {
-        grade.innerHTML = `<p class="cta-banner" style="grid-column:1/-1">Erro ao carregar: ${erro.message}</p>`;
+        grade.innerHTML = `<p class="cta-banner filtro-status" style="grid-column:1/-1">Erro ao carregar: ${erro.message}</p>`;
     }
+}
+
+function agendarCarregar() {
+    window.clearTimeout(debouncePreco);
+    debouncePreco = window.setTimeout(carregar, 120);
 }
 
 pills.forEach((pill) => {
@@ -92,26 +163,67 @@ botaoBuscar?.addEventListener('click', (evento) => {
     carregar();
 });
 
-inputs.forEach((input) => {
-    input.addEventListener('keydown', (evento) => {
-        if (evento.key === 'Enter') {
-            evento.preventDefault();
-            carregar();
-        }
-    });
+inputBairro?.addEventListener('input', agendarCarregar);
+inputBairro?.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Enter') {
+        evento.preventDefault();
+        carregar();
+    }
 });
 
+inputPreco?.addEventListener('input', () => {
+    atualizarSliderValor();
+    agendarCarregar();
+});
+inputPreco?.addEventListener('change', () => {
+    atualizarSliderValor();
+    carregar();
+});
+
+selectTag?.addEventListener('change', () => {
+    carregar();
+});
+selectTag?.addEventListener('input', () => {
+    carregar();
+});
+
+preencherSelectTags();
+atualizarSliderValor();
+carregar();
+
+function mostrarStatsLogado() {
+    const logado = typeof estaLogado === 'function' && estaLogado();
+    document.querySelectorAll('.stat-logado').forEach((el) => {
+        el.hidden = !logado;
+    });
+}
+
 async function carregarStats() {
+    // Visitante: só "imóveis ativos". Match e deslocamento só logado.
+    mostrarStatsLogado();
     try {
         const s = await RoomMatchApi.stats();
-        const nums = document.querySelectorAll('.stats .stat-number');
-        if (nums[0]) nums[0].textContent = String(s.imoveis_ativos);
-        if (nums[1]) nums[1].textContent = `${s.match_medio}%`;
-        if (nums[2]) nums[2].textContent = `${s.deslocamento_medio} min`;
+        const imoveis = document.querySelector('[data-stat="imoveis"] .stat-number');
+        if (imoveis) imoveis.textContent = String(s.imoveis_ativos);
+
+        if (typeof estaLogado === 'function' && estaLogado()) {
+            const match = document.querySelector('[data-stat="match"] .stat-number');
+            const desloc = document.querySelector('[data-stat="deslocamento"] .stat-number');
+            if (match) match.textContent = `${s.match_medio}%`;
+            if (desloc) desloc.textContent = `${s.deslocamento_medio} min`;
+        }
     } catch (erro) {
         /* mantém placeholders */
     }
 }
 
-carregar();
 carregarStats();
+
+const hero = document.querySelector('.hero');
+if (hero && typeof ImovelFotos !== 'undefined') {
+    ImovelFotos.iniciarCarrossel(hero, [
+        '../assets/campinas/hero.jpg',
+        '../assets/campinas/taquaral.jpg',
+        '../assets/campinas/rua.jpg'
+    ], { intervalo: 6500 });
+}

@@ -11,7 +11,7 @@
 </head>
 <body class="favoritos-page">
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="home.html">Explorar</a>
             <a href="favoritos.html">Favoritos</a>
@@ -23,25 +23,91 @@
     <div class="vista-lista">
         <div class="page-bar">
             <h1>Configurações</h1>
-            <span class="page-bar-sub">Gerencie sua conta</span>
+            <span class="page-bar-sub">Dados da conta</span>
         </div>
         <div class="layout">
             <aside class="sidebar"></aside>
             <main class="conteudo">
                 <h2>Perfil</h2>
-                <p class="conteudo-sub">Dados básicos da conta</p>
-                <form id="perfil-form" class="config-form">
-                    <label>Nome<input id="perfil-nome" type="text" required></label>
-                    <label>E-mail<input id="perfil-email" type="email" disabled></label>
-                    <label>Papel<input id="perfil-papel" type="text" disabled></label>
-                    <button class="btn btn-primary" type="submit">Salvar</button>
+                <p class="conteudo-sub">Tudo o que você informou no cadastro — editável a qualquer momento.</p>
+
+                <form id="perfil-form" class="config-form perfil-form" novalidate>
+                    <div class="perfil-foto-campo">
+                        <span class="perfil-foto-rotulo">Foto de perfil</span>
+                        <div class="perfil-foto-linha">
+                            <div class="perfil-avatar" id="perfil-avatar" aria-hidden="true">?</div>
+                            <div class="perfil-foto-acoes">
+                                <label for="perfil-foto" class="btn btn-secondary">Trocar foto</label>
+                                <input id="perfil-foto" class="visually-hidden" type="file" accept="image/jpeg,image/png">
+                                <button type="button" id="perfil-foto-remover" class="btn btn-secondary">Remover</button>
+                                <p class="perfil-foto-dica">JPG ou PNG · até 5 MB · mínimo 200×200 px</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label for="perfil-nome">Nome completo *
+                        <input id="perfil-nome" name="nome" type="text" autocomplete="name" required>
+                    </label>
+
+                    <label for="perfil-telefone">Telefone de contato *
+                        <input id="perfil-telefone" name="telefone" type="tel" autocomplete="tel" placeholder="(19) 99999-9999" required>
+                    </label>
+
+                    <label for="perfil-genero">Gênero *
+                        <select id="perfil-genero" name="genero" required>
+                            <option value="">Selecione</option>
+                            <option value="Homem Cisgênero">Homem Cisgênero</option>
+                            <option value="Mulher Cisgênero">Mulher Cisgênero</option>
+                            <option value="Homem Transgênero">Homem Transgênero</option>
+                            <option value="Mulher Transgênero">Mulher Transgênero</option>
+                            <option value="Travesti">Travesti</option>
+                            <option value="Não-binário">Não-binário</option>
+                            <option value="Outro/Não informar">Outro/Não informar</option>
+                        </select>
+                    </label>
+
+                    <label for="perfil-ocupacao">Ocupação
+                        <select id="perfil-ocupacao" name="ocupacao"></select>
+                        <span class="campo-ajuda">Classificação Brasileira de Ocupações (CBO), em grupos principais.</span>
+                    </label>
+
+                    <label for="perfil-emprego">Situação de emprego
+                        <select id="perfil-emprego" name="emprego"></select>
+                        <span class="campo-ajuda">Vínculo ou situação atual, no padrão usado em cadastros brasileiros.</span>
+                    </label>
+
+                    <label for="perfil-faculdade">Faculdade / universidade
+                        <select id="perfil-faculdade" name="faculdade"></select>
+                        <span class="campo-ajuda">Universidades do e-MEC (MEC) em São Paulo, organizadas por campus.</span>
+                    </label>
+
+                    <label for="perfil-email">E-mail *
+                        <input id="perfil-email" name="email" type="email" autocomplete="email" required>
+                    </label>
+
+                    <label for="perfil-papel">Tipo de perfil *
+                        <select id="perfil-papel" name="papel" required>
+                            <option value="Morador">Morador</option>
+                            <option value="Locador">Locador</option>
+                        </select>
+                        <span class="campo-ajuda">Pode trocar a qualquer momento. O menu e as funções da conta acompanham o tipo escolhido.</span>
+                    </label>
+
+                    <p class="perfil-atalhos">
+                        Hábitos, orçamento e limiar de afinidade:
+                        <a href="preferencias.html">Preferências</a>.
+                        Senha:
+                        <a href="seguranca.html">Segurança</a>.
+                    </p>
+
+                    <button class="btn btn-primary" type="submit">Salvar perfil</button>
                     <p id="perfil-retorno" class="config-retorno" hidden></p>
                 </form>
             </main>
         </div>
     </div>
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -54,6 +120,9 @@
     <script src="../js/papel-ui.js"></script>
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/classificacoes-br.js"></script>
+    <script src="../js/universidades-sp.js"></script>
     <script src="../js/perfil.js"></script>
 </body>
 </html>

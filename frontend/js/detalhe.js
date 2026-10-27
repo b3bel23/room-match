@@ -1,7 +1,6 @@
 const params = new URLSearchParams(window.location.search);
 const ID_IMOVEL = params.get('id') || 'kitnet-cambui';
 const botaoFavoritar = document.getElementById('favoritar');
-const linkAgendar = document.querySelector('a[href*="agendar-visita"]');
 const linkConversar = document.querySelector('a.btn-conversar, a[href="#conversar"]');
 let imovelAtual = null;
 
@@ -29,7 +28,6 @@ function montarAcoesPorPapel(imovel) {
 
     if (ehLocador()) {
         if (botaoFavoritar) botaoFavoritar.hidden = true;
-        if (linkAgendar) linkAgendar.hidden = true;
 
         if (proprio) {
             if (linkConversar) {
@@ -64,11 +62,6 @@ function montarAcoesPorPapel(imovel) {
 
     if (ehMorador()) {
         if (botaoFavoritar) botaoFavoritar.hidden = false;
-        if (linkAgendar) {
-            linkAgendar.hidden = false;
-            linkAgendar.href = `agendar-visita.html?id=${encodeURIComponent(imovel.id)}`;
-            linkAgendar.textContent = 'Agendar visita';
-        }
         if (linkConversar) {
             linkConversar.hidden = false;
             linkConversar.href = '#conversar';
@@ -140,7 +133,7 @@ function preencher(imovel) {
     if (trajetoStrong) trajetoStrong.textContent = `${imovel.deslocamento_min} min · ${imovel.destino}`;
     if (trajetoSpan) {
         const km = imovel.distancia_km ? `${imovel.distancia_km} km · ` : '';
-        trajetoSpan.textContent = `${km}EMDEC/EMTU GTFS`;
+        trajetoSpan.textContent = `${km}estimativa com dados abertos de transporte`;
     }
 
     const afinidade = document.querySelector('.afinidade');
@@ -150,7 +143,9 @@ function preencher(imovel) {
             afinidade.hidden = !estaLogado();
         } else {
             const match = imovel.match_percent ?? imovel.match ?? 0;
-            afinidade.textContent = `${match}% match`;
+            afinidade.textContent = `${match}%`;
+            afinidade.title = `${match}% de afinidade`;
+            afinidade.setAttribute('aria-label', `${match}% de afinidade`);
             afinidade.hidden = false;
         }
     }
@@ -211,6 +206,10 @@ function preencher(imovel) {
     if (typeof ImovelFotos !== 'undefined') {
         ImovelFotos.preencherGaleria(imovel);
     }
+
+    document.querySelectorAll('.bloqueio').forEach((el) => {
+        el.hidden = estaLogado();
+    });
 
     montarAcoesPorPapel(imovel);
 }

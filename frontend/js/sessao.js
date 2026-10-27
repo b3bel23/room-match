@@ -137,22 +137,36 @@ function atualizarNavPorPapel() {
     });
 }
 
+function aplicarAvatarElemento(el, user) {
+    if (!el || !user) return;
+    if (user.foto_url) {
+        el.style.backgroundImage = `url("${user.foto_url}")`;
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+        el.textContent = '';
+    } else {
+        el.style.backgroundImage = '';
+        el.textContent = user.iniciais || '?';
+    }
+}
+
 function atualizarChromeSessao() {
     document.body.classList.toggle('visitante', !estaLogado());
     document.body.classList.toggle('papel-locador', ehLocador());
     document.body.classList.toggle('papel-morador', ehMorador());
+    atualizarNavPorPapel();
     const user = usuarioAtual();
     if (!user) return;
 
     document.querySelectorAll('.usuario-foto, a.nav-usuario, span.nav-usuario').forEach((el) => {
         if (el.classList.contains('usuario-foto') || el.classList.contains('nav-usuario')) {
-            el.textContent = user.iniciais || '?';
+            aplicarAvatarElemento(el, user);
         }
     });
     document.querySelectorAll('.usuario').forEach((el) => {
         const foto = el.querySelector('.usuario-foto');
         if (foto) {
-            foto.textContent = user.iniciais || '?';
+            aplicarAvatarElemento(foto, user);
             el.childNodes.forEach((node) => {
                 if (node.nodeType === Node.TEXT_NODE) node.textContent = '';
             });
@@ -165,13 +179,17 @@ function atualizarChromeSessao() {
 
 function ligarSair() {
     document.querySelectorAll('a.sair').forEach((link) => {
-        link.onclick = (evento) => {
-            evento.preventDefault();
-            sair();
-        };
         if (!link.getAttribute('href') || link.getAttribute('href') === 'login.html') {
             link.setAttribute('href', '#');
         }
+    });
+    if (document.documentElement.dataset.sairDelegado === '1') return;
+    document.documentElement.dataset.sairDelegado = '1';
+    document.addEventListener('click', (evento) => {
+        const link = evento.target.closest('a.sair');
+        if (!link) return;
+        evento.preventDefault();
+        sair();
     });
 }
 

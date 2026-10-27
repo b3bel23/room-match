@@ -1,16 +1,15 @@
 .mensagens-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
     background: #f4f6f7;
 }
 
 .chat-layout {
-    flex: 1;
     display: grid;
-    grid-template-columns: 280px 1fr 300px;
-    min-height: calc(100vh - 64px - 72px);
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(220px, 300px);
+    min-height: min(720px, calc(100dvh - 64px - 80px));
     background: #fff;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .chat-lista,
@@ -72,7 +71,7 @@
 .chat-item span {
     display: block;
     font-size: 12px;
-    color: #94a3ad;
+    color: var(--color-text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -102,50 +101,82 @@
 
 .bolha.minha {
     align-self: flex-end;
-    background: #5ea38f;
+    background: var(--color-primary);
     color: #fff;
 }
 
 .bolha.deles {
     align-self: flex-start;
     background: #fff;
-    border: 1px solid #e2e8eb;
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text-primary);
 }
 
 .bolha small {
     display: block;
     margin-top: 6px;
-    opacity: 0.7;
-    font-size: 11px;
+    opacity: 1;
+    font-size: 12px;
+    font-weight: 500;
+    color: inherit;
+    filter: brightness(0.9);
 }
 
 .chat-composer {
     display: flex;
     gap: 8px;
     padding: 12px 16px;
-    border-top: 1px solid var(--color-border, #e2e8eb);
+    border-top: 1px solid var(--color-border);
     background: #fff;
 }
 
 .chat-composer input {
     flex: 1;
     padding: 12px 14px;
-    border: 1px solid #e2e8eb;
+    border: 1px solid var(--color-border-strong);
     border-radius: 10px;
+}
+
+.chat-imovel-meta {
+    color: var(--color-text-muted);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
 }
 
 .chat-vazio {
     margin: auto;
-    color: #94a3ad;
+    color: var(--color-text-muted);
     text-align: center;
     padding: 24px;
+    font-weight: var(--fw-medium);
 }
 
 @media (max-width: 960px) {
     .chat-layout {
         grid-template-columns: 1fr;
+        min-height: calc(100dvh - 64px - 96px);
     }
+
     .chat-info {
         display: none;
+    }
+
+    .chat-lista {
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border, #e2e8eb);
+    }
+
+    .chat-composer {
+        flex-wrap: wrap;
+    }
+
+    .chat-composer .btn {
+        width: 100%;
+        min-height: var(--tap-min);
+    }
+
+    .bolha {
+        max-width: 88%;
     }
 }

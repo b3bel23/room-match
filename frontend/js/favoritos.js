@@ -21,12 +21,16 @@ function montarCartao(imovel) {
     const cartao = modelo.content.firstElementChild.cloneNode(true);
     const img = cartao.querySelector('.fav-img');
     if (img && typeof ImovelFotos !== 'undefined') {
-        ImovelFotos.aplicarFundo(img, ImovelFotos.capa(imovel));
+        ImovelFotos.iniciarCarrossel(img, ImovelFotos.lista(imovel), { intervalo: 3800 });
     }
     cartao.querySelector('.fav-titulo').textContent = imovel.titulo;
     cartao.querySelector('.fav-detalhes').textContent =
         `${imovel.bairro}, Campinas · R$ ${formatarPreco(imovel.preco)}/mês · `;
-    cartao.querySelector('.fav-match').textContent = `${imovel.match}% match`;
+    const favMatch = cartao.querySelector('.fav-match');
+    if (favMatch) {
+        favMatch.textContent = `${imovel.match}%`;
+        favMatch.title = `${imovel.match}% de afinidade`;
+    }
     cartao.style.cursor = 'pointer';
     cartao.addEventListener('click', (evento) => {
         if (evento.target.closest('.fav-coracao')) return;

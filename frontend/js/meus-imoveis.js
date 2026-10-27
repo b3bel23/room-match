@@ -15,7 +15,7 @@ function montarCard(imovel) {
     article.className = 'meu-card';
     const capaUrl = typeof ImovelFotos !== 'undefined' ? ImovelFotos.capa(imovel) : '';
     article.innerHTML = `
-        <div class="meu-thumb"${capaUrl ? ` style="background-image:url('${capaUrl}')"` : ''} role="img" aria-label="Foto do anúncio"></div>
+        <div class="meu-thumb" role="img" aria-label="Foto do anúncio"></div>
         <div>
             <h3>${imovel.titulo}</h3>
             <p>${imovel.bairro}, Campinas · R$ ${formatarPreco(imovel.preco)}/mês · Ativo</p>
@@ -27,13 +27,21 @@ function montarCard(imovel) {
             <a class="btn btn-primary" href="editar-anuncio.html?id=${encodeURIComponent(imovel.id)}">Editar</a>
         </div>
     `;
+    const thumb = article.querySelector('.meu-thumb');
+    if (thumb && typeof ImovelFotos !== 'undefined') {
+        ImovelFotos.iniciarCarrossel(thumb, ImovelFotos.lista(imovel), { intervalo: 4000 });
+    } else if (thumb && capaUrl) {
+        thumb.style.backgroundImage = `url("${capaUrl}")`;
+        thumb.style.backgroundSize = 'cover';
+        thumb.style.backgroundPosition = 'center';
+    }
     return article;
 }
 
 async function carregar() {
     try {
         const { items } = await RoomMatchApi.meusImoveis();
-        contagem.textContent = `${items.length} ${items.length === 1 ? 'anúncio ativo' : 'anúncios ativos'} · painel do Locador Demo`;
+        contagem.textContent = `${items.length} ${items.length === 1 ? 'anúncio ativo' : 'anúncios ativos'}`;
         vazia.hidden = items.length > 0;
         lista.hidden = items.length === 0;
         lista.replaceChildren(...items.map(montarCard));

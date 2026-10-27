@@ -7,43 +7,237 @@
     <link rel="stylesheet" href="../design-tokens.css">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/config.css">
+    <link rel="stylesheet" href="../css/como-funciona.css">
 </head>
-<body class="auth-page">
+<body class="auth-page como-page">
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
-        <nav>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
             <a class="ativo" href="como-funciona.html">Como funciona</a>
             <a class="btn btn-secondary" href="login.html">Entrar</a>
             <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
         </nav>
+        <nav class="nav-logado">
+            <a href="home.html">Explorar</a>
+            <a class="ativo" href="como-funciona.html">Como funciona</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
+            <a class="sair" href="#">Sair</a>
+        </nav>
     </header>
-    <main class="conteudo" style="max-width:800px;margin:40px auto;padding:0 24px">
-        <h1 style="font-family:var(--font-heading),sans-serif;margin-bottom:12px">Como funciona o RoomMatch</h1>
-        <div class="conteudo-prosa">
-            <h3>Visão Morador (busca moradia)</h3>
-            <p>Mural com match · Favoritos · Minhas visitas · Mensagens com locadores · Preferências de busca (orçamento + limiar + tags).</p>
-            <h3>Visão Locador (publica vagas)</h3>
-            <p>Painel Meus anúncios · Publicar/Editar · Agenda de visitas recebidas · Interessados (chat) · Regras da casa. Sem favoritos e sem mural de busca.</p>
-            <h3>Contas demo</h3>
-            <p><strong>Morador Demo</strong> — <code>morador@demo.com</code> / <code>demo123</code>
-            → entra no mural<br>
-            <strong>Locador Demo</strong> — <code>locador@demo.com</code> / <code>demo123</code>
-            → entra no painel de anúncios</p>
-            <p><a class="btn btn-primary" href="escolha-papel.html">Começar agora</a></p>
-        </div>
-    </main>
+
+    <div class="page-content">
+        <section class="page-hero page-hero-taquaral cf-hero" aria-label="Taquaral, Campinas">
+            <div class="page-hero-inner">
+                <img class="page-hero-logo" src="../assets/logo.svg" alt="RoomMatch">
+                <h1>Como o RoomMatch funciona</h1>
+                <p>Entenda, em linguagem simples, como achar um quarto ou anunciar uma vaga — seja você morador ou locador.</p>
+                <div class="cf-hero-actions">
+                    <a class="btn btn-primary" href="#cf-jornada">Ver o passo a passo</a>
+                    <a class="btn btn-secondary cf-btn-ghost" href="escolha-papel.html">Criar conta</a>
+                </div>
+            </div>
+        </section>
+
+        <main class="cf-main">
+            <!-- Papel interativo -->
+            <section class="cf-section" id="cf-jornada" aria-labelledby="cf-papel-title">
+                <header class="cf-section-head">
+                    <h2 id="cf-papel-title">Escolha o seu caminho</h2>
+                    <p>Morador e locador usam a plataforma de jeitos diferentes. Toque em um dos dois para ver o passo a passo.</p>
+                </header>
+
+                <div class="cf-papel-switch" role="tablist" aria-label="Tipo de usuário">
+                    <button type="button" class="cf-papel-btn ativo" role="tab" aria-selected="true" aria-controls="cf-painel-morador" id="tab-morador" data-papel="morador">
+                        <span class="cf-papel-icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z"/></svg>
+                        </span>
+                        <span class="cf-papel-nome">Morador</span>
+                        <span class="cf-papel-desc">Quero encontrar um quarto ou vaga</span>
+                    </button>
+                    <button type="button" class="cf-papel-btn" role="tab" aria-selected="false" aria-controls="cf-painel-locador" id="tab-locador" data-papel="locador">
+                        <span class="cf-papel-icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01M15 10h.01"/></svg>
+                        </span>
+                        <span class="cf-papel-nome">Locador</span>
+                        <span class="cf-papel-desc">Quero anunciar um imóvel ou vaga</span>
+                    </button>
+                </div>
+
+                <div id="cf-painel-morador" class="cf-painel ativo" role="tabpanel" aria-labelledby="tab-morador">
+                    <ol class="cf-steps">
+                        <li class="cf-step aberto">
+                            <button type="button" class="cf-step-toggle" aria-expanded="true">
+                                <span class="cf-step-num">1</span>
+                                <span class="cf-step-title">Monte seu perfil de convivência</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Você informa quanto pode pagar por mês no total, qual afinidade mínima aceita para conversar, e quais hábitos importam no dia a dia — por exemplo, aceitar pets, preferir silêncio à noite ou trabalhar de casa. Esses hábitos guiam a afinidade com cada anúncio.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">2</span>
+                                <span class="cf-step-title">Explore anúncios com afinidade clara</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>No mural você filtra por bairro, valor e tipo de imóvel. Em cada card aparece a afinidade com o seu perfil, o total mensal aberto (aluguel, condomínio, imposto predial e contas) e uma estimativa de tempo até a faculdade ou o trabalho.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">3</span>
+                                <span class="cf-step-title">Salve favoritos e converse quando fizer sentido</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Você pode favoritar anúncios para voltar depois. A conversa com o locador só libera quando a afinidade atinge o mínimo que você definiu e o valor mensal cabe no seu orçamento. Assim você não perde tempo com opções fora do perfil.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">4</span>
+                                <span class="cf-step-title">Peça uma visita pelo chat</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Depois de conversar, você agenda a visita dentro do chat. Os horários ficam em Minhas visitas. O RoomMatch não reserva o quarto e não assina contrato: isso fica entre você e o locador.</p>
+                            </div>
+                        </li>
+                    </ol>
+                    <a class="btn btn-primary cf-painel-cta" href="escolha-papel.html">Começar como Morador</a>
+                </div>
+
+                <div id="cf-painel-locador" class="cf-painel" role="tabpanel" aria-labelledby="tab-locador" hidden>
+                    <ol class="cf-steps">
+                        <li class="cf-step aberto">
+                            <button type="button" class="cf-step-toggle" aria-expanded="true">
+                                <span class="cf-step-num">1</span>
+                                <span class="cf-step-title">Publique o anúncio com valores claros</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Inclua fotos, endereço na região metropolitana de Campinas, o total mensal (aluguel, condomínio, imposto predial e contas) e os hábitos da casa. Quem busca vê o custo completo antes de conversar.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">2</span>
+                                <span class="cf-step-title">Cuide dos seus anúncios no painel</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Em Meus anúncios você edita, pausa e acompanha quem demonstrou interesse. O locador não usa favoritos nem o mural de busca: o foco é a vaga que você oferece.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">3</span>
+                                <span class="cf-step-title">Responda quem tem perfil compatível</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Só quem atingiu a afinidade mínima e cabe no próprio orçamento consegue abrir a conversa. Você vê essas mensagens em Interessados, com o anúncio ao lado para lembrar o contexto.</p>
+                            </div>
+                        </li>
+                        <li class="cf-step">
+                            <button type="button" class="cf-step-toggle" aria-expanded="false">
+                                <span class="cf-step-num">4</span>
+                                <span class="cf-step-title">Confirme os pedidos de visita</span>
+                                <span class="cf-step-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="cf-step-body">
+                                <p>Os pedidos aparecem na sua agenda de visitas. Você confirma o horário e combina o restante diretamente com a pessoa interessada, se precisar.</p>
+                            </div>
+                        </li>
+                    </ol>
+                    <a class="btn btn-primary cf-painel-cta" href="escolha-papel.html">Começar como Locador</a>
+                </div>
+            </section>
+
+            <section class="cf-section cf-match" aria-labelledby="cf-match-title">
+                <header class="cf-section-head">
+                    <h2 id="cf-match-title">O que é a afinidade?</h2>
+                    <p>É uma porcentagem que mostra quanto os hábitos do morador batem com os hábitos descritos no anúncio. Toque nas opções à esquerda e veja o número mudar.</p>
+                </header>
+
+                <div class="cf-match-board" aria-live="polite">
+                    <div class="cf-match-col">
+                        <h3 class="label-com-tip">
+                            Seus hábitos
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Como usar os hábitos">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Toque para ligar ou desligar um hábito. A porcentagem de afinidade atualiza na hora.</span>
+                            </span>
+                        </h3>
+                        <div class="cf-tags" id="cf-tags-user">
+                            <button type="button" class="cf-tag ativo" data-tag="Pet Friendly">Pet Friendly</button>
+                            <button type="button" class="cf-tag ativo" data-tag="Silêncio Noturno">Silêncio Noturno</button>
+                            <button type="button" class="cf-tag ativo" data-tag="Home Office">Home Office</button>
+                            <button type="button" class="cf-tag" data-tag="Sem Festas">Sem Festas</button>
+                            <button type="button" class="cf-tag" data-tag="LGBTQIA+ Safe">LGBTQIA+ Safe</button>
+                        </div>
+                    </div>
+                    <div class="cf-match-score">
+                        <span class="cf-match-ring" id="cf-match-ring">
+                            <span class="cf-match-valor"><span id="cf-match-num">100</span><small>%</small></span>
+                        </span>
+                        <p id="cf-match-label">Afinidade alta. A conversa pode ser liberada.</p>
+                    </div>
+                    <div class="cf-match-col">
+                        <h3 class="label-com-tip">
+                            Hábitos do anúncio
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Sobre o exemplo de anúncio">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Exemplo de uma república em Barão Geraldo. Os hábitos em comum com os seus ficam destacados.</span>
+                            </span>
+                        </h3>
+                        <div class="cf-tags cf-tags-imovel">
+                            <span class="cf-tag fixo">Pet Friendly</span>
+                            <span class="cf-tag fixo">Silêncio Noturno</span>
+                            <span class="cf-tag fixo">Home Office</span>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="cf-regras">
+                    <li><strong>Afinidade:</strong> contamos quantos dos seus hábitos também estão no anúncio e transformamos isso em porcentagem.</li>
+                    <li><strong>Conversa:</strong> o chat só abre se a afinidade for no mínimo a que você escolheu e se o valor mensal couber no seu orçamento.</li>
+                    <li><strong>Total mensal:</strong> o anúncio mostra aluguel, condomínio, imposto predial e contas somados, sem surpresa escondida.</li>
+                </ul>
+            </section>
+
+            <section class="cf-cta" aria-label="Próximo passo">
+                <div class="cf-cta-inner">
+                    <img src="../assets/logo.svg" alt="" class="cf-cta-logo" width="77" height="40">
+                    <h2>Pronto para achar ou anunciar moradia na região metropolitana de Campinas?</h2>
+                    <p>Cadastro rápido, papéis separados e afinidade transparente desde o primeiro anúncio.</p>
+                    <div class="cf-cta-actions">
+                        <a class="btn btn-primary" href="escolha-papel.html">Criar conta</a>
+                        <a class="btn btn-secondary" href="home.html">Ver anúncios</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
         </nav>
-        <small>© 2026 RoomMatch</small>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
     </footer>
+
     <script src="../js/mock-api.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/tip.js"></script>
+    <script src="../js/como-funciona.js"></script>
 </body>
 </html>

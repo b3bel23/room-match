@@ -38,7 +38,7 @@ document.getElementById('pref-form').addEventListener('submit', async (evento) =
             tags
         });
         entrar(RoomMatchApi.lerToken(), user);
-        retorno.textContent = 'Salvo (orcamento_maximo / limiar_compatibilidade / tags).';
+        retorno.textContent = 'Preferências salvas. Elas entram no cálculo de afinidade na hora.';
         retorno.classList.remove('erro');
         retorno.hidden = false;
     } catch (erro) {

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=/room-match/frontend/pages/home.html">
+    <title>Room Match</title>
+    <script>
+        (function () {
+            var base = location.pathname.indexOf('/room-match') === 0 ? '/room-match' : '';
+            location.replace(base + '/frontend/pages/home.html');
+        }());
+    </script>
+</head>
+<body>
+    <p><a id="link" href="frontend/pages/home.html">Voltar ao RoomMatch</a></p>
+    <script>
+        var base = location.pathname.indexOf('/room-match') === 0 ? '/room-match/' : '';
+        document.getElementById('link').href = base + 'frontend/pages/home.html';
+    </script>
+</body>
+</html>

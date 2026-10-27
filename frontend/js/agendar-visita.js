@@ -7,7 +7,12 @@ const confirmar = document.getElementById('agendar-confirmar');
 const nota = document.getElementById('agendar-nota');
 const retorno = document.getElementById('agendar-retorno');
 const rotuloImovel = document.querySelector('.agendar-imovel');
-const imovelId = new URLSearchParams(window.location.search).get('id') || 'kitnet-cambui';
+const imovelId = new URLSearchParams(window.location.search).get('id');
+
+// Agendar visita só a partir do chat (precisa do imóvel da conversa).
+if (!imovelId) {
+    window.location.replace('mensagens.html');
+}
 
 (async function carregarImovel() {
     try {

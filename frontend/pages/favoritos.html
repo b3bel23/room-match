@@ -11,12 +11,13 @@
 <body class="favoritos-page">
 
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="home.html">Explorar</a>
             <a class="ativo" href="favoritos.html">Favoritos</a>
+            <a href="calendario-visitas.html">Minhas visitas</a>
             <a href="mensagens.html">Mensagens</a>
-            <span class="usuario"><span class="usuario-foto">MS</span></span>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
             <a class="sair" href="#">Sair</a>
         </nav>
     </header>
@@ -77,7 +78,7 @@
     </template>
 
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -91,6 +92,7 @@
     <script src="../js/papel-ui.js"></script>
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
     <script src="../js/favoritos-armazenamento.js"></script>
     <script src="../js/imovel-fotos.js"></script>
     <script src="../js/favoritos.js"></script>

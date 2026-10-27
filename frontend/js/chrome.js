@@ -42,34 +42,33 @@
             }
         });
 
-        const conversar = document.querySelector('a[href="#conversar"], a.btn-conversar');
-        if (conversar) {
-            conversar.addEventListener('click', async (evento) => {
-                if (conversar.getAttribute('href') !== '#conversar' && !conversar.classList.contains('btn-conversar')) {
-                    return;
-                }
-                evento.preventDefault();
-                if (!estaLogado()) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                if (typeof ehLocador === 'function' && ehLocador()) {
-                    window.location.href = 'mensagens.html';
-                    return;
-                }
-                if (conversar.getAttribute('aria-disabled') === 'true') {
-                    window.alert(conversar.title || 'Chat bloqueado: ajuste limiar/orçamento nas preferências.');
-                    return;
-                }
-                const id = new URLSearchParams(window.location.search).get('id') || 'kitnet-cambui';
-                try {
-                    const conv = await RoomMatchApi.abrirConversa({ imovel_id: id });
-                    window.location.href = `mensagens.html?id=${encodeURIComponent(conv.id)}`;
-                } catch (erro) {
-                    window.alert(erro.detail || erro.message);
-                }
-            });
-        }
+        document.addEventListener('click', async (evento) => {
+            const conversar = evento.target.closest('a[href="#conversar"], a.btn-conversar');
+            if (!conversar) return;
+            if (conversar.getAttribute('href') !== '#conversar' && !conversar.classList.contains('btn-conversar')) {
+                return;
+            }
+            evento.preventDefault();
+            if (!estaLogado()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            if (typeof ehLocador === 'function' && ehLocador()) {
+                window.location.href = 'mensagens.html';
+                return;
+            }
+            if (conversar.getAttribute('aria-disabled') === 'true') {
+                window.alert(conversar.title || 'Chat bloqueado: ajuste limiar/orçamento nas preferências.');
+                return;
+            }
+            const id = new URLSearchParams(window.location.search).get('id') || 'kitnet-cambui';
+            try {
+                const conv = await RoomMatchApi.abrirConversa({ imovel_id: id });
+                window.location.href = `mensagens.html?id=${encodeURIComponent(conv.id)}`;
+            } catch (erro) {
+                window.alert(erro.detail || erro.message);
+            }
+        });
     }
 
     if (document.readyState === 'loading') {

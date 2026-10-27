@@ -9,34 +9,39 @@
     <link rel="stylesheet" href="../css/favoritos.css">
     <link rel="stylesheet" href="../css/config.css">
 </head>
-<body class="favoritos-page">
+<body class="auth-page favoritos-page">
     <header class="site-header">
-        <a href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
-        <nav>
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="ativo" href="termos.html">Termos</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+        <nav class="nav-logado">
             <a href="home.html">Explorar</a>
-            <a href="favoritos.html">Favoritos</a>
-            <a href="mensagens.html">Mensagens</a>
-            <span class="usuario"><span class="usuario-foto">MS</span></span>
+            <a class="ativo" href="termos.html">Termos</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
             <a class="sair" href="#">Sair</a>
         </nav>
     </header>
     <div class="vista-lista">
         <div class="page-bar">
             <h1>Termos e privacidade</h1>
-            <span class="page-bar-sub">LGPD · RoomMatch demo</span>
+            <span class="page-bar-sub">Proteção de dados</span>
         </div>
         <div class="layout">
             <aside class="sidebar"></aside>
             <main class="conteudo">
                 <h2>Termos de uso</h2>
                 <div class="conteudo-prosa">
-                    <p>O RoomMatch é uma plataforma de matching para moradia compartilhada na RMC. Esta página descreve o tratamento de dados da <strong>versão demo acadêmica</strong>.</p>
+                    <p>O RoomMatch é uma plataforma de combinação de perfis para moradia compartilhada na região metropolitana de Campinas. Esta página descreve o tratamento de dados da plataforma.</p>
                     <h3>Dados coletados</h3>
                     <p>Nome, e-mail, preferências de convivência, orçamento, limiar de match, favoritos, visitas e mensagens trocadas na plataforma.</p>
                     <h3>Finalidade</h3>
                     <p>Calcular afinidade, exibir anúncios, permitir contato entre morador e locador e organizar visitas.</p>
-                    <h3>Base legal (LGPD)</h3>
-                    <p>Consentimento no cadastro e legítimo interesse para segurança da conta. Você pode solicitar exclusão dos dados da demo limpando o armazenamento local do navegador.</p>
+                    <h3>Base legal (Lei Geral de Proteção de Dados)</h3>
+                    <p>Consentimento no cadastro e legítimo interesse para segurança da conta. Você pode solicitar exclusão dos seus dados pelos canais de suporte da plataforma.</p>
                     <h3>Contato</h3>
                     <p>Dúvidas: equipe RoomMatch · PUC-Campinas · Projeto Integrador 2026.</p>
                 </div>
@@ -44,7 +49,7 @@
         </div>
     </div>
     <footer class="site-footer">
-        <img src="../assets/logo.svg" alt="RoomMatch">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
         <nav>
             <a href="como-funciona.html">Como funciona</a>
             <a href="termos.html">Termos e privacidade</a>
@@ -57,6 +62,7 @@
     <script src="../js/papel-ui.js"></script>
     <script src="../js/config-shell.js"></script>
     <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
     <script>
         if (estaLogado()) montarSidebarConfig('termos.html');
         else document.querySelector('.sidebar').innerHTML = '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a href="login.html">Entrar</a>';

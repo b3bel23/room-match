@@ -21,13 +21,15 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 
 | Método | Rota | Uso |
 |--------|------|-----|
-| GET | `/imoveis` | Mural (match se autenticado) |
+| GET | `/imoveis` | Mural (match se autenticado). Query opcional: `tipo`, `bairro`, `preco_max`, `tag` |
 | GET | `/imoveis/{id}` | Detalhe (`capa`, `fotos[]` — URLs ou paths) |
 | GET/POST | `/favoritos`, `/favoritos/{id}` | Lista e toggle (≈ `likes`) |
 | POST | `/visitas` | Solicitar visita |
 | GET | `/visitas` | Próprios pedidos |
 | GET/POST | `/conversas`, `/conversas/{id}/mensagens` | Chat com locador |
-| GET/PATCH | `/me` | Perfil |
+| GET/PATCH | `/me` | Perfil (nome, telefone, gênero, ocupação, emprego, faculdade, foto_url, e-mail; `papel` opcional) |
+
+**PATCH `/me` + troca de `papel`:** backend deve migrar `locatario` ↔ `locador`, revogar escopos antigos e devolver `user` atualizado. Não confiar só no client.
 
 **Não usa:** `/imoveis/meus`, POST/PATCH de imóvel próprio.
 
@@ -41,9 +43,9 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 | PATCH | `/imoveis/{id}` | Editar (dono) |
 | GET | `/visitas` | Visitas nos imóveis dele |
 | GET/POST | `/conversas`, … | Chat com interessados |
-| GET/PATCH | `/me` | Perfil |
+| GET/PATCH | `/me` | Mesmos campos do morador (incl. troca de `papel` com migração no banco) |
 
-**Não usa:** `/favoritos` (403 no mock). **Não** POST `/visitas` (quem agenda é o morador).
+**Não usa:** `/favoritos` (403 no mock). **Não** POST `/visitas` (quem agenda é o morador). Visita só via fluxo do chat no front.
 
 ## Visitante (sem token)
 
@@ -63,6 +65,8 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 
 O mock em `frontend/js/mock-api.js` segue esta tabela para facilitar trocar
 `roommatch-api-mode` para `live` sem mudar `api.js`.
+
+Deploy sem API: `frontend/README.md`. Contrato em runtime: `RoomMatchApi.CONTRATO`.
 
 ## Matching (contrato único)
 

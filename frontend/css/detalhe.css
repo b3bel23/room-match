@@ -1,25 +1,9 @@
 .detalhe-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
     background: #f0f7f6;
 }
 
 body.detalhe-page:not(.visitante) {
     background: linear-gradient(143deg, #e7ecec 15%, #f7fffd 85%);
-}
-
-/* Cabeçalho: visitante x logado */
-.site-header .nav-logado {
-    display: none;
-}
-
-body:not(.visitante) .site-header .nav-visitante {
-    display: none;
-}
-
-body:not(.visitante) .site-header .nav-logado {
-    display: flex;
 }
 
 .morador-foto {
@@ -51,15 +35,17 @@ body:not(.visitante) .site-header .nav-logado {
 
 /* Conteúdo */
 .detalhe {
-    flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
     gap: 32px;
-    padding: 48px 32px;
+    padding: 48px clamp(16px, 3vw, 32px);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 body:not(.visitante) .detalhe {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     padding-block: 24px;
 }
 
@@ -67,7 +53,8 @@ body:not(.visitante) .detalhe {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    max-width: 420px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .info h2 {
@@ -307,6 +294,9 @@ body:not(.visitante) .detalhe {
 
 .bloqueio p {
     font-size: 16px;
+    font-weight: var(--fw-semibold);
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .bloqueio-botoes {
@@ -358,6 +348,13 @@ body:not(.visitante) .detalhe {
     display: none;
     font-size: var(--fs-body);
     font-weight: var(--fw-bold);
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(20, 29, 34, 0.72);
+    color: #fff;
+    width: max-content;
+    max-width: calc(100% - 24px);
 }
 
 body:not(.visitante) .afinidade {
@@ -388,11 +385,38 @@ body:not(.visitante) .afinidade {
     .detalhe,
     body:not(.visitante) .detalhe {
         grid-template-columns: 1fr;
+        gap: 20px;
+        padding-block: 20px;
     }
 
     .galeria {
         order: -1;
         min-height: 0;
+        width: 100%;
+    }
+
+    .galeria-principal {
+        height: min(280px, 50vw);
+    }
+
+    .acoes {
+        flex-wrap: wrap;
+    }
+
+    .acoes .btn-primary,
+    .acoes .btn {
+        width: 100%;
+        min-height: var(--tap-min);
+    }
+
+    .bloqueio-botoes {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .bloqueio-botoes .btn {
+        width: auto;
+        min-width: 120px;
     }
 }
 

@@ -19,14 +19,13 @@
             return;
         }
         if (typeof ehMorador === 'function' && ehMorador()) {
-            setText('.hero h1', 'Seu mural de matches na RMC');
-            setText('.hero p', 'Afinidade com suas tags, rateio transparente e tempo até a faculdade ou o trabalho.');
+            setText('.hero h1', 'Seu mural na região metropolitana de Campinas');
+            setText('.hero-lead, .hero .hero-lead', 'Afinidade com seus hábitos, rateio transparente e tempo até a faculdade ou o trabalho.');
+            document.querySelectorAll('.stat-logado').forEach((el) => { el.hidden = false; });
             const cta = document.querySelector('.cta-banner');
-            if (cta) {
-                cta.textContent = 'Match calculado com suas preferências · salve favoritos e converse com o locador.';
-            }
+            if (cta) cta.hidden = true;
             const buscar = document.querySelector('.filter-bar .btn-buscar');
-            if (buscar) buscar.textContent = 'Buscar match';
+            if (buscar) buscar.textContent = 'Buscar';
         }
     }
 
@@ -78,22 +77,20 @@
         // Campos = schema locatario (orcamento_maximo, limiar_compatibilidade, tags).
         // Só o contexto da página muda; nomes/labels de campo são os do banco.
         if (typeof ehLocador === 'function' && ehLocador()) {
-            setText('.page-bar-sub', 'Perfil locador · campos do schema locatario');
-            setText('.conteudo-sub', 'Mesmos campos do banco; usados na demo do locador para contexto');
+            setText('.page-bar-sub', 'Perfil locador');
         } else if (typeof ehMorador === 'function' && ehMorador()) {
-            setText('.page-bar-sub', 'Perfil locatário · campos do schema locatario');
-            setText('.conteudo-sub', 'orcamento_maximo, limiar_compatibilidade e tags de convivência');
+            setText('.page-bar-sub', 'Perfil locatário');
         }
     }
 
     function personalizarPerfil() {
         if (path() !== 'perfil.html') return;
         if (typeof ehLocador === 'function' && ehLocador()) {
-            setText('.conteudo-sub', 'usuario + papel locador (schema)');
-            setText('.page-bar-sub', 'locador@demo.com');
+            setText('.conteudo-sub', 'Dados do cadastro do locador — todos os campos editáveis, inclusive o tipo de perfil.');
+            setText('.page-bar-sub', 'Conta locador');
         } else if (typeof ehMorador === 'function' && ehMorador()) {
-            setText('.conteudo-sub', 'usuario + papel locatário (schema)');
-            setText('.page-bar-sub', 'morador@demo.com');
+            setText('.conteudo-sub', 'Dados do cadastro do morador — todos os campos editáveis, inclusive o tipo de perfil.');
+            setText('.page-bar-sub', 'Conta morador');
         }
     }
 
@@ -108,9 +105,9 @@
         const p = path();
         if (p !== 'seguranca.html' && p !== 'termos.html') return;
         if (typeof ehLocador === 'function' && ehLocador()) {
-            setText('.page-bar-sub', 'Conta Locador Demo');
+            setText('.page-bar-sub', 'Conta locador');
         } else if (typeof ehMorador === 'function' && ehMorador()) {
-            setText('.page-bar-sub', 'Conta Morador Demo');
+            setText('.page-bar-sub', 'Conta morador');
         }
     }
 
@@ -144,6 +141,8 @@
         personalizarPublicarEditar();
         personalizarAgendar();
     }
+
+    window.RoomMatchPapelUi = { aplicar };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', aplicar);

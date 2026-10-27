@@ -1,17 +1,65 @@
 /**
  * Cliente HTTP central (KAN-49).
- * Modo padrão: mock (RoomMatchMock). Para API real:
+ * Modo padrão: mock (RoomMatchMock) — publicável sem backend.
+ * API real:
  *   localStorage.setItem('roommatch-api-mode', 'live')
- *   localStorage.setItem('roommatch-api-base', 'http://127.0.0.1:8000')
+ *   localStorage.setItem('roommatch-api-base', 'https://sua-api.exemplo.com')
  *
- * Rotas por papel (Morador ≈ locatario, Locador ≈ locador): ver
- * docs/frontend/papeis-e-rotas-api-v1.md
+ * Contrato: docs/frontend/papeis-e-rotas-api-v1.md
+ * Deploy: frontend/README.md
  */
 (function (global) {
     const CHAVE_TOKEN = 'roommatch-token';
     const CHAVE_USER = 'roommatch-user';
     const CHAVE_MODE = 'roommatch-api-mode';
     const CHAVE_BASE = 'roommatch-api-base';
+    const PREFIXO = '/api/v1';
+
+    /** Contrato estável para o backend espelhar (não mudar sem atualizar docs). */
+    const CONTRATO = Object.freeze({
+        version: 'v1',
+        prefix: PREFIXO,
+        papeisUi: Object.freeze({ Morador: 'locatario', Locador: 'locador' }),
+        /** Editáveis via PATCH /me. */
+        camposPerfil: Object.freeze([
+            'nome',
+            'telefone',
+            'genero',
+            'ocupacao',
+            'emprego',
+            'faculdade',
+            'foto_url',
+            'email',
+            'papel'
+        ]),
+        /**
+         * Se `papel` mudar (Morador↔Locador), o backend DEVE migrar
+         * registro locatario ↔ locador e invalidar permissões antigas.
+         */
+        filtrosImoveis: Object.freeze([
+            'tipo',
+            'bairro',
+            'preco_max',
+            'tag'
+        ]),
+        camposLocatario: Object.freeze([
+            'orcamento_maximo',
+            'limiar_compatibilidade',
+            'tags'
+        ]),
+        camposImovelValor: Object.freeze([
+            'aluguel',
+            'condominio',
+            'iptu',
+            'contas',
+            'preco'
+        ]),
+        auth: Object.freeze({
+            login: 'POST /auth/login → { access_token, user }',
+            register: 'POST /auth/register → { access_token, user }',
+            header: 'Authorization: Bearer <access_token>'
+        })
+    });
 
     function modo() {
         try {
@@ -27,6 +75,16 @@
         } catch (erro) {
             return 'http://127.0.0.1:8000';
         }
+    }
+
+    function detalheErro(dados, status) {
+        const d = dados?.detail ?? dados?.message;
+        if (typeof d === 'string') return d;
+        if (Array.isArray(d)) {
+            return d.map((item) => item.msg || item.message || JSON.stringify(item)).join(' · ');
+        }
+        if (d && typeof d === 'object') return JSON.stringify(d);
+        return `Erro ${status}`;
     }
 
     function lerToken() {
@@ -71,7 +129,9 @@
         const auth = opcoes.auth !== false;
         const body = opcoes.body;
         const token = auth ? lerToken() : null;
-        const pathApi = path.startsWith('/api/') ? path : `/api/v1${path.startsWith('/') ? path : `/${path}`}`;
+        const pathApi = path.startsWith('/api/')
+            ? path
+            : `${PREFIXO}${path.startsWith('/') ? path : `/${path}`}`;
 
         if (modo() === 'mock') {
             if (!global.RoomMatchMock) {
@@ -119,15 +179,18 @@
         }
 
         if (!resposta.ok) {
-            throw Object.assign(new Error(dados?.detail || `Erro ${resposta.status}`), {
+            const detail = detalheErro(dados, resposta.status);
+            throw Object.assign(new Error(detail), {
                 status: resposta.status,
-                detail: dados?.detail || dados
+                detail,
+                body: dados
             });
         }
         return dados;
     }
 
     const api = {
+        CONTRATO,
         modo,
         baseUrl,
         request,
