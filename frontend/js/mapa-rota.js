@@ -160,9 +160,11 @@ modos.forEach((modo) => {
     });
 });
 
-// Estimativa de carro até o Centro, mostrada no card sem precisar abrir o mapa.
-buscarRota('car', CENTRO)
-    .then((rota) => {
-        textoCarro.textContent = `${formatarTempo(rota.duration)} de carro · ${formatarKm(rota.distance)}`;
-    })
-    .catch(() => {});
+// Estimativa de carro até o Centro, mostrada no card sem precisar abrir o mapa. Só para quem está logado.
+if (estaLogado()) {
+    buscarRota('car', CENTRO)
+        .then((rota) => {
+            textoCarro.textContent = `${formatarTempo(rota.duration)} de carro · ${formatarKm(rota.distance)}`;
+        })
+        .catch(() => {});
+}

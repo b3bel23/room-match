@@ -161,6 +161,11 @@ body:not(.visitante) .detalhe {
     gap: 1px;
 }
 
+.visitante .trajeto,
+.visitante .rota {
+    display: none;
+}
+
 .trajeto strong {
     font-size: var(--fs-body);
 }
