@@ -176,40 +176,23 @@ function validarDimensoes(dataUrl) {
     });
 }
 
-foto?.addEventListener('change', async () => {
-    const arquivo = foto.files?.[0];
-    foto.value = '';
-    foto.setCustomValidity('');
-    if (!arquivo) {
-        limparPreviaFoto();
-        return;
-    }
-
-    try {
-        if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
-            throw new Error('Use uma imagem JPG ou PNG.');
+if (typeof RoomMatchFaceCheck !== 'undefined' && foto) {
+    RoomMatchFaceCheck.ligarEntrada(foto, {
+        statusEl: document.getElementById('foto-face-status'),
+        onAceita(dataUrl) {
+            mostrarPreviaFoto(dataUrl);
+        },
+        onRecusa() {
+            limparPreviaFoto();
         }
-        if (arquivo.size > TAMANHO_MAXIMO) {
-            throw new Error('A foto deve ter no máximo 5 MB.');
-        }
-        const dataUrl = await validarDimensoes(await lerArquivoComoDataUrl(arquivo));
-        if (typeof RoomMatchFaceCheck === 'undefined') {
-            throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
-        }
-        foto.setCustomValidity('Verificando rosto na foto…');
-        foto.reportValidity();
-        await RoomMatchFaceCheck.exigirRosto(dataUrl);
-        mostrarPreviaFoto(dataUrl);
-        foto.setCustomValidity('');
-    } catch (erro) {
-        limparPreviaFoto();
-        foto.setCustomValidity(erro.message || 'Não foi possível usar esta foto.');
-        foto.reportValidity();
-    }
-});
-
-if (typeof RoomMatchFaceCheck !== 'undefined') {
+    });
     RoomMatchFaceCheck.aquecer();
+} else {
+    foto?.addEventListener('change', () => {
+        limparPreviaFoto();
+        foto.setCustomValidity('Verificador de rosto não carregou. Atualize a página.');
+        foto.reportValidity();
+    });
 }
 
 const TAGS_MINIMO = 3;

@@ -446,6 +446,28 @@ body:not(.visitante) .site-header .nav-logado {
     color: var(--color-primary);
 }
 
+/* Status da verificação de rosto (foto de perfil) */
+.face-check-status {
+    margin: 8px 0 0;
+    font-size: var(--fs-xsmall);
+    line-height: 1.35;
+    color: var(--color-text-muted);
+}
+
+.face-check-status.info {
+    color: var(--color-text-muted);
+}
+
+.face-check-status.ok {
+    color: var(--color-primary-hover);
+    font-weight: var(--fw-medium);
+}
+
+.face-check-status.erro {
+    color: var(--color-danger);
+    font-weight: var(--fw-medium);
+}
+
 /* Senha: olho + força (cadastro, login, segurança) */
 .senha-linha {
     position: relative;

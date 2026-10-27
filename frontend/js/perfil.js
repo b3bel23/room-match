@@ -106,36 +106,25 @@ async function carregar() {
     aplicarPerfilNaUi(user);
 }
 
-inputFoto?.addEventListener('change', async () => {
-    const arquivo = inputFoto.files?.[0];
-    inputFoto.value = '';
-    if (!arquivo) return;
-
-    try {
-        if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
-            throw new Error('Use uma imagem JPG ou PNG.');
+if (typeof RoomMatchFaceCheck !== 'undefined' && inputFoto) {
+    RoomMatchFaceCheck.ligarEntrada(inputFoto, {
+        statusEl: document.getElementById('perfil-foto-face-status'),
+        onAceita(dataUrl) {
+            fotoUrlAtual = dataUrl;
+            avatar.style.backgroundImage = `url("${dataUrl}")`;
+            avatar.textContent = '';
+            avatar.classList.add('com-foto');
+            mostrarRetorno('Rosto detectado. Clique em Salvar perfil para aplicar.', false);
+        },
+        onRecusa(erro) {
+            mostrarRetorno(erro.message || 'Não foi possível usar esta foto.', true);
         }
-        if (arquivo.size > TAMANHO_MAXIMO) {
-            throw new Error('A foto deve ter no máximo 5 MB.');
-        }
-        const dataUrl = await validarDimensoes(await lerArquivoComoDataUrl(arquivo));
-        if (typeof RoomMatchFaceCheck === 'undefined') {
-            throw new Error('Verificador de rosto não carregou. Atualize a página e tente de novo.');
-        }
-        mostrarRetorno('Verificando rosto na foto…', false);
-        await RoomMatchFaceCheck.exigirRosto(dataUrl);
-        fotoUrlAtual = dataUrl;
-        avatar.style.backgroundImage = `url("${dataUrl}")`;
-        avatar.textContent = '';
-        avatar.classList.add('com-foto');
-        mostrarRetorno('Rosto detectado. Clique em Salvar perfil para aplicar.', false);
-    } catch (erro) {
-        mostrarRetorno(erro.message || 'Não foi possível usar esta foto.', true);
-    }
-});
-
-if (typeof RoomMatchFaceCheck !== 'undefined') {
+    });
     RoomMatchFaceCheck.aquecer();
+} else if (inputFoto) {
+    inputFoto.addEventListener('change', () => {
+        mostrarRetorno('Verificador de rosto não carregou. Atualize a página.', true);
+    });
 }
 
 btnRemoverFoto?.addEventListener('click', () => {

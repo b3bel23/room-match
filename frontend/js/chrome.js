@@ -70,11 +70,16 @@
         });
     }
 
-    function garantirCookieConsent() {
-        if (document.querySelector('script[data-rm-cookies]')) return;
+    function raizScripts() {
         const base = document.querySelector('script[src*="chrome.js"]')?.getAttribute('src') || '../js/chrome.js';
         const raizJs = base.replace(/chrome\.js(\?.*)?$/, '');
         const raizCss = raizJs.replace(/\/js\/?$/, '/css/');
+        return { raizJs, raizCss };
+    }
+
+    function garantirCookieConsent() {
+        if (document.querySelector('script[data-rm-cookies]')) return;
+        const { raizJs, raizCss } = raizScripts();
 
         if (!document.querySelector('link[data-rm-cookies]')) {
             const css = document.createElement('link');
@@ -87,6 +92,26 @@
         const script = document.createElement('script');
         script.src = `${raizJs}cookie-consent.js`;
         script.dataset.rmCookies = '1';
+        document.body.appendChild(script);
+    }
+
+    /** Garante face-check em qualquer página com input de foto de perfil. */
+    function garantirFaceCheck() {
+        const precisa = document.querySelector('input[data-face-perfil], input#foto, input#perfil-foto');
+        if (!precisa) return;
+        if (document.querySelector('script[src*="face-check.js"]')) {
+            if (typeof RoomMatchFaceCheck !== 'undefined') RoomMatchFaceCheck.aquecer();
+            return;
+        }
+        const { raizJs } = raizScripts();
+        const script = document.createElement('script');
+        script.src = `${raizJs}face-check.js`;
+        script.dataset.rmFaceCheck = '1';
+        script.onload = () => {
+            if (typeof RoomMatchFaceCheck !== 'undefined') {
+                RoomMatchFaceCheck.aquecer();
+            }
+        };
         document.body.appendChild(script);
     }
 
@@ -159,6 +184,7 @@
         aplicar();
         garantirLinksAjudaNosMenus();
         garantirCookieConsent();
+        garantirFaceCheck();
     }
 
     if (document.readyState === 'loading') {
