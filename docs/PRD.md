@@ -47,3 +47,36 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Testar contra o banco real e com o front em modo `live`.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
+
+### Perfil do usuário e troca de modo (KAN-33)
+
+**Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar
+no Postgres/Supabase.
+
+**O que faz:** o usuário logado vê e edita o próprio perfil, define suas tags de
+convivência e preferências de busca, troca entre Morador (locatário) e Locador, e pode
+excluir a conta.
+
+**Endpoints** (contrato em `docs/frontend/papeis-e-rotas-api-v1.md`)
+- `GET /me`: perfil no formato do front (`papel`, `papel_schema`, `foto_url`, `tags`,
+  `orcamento_maximo`, `limiar_compatibilidade` e aliases `orcamento`/`limiar`).
+- `PATCH /me`: altera só os campos enviados. `id` e `senha` nunca são aceitos.
+- `DELETE /me`: exclui a conta.
+
+**Regras de negócio**
+- Papel: Locador se existe registro em `locadores`; senão Morador (locatário).
+- Trocar o papel migra o registro no banco (`locatarios` ↔ `locadores`). O token só carrega
+  o id; o papel é resolvido a cada requisição, então permissões antigas deixam de valer.
+- Virar Locador pela primeira vez exige `cpf_cnpj` (422 sem ele; 409 se já cadastrado).
+- Locador com anúncios não vira Morador (409); Morador com favoritos ou conversas não vira
+  Locador (409). Nada é apagado nesses casos.
+- E-mail é gravado em minúsculas e deve ser único (409).
+- Tags: `usuario_tags` é a fonte; `usuarios.tags_convivencia` é mantida em sincronia.
+- Orçamento e limiar só valem para Morador. Limiar fica em `preferencias_moradia`
+  (ver KAN-35).
+- Excluir conta com anúncios, favoritos ou conversas é recusado (409).
+
+**Divergências e pendências**
+- `genero`, `ocupacao`, `emprego` e `faculdade` são aceitos mas **não persistidos**: o banco
+  não tem essas colunas (exigem migração Alembic). A resposta devolve vazio.
+- Os dados de Locador exigem CPF/CNPJ, que o front ainda não coleta na troca de papel.
