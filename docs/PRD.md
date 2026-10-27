@@ -62,6 +62,11 @@ destino e abre um mapa com a rota a pé ou de bicicleta.
 
 **Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, `mapa-rota.js`).
 
+- Lupa dentro do mapa: o usuário digita uma faculdade, trabalho ou endereço e o mapa mostra
+  tempo e distância até lá, além do destino padrão (Centro). A busca usa o Nominatim do
+  OpenStreetMap, com preferência por Campinas e região; trocar de "A pé" para "Bicicleta"
+  mantém o destino escolhido. Lugar não encontrado mostra um aviso.
+
 **Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40).
 
 ### Perfil do usuário e troca de modo (KAN-33)
