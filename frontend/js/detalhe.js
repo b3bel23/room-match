@@ -211,6 +211,12 @@ function preencher(imovel) {
         el.hidden = estaLogado();
     });
 
+    const botaoRota = document.getElementById('rota-abrir');
+    if (botaoRota && !estaLogado()) {
+        botaoRota.disabled = true;
+        botaoRota.title = 'Cadastre-se para ver o mapa';
+    }
+
     montarAcoesPorPapel(imovel);
 }
 
