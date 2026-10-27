@@ -73,6 +73,7 @@ class ImovelMural(BaseModel):
     tags: List[str]
     capa: Optional[str] = None
     fotos: List[str]
+    fotos_ids: List[int] = []
     locador_id: int
     match_percent: int
     match: int

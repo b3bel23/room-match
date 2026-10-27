@@ -21,7 +21,7 @@ def _post(**over):
         vagas_disponiveis=1,
         quantidade_quartos=1,
         endereco=NS(rua="R. Benedito", numero="450", bairro="Barão Geraldo", cidade="Campinas"),
-        imagens=[NS(url_imagem="2.jpg", ordem_exibicao=2), NS(url_imagem="1.jpg", ordem_exibicao=1)],
+        imagens=[NS(id_imagem=2, url_imagem="2.jpg", ordem_exibicao=2), NS(id_imagem=1, url_imagem="1.jpg", ordem_exibicao=1)],
     )
     base = dict(id_post=10, id_locador=5, titulo="Quarto em república", descricao=None, imovel=imovel)
     base.update(over)
