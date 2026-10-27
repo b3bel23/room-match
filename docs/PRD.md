@@ -119,6 +119,41 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
   `url_imagem` já aceita URL absoluta.
 - `GET /imoveis` e `GET /imoveis/{id}` (leitura pública) continuam em `matches.py` (KAN-35).
   `/imoveis/meus` precisa ser registrado antes de `/imoveis/{id}`; há teste para isso.
+- Seed dos dados fictícios: ver "Dados fictícios (KAN-30)" abaixo.
 - Correção: `Imovel.endereco` era uma lista (o `uselist=False` estava só no lado
   `EnderecoImovel.imovel`); passou a ser um único objeto. Sem isso o mural quebrava no
   banco real.
+
+### Dados fictícios (KAN-30)
+
+**Status:** concluída no código e testada contra o ORM (SQLite em memória); **ainda não
+executada no Postgres/Supabase**.
+
+**O que faz:** popula o banco com um catálogo de demonstração igual ao do front, para as
+telas e a afinidade funcionarem sem cadastro manual.
+
+**Como rodar** (de dentro de `backend/`, com `.env` e `alembic upgrade head`)
+- `python -m scripts.seed` (opções: `--senha`, ou variável `SEED_PASSWORD`).
+- Se `DB_HOST` não for local (ex.: Supabase), exige `--confirmar-banco-remoto`.
+
+**O que cria**
+- 14 tags do catálogo do front (`frontend/js/tags-catalogo.js`).
+- 8 usuários `@demo.com`: 2 locadores (`locador@demo.com`, `locador2@demo.com`), 3 moradores
+  (`morador@demo.com`, `morador2@demo.com`, `morador3@demo.com`, com orçamento, limiar e
+  tags) e 3 residentes sem perfil de busca.
+- 4 anúncios com as fotos que já existem em `frontend/assets/imoveis/` (república Barão
+  Geraldo, kitnet Cambuí, casa Sousas, suíte Taquaral), com endereço, tags, 4 fotos cada,
+  moradores atuais e os mesmos preços totais do mock (850, 1200, 720, 980).
+- 2 favoritos.
+
+**Regras e decisões**
+- Idempotente: cada registro é buscado pela chave natural e só criado se faltar; rodar de
+  novo completa o que faltar sem duplicar nem sobrescrever edições.
+- A senha dos usuários de demonstração não fica no repositório: vem de `--senha` ou
+  `SEED_PASSWORD`; o padrão `demo12345` existe só para desenvolvimento.
+- Fotos guardam o caminho relativo do front (`../assets/imoveis/{slug}/{n}.jpg`), como o
+  mock.
+
+**Pendências**
+- Executar no banco real e conferir com o front em modo `live`.
+- Só há fotos para 4 imóveis; mais anúncios exigem novos arquivos em `frontend/assets/`.
