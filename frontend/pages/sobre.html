@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre nós · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/config.css">
+    <link rel="stylesheet" href="../css/sobre.css">
+</head>
+<body class="auth-page favoritos-page sobre-page">
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="ativo" href="sobre.html">Sobre nós</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contato.html">Contato</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+        <nav class="nav-logado">
+            <a href="home.html">Explorar</a>
+            <a class="ativo" href="sobre.html">Sobre nós</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contato.html">Contato</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
+            <a class="sair" href="#">Sair</a>
+        </nav>
+    </header>
+
+    <div class="vista-lista">
+        <div class="page-bar">
+            <h1>Sobre nós</h1>
+            <span class="page-bar-sub">Quem somos e por que existe o RoomMatch</span>
+        </div>
+        <div class="layout">
+            <aside class="sidebar"></aside>
+            <main class="conteudo">
+                <section class="sobre-hero-bloco" aria-label="Missão">
+                    <h2>Moradia compatível, com pessoas certas</h2>
+                    <p>Nascemos na região metropolitana de Campinas para aproximar quem busca quarto e quem anuncia vaga — com foco em convivência, custo transparente e rotina real.</p>
+                </section>
+
+                <div class="sobre-secoes">
+                    <section class="sobre-secao">
+                        <h2>Nossa história</h2>
+                        <p>O RoomMatch é um projeto da PUC-Campinas (Projeto Integrador 2026). Surgiu da dor de estudantes e profissionais que achavam anúncio barato no papel, mas ruim na convivência — ou o contrário.</p>
+                        <p>Em vez de só listar imóveis, combinamos hábitos (tags), orçamento mensal completo e tempo até faculdade ou trabalho, para a conversa começar com mais afinidade.</p>
+                    </section>
+
+                    <section class="sobre-secao">
+                        <h2>O que defendemos</h2>
+                        <div class="sobre-valores">
+                            <div class="sobre-valor">
+                                <strong>Compatibilidade</strong>
+                                <span>Match por convivência, não só por preço ou foto.</span>
+                            </div>
+                            <div class="sobre-valor">
+                                <strong>Transparência</strong>
+                                <span>Rateio claro: aluguel, condomínio, IPTU e contas.</span>
+                            </div>
+                            <div class="sobre-valor">
+                                <strong>Respeito aos dados</strong>
+                                <span>Consentimento, LGPD e controle da sua conta.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="sobre-secao">
+                        <h2>Para quem é</h2>
+                        <p><strong>Moradores</strong> que querem um lar compartilhado alinhado aos hábitos e ao bolso.</p>
+                        <p><strong>Locadores</strong> que preferem interessados com perfil compatível, menos atrito e visitas mais objetivas.</p>
+                    </section>
+
+                    <section class="sobre-secao">
+                        <h2>O que não somos</h2>
+                        <p>Não somos imobiliária, não cobramos aluguel, não guardamos caução e não assinamos o contrato de locação. Combinar visita e fechar o aluguel continua sendo acordo entre as pessoas.</p>
+                    </section>
+
+                    <section class="sobre-secao">
+                        <h2>Equipe e contato</h2>
+                        <p>Somos o time RoomMatch · PUC-Campinas. Dúvidas de produto, suporte ou privacidade:</p>
+                        <p>
+                            <a href="contato.html">Atendimento e suporte</a>
+                            ·
+                            <a href="faq.html">FAQ</a>
+                            ·
+                            <a href="termos.html">Termos e privacidade</a>
+                        </p>
+                    </section>
+                </div>
+
+                <div class="sobre-cta">
+                    <a class="btn btn-primary" href="escolha-papel.html">Criar conta</a>
+                    <a class="btn btn-secondary" href="como-funciona.html">Como funciona</a>
+                    <a class="btn btn-secondary" href="home.html">Explorar anúncios</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="sobre.html">Sobre nós</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contato.html">Contato</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script>
+        if (estaLogado()) montarSidebarConfig('sobre.html');
+        else document.querySelector('.sidebar').innerHTML =
+            '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a class="ativo" href="sobre.html">Sobre nós</a><a href="faq.html">FAQ</a><a href="contato.html">Contato</a><a href="login.html">Entrar</a>';
+    </script>
+</body>
+</html>

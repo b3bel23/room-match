@@ -46,16 +46,22 @@
 
     function garantirLinksAjudaNosMenus() {
         document.querySelectorAll('.site-footer nav').forEach((nav) => {
+            garantirLinkAjuda(nav, { href: 'sobre.html', label: 'Sobre nós', antesDe: /faq|contato|termos/i });
             garantirLinkAjuda(nav, { href: 'faq.html', label: 'FAQ', antesDe: /termos/i });
             garantirLinkAjuda(nav, { href: 'contato.html', label: 'Contato', antesDe: /termos/i });
         });
 
         document.querySelectorAll('.nav-visitante, .nav-logado').forEach((nav) => {
             garantirLinkAjuda(nav, {
+                href: 'sobre.html',
+                label: 'Sobre nós',
+                antesDe: null
+            }, /como funciona/i);
+            garantirLinkAjuda(nav, {
                 href: 'faq.html',
                 label: 'FAQ',
                 antesDe: null
-            }, /como funciona/i);
+            }, /sobre nós/i);
             garantirLinkAjuda(nav, {
                 href: 'contato.html',
                 label: 'Contato',
