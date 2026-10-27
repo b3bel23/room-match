@@ -465,6 +465,7 @@ Ações prioritárias do grupo de trabalho:
 | 👩‍💻 | Lavínia Oliveira | [@LaviniaOliveira-2007](https://github.com/LaviniaOliveira-2007) | [Perfil](https://linkedin.com/in/laviniaoliveiras) |
 | 👩‍💻 | Alice Pasolini | [@paso-lini](https://github.com/paso-lini) | [Perfil](https://linkedin.com/in/aliceaguiarp) |
 | 👨‍💻 | Enzo Guerra | [@vooort](https://github.com/vooort) | [Perfil](https://linkedin.com/in/enzo-guerra-b16110275) |
+| 👨‍💻 | Isabel Baungartner | [@b3bel23](https://github.com/b3bel23) | [Perfil](https://www.linkedin.com/in/isabel-baungartner) |
 
 </div>
 
