@@ -85,6 +85,7 @@
                 </div>
                 <div class="rm-cookie-links">
                     <a href="faq.html">FAQ</a>
+                    <a href="contato.html">Suporte</a>
                     <a href="termos.html">Termos de uso</a>
                     <a href="termos.html#privacidade">Aviso de privacidade</a>
                 </div>

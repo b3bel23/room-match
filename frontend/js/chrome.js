@@ -7,41 +7,60 @@
         ['a[href="#"]:not(.sair)', null],
     ];
 
-    function garantirFaqNosMenus() {
-        const jaTem = (nav) => [...nav.querySelectorAll('a')].some((a) => {
-            const href = (a.getAttribute('href') || '').toLowerCase();
-            return href.includes('faq.html') || (a.textContent || '').trim().toLowerCase() === 'faq';
+    function garantirLinkAjuda(nav, { href, label, antesDe }, aposSeletorTexto) {
+        const jaTem = [...nav.querySelectorAll('a')].some((a) => {
+            const h = (a.getAttribute('href') || '').toLowerCase();
+            const t = (a.textContent || '').trim().toLowerCase();
+            return h.includes(href) || t === label.toLowerCase();
         });
+        if (jaTem) return;
 
-        document.querySelectorAll('.site-footer nav').forEach((nav) => {
-            if (jaTem(nav)) return;
-            const link = document.createElement('a');
-            link.href = 'faq.html';
-            link.textContent = 'FAQ';
-            const termos = [...nav.querySelectorAll('a')].find((a) =>
-                /termos/i.test(a.textContent || '')
+        const link = document.createElement('a');
+        link.href = href;
+        link.textContent = label;
+
+        if (antesDe) {
+            const alvo = [...nav.querySelectorAll('a')].find((a) =>
+                antesDe.test(a.textContent || '')
             );
-            if (termos) nav.insertBefore(link, termos);
-            else nav.appendChild(link);
+            if (alvo) {
+                nav.insertBefore(link, alvo);
+                return;
+            }
+        }
+
+        if (aposSeletorTexto) {
+            const ancora = [...nav.querySelectorAll('a')].find((a) =>
+                aposSeletorTexto.test(a.textContent || '')
+            );
+            if (ancora) {
+                ancora.after(link);
+                return;
+            }
+        }
+
+        const btn = nav.querySelector('.btn');
+        if (btn) nav.insertBefore(link, btn);
+        else nav.appendChild(link);
+    }
+
+    function garantirLinksAjudaNosMenus() {
+        document.querySelectorAll('.site-footer nav').forEach((nav) => {
+            garantirLinkAjuda(nav, { href: 'faq.html', label: 'FAQ', antesDe: /termos/i });
+            garantirLinkAjuda(nav, { href: 'contato.html', label: 'Contato', antesDe: /termos/i });
         });
 
         document.querySelectorAll('.nav-visitante, .nav-logado').forEach((nav) => {
-            if (jaTem(nav)) return;
-            const link = document.createElement('a');
-            link.href = 'faq.html';
-            link.textContent = 'FAQ';
-            const ancora = [...nav.querySelectorAll('a')].find((a) =>
-                /como funciona/i.test(a.textContent || '')
-            );
-            if (ancora && ancora.nextSibling) {
-                ancora.parentNode.insertBefore(link, ancora.nextSibling);
-            } else if (ancora) {
-                ancora.after(link);
-            } else {
-                const btn = nav.querySelector('.btn');
-                if (btn) nav.insertBefore(link, btn);
-                else nav.appendChild(link);
-            }
+            garantirLinkAjuda(nav, {
+                href: 'faq.html',
+                label: 'FAQ',
+                antesDe: null
+            }, /como funciona/i);
+            garantirLinkAjuda(nav, {
+                href: 'contato.html',
+                label: 'Contato',
+                antesDe: null
+            }, /^faq$/i);
         });
     }
 
@@ -132,7 +151,7 @@
 
     function boot() {
         aplicar();
-        garantirFaqNosMenus();
+        garantirLinksAjudaNosMenus();
         garantirCookieConsent();
     }
 

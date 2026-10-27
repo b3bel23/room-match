@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato e suporte · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/favoritos.css">
+    <link rel="stylesheet" href="../css/config.css">
+    <link rel="stylesheet" href="../css/contato.css">
+</head>
+<body class="auth-page favoritos-page contato-page">
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="faq.html">FAQ</a>
+            <a class="ativo" href="contato.html">Contato</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+        <nav class="nav-logado">
+            <a href="home.html">Explorar</a>
+            <a href="faq.html">FAQ</a>
+            <a class="ativo" href="contato.html">Contato</a>
+            <a class="nav-usuario" href="perfil.html" aria-label="Minha conta">MD</a>
+            <a class="sair" href="#">Sair</a>
+        </nav>
+    </header>
+
+    <div class="vista-lista">
+        <div class="page-bar">
+            <h1>Atendimento e suporte</h1>
+            <span class="page-bar-sub">Fale com a equipe RoomMatch</span>
+        </div>
+        <div class="layout">
+            <aside class="sidebar"></aside>
+            <main class="conteudo">
+                <p class="contato-intro">
+                    Precisa de ajuda com cadastro, anúncio, match, visita ou privacidade?
+                    Envie uma mensagem ou use um dos canais abaixo. Em muitos casos o
+                    <a href="faq.html">FAQ</a> já resolve na hora.
+                </p>
+
+                <div class="contato-grade">
+                    <form id="contato-form" class="contato-form" novalidate>
+                        <h2>Abrir chamado</h2>
+
+                        <div class="contato-campo">
+                            <label for="contato-nome">Nome *</label>
+                            <input id="contato-nome" name="nome" type="text" autocomplete="name" required placeholder="Seu nome">
+                        </div>
+
+                        <div class="contato-campo">
+                            <label for="contato-email">E-mail de retorno *</label>
+                            <input id="contato-email" name="email" type="email" autocomplete="email" required placeholder="voce@email.com">
+                        </div>
+
+                        <div class="contato-campo">
+                            <label for="contato-assunto">Assunto *</label>
+                            <select id="contato-assunto" name="assunto" required>
+                                <option value="">Selecione</option>
+                                <option value="conta">Conta e login</option>
+                                <option value="anuncio">Anúncio / publicação</option>
+                                <option value="match">Match, chat e visitas</option>
+                                <option value="pagamento">Valores e rateio</option>
+                                <option value="privacidade">Privacidade e dados (LGPD)</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="contato-campo">
+                            <label for="contato-mensagem">Mensagem *</label>
+                            <textarea id="contato-mensagem" name="mensagem" required maxlength="2000" placeholder="Descreva o que aconteceu e, se puder, o e-mail da conta ou o anúncio."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Enviar para o suporte</button>
+                        <p id="contato-retorno" class="contato-retorno" hidden></p>
+                    </form>
+
+                    <aside class="contato-canais" aria-label="Canais de atendimento">
+                        <div class="contato-canal">
+                            <h3>E-mail</h3>
+                            <p><a href="mailto:suporte@roommatch.app">suporte@roommatch.app</a></p>
+                            <p class="contato-horario">Resposta em até 1 dia útil · seg–sex, 9h–18h</p>
+                        </div>
+                        <div class="contato-canal">
+                            <h3>Projeto acadêmico</h3>
+                            <p>RoomMatch · PUC-Campinas · Projeto Integrador 2026</p>
+                            <p class="contato-horario">Canal institucional do time do projeto</p>
+                        </div>
+                        <div class="contato-canal">
+                            <h3>Privacidade</h3>
+                            <p>Pedidos de acesso ou exclusão de dados:</p>
+                            <p><a href="termos.html#privacidade">Termos e privacidade</a></p>
+                        </div>
+                        <div class="contato-atalhos">
+                            <p>Atalhos úteis</p>
+                            <div class="contato-atalhos-links">
+                                <a class="btn btn-secondary" href="faq.html">FAQ</a>
+                                <a class="btn btn-secondary" href="como-funciona.html">Como funciona</a>
+                                <a class="btn btn-secondary" href="recuperar-senha.html">Recuperar senha</a>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contato.html">Contato</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/config-shell.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script src="../js/contato.js"></script>
+    <script>
+        if (estaLogado()) {
+            montarSidebarConfig('contato.html');
+            const user = typeof usuarioAtual === 'function' ? usuarioAtual() : null;
+            if (user) {
+                const nome = document.getElementById('contato-nome');
+                const email = document.getElementById('contato-email');
+                if (nome && !nome.value) nome.value = user.nome || '';
+                if (email && !email.value) email.value = user.email || '';
+            }
+        } else {
+            document.querySelector('.sidebar').innerHTML =
+                '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a href="faq.html">FAQ</a><a class="ativo" href="contato.html">Contato</a><a href="login.html">Entrar</a>';
+        }
+    </script>
+</body>
+</html>
