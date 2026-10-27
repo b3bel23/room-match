@@ -110,9 +110,9 @@ function preencher(imovel) {
     const tags = document.querySelector('.info > .tags');
     if (tags) {
         tags.replaceChildren();
-        (imovel.tags || []).slice(0, 6).forEach((nome, i) => {
+        (imovel.tags || []).slice(0, 6).forEach((nome) => {
             const span = document.createElement('span');
-            span.className = i === 0 ? 'tag tag-destaque' : 'tag';
+            span.className = 'tag tag-destaque';
             span.textContent = nome;
             tags.append(span);
         });
