@@ -6,6 +6,15 @@ este arquivo registra o que foi de fato implementado.
 
 ## Funcionalidades
 
+### Tags de convivência no detalhe do imóvel
+
+**Status:** concluída.
+
+**O que faz:** no detalhe do imóvel, todas as tags de convivência (Pet Friendly, Silêncio
+Noturno etc.) aparecem com o mesmo fundo vermelho, em vez de só a primeira.
+
+**Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, classe `tag-destaque`).
+
 ### Afinidade e mural de imóveis (KAN-35)
 
 **Status:** parcial. Código pronto e testado com banco falso; falta validar contra o
