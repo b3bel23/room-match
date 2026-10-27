@@ -3,14 +3,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import app.models  # noqa: F401  (registra todos os models antes do primeiro uso)
 from app.api.v1.router import api_router
 from app.core.config import settings
-from app.core.database import create_tables, engine
+from app.core.database import engine
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    # Tabelas são gerenciadas pelo Alembic: rode "alembic upgrade head" antes de subir a API.
     yield
     engine.dispose()
 
