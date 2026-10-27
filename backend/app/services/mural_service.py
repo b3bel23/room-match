@@ -42,7 +42,8 @@ def montar_imovel(
     """Serializa um anúncio (post + imóvel + endereço + fotos) com match e elegibilidade."""
     imovel = post.imovel
     endereco = imovel.endereco
-    fotos = [i.url_imagem for i in sorted(imovel.imagens, key=lambda i: i.ordem_exibicao or 0)]
+    imagens = sorted(imovel.imagens, key=lambda i: i.ordem_exibicao or 0)
+    fotos = [i.url_imagem for i in imagens]
 
     aluguel = _num(imovel.valor_aluguel)
     condominio = _num(imovel.valor_condominio)
@@ -87,6 +88,7 @@ def montar_imovel(
         "tags": list(tags),
         "capa": fotos[0] if fotos else None,
         "fotos": fotos,
+        "fotos_ids": [i.id_imagem for i in imagens],  # para DELETE /imoveis/{id}/fotos/{id_imagem}
         "locador_id": post.id_locador,
         "match_percent": match,
         "match": match,
