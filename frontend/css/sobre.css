@@ -1,10 +1,13 @@
-.sobre-page .vista-lista {
-    max-width: 920px;
+.sobre-page .vista-lista,
+.sobre-page .layout,
+.sobre-page .conteudo {
+    width: 100%;
+    max-width: none;
 }
 
 .sobre-hero-bloco {
     margin-bottom: 22px;
-    padding: 22px 20px;
+    padding: clamp(22px, 3vw, 36px);
     border-radius: var(--radius-lg);
     background:
         linear-gradient(120deg, rgba(26, 61, 50, 0.92), rgba(63, 143, 122, 0.78)),
@@ -21,16 +24,21 @@
 
 .sobre-hero-bloco p {
     margin: 0;
-    max-width: 48ch;
+    max-width: 62ch;
     font-size: var(--fs-body);
     line-height: 1.5;
     color: rgba(255, 255, 255, 0.9);
 }
 
 .sobre-secoes {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
+}
+
+.sobre-secoes .sobre-secao:first-child,
+.sobre-secoes .sobre-secao:last-child {
+    grid-column: 1 / -1;
 }
 
 .sobre-secao {
@@ -93,6 +101,17 @@
 
 .sobre-cta .btn {
     min-height: var(--tap-min);
+}
+
+@media (max-width: 900px) {
+    .sobre-secoes {
+        grid-template-columns: 1fr;
+    }
+
+    .sobre-secoes .sobre-secao:first-child,
+    .sobre-secoes .sobre-secao:last-child {
+        grid-column: auto;
+    }
 }
 
 @media (max-width: 720px) {

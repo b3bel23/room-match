@@ -1,5 +1,12 @@
-.faq-page .vista-lista {
-    max-width: 920px;
+.faq-page .vista-lista,
+.faq-page .layout,
+.faq-page .conteudo {
+    width: 100%;
+    max-width: none;
+}
+
+.faq-page .faq-lista {
+    max-width: none;
 }
 
 .faq-intro {

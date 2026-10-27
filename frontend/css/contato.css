@@ -1,5 +1,8 @@
-.contato-page .vista-lista {
-    max-width: 960px;
+.contato-page .vista-lista,
+.contato-page .layout,
+.contato-page .conteudo {
+    width: 100%;
+    max-width: none;
 }
 
 .contato-intro {

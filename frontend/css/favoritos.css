@@ -4,6 +4,12 @@
 
 .vista-lista {
     width: 100%;
+    max-width: none;
+}
+
+.vista-lista .layout {
+    width: 100%;
+    max-width: none;
 }
 
 .vista-lista[hidden],

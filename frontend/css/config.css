@@ -138,7 +138,7 @@
 }
 
 .conteudo-prosa {
-    max-width: 720px;
+    max-width: min(72ch, 100%);
     margin-top: 16px;
     display: flex;
     flex-direction: column;
@@ -202,16 +202,22 @@
 
 .page-conteudo {
     width: 100%;
-    max-width: min(960px, 100%);
-    margin: 40px auto;
-    padding: 0 clamp(16px, 3vw, 24px) 48px;
+    max-width: none;
+    margin: 40px 0;
+    padding: 0 clamp(16px, 3vw, 32px) 48px;
     min-width: 0;
 }
 
 .conteudo {
     width: 100%;
-    max-width: 100%;
+    max-width: none;
     min-width: 0;
+    flex: 1;
+}
+
+.favoritos-page .conteudo-prosa,
+.auth-page .conteudo-prosa {
+    max-width: min(72ch, 100%);
 }
 
 @media (max-width: 720px) {
