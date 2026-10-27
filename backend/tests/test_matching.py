@@ -95,40 +95,63 @@ def test_match_medio_personalizado():
     assert match_medio(MORADOR_TAGS, imoveis) == round((100 + 33) / 2)
 
 
-# --- camada de banco, com sessão falsa (não precisa de Postgres) ---
+# --- camada de banco (imovel_tags / usuario_tags), com sessão falsa ---
 
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 
-def _db_com_moradores(moradores):
-    """Sessão falsa: query(...).filter(...).all() devolve integrantes; get() devolve o usuário."""
-    integrantes = [SimpleNamespace(id_pessoa=i) for i in moradores]
+def _db_com_linhas(linhas):
+    """query(...).join(...).filter(...).all() devolve `linhas`."""
     db = MagicMock()
-    db.query.return_value.filter.return_value.all.return_value = integrantes
-    db.get.side_effect = lambda _model, pk: SimpleNamespace(tags_convivencia=moradores[pk])
+    db.query.return_value.join.return_value.filter.return_value.all.return_value = linhas
     return db
 
 
-def test_tags_do_imovel_une_moradores_sem_duplicar():
-    db = _db_com_moradores({1: ["Pet Friendly", "Home Office"], 2: ["pet friendly", "Vegetariano"]})
-    assert matching.tags_do_imovel(db, 10) == ["Pet Friendly", "Home Office", "Vegetariano"]
+def test_tags_por_imovel_agrupa_por_imovel_e_inclui_vazios():
+    db = _db_com_linhas([(1, "Pet Friendly"), (1, "Home Office"), (2, "Vegetariano")])
+    assert matching.tags_por_imovel(db, [1, 2, 3]) == {
+        1: ["Pet Friendly", "Home Office"],
+        2: ["Vegetariano"],
+        3: [],
+    }
 
 
-def test_tags_do_imovel_sem_moradores_e_vazio():
-    assert matching.tags_do_imovel(_db_com_moradores({}), 10) == []
-
-
-def test_tags_do_locatario_usa_estilo_de_vida_e_cai_no_perfil():
+def test_tags_por_imovel_sem_ids_nao_consulta_o_banco():
     db = MagicMock()
-    db.get.return_value = SimpleNamespace(tags_convivencia=["Pet Friendly"])
-    com_estilo = SimpleNamespace(id_locatario=1, tags_estilo_vida=["Home Office"])
-    sem_estilo = SimpleNamespace(id_locatario=1, tags_estilo_vida=None)
-    assert matching.tags_do_locatario(db, com_estilo) == ["Home Office"]
-    assert matching.tags_do_locatario(db, sem_estilo) == ["Pet Friendly"]
+    assert matching.tags_por_imovel(db, []) == {}
+    db.query.assert_not_called()
 
 
-def test_match_para_post_integra_as_pecas():
-    db = _db_com_moradores({1: ["Pet Friendly", "Home Office"]})
-    locatario = SimpleNamespace(id_locatario=9, tags_estilo_vida=["Pet Friendly", "Festas"])
-    assert matching.match_para_post(db, locatario, 10) == 50
+def test_tags_do_imovel():
+    db = _db_com_linhas([(7, "Pet Friendly")])
+    assert matching.tags_do_imovel(db, 7) == ["Pet Friendly"]
+
+
+def test_tags_do_usuario_prefere_usuario_tags():
+    db = _db_com_linhas([("Pet Friendly",)])
+    usuario = SimpleNamespace(id_usuario=1, tags_convivencia=["Outra"])
+    locatario = SimpleNamespace(tags_estilo_vida=["Home Office"])
+    assert matching.tags_do_usuario(db, usuario, locatario) == ["Pet Friendly"]
+
+
+def test_tags_do_usuario_cai_no_estilo_de_vida_e_depois_no_perfil():
+    db = _db_com_linhas([])
+    usuario = SimpleNamespace(id_usuario=1, tags_convivencia=["Pet Friendly"])
+    com_estilo = SimpleNamespace(tags_estilo_vida=["Home Office"])
+    sem_estilo = SimpleNamespace(tags_estilo_vida=None)
+    assert matching.tags_do_usuario(db, usuario, com_estilo) == ["Home Office"]
+    assert matching.tags_do_usuario(db, usuario, sem_estilo) == ["Pet Friendly"]
+    assert matching.tags_do_usuario(db, usuario) == ["Pet Friendly"]
+
+
+def test_tags_do_usuario_sem_nada_e_vazio():
+    db = _db_com_linhas([])
+    assert matching.tags_do_usuario(db, SimpleNamespace(id_usuario=1, tags_convivencia=None)) == []
+
+
+def test_tags_correspondentes_normaliza():
+    assert matching.tags_correspondentes(
+        ["pet friendly", "Silêncio"], ["Pet Friendly", "Silêncio Noturno", "Festas"]
+    ) == ["Pet Friendly", "Silêncio Noturno"]
+    assert matching.tags_correspondentes([], ["Pet Friendly"]) == []
