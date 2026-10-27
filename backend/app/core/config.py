@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     db_password: str = ""
     db_name: str = "roommatch"
 
-    secret_key: str = "changeme"
+    # Defina SECRET_KEY no .env (nunca commitar valor real).
+    secret_key: str = ""
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 

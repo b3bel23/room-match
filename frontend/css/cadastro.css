@@ -74,13 +74,22 @@
 
 .grade {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+    align-items: start;
 }
 
-.col-1 { grid-column: 1; }
-.col-2 { grid-column: 2; }
-.col-full { grid-column: 1 / -1; }
+/* Fluxo automático: pares lado a lado. Só .col-full ocupa as 2 colunas. */
+.col-1,
+.col-2 {
+    grid-column: auto;
+    min-width: 0;
+}
+
+.col-full {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
 
 .campo {
     display: flex;

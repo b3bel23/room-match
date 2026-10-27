@@ -10,6 +10,13 @@ venv/
 # Node (frontend)
 node_modules/
 
-# IDE
+# IDE / editor
 .vscode/
 .idea/
+.cursor/
+
+# Segredos e chaves locais
+*.pem
+*.key
+credentials.json
+secrets.json

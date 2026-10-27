@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v5';
+    const CHAVE_DB = 'roommatch-mock-db-v6';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -180,14 +180,14 @@
         })
     ];
 
+    // Personas do catálogo (anúncios/match). Sem senha no repo — login só via cadastro.
     const SEED_USERS = [
         {
             id: 'u-morador',
-            email: 'morador@demo.com',
-            senha: 'demo123',
-            nome: 'Morador Demo',
+            email: 'catalogo.morador@roommatch.local',
+            nome: 'Morador Catálogo',
             papel: 'Morador',
-            telefone: '(19) 98888-1001',
+            telefone: '',
             genero: 'Não-binário',
             ocupacao: 'estudante',
             emprego: 'estudante-sem-vinculo',
@@ -199,11 +199,10 @@
         },
         {
             id: 'u-locador',
-            email: 'locador@demo.com',
-            senha: 'demo123',
-            nome: 'Locador Demo',
+            email: 'catalogo.locador@roommatch.local',
+            nome: 'Locador Catálogo',
             papel: 'Locador',
-            telefone: '(19) 97777-2002',
+            telefone: '',
             genero: 'Mulher Cisgênero',
             ocupacao: 'cbo-2',
             emprego: 'autonomo',
@@ -373,7 +372,8 @@
                 preservados.push({
                     ...seed,
                     id: existente.id || seed.id,
-                    senha: existente.senha || seed.senha,
+                    // Seed nunca traz senha; contas reais só via register.
+                    senha: existente.senha || '',
                     tags: existente.tags?.length ? existente.tags : seed.tags,
                     orcamento: existente.orcamento ?? seed.orcamento,
                     limiar: existente.limiar ?? seed.limiar,
@@ -578,15 +578,51 @@
         const user = usuarioAutenticado(db, token);
 
         if (m === 'POST' && pathname === '/auth/register') {
-            throw erro(
-                403,
-                'Cadastro temporariamente indisponível. Se você já tem conta, use Entrar.'
-            );
+            const email = String(body.email || '').trim().toLowerCase();
+            const senha = String(body.senha || '');
+            const nome = String(body.nome || '').trim();
+            const papel = String(body.papel || '').trim();
+            if (!email || !email.includes('@')) {
+                throw erro(400, 'Informe um e-mail válido.');
+            }
+            if (senha.length < 6) {
+                throw erro(400, 'A senha deve ter ao menos 6 caracteres.');
+            }
+            if (!nome) throw erro(400, 'Informe o nome.');
+            if (!PAPEIS_UI.includes(papel)) {
+                throw erro(400, 'Tipo de perfil inválido. Use Morador ou Locador.');
+            }
+            if (db.users.some((u) => u.email === email)) {
+                throw erro(409, 'Este e-mail já está em uso.');
+            }
+            const novo = {
+                id: `u-${Date.now()}`,
+                email,
+                senha,
+                nome,
+                papel,
+                telefone: String(body.telefone || '').trim(),
+                genero: String(body.genero || '').trim(),
+                ocupacao: String(body.ocupacao || '').trim(),
+                emprego: String(body.emprego || '').trim(),
+                faculdade: String(body.faculdade || '').trim(),
+                foto_url: String(body.foto_url || ''),
+                tags: Array.isArray(body.tags) ? body.tags : [],
+                orcamento: Number(body.orcamento_maximo ?? body.orcamento) || 0,
+                limiar: Number(body.limiar_compatibilidade ?? body.limiar) || 70,
+                orcamento_maximo: Number(body.orcamento_maximo ?? body.orcamento) || 0,
+                limiar_compatibilidade: Number(body.limiar_compatibilidade ?? body.limiar) || 70
+            };
+            db.users.push(novo);
+            salvarDb(db);
+            return { access_token: tokenPara(novo), user: publico(novo) };
         }
 
         if (m === 'POST' && pathname === '/auth/login') {
             const email = String(body.email || '').trim().toLowerCase();
-            const encontrado = db.users.find((u) => u.email === email && u.senha === String(body.senha || ''));
+            const senha = String(body.senha || '');
+            if (!senha) throw erro(401, 'E-mail ou senha inválidos.');
+            const encontrado = db.users.find((u) => u.email === email && u.senha && u.senha === senha);
             if (!encontrado) throw erro(401, 'E-mail ou senha inválidos.');
             return { access_token: tokenPara(encontrado), user: publico(encontrado) };
         }
@@ -954,10 +990,6 @@
         normalizarTag,
         reset() {
             localStorage.removeItem(CHAVE_DB);
-        },
-        demoAccounts: [
-            { email: 'morador@demo.com', senha: 'demo123', papel: 'Morador', nome: 'Morador Demo' },
-            { email: 'locador@demo.com', senha: 'demo123', papel: 'Locador', nome: 'Locador Demo' }
-        ]
+        }
     };
 }(window));

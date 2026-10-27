@@ -22,14 +22,9 @@ cd frontend && python3 -m http.server 8765 --bind 127.0.0.1
 # http://127.0.0.1:8765/pages/home.html
 ```
 
-### Contas demo
+### Conta na demo (mock)
 
-| Papel   | E-mail             | Senha   | Destino pós-login   |
-|---------|--------------------|---------|---------------------|
-| Morador | morador@demo.com   | demo123 | Mural (`home.html`) |
-| Locador | locador@demo.com   | demo123 | `meus-imoveis.html` |
-
-Cadastro novo na demo retorna **403** (só as duas contas). Use **Entrar**.
+Não há senha nem conta fixa no repositório. Use **Criar conta** (`cadastro.html`) e depois **Entrar**.
 
 Reset do mock no DevTools: `RoomMatchMock.reset()` + F5.
 
