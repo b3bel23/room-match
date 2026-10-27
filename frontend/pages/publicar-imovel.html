@@ -51,20 +51,56 @@
                         <option>Casa</option>
                     </select>
                 </div>
-                <div class="campo">
-                    <label class="label-com-tip" for="endereco">
-                        Endereço / Bairro *
+                <fieldset class="endereco-bloco">
+                    <legend class="label-com-tip">
+                        Endereço do imóvel *
                         <span class="tip">
                             <button type="button" class="tip-btn" aria-label="Ajuda sobre endereço">?</button>
-                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Inclua rua e bairro na região metropolitana de Campinas. Aparece no detalhe do anúncio e no cálculo de deslocamento.</span>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Campos do schema endereços do imóvel. Digite o CEP para preencher rua, bairro, cidade e estado automaticamente.</span>
                         </span>
-                    </label>
-                    <textarea id="endereco" rows="2" placeholder="R. Benedito Alves Aranha, 450 · Barão Geraldo" required></textarea>
-                </div>
-                <div class="campo">
-                    <label class="label-com-tip" for="cep">CEP *</label>
-                    <input id="cep" type="text" inputmode="numeric" pattern="\d{5}-?\d{3}" placeholder="13085-000" required>
-                </div>
+                    </legend>
+
+                    <div class="campo">
+                        <label class="label-com-tip" for="cep">CEP *</label>
+                        <div class="cep-linha">
+                            <input id="cep" name="cep" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="13085-000" required pattern="\d{5}-?\d{3}">
+                            <button type="button" class="btn btn-secondary" data-acao="buscar-cep">Buscar</button>
+                        </div>
+                        <p id="cep-status" class="cep-status" hidden></p>
+                    </div>
+
+                    <div class="campo">
+                        <label for="rua">Rua *</label>
+                        <input id="rua" name="rua" type="text" autocomplete="address-line1" maxlength="150" placeholder="Rua / avenida" required>
+                    </div>
+
+                    <div class="endereco-grade">
+                        <div class="campo">
+                            <label for="numero">Número *</label>
+                            <input id="numero" name="numero" type="text" inputmode="numeric" autocomplete="address-line2" maxlength="20" placeholder="450" required>
+                        </div>
+                        <div class="campo">
+                            <label for="complemento">Complemento</label>
+                            <input id="complemento" name="complemento" type="text" maxlength="100" placeholder="Apto, bloco…">
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="bairro">Bairro *</label>
+                        <input id="bairro" name="bairro" type="text" maxlength="100" placeholder="Barão Geraldo" required>
+                    </div>
+
+                    <div class="endereco-grade">
+                        <div class="campo">
+                            <label for="cidade">Cidade *</label>
+                            <input id="cidade" name="cidade" type="text" maxlength="100" placeholder="Campinas" required>
+                        </div>
+                        <div class="campo">
+                            <label for="estado">Estado (UF) *</label>
+                            <input id="estado" name="estado" type="text" maxlength="2" placeholder="SP" required pattern="[A-Za-z]{2}" title="UF com 2 letras">
+                        </div>
+                    </div>
+                </fieldset>
                 <div class="campo">
                     <label class="label-com-tip" for="aluguel">Aluguel (R$) *</label>
                     <input id="aluguel" type="number" min="0" step="1" inputmode="numeric" placeholder="600" required>
@@ -186,6 +222,7 @@
     <script src="../js/chrome.js"></script>
     <script src="../js/page-motion.js"></script>
     <script src="../js/tip.js"></script>
+    <script src="../js/cep-ui.js"></script>
     <script src="../js/publicar-imovel.js"></script>
 </body>
 </html>

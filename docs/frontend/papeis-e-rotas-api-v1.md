@@ -39,7 +39,7 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 |--------|------|-----|
 | GET | `/imoveis` | Explorar mural (opcional) |
 | GET | `/imoveis/meus` | Anúncios da conta |
-| POST | `/imoveis` | Publicar |
+| POST | `/imoveis` | Publicar (body inclui endereço: `cep`, `rua`, `numero`, `complemento?`, `bairro`, `cidade`, `estado`) |
 | PATCH | `/imoveis/{id}` | Editar (dono) |
 | GET | `/visitas` | Visitas nos imóveis dele |
 | GET/POST | `/conversas`, … | Chat com interessados |

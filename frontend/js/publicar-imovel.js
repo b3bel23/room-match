@@ -4,6 +4,7 @@ if (!requerLocador()) {
 
 const form = document.getElementById('publicar-form');
 const retorno = document.getElementById('publicar-retorno');
+const cepUi = RoomMatchCep.ligarFormulario(form);
 
 const FOTOS_MINIMO = 3;
 const entradaFotos = document.getElementById('fotos-entrada');
@@ -58,10 +59,9 @@ function tipoCurto(valor) {
     return 'República';
 }
 
-function extrairBairro(endereco) {
-    const partes = String(endereco || '').split('·');
-    return (partes[partes.length - 1] || 'Campinas').trim() || 'Campinas';
-}
+document.getElementById('estado')?.addEventListener('input', (evento) => {
+    evento.target.value = evento.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
+});
 
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
@@ -72,14 +72,23 @@ form.addEventListener('submit', async (evento) => {
         .map((t) => t.value || t.parentElement?.textContent?.trim())
         .filter(Boolean);
     const classificacao = form.querySelector('input[name="classificacao"]:checked')?.value || 'Mista';
-    const endereco = document.getElementById('endereco').value.trim();
+    const enderecoSchema = cepUi ? cepUi.ler() : RoomMatchCep.lerCampos(form);
+    const endereco = RoomMatchCep.montarEnderecoExibicao(enderecoSchema);
 
     try {
         const criado = await RoomMatchApi.criarImovel({
             titulo: document.getElementById('titulo').value.trim(),
             tipo: tipoCurto(document.getElementById('tipo').value),
+            // Schema enderecos_imovel / EnderecoImovel
+            cep: RoomMatchCep.formatarCep(enderecoSchema.cep),
+            rua: enderecoSchema.rua,
+            numero: enderecoSchema.numero,
+            complemento: enderecoSchema.complemento || null,
+            bairro: enderecoSchema.bairro,
+            cidade: enderecoSchema.cidade,
+            estado: String(enderecoSchema.estado || '').toUpperCase().slice(0, 2),
+            // Compatível com listagens atuais do mock
             endereco,
-            bairro: extrairBairro(endereco),
             aluguel: document.getElementById('aluguel').value,
             condominio: document.getElementById('condominio').value,
             iptu: document.getElementById('iptu').value,

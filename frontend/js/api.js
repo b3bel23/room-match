@@ -54,6 +54,18 @@
             'contas',
             'preco'
         ]),
+        /** Schema `enderecos_imovel` / EnderecoImovel (API). */
+        camposEnderecoImovel: Object.freeze([
+            'rua',
+            'numero',
+            'complemento',
+            'bairro',
+            'cidade',
+            'estado',
+            'cep',
+            'latitude',
+            'longitude'
+        ]),
         auth: Object.freeze({
             login: 'POST /auth/login → { access_token, user }',
             register: 'POST /auth/register → { access_token, user }',

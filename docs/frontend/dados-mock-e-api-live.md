@@ -74,6 +74,7 @@ Objetivo: **não reescrever as telas** — só trocar o transporte.
 | `limiar_compatibilidade` | `locatario.limiar_compatibilidade` |
 | `tags` | `usuario_tag` / tags do imóvel |
 | `aluguel`, `condominio`, `iptu`, `contas` | `imovel.valor_*` |
+| `cep`, `rua`, `numero`, `complemento?`, `bairro`, `cidade`, `estado` | `enderecos_imovel` / `EnderecoImovel` |
 | favoritos | `interesse` (`tipo_interesse`) ou likes |
 | visitas / conversas / mensagens | tabelas homônimas |
 

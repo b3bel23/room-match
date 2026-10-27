@@ -653,12 +653,34 @@
             const condominio = Number(body.condominio) || 0;
             const iptu = Number(body.iptu) || 0;
             const contas = Number(body.contas) || 0;
+            const rua = String(body.rua || '').trim();
+            const numero = String(body.numero || '').trim();
+            const complemento = String(body.complemento || '').trim();
+            const bairro = String(body.bairro || '').trim() || 'Campinas';
+            const cidade = String(body.cidade || '').trim() || 'Campinas';
+            const estado = String(body.estado || 'SP').trim().toUpperCase().slice(0, 2) || 'SP';
+            const cep = String(body.cep || '').trim();
+            const endereco = String(body.endereco || '').trim() || [
+                [rua, numero].filter(Boolean).join(', '),
+                complemento ? `(${complemento})` : '',
+                [bairro, `${cidade}/${estado}`].filter(Boolean).join(' · ')
+            ].filter(Boolean).join(' · ');
+            if (!rua || !numero || !bairro || !cidade || !estado) {
+                throw erro(400, 'Informe rua, número, bairro, cidade e estado (UF).');
+            }
             const criado = {
                 id: `imovel-${Date.now()}`,
                 titulo: body.titulo || 'Novo anúncio',
                 tipo: body.tipo || 'República',
-                bairro: body.bairro || 'Campinas',
-                cidade: 'Campinas',
+                // enderecos_imovel
+                cep,
+                rua,
+                numero,
+                complemento: complemento || null,
+                bairro,
+                cidade,
+                estado,
+                endereco,
                 preco: aluguel + condominio + iptu + contas,
                 match_percent: 70,
                 tags: body.tags || [],
@@ -672,7 +694,6 @@
                 iptu,
                 contas,
                 classificacao: body.classificacao || 'Mista',
-                endereco: body.endereco || '',
                 ...fotosSeed('placeholder')
             };
             db.imoveis.unshift(criado);
