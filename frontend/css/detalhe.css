@@ -200,8 +200,9 @@ body:not(.visitante) .detalhe {
     box-shadow: 0 4px 12px rgba(20, 29, 34, 0.08);
 }
 
-.trajeto[hidden] {
-    display: none;
+.visitante .trajeto div {
+    filter: blur(5px);
+    user-select: none;
 }
 
 .trajeto svg {
@@ -450,6 +451,11 @@ body:not(.visitante) .afinidade {
     font-size: var(--fs-xsmall);
     font-weight: var(--fw-semibold);
     color: var(--color-primary);
+}
+
+.trajeto .rota-abrir:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .rota {

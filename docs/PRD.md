@@ -65,8 +65,9 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 destino e abre um mapa com a rota a pé ou de bicicleta.
 
 **Regras de negócio e decisões**
-- Visitante (sem login ou cadastro) não vê o card de distância nem o mapa; a tela mostra
-  só o convite para criar conta ("Cadastre-se para ver mais informações").
+- Visitante (sem login ou cadastro) vê o card de trajeto, mas com tempo e distância
+  borrados e o botão "Ver rota no mapa" desativado; só usuário logado vê os valores e
+  abre o mapa.
 - Rota calculada no navegador com o OSRM do OpenStreetMap; mapa com Leaflet.
 
 **Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, `mapa-rota.js`).
