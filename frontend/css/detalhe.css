@@ -200,6 +200,10 @@ body:not(.visitante) .detalhe {
     box-shadow: 0 4px 12px rgba(20, 29, 34, 0.08);
 }
 
+.trajeto[hidden] {
+    display: none;
+}
+
 .trajeto svg {
     width: 16px;
     height: 14px;
