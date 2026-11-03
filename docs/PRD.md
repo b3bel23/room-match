@@ -218,11 +218,15 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
 **Status:** parcial. Lista os anúncios do locador; a publicação em si está em KAN-34.
 
 **O que faz:** o locador vê seus anúncios e a contagem de anúncios ativos, cria um novo pelo
-botão "Novo anúncio" no topo da tela e exclui um anúncio pelo botão "Excluir" de cada cartão.
+botão "Novo anúncio" no topo da tela e, em cada cartão, vê as visitas, edita, abre o anúncio
+como locador ou o exclui.
 
 **Regras de negócio e decisões**
 - Sem anúncios, a tela mostra só a mensagem "Você ainda não publicou nenhum imóvel."; o botão
   "Publicar anúncio" do estado vazio foi retirado por duplicar o "Novo anúncio" do topo.
+- Ações do cartão: "Visitas" e "Editar" (contorno verde) ficam à vista; "Ver como locador" e
+  "Excluir anúncio" ficam no menu "⋯" do cartão. Clicar no nome do imóvel também abre a visão
+  de locador (`detalhe.html`).
 - Excluir pede confirmação ("Você tem certeza que quer excluir este anúncio?") e não pode ser
   desfeito. Só o locador dono do anúncio exclui (`DELETE /imoveis/{id}`, já existente no
   servidor; resposta 204). Ao excluir, o anúncio some do mural e dos favoritos dos moradores e
