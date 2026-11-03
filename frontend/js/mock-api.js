@@ -357,7 +357,9 @@
             if (db.imoveis_excluidos.includes(seed.id)) return;
             const idx = db.imoveis.findIndex((i) => i.id === seed.id);
             if (idx >= 0) {
-                db.imoveis[idx] = { ...db.imoveis[idx], ...seed };
+                const atual = db.imoveis[idx];
+                const enviadas = (atual.fotos || []).some((f) => f.startsWith('data:'));
+                db.imoveis[idx] = { ...atual, ...seed, ...(enviadas ? { fotos: atual.fotos, capa: atual.capa } : {}) };
             } else {
                 db.imoveis.push({ ...seed });
             }
