@@ -74,6 +74,20 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
 
+### Menu lateral das telas de conta
+
+**Status:** concluída.
+
+**O que faz:** o menu lateral das telas de Configurações lista os atalhos do papel do usuário.
+
+**Regras de negócio e decisões**
+- Locador: Perfil, Preferências, Meus anúncios, Calendário de visitas, Mensagens, Segurança,
+  Termos. "Publicar anúncio" saiu do menu lateral porque a tela Meus anúncios já tem o botão
+  "Novo anúncio"; o atalho "Publicar" continua no menu do topo.
+- Locatário: Perfil, Preferências, Favoritos, Calendário de visitas, Mensagens, Segurança, Termos.
+
+**Telas:** `frontend/js/config-shell.js` (usado em todas as telas com `aside.sidebar`).
+
 ### Mapa de rota no detalhe do imóvel (KAN-59)
 
 **Status:** parcial. Mapa e acesso por login prontos; falta a rota de ônibus.
