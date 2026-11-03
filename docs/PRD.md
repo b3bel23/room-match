@@ -96,6 +96,19 @@ destino e abre um mapa com a rota a pé ou de bicicleta.
 
 **Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40).
 
+### Publicar anúncio (tela do locador)
+
+**Status:** parcial. Tela e envio prontos; a persistência real depende do CRUD de anúncios (KAN-34).
+
+**O que faz:** o locador preenche o formulário de novo anúncio (título, tipo, endereço, valores,
+fotos, classificação e tags) e o publica.
+
+**Regras de negócio e decisões**
+- O botão "Publicar anúncio" fica no fim do formulário, depois de todos os campos, e não mais
+  no topo da página; o envio só ocorre com os campos obrigatórios válidos.
+
+**Telas:** `frontend/pages/publicar-imovel.html`.
+
 ### Perfil do usuário e troca de modo (KAN-33)
 
 **Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar
