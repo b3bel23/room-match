@@ -165,6 +165,10 @@ excluir a conta.
   (ver KAN-35).
 - Excluir conta com anúncios, favoritos ou conversas é recusado (409).
 
+- Foto de perfil é obrigatória: a tela de perfil só oferece "Trocar foto" (não há "Remover") e
+  "Salvar perfil" é recusado se a conta ficar sem foto. Vale para Morador e Locador. Foi uma
+  decisão do front; o servidor ainda aceita `foto_url` vazio em `PATCH /me`.
+
 **Divergências e pendências**
 - `genero`, `ocupacao`, `emprego` e `faculdade` são aceitos mas **não persistidos**: o banco
   não tem essas colunas (exigem migração Alembic). A resposta devolve vazio.

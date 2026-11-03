@@ -5,7 +5,6 @@ const form = document.getElementById('perfil-form');
 const retorno = document.getElementById('perfil-retorno');
 const avatar = document.getElementById('perfil-avatar');
 const inputFoto = document.getElementById('perfil-foto');
-const btnRemoverFoto = document.getElementById('perfil-foto-remover');
 const btnSalvar = form?.querySelector('button[type="submit"]');
 
 const TAMANHO_MAXIMO = 5 * 1024 * 1024;
@@ -127,20 +126,14 @@ if (typeof RoomMatchFaceCheck !== 'undefined' && inputFoto) {
     });
 }
 
-btnRemoverFoto?.addEventListener('click', () => {
-    fotoUrlAtual = '';
-    const iniciais = document.getElementById('perfil-nome').value
-        .split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase() || '').join('') || '?';
-    avatar.style.backgroundImage = '';
-    avatar.textContent = iniciais;
-    avatar.classList.remove('com-foto');
-    mostrarRetorno('Foto removida na prévia. Clique em Salvar perfil para aplicar.', false);
-});
-
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     if (!form.checkValidity()) {
         form.reportValidity();
+        return;
+    }
+    if (!fotoUrlAtual) {
+        mostrarRetorno('Adicione uma foto de perfil.', true);
         return;
     }
 
