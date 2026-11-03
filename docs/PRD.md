@@ -172,6 +172,19 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
   `EnderecoImovel.imovel`); passou a ser um único objeto. Sem isso o mural quebrava no
   banco real.
 
+### Meus anúncios do locador (tela)
+
+**Status:** parcial. Lista os anúncios do locador; a publicação em si está em KAN-34.
+
+**O que faz:** o locador vê seus anúncios e a contagem de anúncios ativos, e cria um novo pelo
+botão "Novo anúncio" no topo da tela.
+
+**Regras de negócio e decisões**
+- Sem anúncios, a tela mostra só a mensagem "Você ainda não publicou nenhum imóvel."; o botão
+  "Publicar anúncio" do estado vazio foi retirado por duplicar o "Novo anúncio" do topo.
+
+**Telas:** `frontend/pages/meus-imoveis.html`.
+
 ### Dados fictícios (KAN-30)
 
 **Status:** concluída no código e testada contra o ORM (SQLite em memória); **ainda não
