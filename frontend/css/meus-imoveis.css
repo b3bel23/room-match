@@ -85,12 +85,84 @@
         flex: 1 1 auto;
         min-height: var(--tap-min);
     }
+
+    .meu-acoes .btn-mais {
+        flex: 0 0 auto;
+    }
 }
 
-.btn.btn-excluir {
+.btn.btn-editar {
     background: var(--color-surface);
-    border: 1px solid var(--color-danger);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn.btn-editar:hover {
+    background: var(--color-primary-soft);
+    color: var(--color-primary-hover);
+}
+
+.meu-titulo:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.meu-menu {
+    position: relative;
+}
+
+.btn.btn-mais {
+    width: 40px;
+    padding: 0;
+}
+
+.btn-mais svg {
+    width: 18px;
+    height: 18px;
+}
+
+.meu-menu-lista {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 5;
+    min-width: 190px;
+    padding: 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: 0 8px 24px rgba(20, 29, 34, 0.14);
+}
+
+.meu-menu-lista[hidden] {
+    display: none;
+}
+
+.meu-menu-lista a,
+.meu-menu-lista button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-primary);
+    text-align: left;
+}
+
+.meu-menu-lista a:hover,
+.meu-menu-lista button:hover {
+    background: var(--color-primary-soft);
+}
+
+.meu-menu-lista .btn-excluir {
     color: var(--color-danger);
+}
+
+.meu-menu-lista .btn-excluir:hover {
+    background: var(--color-danger-bg);
 }
 
 .confirmacao {
