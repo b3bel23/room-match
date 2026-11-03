@@ -18,6 +18,12 @@
         window.requestAnimationFrame(entrar);
     }
 
+    // Ao voltar pelo histórico, o navegador restaura a página como ela estava ao sair
+    // (já esmaecida); aqui ela volta a ficar visível.
+    window.addEventListener('pageshow', (evento) => {
+        if (evento.persisted) document.body.classList.remove('pagina-saindo');
+    });
+
     if (REDUZIDO) return;
 
     document.addEventListener('click', (evento) => {

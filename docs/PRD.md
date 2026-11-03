@@ -74,6 +74,18 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
 
+### Transição entre telas
+
+**Status:** concluída.
+
+**O que faz:** as telas esmaecem ao sair e aparecem suavemente ao entrar.
+
+**Regras de negócio e decisões**
+- Ao voltar pelo histórico do navegador (botão Voltar do site ou do navegador), a tela
+  restaurada volta visível; antes, ela voltava esmaecida e a página aparecia em branco.
+
+**Telas:** todas as páginas (`frontend/js/page-motion.js`).
+
 ### Menu lateral das telas de conta
 
 **Status:** concluída.
