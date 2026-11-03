@@ -10,6 +10,35 @@ function formatarPreco(valor) {
     return Number(valor).toLocaleString('pt-BR');
 }
 
+const confirmacao = document.getElementById('excluir-confirmacao');
+const confirmacaoNome = document.getElementById('excluir-nome');
+const confirmacaoErro = document.getElementById('excluir-erro');
+const botaoConfirmar = document.getElementById('excluir-confirmar');
+let imovelParaExcluir = null;
+
+function pedirExclusao(imovel) {
+    imovelParaExcluir = imovel;
+    confirmacaoNome.textContent = imovel.titulo;
+    confirmacaoErro.hidden = true;
+    confirmacao.showModal();
+}
+
+document.getElementById('excluir-cancelar').addEventListener('click', () => confirmacao.close());
+
+botaoConfirmar.addEventListener('click', async () => {
+    botaoConfirmar.disabled = true;
+    try {
+        await RoomMatchApi.excluirImovel(imovelParaExcluir.id);
+        confirmacao.close();
+        await carregar();
+    } catch (erro) {
+        confirmacaoErro.textContent = erro.detail || erro.message;
+        confirmacaoErro.hidden = false;
+    } finally {
+        botaoConfirmar.disabled = false;
+    }
+});
+
 function montarCard(imovel) {
     const article = document.createElement('article');
     article.className = 'meu-card';
@@ -25,8 +54,10 @@ function montarCard(imovel) {
             <a class="btn btn-secondary" href="detalhe.html?id=${encodeURIComponent(imovel.id)}">Ver como locador</a>
             <a class="btn btn-secondary" href="calendario-visitas.html">Visitas</a>
             <a class="btn btn-primary" href="editar-anuncio.html?id=${encodeURIComponent(imovel.id)}">Editar</a>
+            <button class="btn btn-excluir" type="button">Excluir</button>
         </div>
     `;
+    article.querySelector('.btn-excluir').addEventListener('click', () => pedirExclusao(imovel));
     const thumb = article.querySelector('.meu-thumb');
     if (thumb && typeof ImovelFotos !== 'undefined') {
         ImovelFotos.iniciarCarrossel(thumb, ImovelFotos.lista(imovel), { intervalo: 4000 });
