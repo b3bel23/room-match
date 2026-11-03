@@ -142,6 +142,25 @@ excluir a conta.
   não tem essas colunas (exigem migração Alembic). A resposta devolve vazio.
 - Os dados de Locador exigem CPF/CNPJ, que o front ainda não coleta na troca de papel.
 
+### Botão Voltar nas telas
+
+**Status:** concluída.
+
+**O que faz:** telas de segundo nível têm um botão "← Voltar" que leva o usuário à tela em que
+ele estava antes.
+
+**Regras de negócio e decisões**
+- O botão usa o histórico do navegador; se a página foi aberta direto (sem tela anterior no
+  site), ele leva à página inicial.
+- Presente em: Publicar anúncio, Editar anúncio, Detalhe do imóvel, Agendar visita, Sobre nós,
+  FAQ, Contato, Termos, Login e Escolha de papel.
+- Fora de propósito: telas principais do menu (Explorar, Favoritos, Mensagens, Meus anúncios,
+  Visitas) e as telas de Configurações, que já têm navegação própria.
+- O comportamento fica em `frontend/js/chrome.js` e é ativado pelo atributo `data-voltar`
+  no link.
+
+**Telas:** páginas listadas acima em `frontend/pages/`.
+
 ### Anúncios do locador e fotos (KAN-34)
 
 **Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar
