@@ -63,6 +63,14 @@ document.getElementById('estado')?.addEventListener('input', (evento) => {
     evento.target.value = evento.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
 });
 
+// Volta à tela de onde veio; sem histórico do site, vai para Meus anúncios.
+document.getElementById('voltar').addEventListener('click', (evento) => {
+    if (document.referrer.startsWith(window.location.origin)) {
+        evento.preventDefault();
+        window.history.back();
+    }
+});
+
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     if (!form.reportValidity()) return;

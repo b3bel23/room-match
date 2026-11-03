@@ -106,6 +106,8 @@ fotos, classificação e tags) e o publica.
 **Regras de negócio e decisões**
 - O botão "Publicar anúncio" fica no fim do formulário, depois de todos os campos, e não mais
   no topo da página; o envio só ocorre com os campos obrigatórios válidos.
+- Botão "← Voltar" no topo da página leva à tela anterior; se o locador abriu a página
+  direto (sem histórico do site), leva a "Meus anúncios".
 
 **Telas:** `frontend/pages/publicar-imovel.html`.
 
@@ -151,7 +153,7 @@ ele estava antes.
 
 **Regras de negócio e decisões**
 - O botão usa o histórico do navegador; se a página foi aberta direto (sem tela anterior no
-  site), ele leva à página inicial.
+  site), ele leva à página inicial (em Publicar anúncio, a Meus anúncios).
 - Presente em: Publicar anúncio, Editar anúncio, Detalhe do imóvel, Agendar visita, Sobre nós,
   FAQ, Contato, Termos, Login e Escolha de papel.
 - Fora de propósito: telas principais do menu (Explorar, Favoritos, Mensagens, Meus anúncios,
