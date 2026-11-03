@@ -240,6 +240,7 @@
         meusImoveis: () => request('/imoveis/meus'),
         criarImovel: (payload) => request('/imoveis', { method: 'POST', body: payload }),
         atualizarImovel: (id, payload) => request(`/imoveis/${id}`, { method: 'PATCH', body: payload }),
+        excluirImovel: (id) => request(`/imoveis/${id}`, { method: 'DELETE' }),
         listarFavoritos: () => request('/favoritos'),
         alternarFavorito: (id) => request(`/favoritos/${id}`, { method: 'POST' }),
         listarVisitas: () => request('/visitas'),

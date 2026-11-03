@@ -86,3 +86,59 @@
         min-height: var(--tap-min);
     }
 }
+
+.btn.btn-excluir {
+    background: var(--color-surface);
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+}
+
+.confirmacao {
+    width: min(92vw, 420px);
+    padding: 28px 24px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    text-align: center;
+    margin: auto;
+}
+
+.confirmacao::backdrop {
+    background: rgba(20, 29, 34, 0.5);
+}
+
+.confirmacao h2 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h3, 18px);
+    margin-bottom: 12px;
+}
+
+.confirmacao-texto {
+    margin-bottom: 8px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-small);
+}
+
+.confirmacao-erro {
+    margin-bottom: 8px;
+    color: var(--color-danger);
+    font-size: var(--fs-small);
+}
+
+.confirmacao-erro[hidden] {
+    display: none;
+}
+
+.confirmacao-botoes {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn.btn-excluir-confirmar {
+    background: var(--color-danger);
+    border: 1px solid var(--color-danger);
+    color: #fff;
+}
