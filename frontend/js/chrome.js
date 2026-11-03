@@ -51,7 +51,7 @@
             garantirLinkAjuda(nav, { href: 'contato.html', label: 'Contato', antesDe: /termos/i });
         });
 
-        document.querySelectorAll('.nav-visitante, .nav-logado').forEach((nav) => {
+        document.querySelectorAll('.nav-visitante').forEach((nav) => {
             garantirLinkAjuda(nav, {
                 href: 'sobre.html',
                 label: 'Sobre nós',

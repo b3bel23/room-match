@@ -6,6 +6,23 @@ este arquivo registra o que foi de fato implementado.
 
 ## Funcionalidades
 
+### Menu do usuário logado
+
+**Status:** concluída.
+
+**O que faz:** simplifica o menu do topo para quem está logado. Os links de navegação do
+papel e o "Sair" ficam agrupados à esquerda da foto de perfil, e a foto fica no canto direito.
+
+**Regras de negócio e decisões**
+- Locatário: Explorar, Favoritos, Minhas visitas, Mensagens, Sair, foto.
+  Locador: Meus anúncios, Publicar, Visitas, Mensagens, Sair, foto.
+- "Sobre nós", "FAQ" e "Contato" saem do menu de quem está logado; continuam no menu do
+  visitante e no rodapé de todas as páginas.
+- "Sair" continua no menu, pois é o único ponto de saída da conta.
+
+**Telas:** todas as páginas com o cabeçalho (`sessao.js` monta o menu; `chrome.js` só
+completa o menu do visitante).
+
 ### Tags de convivência no detalhe do imóvel
 
 **Status:** concluída.

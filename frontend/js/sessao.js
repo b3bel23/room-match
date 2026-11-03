@@ -114,7 +114,7 @@ function montarNavPorPapel(nav) {
     sairLink.className = 'sair';
     sairLink.href = '#';
     sairLink.textContent = 'Sair';
-    nav.append(sairLink);
+    nav.insertBefore(sairLink, nav.querySelector('.nav-usuario'));
 }
 
 function atualizarNavPorPapel() {
