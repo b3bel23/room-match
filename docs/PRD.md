@@ -235,6 +235,24 @@ como locador ou o exclui.
 
 **Telas:** `frontend/pages/meus-imoveis.html`.
 
+### Editar anúncio: fotos (tela do locador)
+
+**Status:** parcial. Adicionar fotos funciona na tela e no modo de demonstração (mock); falta
+ligar ao `POST /imoveis/{id}/fotos` do servidor e permitir remover fotos.
+
+**O que faz:** na tela "Editar anúncio", o locador vê as fotos atuais do imóvel e adiciona
+novas pelo quadrado "+" (várias de uma vez). As novas aparecem na hora e entram no anúncio
+(a primeira foto continua sendo a capa) ao clicar em "Salvar".
+
+**Regras de negócio e decisões**
+- Só o locador dono do anúncio edita (mesma regra do `PATCH /imoveis/{id}`).
+- No mock, as fotos novas são reduzidas (lado maior de 1200 px, JPEG) e guardadas no próprio
+  anúncio; fotos enviadas pelo locador não são sobrescritas pelo catálogo de exemplo.
+- Divergência: o contrato do servidor prevê upload multipart em `POST /imoveis/{id}/fotos`
+  (JPEG/PNG/WebP, até 5 MB, 10 por imóvel); o front ainda não aplica esses limites.
+
+**Telas:** `frontend/pages/editar-anuncio.html`.
+
 ### Dados fictícios (KAN-30)
 
 **Status:** concluída no código e testada contra o ORM (SQLite em memória); **ainda não
