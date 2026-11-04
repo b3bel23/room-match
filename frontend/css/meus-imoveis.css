@@ -85,4 +85,132 @@
         flex: 1 1 auto;
         min-height: var(--tap-min);
     }
+
+    .meu-acoes .btn-mais {
+        flex: 0 0 auto;
+    }
+}
+
+.btn.btn-editar {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn.btn-editar:hover {
+    background: var(--color-primary-soft);
+    color: var(--color-primary-hover);
+}
+
+.meu-titulo:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.meu-menu {
+    position: relative;
+}
+
+.btn.btn-mais {
+    width: 40px;
+    padding: 0;
+}
+
+.btn-mais svg {
+    width: 18px;
+    height: 18px;
+}
+
+.meu-menu-lista {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 5;
+    min-width: 190px;
+    padding: 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: 0 8px 24px rgba(20, 29, 34, 0.14);
+}
+
+.meu-menu-lista[hidden] {
+    display: none;
+}
+
+.meu-menu-lista a,
+.meu-menu-lista button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-primary);
+    text-align: left;
+}
+
+.meu-menu-lista a:hover,
+.meu-menu-lista button:hover {
+    background: var(--color-primary-soft);
+}
+
+.meu-menu-lista .btn-excluir {
+    color: var(--color-danger);
+}
+
+.meu-menu-lista .btn-excluir:hover {
+    background: var(--color-danger-bg);
+}
+
+.confirmacao {
+    width: min(92vw, 420px);
+    padding: 28px 24px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    text-align: center;
+    margin: auto;
+}
+
+.confirmacao::backdrop {
+    background: rgba(20, 29, 34, 0.5);
+}
+
+.confirmacao h2 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: var(--fs-h3, 18px);
+    margin-bottom: 12px;
+}
+
+.confirmacao-texto {
+    margin-bottom: 8px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-small);
+}
+
+.confirmacao-erro {
+    margin-bottom: 8px;
+    color: var(--color-danger);
+    font-size: var(--fs-small);
+}
+
+.confirmacao-erro[hidden] {
+    display: none;
+}
+
+.confirmacao-botoes {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn.btn-excluir-confirmar {
+    background: var(--color-danger);
+    border: 1px solid var(--color-danger);
+    color: #fff;
 }

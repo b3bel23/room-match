@@ -49,6 +49,17 @@
                 <input id="contas" type="number" min="0" step="1" inputmode="numeric" value="85" required>
             </div>
 
+            <section class="editar-fotos">
+                <h2>Fotos do imóvel</h2>
+                <div id="fotos-grade" class="fotos-grade">
+                    <label class="foto-slot foto-adicionar">
+                        <input id="fotos-entrada" class="visually-hidden" type="file" accept="image/*" multiple>
+                        <span aria-hidden="true">+</span>
+                        <span class="visually-hidden">Adicionar fotos</span>
+                    </label>
+                </div>
+            </section>
+
             <p class="editar-total">Total mensal: <strong id="editar-total">R$ 850</strong></p>
 
             <div class="editar-acoes">
@@ -72,6 +83,7 @@
     <script src="../js/api.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="../js/papel-ui.js"></script>
+    <script src="../js/imovel-fotos.js"></script>
     <script src="../js/chrome.js"></script>
     <script src="../js/page-motion.js"></script>
 

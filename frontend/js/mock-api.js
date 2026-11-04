@@ -286,6 +286,7 @@
         return {
             users: SEED_USERS.map((u) => ({ ...u })),
             imoveis: SEED_IMOVEIS.map((i) => ({ ...i })),
+            imoveis_excluidos: [],
             favoritos: {
                 'u-morador': ['republica-barao', 'kitnet-cambui', 'casa-sousas', 'suite-taquaral']
             },
@@ -353,9 +354,12 @@
 
     function sincronizarCatalogoDemo(db) {
         SEED_IMOVEIS.forEach((seed) => {
+            if (db.imoveis_excluidos.includes(seed.id)) return;
             const idx = db.imoveis.findIndex((i) => i.id === seed.id);
             if (idx >= 0) {
-                db.imoveis[idx] = { ...db.imoveis[idx], ...seed };
+                const atual = db.imoveis[idx];
+                const enviadas = (atual.fotos || []).some((f) => f.startsWith('data:'));
+                db.imoveis[idx] = { ...atual, ...seed, ...(enviadas ? { fotos: atual.fotos, capa: atual.capa } : {}) };
             } else {
                 db.imoveis.push({ ...seed });
             }
@@ -410,6 +414,7 @@
         if (!db.favoritos) db.favoritos = {};
         if (!db.visitas) db.visitas = [];
         if (!db.imoveis) db.imoveis = [];
+        if (!db.imoveis_excluidos) db.imoveis_excluidos = [];
         if (!db.users) db.users = [];
         sincronizarUsuariosDemo(db);
         sincronizarCatalogoDemo(db);
@@ -735,6 +740,23 @@
             db.imoveis[idx] = atual;
             salvarDb(db);
             return atual;
+        }
+
+        const delImovel = pathname.match(/^\/imoveis\/([^/]+)$/);
+        if (m === 'DELETE' && delImovel) {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const id = delImovel[1];
+            const imovel = db.imoveis.find((i) => i.id === id);
+            if (!imovel) throw erro(404, 'Imóvel não encontrado.');
+            if (imovel.locador_id !== user.id) throw erro(403, 'Sem permissão.');
+            db.imoveis = db.imoveis.filter((i) => i.id !== id);
+            db.imoveis_excluidos.push(id);
+            Object.keys(db.favoritos).forEach((uid) => {
+                db.favoritos[uid] = db.favoritos[uid].filter((fav) => fav !== id);
+            });
+            db.visitas = db.visitas.filter((v) => v.imovel_id !== id);
+            salvarDb(db);
+            return null;
         }
 
         if (m === 'GET' && pathname === '/favoritos') {

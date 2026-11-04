@@ -44,8 +44,18 @@
                 <div id="meus-lista" class="meus-lista"></div>
                 <div id="meus-vazia" class="meus-vazia" hidden>
                     <p>Você ainda não publicou nenhum imóvel.</p>
-                    <a class="btn btn-primary" href="publicar-imovel.html" style="margin-top:12px">Publicar anúncio</a>
                 </div>
+
+                <dialog id="excluir-confirmacao" class="confirmacao" aria-labelledby="excluir-titulo">
+                    <h2 id="excluir-titulo">Você tem certeza que quer excluir este anúncio?</h2>
+                    <p id="excluir-nome" class="confirmacao-texto"></p>
+                    <p class="confirmacao-texto">Essa ação não pode ser desfeita.</p>
+                    <p id="excluir-erro" class="confirmacao-erro" role="alert" hidden></p>
+                    <div class="confirmacao-botoes">
+                        <button id="excluir-cancelar" class="btn btn-secondary" type="button">Cancelar</button>
+                        <button id="excluir-confirmar" class="btn btn-excluir-confirmar" type="button">Excluir</button>
+                    </div>
+                </dialog>
             </main>
         </div>
     </div>

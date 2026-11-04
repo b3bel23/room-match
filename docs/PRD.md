@@ -6,6 +6,23 @@ este arquivo registra o que foi de fato implementado.
 
 ## Funcionalidades
 
+### Menu do usuário logado
+
+**Status:** concluída.
+
+**O que faz:** simplifica o menu do topo para quem está logado. Os links de navegação do
+papel e o "Sair" ficam agrupados à esquerda da foto de perfil, e a foto fica no canto direito.
+
+**Regras de negócio e decisões**
+- Locatário: Explorar, Favoritos, Minhas visitas, Mensagens, Sair, foto.
+  Locador: Meus anúncios, Publicar, Visitas, Mensagens, Sair, foto.
+- "Sobre nós", "FAQ" e "Contato" saem do menu de quem está logado; continuam no menu do
+  visitante e no rodapé de todas as páginas.
+- "Sair" continua no menu, pois é o único ponto de saída da conta.
+
+**Telas:** todas as páginas com o cabeçalho (`sessao.js` monta o menu; `chrome.js` só
+completa o menu do visitante).
+
 ### Tags de convivência no detalhe do imóvel
 
 **Status:** concluída.
@@ -64,6 +81,32 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
 
+### Transição entre telas
+
+**Status:** concluída.
+
+**O que faz:** as telas esmaecem ao sair e aparecem suavemente ao entrar.
+
+**Regras de negócio e decisões**
+- Ao voltar pelo histórico do navegador (botão Voltar do site ou do navegador), a tela
+  restaurada volta visível; antes, ela voltava esmaecida e a página aparecia em branco.
+
+**Telas:** todas as páginas (`frontend/js/page-motion.js`).
+
+### Menu lateral das telas de conta
+
+**Status:** concluída.
+
+**O que faz:** o menu lateral das telas de Configurações lista os atalhos do papel do usuário.
+
+**Regras de negócio e decisões**
+- Locador: Perfil, Preferências, Meus anúncios, Calendário de visitas, Mensagens, Segurança,
+  Termos. "Publicar anúncio" saiu do menu lateral porque a tela Meus anúncios já tem o botão
+  "Novo anúncio"; o atalho "Publicar" continua no menu do topo.
+- Locatário: Perfil, Preferências, Favoritos, Calendário de visitas, Mensagens, Segurança, Termos.
+
+**Telas:** `frontend/js/config-shell.js` (usado em todas as telas com `aside.sidebar`).
+
 ### Mapa de rota no detalhe do imóvel (KAN-59)
 
 **Status:** parcial. Mapa e acesso por login prontos; falta a rota de ônibus.
@@ -85,6 +128,21 @@ destino e abre um mapa com a rota a pé ou de bicicleta.
   mantém o destino escolhido. Lugar não encontrado mostra um aviso.
 
 **Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40).
+
+### Publicar anúncio (tela do locador)
+
+**Status:** parcial. Tela e envio prontos; a persistência real depende do CRUD de anúncios (KAN-34).
+
+**O que faz:** o locador preenche o formulário de novo anúncio (título, tipo, endereço, valores,
+fotos, classificação e tags) e o publica.
+
+**Regras de negócio e decisões**
+- O botão "Publicar anúncio" fica no fim do formulário, depois de todos os campos, e não mais
+  no topo da página; o envio só ocorre com os campos obrigatórios válidos.
+- Botão "← Voltar" no topo da página leva à tela anterior; se o locador abriu a página
+  direto (sem histórico do site), leva a "Meus anúncios".
+
+**Telas:** `frontend/pages/publicar-imovel.html`.
 
 ### Perfil do usuário e troca de modo (KAN-33)
 
@@ -113,6 +171,10 @@ excluir a conta.
 - Orçamento e limiar só valem para Morador. Limiar fica em `preferencias_moradia`
   (ver KAN-35).
 - Excluir conta com anúncios, favoritos ou conversas é recusado (409).
+
+- Foto de perfil é obrigatória: a tela de perfil só oferece "Trocar foto" (não há "Remover") e
+  "Salvar perfil" é recusado se a conta ficar sem foto. Vale para Morador e Locador. Foi uma
+  decisão do front; o servidor ainda aceita `foto_url` vazio em `PATCH /me`.
 
 **Divergências e pendências**
 - `genero`, `ocupacao`, `emprego` e `faculdade` são aceitos mas **não persistidos**: o banco
@@ -161,6 +223,46 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
 - Correção: `Imovel.endereco` era uma lista (o `uselist=False` estava só no lado
   `EnderecoImovel.imovel`); passou a ser um único objeto. Sem isso o mural quebrava no
   banco real.
+
+### Meus anúncios do locador (tela)
+
+**Status:** parcial. Lista os anúncios do locador; a publicação em si está em KAN-34.
+
+**O que faz:** o locador vê seus anúncios e a contagem de anúncios ativos, cria um novo pelo
+botão "Novo anúncio" no topo da tela e, em cada cartão, vê as visitas, edita, abre o anúncio
+como locador ou o exclui.
+
+**Regras de negócio e decisões**
+- Sem anúncios, a tela mostra só a mensagem "Você ainda não publicou nenhum imóvel."; o botão
+  "Publicar anúncio" do estado vazio foi retirado por duplicar o "Novo anúncio" do topo.
+- Ações do cartão: "Visitas" e "Editar" (contorno verde) ficam à vista; "Ver como locador" e
+  "Excluir anúncio" ficam no menu "⋯" do cartão. Clicar no nome do imóvel também abre a visão
+  de locador (`detalhe.html`).
+- Excluir pede confirmação ("Você tem certeza que quer excluir este anúncio?") e não pode ser
+  desfeito. Só o locador dono do anúncio exclui (`DELETE /imoveis/{id}`, já existente no
+  servidor; resposta 204). Ao excluir, o anúncio some do mural e dos favoritos dos moradores e
+  as visitas agendadas dele são removidas.
+- No modo de demonstração (mock), um anúncio de exemplo excluído não volta ao recarregar.
+
+**Telas:** `frontend/pages/meus-imoveis.html`.
+
+### Editar anúncio: fotos (tela do locador)
+
+**Status:** parcial. Adicionar fotos funciona na tela e no modo de demonstração (mock); falta
+ligar ao `POST /imoveis/{id}/fotos` do servidor e permitir remover fotos.
+
+**O que faz:** na tela "Editar anúncio", o locador vê as fotos atuais do imóvel e adiciona
+novas pelo quadrado "+" (várias de uma vez). As novas aparecem na hora e entram no anúncio
+(a primeira foto continua sendo a capa) ao clicar em "Salvar".
+
+**Regras de negócio e decisões**
+- Só o locador dono do anúncio edita (mesma regra do `PATCH /imoveis/{id}`).
+- No mock, as fotos novas são reduzidas (lado maior de 1200 px, JPEG) e guardadas no próprio
+  anúncio; fotos enviadas pelo locador não são sobrescritas pelo catálogo de exemplo.
+- Divergência: o contrato do servidor prevê upload multipart em `POST /imoveis/{id}/fotos`
+  (JPEG/PNG/WebP, até 5 MB, 10 por imóvel); o front ainda não aplica esses limites.
+
+**Telas:** `frontend/pages/editar-anuncio.html`.
 
 ### Dados fictícios (KAN-30)
 
