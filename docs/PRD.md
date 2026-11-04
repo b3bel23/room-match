@@ -50,10 +50,17 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - `deslocamento_medio` devolve 0 até a integração GTFS (KAN-40).
 - As rotas `GET /imoveis*` ficam em `api/v1/matches.py`. Quando o CRUD de imóvel (KAN-34)
   entrar em `imoveis.py`, não pode haver segunda rota `GET /imoveis`.
-- O front chama `/api/v1/...`, mas `main.py` monta o `api_router` sem esse prefixo.
+- O front chama `/api/v1/...`. **Corrigido:** `main.py` agora monta o `api_router` com
+  `prefix="/api/v1"` (antes as rotas saíam sem prefixo e o front recebia 404). Os caminhos
+  documentados acima (`/imoveis`, `/stats`, `/me`, `/auth/*`) passam a ser servidos em
+  `/api/v1/...`. `/health` e `/uploads` continuam sem prefixo.
+- O front usa o mock por padrão; para falar com o back é preciso
+  `localStorage.setItem('roommatch-api-mode', 'live')`.
 
 **Pendências**
-- Testar contra o banco real e com o front em modo `live`.
+- Testado contra o Supabase real pela API (cadastro, login, `/auth/me`, `/me`, `/imoveis`,
+  `/stats`: tudo 200 e gravação confirmada em conexão nova). Falta testar pelo navegador com o
+  front em modo `live` e o CRUD de imóveis (KAN-34) com locador.
 - Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
   afinidade fica em 0%.
 

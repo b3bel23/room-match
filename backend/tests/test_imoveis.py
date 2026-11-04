@@ -364,11 +364,11 @@ def test_meus_vem_antes_de_imoveis_id_nas_rotas():
     from app.main import app
 
     caminhos = list(app.openapi()["paths"])
-    assert caminhos.index("/imoveis/meus") < caminhos.index("/imoveis/{id_imovel}")
+    assert caminhos.index("/api/v1/imoveis/meus") < caminhos.index("/api/v1/imoveis/{id_imovel}")
 
 
 def test_nao_ha_get_duplicado_em_imoveis():
     from app.main import app
 
-    gets = [r for r in app.openapi()["paths"].get("/imoveis", {}) if r == "get"]
+    gets = [r for r in app.openapi()["paths"].get("/api/v1/imoveis", {}) if r == "get"]
     assert len(gets) == 1

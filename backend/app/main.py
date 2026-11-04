@@ -29,7 +29,7 @@ app.add_middleware(
 )
 
 # Routers ficam em app/api/v1 (estrutura existente do repo, no lugar de app/routers).
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api/v1")
 
 # Fotos enviadas pelos locadores (KAN-34); url_imagem é guardada como /uploads/...
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
