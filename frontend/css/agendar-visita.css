@@ -16,8 +16,9 @@ html:has(body.agendar-page) {
 
 .agendar-main {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
     padding: 48px clamp(16px, 4vw, 64px) 56px;
     width: 100%;
     max-width: 100%;
@@ -116,4 +117,8 @@ html:has(body.agendar-page) {
         width: 100%;
         min-height: var(--tap-min);
     }
+}
+
+.agendar-main .btn-voltar-pagina {
+    align-self: flex-end;
 }
