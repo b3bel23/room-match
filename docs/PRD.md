@@ -160,6 +160,26 @@ fotos, classificação e tags) e o publica.
 
 **Telas:** `frontend/pages/publicar-imovel.html`.
 
+### Tela "Conta criada" (pós-cadastro)
+
+**Status:** concluída.
+
+**O que faz:** logo após o cadastro, mostra que a conta foi criada com sucesso e, depois de
+8 segundos, leva o usuário automaticamente à página principal do seu papel.
+
+**Regras de negócio e decisões**
+- Morador vai para o Explorar (`home.html`); Locador vai para Meus anúncios
+  (`meus-imoveis.html`). O papel vem de `?papel=` (enviado pelo cadastro) ou da sessão.
+- Uma contagem ("Você será levado ao Explorar em 8 segundos.") e uma barra de progresso
+  mostram quanto falta.
+- Um único botão, "Ir agora para o Explorar" / "Ir agora para Meus anúncios", permite ir na
+  hora e serve de reserva se o redirecionamento automático falhar. Os dois botões antigos,
+  que levavam ao mesmo lugar, foram retirados, assim como a nota extra do locador.
+- O redirecionamento usa `location.replace`: o botão Voltar do navegador não retorna a esta
+  tela.
+
+**Telas:** `frontend/pages/conta-criada.html` (`conta-criada.js`, `conta-criada.css`).
+
 ### Perfil do usuário e troca de modo (KAN-33)
 
 **Status:** concluída no backend, testada contra o ORM (SQLite em memória); falta validar
