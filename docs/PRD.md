@@ -109,25 +109,36 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 
 ### Mapa de rota no detalhe do imóvel (KAN-59)
 
-**Status:** parcial. Mapa e acesso por login prontos; falta a rota de ônibus.
+**Status:** parcial. Mapa, busca, rotas a pé, de bicicleta e de carro prontos; falta a rota de
+ônibus.
 
-**O que faz:** quem está logado vê, no detalhe do imóvel, o tempo e a distância até o
-destino e abre um mapa com a rota a pé ou de bicicleta.
+**O que faz:** quem está logado vê, no detalhe do imóvel, o tempo e a distância até um destino
+e abre um mapa no estilo do Google Maps: busca com sugestões enquanto digita, escolha do
+destino clicando no mapa ou arrastando o marcador, rota a pé, de bicicleta ou de carro, rotas
+alternativas, passo a passo e link para abrir a rota no site do OpenStreetMap.
 
 **Regras de negócio e decisões**
 - Visitante (sem login ou cadastro) vê o card de trajeto, mas com tempo e distância
   borrados e o botão "Ver rota no mapa" desativado; só usuário logado vê os valores e
   abre o mapa.
-- Rota calculada no navegador com o OSRM do OpenStreetMap; mapa com Leaflet.
+- Origem (marcador A): o próprio imóvel. Usa `latitude`/`longitude` do anúncio; sem elas,
+  localiza o endereço (rua, número, bairro, cidade) no Nominatim e, se não achar, o bairro.
+  Corrige a versão anterior, em que a origem era sempre o Cambuí para qualquer imóvel.
+- Destino (marcador B): Centro de Campinas por padrão. O usuário troca pela busca (a partir
+  de 3 letras aparecem até 5 sugestões, navegáveis pelo teclado; Enter usa a primeira), por
+  um clique no mapa ou arrastando o B; o nome do ponto clicado vem do endereço mais próximo.
+- Busca: Photon (OpenStreetMap, feito para sugestões), com Nominatim como reserva; só
+  lugares do Brasil, com preferência pelos próximos ao imóvel.
+- Rotas: OSRM dos servidores do OpenStreetMap (FOSSGIS), um por meio de transporte. A rota
+  escolhida fica verde; alternativas ficam cinza e viram a principal ao serem clicadas.
+- O resultado também atualiza o card de trajeto acima do mapa (tempo, destino, distância e
+  meio de transporte).
+- Tudo roda no navegador, sem chave de API e sem mudança no servidor.
 
 **Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, `mapa-rota.js`).
 
-- Lupa dentro do mapa: o usuário digita uma faculdade, trabalho ou endereço e o mapa mostra
-  tempo e distância até lá, além do destino padrão (Centro). A busca usa o Nominatim do
-  OpenStreetMap, com preferência por Campinas e região; trocar de "A pé" para "Bicicleta"
-  mantém o destino escolhido. Lugar não encontrado mostra um aviso.
-
-**Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40).
+**Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40). Os serviços públicos do
+OpenStreetMap têm limite de uso; com muito tráfego, será preciso um servidor próprio.
 
 ### Publicar anúncio (tela do locador)
 
