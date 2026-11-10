@@ -423,6 +423,10 @@ body:not(.visitante) .site-header .nav-logado {
     max-width: 100%;
 }
 
+.page-bar > :last-child:not(:first-child) {
+    margin-left: auto;
+}
+
 .page-bar h1 {
     font-family: var(--font-heading), sans-serif;
     font-size: var(--fs-h2);

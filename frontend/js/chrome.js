@@ -70,6 +70,20 @@
         });
     }
 
+    // Botão "Voltar": vai para a tela anterior do usuário; se ele abriu a página
+    // direto (sem tela anterior no site), segue o link como alternativa.
+    function ligarBotoesVoltar() {
+        document.addEventListener('click', (evento) => {
+            const link = evento.target.closest('a[data-voltar]');
+            if (!link) return;
+            const veioDoSite = document.referrer.startsWith(window.location.origin);
+            if (veioDoSite && window.history.length > 1) {
+                evento.preventDefault();
+                window.history.back();
+            }
+        });
+    }
+
     function raizScripts() {
         const base = document.querySelector('script[src*="chrome.js"]')?.getAttribute('src') || '../js/chrome.js';
         const raizJs = base.replace(/chrome\.js(\?.*)?$/, '');
@@ -205,6 +219,7 @@
     function boot() {
         aplicar();
         garantirLinksAjudaNosMenus();
+        ligarBotoesVoltar();
         garantirCookieConsent();
         garantirFaceCheck();
         garantirTelefoneUi();
