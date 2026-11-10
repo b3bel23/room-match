@@ -10,6 +10,9 @@ const input = document.getElementById('chat-texto');
 const imovelTitulo = document.getElementById('chat-imovel-titulo');
 const imovelMeta = document.getElementById('chat-imovel-meta');
 const imovelLink = document.getElementById('chat-imovel-link');
+
+// Sem tela anterior no site, o Voltar leva à página principal do papel.
+document.getElementById('chat-voltar').href = paginaInicial();
 const agendarLink = document.getElementById('chat-agendar-link');
 const imovelFoto = document.getElementById('chat-imovel-foto');
 
