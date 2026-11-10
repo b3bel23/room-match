@@ -48,11 +48,6 @@
     color: var(--color-text-muted);
 }
 
-.conta-criada-nota {
-    font-size: var(--fs-card-title);
-    color: var(--color-text-muted);
-}
-
 .btn-conta {
     padding: 12px 22px;
     border-radius: var(--radius-md);
@@ -65,8 +60,55 @@
     color: #fff;
 }
 
-.btn-conta-contorno {
-    background: var(--color-surface);
-    border: 1px solid var(--color-primary);
+.conta-criada-icone {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary-soft);
     color: var(--color-primary);
+}
+
+.conta-criada-icone svg {
+    width: 26px;
+    height: 26px;
+}
+
+.conta-criada-espera {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.conta-criada-contagem {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+}
+
+.conta-criada-barra {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-primary-soft);
+    overflow: hidden;
+}
+
+.conta-criada-barra span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary);
+    transform-origin: left;
+    transform: scaleX(0);
+}
+
+.conta-criada-barra.rodando span {
+    animation: conta-criada-progresso linear forwards;
+}
+
+@keyframes conta-criada-progresso {
+    to {
+        transform: scaleX(1);
+    }
 }
