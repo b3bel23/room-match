@@ -129,6 +129,11 @@ alternativas, passo a passo e link para abrir a rota no site do OpenStreetMap.
   um clique no mapa ou arrastando o B; o nome do ponto clicado vem do endereço mais próximo.
 - Busca: Photon (OpenStreetMap, feito para sugestões), com Nominatim como reserva; só
   lugares do Brasil, com preferência pelos próximos ao imóvel.
+- Se o texto digitado não achar nada, a busca tenta de novo tirando a última palavra
+  ("puc campinas campus 1" → "puc campinas campus" → "puc campinas") antes de avisar que o
+  lugar não foi encontrado.
+- `detalhe.html` carrega `detalhe.css`, `detalhe.js` e `mapa-rota.js` com `?v=2`, para o
+  navegador não usar a versão antiga guardada em cache.
 - Rotas: OSRM dos servidores do OpenStreetMap (FOSSGIS), um por meio de transporte. A rota
   escolhida fica verde; alternativas ficam cinza e viram a principal ao serem clicadas.
 - O resultado também atualiza o card de trajeto acima do mapa (tempo, destino, distância e

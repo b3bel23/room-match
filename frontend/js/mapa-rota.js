@@ -376,7 +376,13 @@ formBusca.addEventListener('submit', async (evento) => {
     buscaControle?.abort();
     resumo.textContent = 'Buscando lugar…';
     try {
-        const [lugar] = await buscarLugares(texto);
+        // Se o texto completo não achar nada, tenta de novo tirando a última palavra
+        // ("puc campinas campus 1" → "puc campinas campus" → "puc campinas").
+        let lugar = null;
+        const palavras = texto.split(/\s+/);
+        for (let total = palavras.length; total >= Math.min(2, palavras.length) && !lugar; total -= 1) {
+            [lugar] = await buscarLugares(palavras.slice(0, total).join(' '));
+        }
         if (!lugar) {
             resumo.textContent = 'Lugar não encontrado. Tente incluir o bairro ou a cidade.';
             return;
