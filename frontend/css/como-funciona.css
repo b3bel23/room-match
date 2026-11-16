@@ -1,8 +1,13 @@
 /* Como funciona — jornada interativa */
 
+/* Um degradê só, do topo ao fim da página. No <body> ele recomeçava a cada
+   altura de tela e formava uma faixa mais escura no meio da rolagem. */
 .como-page {
-    background:
-        linear-gradient(180deg, #ecf2f2 0%, var(--color-surface-muted) 40%, #fff 100%);
+    background: var(--color-surface);
+}
+
+.como-page .page-content {
+    background: linear-gradient(180deg, #ecf2f2 0%, var(--color-surface-muted) 40%, #fff 100%);
 }
 
 .cf-hero .page-hero-inner {
@@ -151,7 +156,6 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     margin-left: 18px;
-    overflow: hidden;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -185,6 +189,7 @@
     color: #fff;
     font-size: 13px;
     font-weight: 700;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .cf-step-title {
@@ -208,20 +213,34 @@
     margin-top: 4px;
 }
 
+/* O passo abre e fecha deslizando */
 .cf-step-body {
-    display: none;
-    padding: 0 18px 16px 18px;
+    display: grid;
+    grid-template-rows: 0fr;
+    padding: 0 18px;
+    visibility: hidden;
+    transition: grid-template-rows 0.35s ease, visibility 0s linear 0.35s;
 }
 
 .cf-step.aberto .cf-step-body {
-    display: block;
-    animation: cf-fade-in 0.25s ease;
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition-delay: 0s;
 }
 
 .cf-step-body p {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
     font-size: 14px;
     line-height: 1.55;
     color: var(--color-text-muted);
+    transition: opacity 0.3s ease, padding-bottom 0.35s ease;
+}
+
+.cf-step.aberto .cf-step-body p {
+    opacity: 1;
+    padding-bottom: 16px;
 }
 
 .cf-painel-cta {
@@ -265,7 +284,7 @@
     color: var(--color-text-muted);
     font-family: inherit;
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .cf-tag.ativo {
@@ -313,7 +332,7 @@
         radial-gradient(circle at center, #fff 56%, transparent 57%),
         conic-gradient(var(--color-primary) calc(var(--match, 100) * 1%), #e2e8eb 0);
     color: var(--color-text-primary);
-    transition: background 0.35s ease;
+    transition: --match 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
 }
 
 .cf-match-valor {
@@ -440,9 +459,6 @@
 .cf-cta {
     margin: 0 -24px;
     padding: 48px 24px 56px;
-    background:
-        linear-gradient(105deg, rgba(20, 29, 34, 0.9) 20%, rgba(20, 29, 34, 0.55) 100%),
-        url('../assets/campinas/rua.jpg') center / cover no-repeat;
     color: #fff;
 }
 
@@ -485,6 +501,174 @@
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.4);
     color: #fff;
+}
+
+/* ==========================================================================
+   Movimento
+   As classes .cf-anima (no <html>) e .cf-revela são postas pelo JavaScript,
+   então sem JS ou com "reduzir movimento" a página fica como antes.
+   ========================================================================== */
+
+@property --match {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 100;
+}
+
+/* Fotos em camada própria, para poder mover e ampliar sem mexer no texto */
+.cf-hero,
+.cf-cta {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--color-background);
+}
+
+.cf-hero::before,
+.cf-cta::before {
+    content: '';
+    position: absolute;
+    inset: -14% 0;
+    z-index: -2;
+    background: center / cover no-repeat;
+    translate: 0 var(--cf-desloc, 0px);
+}
+
+.cf-hero::before { background-image: url('../assets/campinas/taquaral.jpg'); }
+.cf-cta::before { background-image: url('../assets/campinas/rua.jpg'); }
+
+.cf-hero::after,
+.cf-cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(105deg, rgba(20, 29, 34, 0.88) 25%, rgba(20, 29, 34, 0.4) 100%);
+}
+
+.cf-cta::after {
+    background: linear-gradient(105deg, rgba(20, 29, 34, 0.9) 20%, rgba(20, 29, 34, 0.55) 100%);
+}
+
+.cf-anima .cf-hero::before,
+.cf-anima .cf-cta::before {
+    animation: cf-foto-respira 24s ease-in-out infinite alternate;
+    will-change: translate, scale;
+}
+
+@keyframes cf-foto-respira {
+    from { scale: 1; }
+    to { scale: 1.12; }
+}
+
+/* Entrada do topo */
+.cf-anima .cf-hero .page-hero-inner > * {
+    animation: cf-sobe 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.cf-anima .cf-hero .page-hero-inner > :nth-child(2) { animation-delay: 0.1s; }
+.cf-anima .cf-hero .page-hero-inner > :nth-child(3) { animation-delay: 0.2s; }
+.cf-anima .cf-hero .page-hero-inner > :nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes cf-sobe {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Blocos que aparecem conforme a rolagem */
+.cf-anima .cf-revela {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--cf-atraso, 0ms);
+}
+
+.cf-anima .cf-regras li.cf-revela {
+    transform: translateX(-28px);
+}
+
+.cf-anima .cf-revela.cf-visivel,
+.cf-anima .cf-regras li.cf-revela.cf-visivel {
+    opacity: 1;
+    transform: none;
+}
+
+/* Passo a passo: números à mostra, linha que acompanha o passo aberto */
+.cf-steps {
+    position: relative;
+}
+
+.cf-steps::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    width: 2px;
+    height: var(--cf-progresso, 0px);
+    background: var(--color-primary);
+    border-radius: 2px;
+}
+
+.cf-step.cf-adiante .cf-step-num {
+    background: #fff;
+    color: var(--color-primary-hover);
+    box-shadow: inset 0 0 0 2px #b8d4cc;
+}
+
+.cf-step.aberto .cf-step-num {
+    transform: scale(1.14);
+    box-shadow: 0 0 0 5px rgba(63, 143, 122, 0.18);
+}
+
+.cf-anima .cf-painel.ativo .cf-step {
+    animation: cf-sobe 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.cf-anima .cf-painel.ativo .cf-step:nth-child(1) { animation-delay: 0.08s; }
+.cf-anima .cf-painel.ativo .cf-step:nth-child(2) { animation-delay: 0.16s; }
+.cf-anima .cf-painel.ativo .cf-step:nth-child(3) { animation-delay: 0.24s; }
+.cf-anima .cf-painel.ativo .cf-step:nth-child(4) { animation-delay: 0.32s; }
+
+.cf-papel-btn.ativo .cf-papel-icone {
+    animation: cf-pop 0.4s ease;
+}
+
+@keyframes cf-pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
+/* Afinidade: anel e número mudam aos poucos */
+.cf-match-ring.cf-pulso {
+    animation: cf-pop 0.45s ease;
+}
+
+button.cf-tag:active {
+    transform: scale(0.94);
+}
+
+.cf-tag.comum {
+    animation: cf-pop 0.35s ease;
+}
+
+.cf-num-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+/* Botões da página sobem um pouco ao passar o mouse */
+.como-page .page-content .btn {
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+        box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.como-page .page-content .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(20, 29, 34, 0.18);
 }
 
 @media (max-width: 720px) {
@@ -540,8 +724,13 @@
 @media (prefers-reduced-motion: reduce) {
     .cf-painel,
     .cf-step-body,
+    .cf-step-body p,
+    .cf-step-num,
     .cf-papel-btn,
-    .cf-match-ring {
+    .cf-papel-icone,
+    .cf-tag,
+    .cf-match-ring,
+    .como-page .page-content .btn {
         animation: none !important;
         transition: none !important;
     }

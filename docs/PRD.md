@@ -93,6 +93,31 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 
 **Telas:** todas as páginas (`frontend/js/page-motion.js`).
 
+### Página "Como funciona" animada
+
+**Status:** concluída. Sem ticket no Jira.
+
+**O que faz:** a página "Como funciona" ganha movimento conforme a pessoa rola, sem perder
+nenhum conteúdo. As fotos do topo e do fim ampliam devagar e se movem mais lentamente que a
+página; títulos, cartões Morador/Locador, quadro de afinidade e regras entram em sequência; o
+passo a passo abre e fecha deslizando, com uma linha que acompanha o passo aberto; o anel de
+afinidade enche até o valor e o número conta a cada hábito ligado ou desligado.
+
+**Regras de negócio e decisões**
+- A fórmula de afinidade do exemplo não mudou: hábitos em comum ÷ hábitos do morador. Por
+  isso, desligar um hábito que o anúncio também tem mantém 100%; o número só cai ao ligar um
+  hábito que o anúncio não tem. Para deixar claro que o toque foi registrado, o anel pulsa a
+  cada toque, mesmo quando a porcentagem fica igual.
+- Com "reduzir movimento" ativado no sistema, ou sem JavaScript, não há animação: a página
+  aparece completa de uma vez.
+- O número que conta é só visual; o leitor de tela recebe apenas o valor final.
+- Os números 1 a 4 do passo a passo, que ficavam cortados, agora aparecem.
+- O fundo da página passou a ser um degradê único do topo ao fim; antes ele recomeçava a cada
+  altura de tela e formava uma faixa mais escura no meio da rolagem.
+
+**Telas:** `frontend/pages/como-funciona.html` (`frontend/css/como-funciona.css`,
+`frontend/js/como-funciona.js`).
+
 ### Menu lateral das telas de conta
 
 **Status:** concluída.
