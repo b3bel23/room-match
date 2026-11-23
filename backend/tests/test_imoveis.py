@@ -269,6 +269,9 @@ def test_remover_so_o_dono(db):
 def uploads(tmp_path, monkeypatch):
     pasta = tmp_path.resolve()
     monkeypatch.setattr(svc, "UPLOAD_DIR", pasta)
+    from app.services import storage_service
+
+    monkeypatch.setattr(storage_service, "UPLOAD_DIR", pasta)
     return pasta
 
 
@@ -372,3 +375,31 @@ def test_nao_ha_get_duplicado_em_imoveis():
 
     gets = [r for r in app.openapi()["paths"].get("/api/v1/imoveis", {}) if r == "get"]
     assert len(gets) == 1
+
+
+
+def test_classificacao_e_persistida_e_validada(db):
+    u = novo_locador(db)
+    item = publicar(db, u, classificacao="feminina")
+    assert item["classificacao"] == "Feminina"
+    with pytest.raises(ValueError):
+        AnuncioCreate(**{**DADOS, "classificacao": "Qualquer"})
+
+
+def test_storage_supabase_monta_urls_e_apaga(monkeypatch):
+    """Com STORAGE_BACKEND=supabase, a foto vai para o bucket e a URL pública fica no banco."""
+    from app.core.config import settings
+    from app.services import storage_service
+
+    chamadas = []
+    monkeypatch.setattr(settings, "storage_backend", "supabase")
+    monkeypatch.setattr(settings, "supabase_url", "https://abc.supabase.co/")
+    monkeypatch.setattr(settings, "supabase_bucket", "imoveis")
+    monkeypatch.setattr(storage_service, "_requisicao", lambda m, url, corpo, tipo: chamadas.append((m, url, tipo, corpo)))
+
+    url = storage_service.salvar("imoveis/7/x.jpg", JPG)
+    assert url == "https://abc.supabase.co/storage/v1/object/public/imoveis/imoveis/7/x.jpg"
+    assert chamadas[0][:3] == ("POST", "https://abc.supabase.co/storage/v1/object/imoveis/imoveis/7/x.jpg", "image/jpeg")
+    storage_service.apagar(url)
+    assert chamadas[1][:2] == ("DELETE", "https://abc.supabase.co/storage/v1/object/imoveis")
+    assert chamadas[1][3] == b'{"prefixes": ["imoveis/7/x.jpg"]}'

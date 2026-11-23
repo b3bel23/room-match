@@ -244,3 +244,33 @@ html:has(body.publicar-page) {
         min-height: var(--tap-min);
     }
 }
+
+.fotos .foto-slot {
+    position: relative;
+}
+
+.fotos .foto-remover {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(20, 29, 34, 0.78);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.fotos .foto-remover:hover,
+.fotos .foto-remover:focus-visible {
+    background: var(--color-accent, #F08070);
+    outline: 2px solid #fff;
+    outline-offset: 1px;
+}
+
+.fotos .foto-adicionar[hidden] {
+    display: none;
+}

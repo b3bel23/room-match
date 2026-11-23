@@ -20,10 +20,11 @@ def _post(**over):
         descricao="desc do imóvel",
         vagas_disponiveis=1,
         quantidade_quartos=1,
+        classificacao="Feminina",
         endereco=NS(rua="R. Benedito", numero="450", bairro="Barão Geraldo", cidade="Campinas"),
         imagens=[NS(id_imagem=2, url_imagem="2.jpg", ordem_exibicao=2), NS(id_imagem=1, url_imagem="1.jpg", ordem_exibicao=1)],
     )
-    base = dict(id_post=10, id_locador=5, titulo="Quarto em república", descricao=None, imovel=imovel)
+    base = dict(id_post=10, id_locador=5, titulo="Quarto em república", descricao=None, status_anuncio="ativo", imovel=imovel)
     base.update(over)
     return NS(**base)
 
@@ -47,6 +48,7 @@ def test_campos_basicos_e_endereco():
     assert item["endereco"] == "R. Benedito, 450 · Barão Geraldo"
     assert item["descricao"] == "desc do imóvel"  # post sem descrição cai na do imóvel
     assert item["tags"] == ["Pet Friendly"]
+    assert item["classificacao"] == "Feminina" and item["status_anuncio"] == "ativo"
 
 
 def test_sem_endereco_nem_fotos():
@@ -65,7 +67,7 @@ def test_visitante_tem_match_zero_e_sem_elegibilidade():
 
 
 def test_locatario_recebe_match_tags_e_elegibilidade():
-    locatario = NS(orcamento_maximo=Decimal("1200"), preferencias_moradia={"limiar_compatibilidade": 70})
+    locatario = NS(orcamento_maximo=Decimal("1200"), limiar_compatibilidade=70)
     item = montar_imovel(
         _post(), ["Pet Friendly", "Silêncio Noturno", "Home Office"], TAGS_USER, locatario
     )
@@ -78,19 +80,19 @@ def test_locatario_recebe_match_tags_e_elegibilidade():
 
 
 def test_chat_bloqueado_por_orcamento_ou_limiar():
-    caro = NS(orcamento_maximo=Decimal("800"), preferencias_moradia=None)
+    caro = NS(orcamento_maximo=Decimal("800"), limiar_compatibilidade=None)
     assert montar_imovel(_post(), ["Pet Friendly"], ["Pet Friendly"], caro)["elegibilidade"][
         "chat_liberado"
     ] is False
-    exigente = NS(orcamento_maximo=Decimal("0"), preferencias_moradia={"limiar_compatibilidade": 90})
+    exigente = NS(orcamento_maximo=Decimal("0"), limiar_compatibilidade=90)
     eleg = montar_imovel(_post(), ["Home Office"], TAGS_USER, exigente)["elegibilidade"]
     assert eleg["match"] == 33 and eleg["limiar_ok"] is False and eleg["chat_liberado"] is False
 
 
 def test_limiar_do_locatario():
     assert limiar_do_locatario(None) is None
-    assert limiar_do_locatario(NS(preferencias_moradia=None)) is None
-    assert limiar_do_locatario(NS(preferencias_moradia={"limiar": 55})) == 55.0
+    assert limiar_do_locatario(NS(limiar_compatibilidade=None)) is None
+    assert limiar_do_locatario(NS(limiar_compatibilidade=55)) == 55.0
 
 
 # --- filtros (mesma semântica de filtrarImoveis no mock) ---

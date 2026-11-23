@@ -74,7 +74,32 @@ function aplicarPerfilNaUi(user) {
         RoomMatchPapelUi.aplicar();
     }
     preencherFormulario(user);
+    mostrarStatusEmail(user);
 }
+
+/* RF02: e-mail confirmado ou não (só existe com o servidor; o mock não manda o campo). */
+function mostrarStatusEmail(user) {
+    const caixa = document.getElementById('perfil-email-status');
+    if (!caixa || user.email_verificado === undefined) return;
+    caixa.hidden = false;
+    caixa.classList.toggle('ok', Boolean(user.email_verificado));
+    document.getElementById('perfil-email-texto').textContent = user.email_verificado
+        ? '✓ E-mail confirmado.'
+        : 'E-mail ainda não confirmado. Procure o link na sua caixa de entrada.';
+    document.getElementById('perfil-email-reenviar').hidden = Boolean(user.email_verificado);
+}
+
+document.getElementById('perfil-email-reenviar')?.addEventListener('click', async (evento) => {
+    const botao = evento.currentTarget;
+    botao.disabled = true;
+    try {
+        const dados = await RoomMatchApi.reenviarVerificacao();
+        document.getElementById('perfil-email-texto').textContent = dados.message;
+    } catch (erro) {
+        document.getElementById('perfil-email-texto').textContent = erro.detail || erro.message;
+        botao.disabled = false;
+    }
+});
 
 function lerArquivoComoDataUrl(arquivo) {
     return new Promise((resolve, reject) => {
@@ -126,6 +151,19 @@ if (typeof RoomMatchFaceCheck !== 'undefined' && inputFoto) {
     });
 }
 
+// CPF/CNPJ só é pedido quando um Morador escolhe virar Locador (exigência do servidor).
+const selectPapel = document.getElementById('perfil-papel');
+const campoCpf = document.getElementById('perfil-cpf-campo');
+const inputCpf = document.getElementById('perfil-cpf');
+function atualizarCampoCpf() {
+    if (!selectPapel || !campoCpf || !inputCpf) return;
+    const papelAtual = (typeof usuarioAtual === 'function' ? usuarioAtual() : null)?.papel;
+    const pedir = selectPapel.value === 'Locador' && papelAtual !== 'Locador';
+    campoCpf.hidden = !pedir;
+    inputCpf.required = pedir;
+}
+selectPapel?.addEventListener('change', atualizarCampoCpf);
+
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     if (!form.checkValidity()) {
@@ -150,9 +188,11 @@ form.addEventListener('submit', async (evento) => {
             faculdade: document.getElementById('perfil-faculdade').value,
             email: document.getElementById('perfil-email').value.trim(),
             papel: document.getElementById('perfil-papel').value,
+            cpf_cnpj: inputCpf && !campoCpf.hidden ? inputCpf.value.trim() : undefined,
             foto_url: fotoUrlAtual
         });
         aplicarPerfilNaUi(user);
+        atualizarCampoCpf();
         const trocouPapel = papelAnterior && papelAnterior !== user.papel;
         mostrarRetorno(
             trocouPapel

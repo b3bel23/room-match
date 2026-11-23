@@ -130,10 +130,17 @@ function preencher(imovel) {
 
     const trajetoStrong = document.querySelector('.trajeto strong');
     const trajetoSpan = document.querySelector('.trajeto span');
-    if (trajetoStrong) trajetoStrong.textContent = `${imovel.deslocamento_min} min · ${imovel.destino}`;
+    const temTrajeto = imovel.deslocamento_min != null && imovel.destino;
+    if (trajetoStrong) {
+        trajetoStrong.textContent = temTrajeto
+            ? `${imovel.deslocamento_min} min · ${imovel.destino}`
+            : 'Tempo até seu destino';
+    }
     if (trajetoSpan) {
         const km = imovel.distancia_km ? `${imovel.distancia_km} km · ` : '';
-        trajetoSpan.textContent = `${km}estimativa com dados abertos de transporte`;
+        trajetoSpan.textContent = temTrajeto
+            ? `${km}estimativa com dados abertos de transporte`
+            : 'Abra o mapa e escolha a faculdade ou o trabalho';
     }
 
     const afinidade = document.querySelector('.afinidade');
@@ -189,8 +196,8 @@ function preencher(imovel) {
         moradores.forEach((m) => {
             const li = document.createElement('li');
             li.className = 'morador';
-            li.innerHTML = `<span class="morador-foto ${m.estilo || 'foto-1'}">${m.iniciais || '?'}</span>
-                <div><strong>${m.nome}</strong><span>${m.linha}</span></div>`;
+            li.innerHTML = `<span class="morador-foto ${escHtml(m.estilo || 'foto-1')}">${escHtml(m.iniciais || '?')}</span>
+                <div><strong>${escHtml(m.nome)}</strong><span>${escHtml(m.linha || '')}</span></div>`;
             listaMoradores.append(li);
         });
     }

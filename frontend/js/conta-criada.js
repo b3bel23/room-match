@@ -17,6 +17,10 @@ const botaoIr = document.getElementById('conta-criada-ir');
 texto.textContent = papel === 'Locador'
     ? 'Sua conta de Locador está pronta. Agora você já pode publicar seus anúncios.'
     : 'Sua conta de Morador está pronta. Explore o mural e veja seus matches.';
+// Com o servidor, o cadastro envia um link de confirmação de e-mail (RF02).
+if (RoomMatchApi.modo() === 'live') {
+    texto.textContent += ' Enviamos um link para confirmar seu e-mail.';
+}
 botaoIr.href = destino.href;
 botaoIr.textContent = `Ir agora para ${destino.nome === 'Explorar' ? 'o Explorar' : destino.nome}`;
 

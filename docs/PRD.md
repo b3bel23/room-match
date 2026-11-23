@@ -14,8 +14,10 @@ este arquivo registra o que foi de fato implementado.
 papel e o "Sair" ficam agrupados à esquerda da foto de perfil, e a foto fica no canto direito.
 
 **Regras de negócio e decisões**
-- Locatário: Explorar, Favoritos, Minhas visitas, Mensagens, Sair, foto.
-  Locador: Meus anúncios, Publicar, Visitas, Mensagens, Sair, foto.
+- Locatário: Explorar, Descobrir, Favoritos, Minhas visitas, Mensagens, sino, Sair, foto.
+  Locador: Meus anúncios, Publicar, Visitas, Mensagens, sino, Sair, foto.
+- O sino de notificações (RF17/RF35) fica antes do "Sair"; mostra a contagem de não lidas e
+  abre a lista. Ver "Notificações no site".
 - "Sobre nós", "FAQ" e "Contato" saem do menu de quem está logado; continuam no menu do
   visitante e no rodapé de todas as páginas.
 - "Sair" continua no menu, pois é o único ponto de saída da conta.
@@ -34,8 +36,8 @@ Noturno etc.) aparecem com o mesmo fundo vermelho, em vez de só a primeira.
 
 ### Afinidade e mural de imóveis (KAN-35)
 
-**Status:** parcial. Código pronto e testado com banco falso; falta validar contra o
-Postgres/Supabase e o front em modo `live`.
+**Status:** concluída. Validada em Postgres 16 e com o site em modo `live` (ver
+"Integração ponta a ponta"). Falta só repetir no Supabase do projeto.
 
 **O que faz:** o locatário vê o mural de imóveis com a % de afinidade entre as suas
 tags de convivência e as tags de cada imóvel. O visitante vê o mural sem personalização.
@@ -61,9 +63,8 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
   `conversas`.
 
 **Decisões e divergências**
-- `locatarios.limiar_compatibilidade` (usado pelo front) **não existe no banco**. Por ora o
-  valor é lido de `locatarios.preferencias_moradia["limiar_compatibilidade"]`. Decidir se
-  vira coluna (migração Alembic).
+- `locatarios.limiar_compatibilidade` virou coluna (migração `9fe30732904e`), que copia o
+  valor antigo de `preferencias_moradia` e o retira de lá. O servidor não lê mais o JSON.
 - `deslocamento_medio` devolve 0 até a integração GTFS (KAN-40).
 - As rotas `GET /imoveis*` ficam em `api/v1/matches.py`. Quando o CRUD de imóvel (KAN-34)
   entrar em `imoveis.py`, não pode haver segunda rota `GET /imoveis`.
@@ -75,11 +76,11 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
   `localStorage.setItem('roommatch-api-mode', 'live')`.
 
 **Pendências**
-- Testado contra o Supabase real pela API (cadastro, login, `/auth/me`, `/me`, `/imoveis`,
-  `/stats`: tudo 200 e gravação confirmada em conexão nova). Falta testar pelo navegador com o
-  front em modo `live` e o CRUD de imóveis (KAN-34) com locador.
-- Seed (KAN-30) precisa popular `tags`, `imovel_tags` e `usuario_tags`; sem isso toda
-  afinidade fica em 0%.
+- O teste anterior "pelo Supabase" chamava a API direto com formulário OAuth2; pelo site o
+  login nunca tinha funcionado (ver "Login e cadastro no contrato do front").
+- O mural agora também devolve `rua`, `numero`, `cep`, `estado`, `latitude`, `longitude`
+  (usados pelo mapa), `badge`, `classificacao`, `status_anuncio` e `moradores_atuais` (RF23:
+  primeiro nome, iniciais, ocupação ou faculdade e idade; sem contato).
 
 ### Transição entre telas
 
@@ -134,8 +135,8 @@ afinidade enche até o valor e o número conta a cada hábito ligado ou desligad
 
 ### Mapa de rota no detalhe do imóvel (KAN-59)
 
-**Status:** parcial. Mapa, busca, rotas a pé, de bicicleta e de carro prontos; falta a rota de
-ônibus.
+**Status:** concluída. Mapa, busca, rotas a pé, de bicicleta, de carro e de ônibus (ver
+"Rota de ônibus com GTFS").
 
 **O que faz:** quem está logado vê, no detalhe do imóvel, o tempo e a distância até um destino
 e abre um mapa no estilo do Google Maps: busca com sugestões enquanto digita, escolha do
@@ -167,8 +168,13 @@ alternativas, passo a passo e link para abrir a rota no site do OpenStreetMap.
 
 **Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, `mapa-rota.js`).
 
-**Pendências:** rota de ônibus (integração EMDEC/EMTU, KAN-40). Os serviços públicos do
-OpenStreetMap têm limite de uso; com muito tráfego, será preciso um servidor próprio.
+- Botão "Ônibus" ligado ao servidor (antes desativado com "Em breve"), com campo "Saindo às".
+- Morador pode salvar o destino ("Salvar … como meu destino"); ao abrir o mapa de novo, o
+  destino salvo vira o padrão no lugar do Centro.
+- `detalhe.html` passou a carregar `detalhe.css`, `detalhe.js` e `mapa-rota.js` com `?v=3`.
+
+**Pendências:** os serviços públicos do OpenStreetMap têm limite de uso; com muito tráfego,
+será preciso um servidor próprio.
 
 ### Publicar anúncio (tela do locador)
 
@@ -229,8 +235,7 @@ excluir a conta.
   Locador (409). Nada é apagado nesses casos.
 - E-mail é gravado em minúsculas e deve ser único (409).
 - Tags: `usuario_tags` é a fonte; `usuarios.tags_convivencia` é mantida em sincronia.
-- Orçamento e limiar só valem para Morador. Limiar fica em `preferencias_moradia`
-  (ver KAN-35).
+- Orçamento e limiar só valem para Morador. Limiar fica em `locatarios.limiar_compatibilidade`.
 - Excluir conta com anúncios, favoritos ou conversas é recusado (409).
 
 - Foto de perfil é obrigatória: a tela de perfil só oferece "Trocar foto" (não há "Remover") e
@@ -238,9 +243,10 @@ excluir a conta.
   decisão do front; o servidor ainda aceita `foto_url` vazio em `PATCH /me`.
 
 **Divergências e pendências**
-- `genero`, `ocupacao`, `emprego` e `faculdade` são aceitos mas **não persistidos**: o banco
-  não tem essas colunas (exigem migração Alembic). A resposta devolve vazio.
-- Os dados de Locador exigem CPF/CNPJ, que o front ainda não coleta na troca de papel.
+- `genero`, `ocupacao`, `emprego` e `faculdade` agora são colunas de `usuarios` (migração
+  `9fe30732904e`) e são gravados no cadastro e no `PATCH /me`.
+- Troca de Morador para Locador: a tela de perfil mostra o campo CPF/CNPJ quando o tipo
+  escolhido é Locador e a conta ainda não é; o servidor exige (422 sem ele).
 
 ### Botão Voltar nas telas de imóvel e de mensagens
 
@@ -294,10 +300,12 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
 - Pausar um anúncio o tira do mural, mas ele continua em `/imoveis/meus`.
 
 **Divergências e pendências**
-- `classificacao` (Mista/Masculina/Feminina) é aceita mas **não persistida**: não há coluna.
-- Fotos ficam em disco local (`backend/uploads/`, servido em `/uploads`). Em produção
-  (Supabase/hospedagem sem disco persistente) precisa migrar para storage em nuvem; a coluna
-  `url_imagem` já aceita URL absoluta.
+- `classificacao` (Mista/Masculina/Feminina) é gravada em `imoveis.classificacao` (padrão
+  Mista; outro valor: 422) e volta no mural e no detalhe.
+- Anúncio pausado: o detalhe (`GET /imoveis/{id}`) só abre para o dono; para os demais, 404.
+- Fotos: `STORAGE_BACKEND=local` grava em `backend/uploads/` (servido em `/uploads`);
+  `STORAGE_BACKEND=supabase` grava no bucket público do Supabase Storage e guarda a URL
+  pública completa em `url_imagem` (ver "Deploy e configuração").
 - `GET /imoveis` e `GET /imoveis/{id}` (leitura pública) continuam em `matches.py` (KAN-35).
   `/imoveis/meus` precisa ser registrado antes de `/imoveis/{id}`; há teste para isso.
 - Seed dos dados fictícios: ver "Dados fictícios (KAN-30)" abaixo.
@@ -329,8 +337,7 @@ como locador ou o exclui.
 
 ### Editar anúncio: fotos (tela do locador)
 
-**Status:** parcial. Adicionar fotos funciona na tela e no modo de demonstração (mock); falta
-ligar ao `POST /imoveis/{id}/fotos` do servidor e permitir remover fotos.
+**Status:** concluída. Funciona no modo demonstração e com o servidor.
 
 **O que faz:** na tela "Editar anúncio", o locador vê as fotos atuais do imóvel e adiciona
 novas pelo quadrado "+" (várias de uma vez). As novas aparecem na hora e entram no anúncio
@@ -340,15 +347,18 @@ novas pelo quadrado "+" (várias de uma vez). As novas aparecem na hora e entram
 - Só o locador dono do anúncio edita (mesma regra do `PATCH /imoveis/{id}`).
 - No mock, as fotos novas são reduzidas (lado maior de 1200 px, JPEG) e guardadas no próprio
   anúncio; fotos enviadas pelo locador não são sobrescritas pelo catálogo de exemplo.
-- Divergência: o contrato do servidor prevê upload multipart em `POST /imoveis/{id}/fotos`
-  (JPEG/PNG/WebP, até 5 MB, 10 por imóvel); o front ainda não aplica esses limites.
+- Com o servidor, "Salvar" envia as fotos novas em `POST /imoveis/{id}/fotos` (multipart) e
+  apaga as retiradas em `DELETE /imoveis/{id}/fotos/{id_imagem}`.
+- Cada foto tem um botão "×" para remover. A tela aplica os limites do servidor: JPEG, PNG ou
+  WebP, até 5 MB cada e 10 por anúncio (o "+" some ao chegar em 10).
+- Fotos salvas no servidor (`/uploads/...`) são exibidas a partir do endereço da API.
 
 **Telas:** `frontend/pages/editar-anuncio.html`.
 
 ### Dados fictícios (KAN-30)
 
-**Status:** concluída no código e testada contra o ORM (SQLite em memória); **ainda não
-executada no Postgres/Supabase**.
+**Status:** concluída. Executada em Postgres 16 local junto com as migrações; falta
+rodar no Supabase do projeto.
 
 **O que faz:** popula o banco com um catálogo de demonstração igual ao do front, para as
 telas e a afinidade funcionarem sem cadastro manual.
@@ -378,3 +388,249 @@ telas e a afinidade funcionarem sem cadastro manual.
 **Pendências**
 - Executar no banco real e conferir com o front em modo `live`.
 - Só há fotos para 4 imóveis; mais anúncios exigem novos arquivos em `frontend/assets/`.
+
+### Login e cadastro no contrato do front
+
+**Status:** concluída. Testada no ORM (SQLite) e em Postgres 16 local.
+
+**O que faz:** o site entra e cria conta falando com o servidor de verdade. Antes, o login
+do servidor só aceitava formulário OAuth2 (`username`/`password`) e o site manda JSON
+(`email`/`senha`); todo login pelo site recebia 422. O cadastro só criava o usuário básico,
+sem papel, tags, orçamento, limiar ou foto, e não devolvia token.
+
+**Regras de negócio e decisões**
+- `POST /auth/login` aceita JSON `{ email, senha }` (site) e também o formulário OAuth2
+  (botão Authorize do `/docs`). Resposta: `{ access_token, token_type, user }`, com `user`
+  no formato de `GET /me`. Credencial errada ou ausente: 401 "E-mail ou senha inválidos."
+- `POST /auth/register` recebe o que `cadastro.js` envia e cria, na mesma transação, o
+  usuário e o perfil do papel: Morador → `locatarios` (orçamento, limiar padrão 70, tags);
+  Locador → `locadores`. Resposta 201 com `{ access_token, user }`, como o mock.
+- Locador precisa de CPF/CNPJ no cadastro (422 sem ele; 409 se repetido). O cadastro do
+  site mostra o campo só quando o papel é Locador.
+- E-mail repetido: 409 (antes 400), igual ao mock.
+- Senha mínima de 8 caracteres no site e no servidor (antes o site aceitava 6 e o servidor
+  recusava com 422). As contas do modo demonstração continuam com `demo123`; as do seed do
+  banco usam a senha passada ao seed (padrão `demo12345`).
+- `usuarios.foto_perfil` passou de `varchar(255)` para `text` (migração `d82d87d32801`): o
+  site envia a foto como data URL, que não cabia. Guardar a foto no banco é provisório; ver
+  storage na seção de deploy.
+- Erros 401 agora mostram a mensagem do servidor na tela de login (antes, "Não autenticado.").
+
+**Endpoints:** `POST /api/v1/auth/login`, `POST /api/v1/auth/register`.
+**Telas:** `login.html`, `cadastro.html`.
+
+### Favoritos, visitas, chat e senha no servidor
+
+**Status:** concluída no servidor e testada (SQLite e Postgres local). Antes só existiam no
+modo demonstração; com o site ligado ao servidor, essas telas davam 404.
+
+**Favoritos (RF25)** — `GET /favoritos` → `{ items, ids }`; `POST /favoritos/{id_imovel}`
+liga/desliga (como o mock); `DELETE /favoritos/{id_imovel}` só desliga → `{ favorito, ids }`.
+- Só Morador (403 para Locador). Usa a tabela `likes`. Anúncio pausado ou removido some da
+  lista, mas o like fica guardado.
+
+**Visitas** — `POST /visitas` `{ imovel_id, horario }`; `GET /visitas`; `PATCH /visitas/{id}`
+`{ status }`.
+- Só Morador pede. O rótulo da tela vira data e hora como no mock ("Amanhã, 16h" → amanhã
+  16:00; "Sábado, 11h" → próximo sábado). Aceita também `data` e `hora` explícitas.
+- Pedido repetido (mesmo imóvel, dia e hora, ainda pendente ou confirmado): 409. Data no
+  passado: 400.
+- Morador vê os próprios pedidos; Locador vê os pedidos nos seus imóveis.
+- Novo: o Locador dono confirma ou recusa (`confirmada`/`recusada`); quem pediu cancela
+  (`cancelada`). A tela do calendário ainda não tem esses botões.
+- Remover um anúncio apaga as visitas pendentes e confirmadas dele.
+
+**Chat (RF27/RF34)** — `GET /conversas`, `GET /conversas/{id}`, `POST /conversas`
+`{ imovel_id, texto? }`, `POST /conversas/{id}/mensagens` `{ texto }`.
+- Só Morador abre conversa, e só se `match ≥ limiar` e `preço ≤ orçamento`; senão 403 com o
+  motivo ("match 33% abaixo do limiar 70%; preço R$ 1000 acima do orçamento R$ 500").
+- Uma conversa por morador e anúncio; abrir de novo devolve a mesma.
+- Só os participantes (morador e locador do anúncio) leem e escrevem; para os demais, 404.
+- Abrir a conversa marca como lidas as mensagens recebidas; a lista traz `nao_lidas`.
+- O outro participante aparece só com nome, iniciais e foto: e-mail e telefone não vão no
+  chat (RF36 prevê compartilhar contato só com consentimento).
+- Mensagem vazia: 400; até 2000 caracteres; anúncio removido não recebe mensagens (409).
+- Segurança no site: mensagens, títulos de anúncio, tags e nomes passam por escape antes de
+  ir para a tela (antes, o texto de outra pessoa entrava como HTML).
+
+**Senha** — `POST /me/senha` `{ senha_atual, senha_nova }`; `POST /auth/recuperar` `{ email }`;
+`POST /auth/redefinir` `{ token, senha_nova }`.
+- Recuperar sempre responde 200 com a mesma mensagem, exista ou não a conta.
+- O link vai por e-mail (`SMTP_*` no `.env`; sem SMTP, o e-mail só aparece no log do
+  servidor) e leva à nova tela `redefinir-senha.html`. Vale 30 minutos e uma única vez (deixa
+  de valer quando a senha muda). Não serve como login.
+
+**Telas:** `favoritos.html`, `detalhe.html`, `agendar-visita.html`, `calendario-visitas.html`,
+`mensagens.html`, `seguranca.html`, `recuperar-senha.html`, `redefinir-senha.html` (nova).
+
+### Integração ponta a ponta (site em modo `live` + API + Postgres)
+
+**Status:** concluída em ambiente local (Postgres 16, API em `uvicorn`, site servido por HTTP,
+Chrome headless). Falta repetir contra o Supabase e a API publicada.
+
+**Como foi testado**
+- Banco zerado → `alembic upgrade head` → `python -m scripts.seed`.
+- `tests/e2e/fluxos_navegador.py` (Playwright) percorre no navegador, com o site em `live`:
+  login de morador e locador, mural, favoritar, conversar com o locador (mensagem com HTML
+  aparece como texto), agendar visita, preferências, locador lendo e respondendo, calendário,
+  publicar anúncio com 3 fotos e classificação, editar removendo 1 foto e enviando 2, e o
+  cadastro completo de Morador e de Locador. Resultado: todos os passos OK, nenhum erro de
+  JavaScript e nenhuma resposta 4xx/5xx inesperada da API.
+- `backend/tests/fumaca/test_fumaca_api.py` faz o mesmo percurso só pela API (inclui
+  confirmar visita, pausar e remover). Roda com `SMOKE_API_URL=...`; sem ela, é pulado.
+- O modo demonstração (mock) foi varrido de novo: todas as telas abrem sem erro.
+
+**Divergências encontradas e corrigidas**
+- Publicar anúncio não enviava as fotos escolhidas (só contava quantas eram). Agora envia
+  para `POST /imoveis/{id}/fotos` (no mock, ficam no anúncio) e cada foto tem "×" para remover.
+- O card de trajeto mostrava "null min · null" quando não há destino calculado; agora mostra
+  "Tempo até seu destino · Abra o mapa e escolha a faculdade ou o trabalho".
+- Conversa aberta por link (`mensagens.html?id=1`) não era selecionada porque o ID da API é
+  número e o da URL é texto; mesma correção na checagem de favorito.
+- A lista de conversas não atualizava a última mensagem depois de enviar.
+- Calendário: nova lista "Próximas visitas" abaixo do mês. O Locador confirma ou recusa e o
+  Morador cancela (usa `PATCH /visitas/{id}`; também no mock). Legenda ganhou "Recusada ou
+  cancelada".
+
+**Telas:** todas; em especial `publicar-imovel.html`, `detalhe.html`, `mensagens.html`,
+`calendario-visitas.html`.
+
+### Rota de ônibus com GTFS (RF28, RF29, RF31; KAN-40)
+
+**Status:** concluída no código e testada com feed GTFS sintético (testes e navegador). Falta
+carregar o GTFS real da EMDEC/EMTU no servidor publicado.
+
+**O que faz:** no mapa do detalhe, o modo "Ônibus" mostra a viagem que chega mais cedo:
+caminhada até o ponto, linha, sentido, horário de embarque e desembarque, número de paradas,
+baldeações e caminhada final, com o trajeto desenhado no mapa. O tempo calculado vai para o
+card de trajeto e, se o destino estiver salvo, para o mural e para o "deslocamento médio".
+
+**Regras de negócio e decisões**
+- Algoritmo: Connection Scan Algorithm (`backend/app/services/mobilidade_service.py`) sobre os
+  feeds em memória (`backend/app/utils/gtfs_loader.py`).
+- Caminhada: até 1 km até o primeiro ponto e do último ponto ao destino
+  (`GTFS_RAIO_CAMINHADA_M`), 4,3 km/h com fator de desvio 1,3 sobre a linha reta.
+- Baldeação: a pé entre pontos a até 250 m; 1 min mínimo para trocar de ônibus no mesmo ponto.
+- Só valem viagens cujo serviço roda no dia (`calendar.txt` + `calendar_dates.txt`);
+  `frequencies.txt` é expandido em viagens. Dia padrão: hoje, ou o próximo dia útil no fim
+  de semana. Hora padrão de saída: 07:30.
+- Se andar for mais rápido, a resposta diz `somente_caminhada` e o site mostra "A pé é mais
+  rápido".
+- Vários feeds juntos (EMDEC + EMTU): `GTFS_PATHS` separado por vírgula; os IDs recebem
+  prefixo por feed e a baldeação entre sistemas sai pelos pontos próximos.
+- A rede carrega em segundo plano ao subir a API. Sem GTFS (ou carregando), a rota responde
+  200 com `disponivel: false` e o motivo, e o site mostra a mensagem.
+- Cache: cada cálculo com `imovel_id` é guardado em `rotas_mobilidade` (chave
+  `lat,lng@hora`, tempo, distância, `detalhes`, `calculado_em`). O mural só lê o cache, para
+  não calcular dezenas de rotas a cada carregamento.
+- Destino salvo do Morador: `PATCH /me` com `destino: { nome, lat, lng }` (fica em
+  `locatarios.preferencias_moradia.destino`); `GET /me` devolve `destino`.
+- No modo demonstração (mock) não há horários: o modo Ônibus explica que precisa do servidor.
+
+**Endpoints:** `GET /mobilidade/rota` (`destino_lat`, `destino_lng`, `destino_nome`,
+`imovel_id`, `origem_lat`/`origem_lng` quando o imóvel não tem coordenadas, `hora`, `dia`);
+`GET /mobilidade/status` (feeds, paradas e conexões carregados).
+
+**Pendências**
+- Obter o GTFS: a EMTU publica dados abertos (inclui as linhas metropolitanas da RMC); para as
+  linhas municipais de Campinas, há o gerador comunitário `paulo-raca/emdec-gtfs`, que monta o
+  feed a partir do site da EMDEC, ou pedir o arquivo à EMDEC. Ver README.
+- Com feed grande, medir o tempo de cálculo contra a meta de 5 s (RNF12); o cache cobre as
+  repetições.
+- RF30 (vários destinos) fica para depois: hoje é um destino salvo.
+
+### Descobrir em cards (RF12, RF13, RF14, RF18)
+
+**Status:** concluída (servidor, mock e tela), testada no navegador.
+
+**O que faz:** nova tela `descobrir.html` (menu do Morador). Mostra um imóvel por vez, do
+mais para o menos compatível; o morador curte (vai para os favoritos) ou recusa (some do
+mural). Dá para desfazer a última decisão, e o histórico lista curtidos e recusados, com
+"Voltar ao mural" para os recusados.
+
+**Regras de negócio e decisões**
+- Curtir é o mesmo que favoritar (`likes`); não há "dupla curtida", como no README.
+- Recusar grava em `recusas` (nova tabela) e tira o favorito, se houver. O imóvel recusado
+  some de `GET /imoveis` para esse morador (`?incluir_recusados=true` mostra todos); visitante
+  e outros moradores continuam vendo.
+- Ordem dos cards: maior afinidade primeiro; empate, menor preço. Já curtidos e recusados não
+  aparecem.
+- Controles: botões, setas ← (recusar) e → (curtir) e arrastar o card no celular.
+
+**Endpoints:** `GET /descobrir`, `POST|DELETE /imoveis/{id}/recusar`, `GET /historico`.
+
+### Notificações no site (RF17, RF35)
+
+**Status:** concluída (servidor e tela). No mock, a lista vem vazia.
+
+**O que faz:** o sino no menu mostra quantas notificações não lidas a pessoa tem e abre a lista;
+cada aviso leva à tela certa. Atualiza a cada minuto com a aba aberta.
+
+**Regras de negócio e decisões**
+- Geram aviso: mensagem nova (para o outro participante; inclui a primeira mensagem de uma
+  conversa nova), favorito no anúncio (para o locador), pedido de visita (para o locador),
+  visita confirmada ou recusada (para o morador) e visita cancelada (para o locador).
+- O aviso é gravado na mesma transação da ação; não existe aviso de algo que falhou.
+- Abrir um aviso marca como lido; "Marcar todas como lidas" zera a contagem. Ninguém marca
+  avisos de outra pessoa.
+- Notificação por e-mail (parte do RF35) fica para depois; o serviço de e-mail já existe.
+
+**Endpoints:** `GET /notificacoes` (`items`, `nao_lidas`), `POST /notificacoes/lidas`
+(`{ ids? }`). Tabela nova `notificacoes`.
+
+### Confirmação de e-mail (RF02)
+
+**Status:** concluída (servidor e tela).
+
+**O que faz:** ao criar a conta, a pessoa recebe um link para confirmar o e-mail. O perfil
+mostra se o e-mail está confirmado e tem "Reenviar link de confirmação". A tela
+`verificar-email.html` confirma o link.
+
+**Regras de negócio e decisões**
+- Não bloqueia o uso no MVP: quem não confirmou continua usando o site.
+- O link vale 7 dias e só para o e-mail atual da conta: trocar o e-mail no perfil desmarca a
+  confirmação e envia um link novo; o link antigo deixa de valer.
+- Os links de confirmação e de redefinição de senha não servem como login.
+- As contas do seed já vêm confirmadas.
+
+**Endpoints:** `POST /auth/verificar` (`{ token }`), `POST /me/verificacao`; `GET /me` traz
+`email_verificado`.
+
+**Migração:** `3654f88a6b5c` cria `recusas` e `notificacoes` (com RLS, como as demais) e
+acrescenta `detalhes` e `calculado_em` em `rotas_mobilidade`.
+
+### Deploy e configuração
+
+**Status:** pronto para publicar; o deploy em si depende das credenciais do grupo (Render e
+Supabase), que não estão no repositório.
+
+**O que foi feito**
+- `render.yaml` (Blueprint do Render) sobe a API a partir de `backend/`, roda
+  `alembic upgrade head` a cada deploy e usa `/health` como checagem. `SECRET_KEY` é gerada
+  pelo Render; banco, Supabase e SMTP são preenchidos no painel.
+- Fotos em nuvem: `backend/app/services/storage_service.py` grava no Supabase Storage
+  (`STORAGE_BACKEND=supabase`, bucket público `imoveis`) ou em disco (`local`, padrão). Falha
+  do Storage no upload: 502 e nenhuma foto gravada.
+- Site publicado aponta para a API por padrão quando `API_PRODUCAO` (topo de
+  `frontend/js/api.js`) está preenchida; em localhost continua no modo demonstração.
+  `?api=live` e `?api=mock` trocam o modo e guardam a escolha.
+- CORS: o padrão já inclui `https://silverwying.github.io` e os servidores locais
+  (5500 e 8765); outras origens em `CORS_ORIGINS`.
+- Segurança: sem `SECRET_KEY`, a API usa uma chave aleatória só daquela execução e avisa no log
+  (antes, os tokens seriam assinados com chave vazia).
+- `.env.example` lista todas as variáveis, com instruções para o Supabase (pooler,
+  `DB_SSLMODE=require`); `backend/requirements-dev.txt` traz pytest e httpx.
+- README: banco PostgreSQL (não MySQL), testes com pytest e Playwright (não Jest), "Como
+  executar" com os comandos reais, GTFS e deploy.
+- `database/`: removidos `schema/*.sql` e `teste.py`, que divergiam das migrações; no lugar,
+  `database/schema.sql` gerado pelo Alembic e `database/README.md`.
+
+**Pendências**
+- Criar o serviço no Render e o bucket `imoveis` (público) no Supabase; preencher
+  `API_PRODUCAO` com a URL do serviço.
+- Rodar `alembic upgrade head` e o seed no Supabase (o Render roda as migrações; o seed é
+  manual, com `--confirmar-banco-remoto`).
+- Rodar `tests/fumaca` contra a API publicada (`SMOKE_API_URL=...`).
+- Configurar SMTP para os e-mails de recuperação de senha e confirmação.
+- Foto de perfil continua guardada no banco como data URL; levar para o Storage também.
+- Plano gratuito do Render dorme sem uso; a primeira requisição depois disso demora.

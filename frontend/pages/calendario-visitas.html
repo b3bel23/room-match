@@ -58,10 +58,18 @@
                         <li><span class="ponto ponto-pendente"></span>Pendente de aprovação</li>
                         <li><span class="ponto ponto-confirmada"></span>Confirmada</li>
                         <li><span class="ponto ponto-remarcada"></span>Remarcada / alterada</li>
+                        <li><span class="ponto ponto-recusada"></span>Recusada ou cancelada</li>
                     </ul>
                     <p>Quando uma pessoa já aprovada remarca a visita, você não recebe uma nova notificação: só a bolinha ao lado do nome muda de cor.</p>
                 </aside>
             </div>
+
+            <section class="visitas-lista" aria-labelledby="visitas-lista-titulo">
+                <h3 id="visitas-lista-titulo">Próximas visitas</h3>
+                <p id="visitas-vazio" class="visitas-vazio" hidden>Nenhuma visita marcada a partir de hoje.</p>
+                <ul id="visitas-itens"></ul>
+                <p id="visitas-retorno" class="config-retorno" role="status" hidden></p>
+            </section>
         </main>
     </div>
 

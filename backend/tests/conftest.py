@@ -35,3 +35,44 @@ def db():
     finally:
         sessao.close()
         engine.dispose()
+
+
+@pytest.fixture()
+def client(db):
+    """TestClient da API inteira usando a sessão SQLite do fixture `db`."""
+    from fastapi.testclient import TestClient
+
+    from app.core.database import get_db
+    from app.main import app
+
+    app.dependency_overrides[get_db] = lambda: db
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.clear()
+
+
+def entrar(client, email, senha="senha12345"):
+    """Faz login pelo contrato do front e devolve o header Authorization."""
+    r = client.post("/api/v1/auth/login", json={"email": email, "senha": senha})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
+def cadastrar(client, email="ana@x.com", papel="Morador", **extra):
+    corpo = {
+        "nome": "Ana Souza",
+        "email": email,
+        "senha": "senha12345",
+        "papel": papel,
+        "telefone": "(19) 98888-1001",
+        "tags": ["Pet Friendly", "Silêncio Noturno"],
+        "orcamento_maximo": 1500,
+        "limiar_compatibilidade": 50,
+        **extra,
+    }
+    if papel == "Locador":
+        corpo.setdefault("cpf_cnpj", f"cpf-{email}")
+    r = client.post("/api/v1/auth/register", json=corpo)
+    assert r.status_code == 201, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}

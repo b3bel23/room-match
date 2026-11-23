@@ -15,7 +15,7 @@ from app.models.usuario import Usuario
 from app.models.usuario_tag import UsuarioTag
 from app.schemas.perfil import PerfilUpdate
 from app.services.matching_service import tags_do_usuario
-from app.services.mural_service import CHAVE_LIMIAR, limiar_do_locatario
+from app.services.mural_service import limiar_do_locatario
 
 MORADOR, LOCADOR = "Morador", "Locador"
 MSG_VINCULOS = "A conta tem dados vinculados (anúncios, favoritos ou conversas)."
@@ -39,21 +39,22 @@ def montar_perfil(db: Session, usuario: Usuario) -> dict:
     return {
         "id": usuario.id_usuario,
         "email": usuario.email,
+        "email_verificado": bool(usuario.status_verificacao),
         "nome": usuario.nome,
         "papel": papel,
         "papel_schema": "locador" if papel == LOCADOR else "locatario",
         "iniciais": iniciais(usuario.nome),
         "telefone": usuario.telefone or "",
-        # sem colunas no banco ainda: sempre vazios
-        "genero": "",
-        "ocupacao": "",
-        "emprego": "",
-        "faculdade": "",
+        "genero": usuario.genero or "",
+        "ocupacao": usuario.ocupacao or "",
+        "emprego": usuario.emprego or "",
+        "faculdade": usuario.faculdade or "",
         "foto_url": usuario.foto_perfil or "",
         "bio": usuario.bio or "",
         "cidade_atual": usuario.cidade_atual or "",
         "data_nascimento": usuario.data_nascimento,
         "tags": tags_do_usuario(db, usuario, locatario),
+        "destino": (locatario.preferencias_moradia or {}).get("destino") if locatario else None,
         "orcamento_maximo": orcamento,
         "limiar_compatibilidade": limiar,
         "orcamento": orcamento,
@@ -130,11 +131,19 @@ def atualizar_perfil(db: Session, usuario: Usuario, dados: PerfilUpdate) -> dict
         existente = db.query(Usuario).filter(Usuario.email == email).first()
         if existente is not None and existente.id_usuario != usuario.id_usuario:
             raise HTTPException(status.HTTP_409_CONFLICT, "Este e-mail já está em uso.")
-        usuario.email = email
+        if email != usuario.email:
+            usuario.email = email
+            usuario.status_verificacao = False
+            from app.services import verificacao_service
+
+            verificacao_service.enviar_link(usuario)
 
     if campos.get("nome") is not None:
         usuario.nome = campos["nome"]
-    for campo in ("telefone", "bio", "cidade_atual", "data_nascimento"):
+    for campo in (
+        "telefone", "bio", "cidade_atual", "data_nascimento",
+        "genero", "ocupacao", "emprego", "faculdade",
+    ):
         if campo in campos:
             setattr(usuario, campo, campos[campo])
     if "foto_url" in campos:
@@ -154,9 +163,11 @@ def atualizar_perfil(db: Session, usuario: Usuario, dados: PerfilUpdate) -> dict
         if orcamento is not None:
             locatario.orcamento_maximo = orcamento
         if limiar is not None:
+            locatario.limiar_compatibilidade = round(limiar)
+        if campos.get("destino") is not None:
             locatario.preferencias_moradia = {
                 **(locatario.preferencias_moradia or {}),
-                CHAVE_LIMIAR: limiar,
+                "destino": campos["destino"],
             }
 
     db.commit()

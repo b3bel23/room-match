@@ -17,3 +17,5 @@ class Imovel(Base):
     area_m2 = Column(Numeric(6, 2))
     descricao = Column(Text)
     status_disponibilidade = Column(String(20), default="disponivel")
+    # Mista, Masculina ou Feminina (quem pode morar na vaga).
+    classificacao = Column(String(20), default="Mista")

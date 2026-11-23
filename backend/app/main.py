@@ -14,6 +14,9 @@ from app.services.imovel_service import UPLOAD_DIR
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Tabelas são gerenciadas pelo Alembic: rode "alembic upgrade head" antes de subir a API.
+    from app.services import mobilidade_service
+
+    mobilidade_service.carregar_em_segundo_plano()  # GTFS_PATHS: horários de ônibus
     yield
     engine.dispose()
 

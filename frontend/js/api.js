@@ -1,9 +1,11 @@
 /**
  * Cliente HTTP central (KAN-49).
- * Modo padrão: mock (RoomMatchMock) — publicável sem backend.
- * API real:
- *   localStorage.setItem('roommatch-api-mode', 'live')
- *   localStorage.setItem('roommatch-api-base', 'https://sua-api.exemplo.com')
+ *
+ * Modo:
+ *  - Site publicado (fora de localhost) com API_PRODUCAO preenchida: fala com a API real.
+ *  - Sem API_PRODUCAO, ou em localhost: modo demonstração (mock, dados no navegador).
+ *  - `?api=mock` ou `?api=live` na URL troca e guarda a escolha neste navegador.
+ *  - Manual: localStorage 'roommatch-api-mode' ('mock'|'live') e 'roommatch-api-base'.
  *
  * Contrato: docs/frontend/papeis-e-rotas-api-v1.md
  * Deploy: frontend/README.md
@@ -14,6 +16,20 @@
     const CHAVE_MODE = 'roommatch-api-mode';
     const CHAVE_BASE = 'roommatch-api-base';
     const PREFIXO = '/api/v1';
+
+    /**
+     * Endereço da API publicada (ex.: 'https://roommatch-api.onrender.com'), sem barra no fim.
+     * Preencha depois do deploy (ver README, "Deploy").
+     */
+    const API_PRODUCAO = '';
+    const EM_DESENVOLVIMENTO = ['localhost', '127.0.0.1', ''].includes(global.location.hostname);
+
+    try {
+        const pedido = new URLSearchParams(global.location.search).get('api');
+        if (pedido === 'mock' || pedido === 'live') localStorage.setItem(CHAVE_MODE, pedido);
+    } catch (erro) {
+        /* sem localStorage: segue o padrão */
+    }
 
     /** Contrato estável para o backend espelhar (não mudar sem atualizar docs). */
     const CONTRATO = Object.freeze({
@@ -73,19 +89,27 @@
         })
     });
 
+    function modoPadrao() {
+        return API_PRODUCAO && !EM_DESENVOLVIMENTO ? 'live' : 'mock';
+    }
+
     function modo() {
         try {
-            return localStorage.getItem(CHAVE_MODE) || 'mock';
+            return localStorage.getItem(CHAVE_MODE) || modoPadrao();
         } catch (erro) {
-            return 'mock';
+            return modoPadrao();
         }
+    }
+
+    function basePadrao() {
+        return (!EM_DESENVOLVIMENTO && API_PRODUCAO) || 'http://127.0.0.1:8000';
     }
 
     function baseUrl() {
         try {
-            return localStorage.getItem(CHAVE_BASE) || 'http://127.0.0.1:8000';
+            return localStorage.getItem(CHAVE_BASE) || basePadrao();
         } catch (erro) {
-            return 'http://127.0.0.1:8000';
+            return basePadrao();
         }
     }
 
@@ -176,18 +200,19 @@
                 : (body instanceof FormData ? body : JSON.stringify(body))
         });
 
-        if (resposta.status === 401) {
-            limparSessao();
-            if (!opcoes.silencioso) window.location.href = 'login.html';
-            throw Object.assign(new Error('Não autenticado.'), { status: 401 });
-        }
-
         const texto = await resposta.text();
         let dados = null;
         try {
             dados = texto ? JSON.parse(texto) : null;
         } catch (erro) {
             dados = { detail: texto };
+        }
+
+        if (resposta.status === 401) {
+            limparSessao();
+            if (!opcoes.silencioso) window.location.href = 'login.html';
+            const detail = detalheErro(dados, 401);
+            throw Object.assign(new Error(detail || 'Não autenticado.'), { status: 401, detail });
         }
 
         if (!resposta.ok) {
@@ -201,8 +226,17 @@
         return dados;
     }
 
+    /** Escapa texto vindo do servidor antes de ir para innerHTML (anúncios, mensagens). */
+    function esc(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+    global.escHtml = esc;
+
     const api = {
         CONTRATO,
+        esc,
         modo,
         baseUrl,
         request,
@@ -241,10 +275,17 @@
         criarImovel: (payload) => request('/imoveis', { method: 'POST', body: payload }),
         atualizarImovel: (id, payload) => request(`/imoveis/${id}`, { method: 'PATCH', body: payload }),
         excluirImovel: (id) => request(`/imoveis/${id}`, { method: 'DELETE' }),
+        enviarFotos: (id, arquivos) => {
+            const corpo = new FormData();
+            arquivos.forEach((arquivo, i) => corpo.append('fotos', arquivo, arquivo.name || `foto-${i + 1}.jpg`));
+            return request(`/imoveis/${id}/fotos`, { method: 'POST', body: corpo });
+        },
+        removerFoto: (id, idImagem) => request(`/imoveis/${id}/fotos/${idImagem}`, { method: 'DELETE' }),
         listarFavoritos: () => request('/favoritos'),
         alternarFavorito: (id) => request(`/favoritos/${id}`, { method: 'POST' }),
         listarVisitas: () => request('/visitas'),
         criarVisita: (payload) => request('/visitas', { method: 'POST', body: payload }),
+        atualizarVisita: (id, status) => request(`/visitas/${id}`, { method: 'PATCH', body: { status } }),
         stats: () => request('/stats', {
             auth: Boolean(lerToken()),
             silencioso: true
@@ -252,9 +293,33 @@
         meuPerfil: () => request('/me'),
         atualizarPerfil: (payload) => request('/me', { method: 'PATCH', body: payload }),
         alterarSenha: (payload) => request('/me/senha', { method: 'POST', body: payload }),
+        redefinirSenha: (token, senhaNova) => request('/auth/redefinir', {
+            method: 'POST',
+            body: { token, senha_nova: senhaNova },
+            auth: false,
+            silencioso: true
+        }),
         recuperarSenha: (email) => request('/auth/recuperar', {
             method: 'POST',
             body: { email },
+            auth: false,
+            silencioso: true
+        }),
+        listarNotificacoes: () => request('/notificacoes', { silencioso: true }),
+        marcarNotificacoesLidas: (ids) => request('/notificacoes/lidas', {
+            method: 'POST',
+            body: ids ? { ids } : {},
+            silencioso: true
+        }),
+        descobrir: () => request('/descobrir'),
+        recusarImovel: (id) => request(`/imoveis/${id}/recusar`, { method: 'POST' }),
+        desfazerRecusa: (id) => request(`/imoveis/${id}/recusar`, { method: 'DELETE' }),
+        historico: () => request('/historico'),
+        rotaOnibus: (params) => request(`/mobilidade/rota?${new URLSearchParams(params)}`),
+        reenviarVerificacao: () => request('/me/verificacao', { method: 'POST' }),
+        verificarEmail: (token) => request('/auth/verificar', {
+            method: 'POST',
+            body: { token },
             auth: false,
             silencioso: true
         }),

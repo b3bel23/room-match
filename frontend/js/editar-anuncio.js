@@ -11,53 +11,90 @@ const imovelId = new URLSearchParams(window.location.search).get('id');
 const grade = document.getElementById('fotos-grade');
 const entradaFotos = document.getElementById('fotos-entrada');
 const botaoAdicionar = grade.querySelector('.foto-adicionar');
-const FOTO_LADO_MAX = 1200;
+const { FOTOS_MAX } = RoomMatchFotosUpload;
+const modoLive = RoomMatchApi.modo() === 'live';
+
+/*
+ * Cada foto: { url, id?, arquivo? }.
+ * - id: foto já salva no servidor (fotos_ids do imóvel); remover chama DELETE.
+ * - arquivo: foto nova, enviada ao salvar (multipart no servidor; data URL no mock).
+ */
 let fotos = [];
+let removidas = [];
 let fotosAlteradas = false;
 
-function mostrarFoto(url) {
-    const slot = document.createElement('div');
-    slot.className = 'foto-slot';
-    const imagem = document.createElement('img');
-    imagem.src = url;
-    imagem.alt = 'Foto do imóvel';
-    slot.append(imagem);
-    grade.insertBefore(slot, botaoAdicionar);
+function avisar(texto) {
+    retorno.textContent = texto;
+    retorno.hidden = false;
 }
 
-/* Reduz a foto antes de guardar, para caber no armazenamento do navegador. */
-function lerFoto(arquivo) {
-    return new Promise((resolve, reject) => {
-        const url = URL.createObjectURL(arquivo);
-        const imagem = new Image();
-        imagem.onload = () => {
-            const escala = Math.min(1, FOTO_LADO_MAX / Math.max(imagem.width, imagem.height));
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.round(imagem.width * escala);
-            canvas.height = Math.round(imagem.height * escala);
-            canvas.getContext('2d').drawImage(imagem, 0, 0, canvas.width, canvas.height);
-            URL.revokeObjectURL(url);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-        };
-        imagem.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
-        imagem.src = url;
+function desenharFotos() {
+    grade.querySelectorAll('.foto-slot:not(.foto-adicionar)').forEach((slot) => slot.remove());
+    fotos.forEach((foto, indice) => {
+        const slot = document.createElement('div');
+        slot.className = 'foto-slot';
+        const imagem = document.createElement('img');
+        imagem.src = foto.url;
+        imagem.alt = indice === 0 ? 'Foto de capa do imóvel' : `Foto ${indice + 1} do imóvel`;
+        const remover = document.createElement('button');
+        remover.type = 'button';
+        remover.className = 'foto-remover';
+        remover.textContent = '×';
+        remover.setAttribute('aria-label', `Remover foto ${indice + 1}`);
+        remover.addEventListener('click', () => {
+            const [tirada] = fotos.splice(indice, 1);
+            if (tirada.id) removidas.push(tirada.id);
+            fotosAlteradas = true;
+            desenharFotos();
+        });
+        slot.append(imagem, remover);
+        grade.insertBefore(slot, botaoAdicionar);
     });
+    botaoAdicionar.hidden = fotos.length >= FOTOS_MAX;
 }
 
 entradaFotos.addEventListener('change', async () => {
+    const problemas = [];
     for (const arquivo of entradaFotos.files) {
+        if (fotos.length >= FOTOS_MAX) {
+            problemas.push(`Máximo de ${FOTOS_MAX} fotos por anúncio.`);
+            break;
+        }
+        const invalido = RoomMatchFotosUpload.validar(arquivo);
+        if (invalido) {
+            problemas.push(invalido);
+            continue;
+        }
         try {
-            const url = await lerFoto(arquivo);
-            fotos.push(url);
-            mostrarFoto(url);
+            fotos.push(await RoomMatchFotosUpload.reduzir(arquivo));
             fotosAlteradas = true;
         } catch (erro) {
-            retorno.textContent = erro.message;
-            retorno.hidden = false;
+            problemas.push(erro.message);
         }
     }
     entradaFotos.value = '';
+    desenharFotos();
+    if (problemas.length) avisar(problemas.join(' '));
 });
+
+async function salvarFotosNoServidor() {
+    for (const idImagem of removidas) {
+        await RoomMatchApi.removerFoto(imovelId, idImagem);
+    }
+    removidas = [];
+    const novas = fotos.filter((f) => f.arquivo).map((f) => f.arquivo);
+    if (novas.length) {
+        const atualizado = await RoomMatchApi.enviarFotos(imovelId, novas);
+        aplicarFotosDoImovel(atualizado);
+    }
+}
+
+function aplicarFotosDoImovel(imovel) {
+    const urls = ImovelFotos.lista(imovel);
+    const ids = imovel.fotos_ids || [];
+    fotos = urls.map((url, i) => ({ url, id: ids[i] }));
+    desenharFotos();
+}
 
 function atualizarTotal() {
     const soma = valores.reduce((acumulado, campo) => acumulado + (Number(campo.value) || 0), 0);
@@ -78,8 +115,7 @@ async function carregar() {
         document.getElementById('condominio').value = imovel.condominio;
         document.getElementById('iptu').value = imovel.iptu;
         document.getElementById('contas').value = imovel.contas;
-        fotos = [...ImovelFotos.lista(imovel)];
-        fotos.forEach(mostrarFoto);
+        aplicarFotosDoImovel(imovel);
         atualizarTotal();
     } catch (erro) {
         retorno.textContent = erro.message;
@@ -98,11 +134,13 @@ form.addEventListener('submit', async (evento) => {
             iptu: document.getElementById('iptu').value,
             contas: document.getElementById('contas').value
         };
-        if (fotosAlteradas) {
-            dados.fotos = fotos;
-            dados.capa = fotos[0];
+        if (fotosAlteradas && !modoLive) {
+            // Mock: as fotos ficam no próprio anúncio (data URL), a primeira é a capa.
+            dados.fotos = fotos.map((f) => f.url);
+            dados.capa = dados.fotos[0];
         }
         await RoomMatchApi.atualizarImovel(imovelId, dados);
+        if (fotosAlteradas && modoLive) await salvarFotosNoServidor();
         fotosAlteradas = false;
         retorno.textContent = 'Alterações salvas.';
         retorno.hidden = false;
