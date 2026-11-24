@@ -15,6 +15,11 @@
     width: 100%;
 }
 
+/* Extras sem caixa própria: os chips ocupam a mesma grade das opções rápidas. */
+.escolha-grade-extra {
+    display: contents;
+}
+
 .escolha-chip {
     display: flex;
     align-items: center;

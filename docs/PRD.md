@@ -160,7 +160,8 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
   vínculo…). Estágio e aposentadoria só em emprego; `ocupacao=estagiario` legado
   normaliza para `estudante`. Chips + “Mais opções”; `<select>` oculto envia os
   mesmos valores da API. O botão “Mais opções”/“Menos opções” fica sempre **abaixo
-  de todas as opções**, com a lista fechada ou expandida.
+  de todas as opções**, com a lista fechada ou expandida. Ao expandir, as opções
+  extras entram na **mesma grade** das rápidas, logo após a última, sem linha vazia.
 - Faculdade (cadastro/perfil): **caixa de busca** (nome/sigla/campus) + atalhos
   Nenhuma / Outra em SP; lista filtrável; mesmos valores estáveis do catálogo SP.
 - **Comodidades** (Wi-Fi, Ar-condicionado, Mobiliado, etc.) **não entram** no match.
