@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124by">
     <link rel="stylesheet" href="../css/favoritos.css?v=20261124by">
-    <link rel="stylesheet" href="../css/config.css?v=20261124cc">
+    <link rel="stylesheet" href="../css/config.css?v=20261124hk">
     <link rel="stylesheet" href="../css/escolha-chips.css?v=20261124ee">
 </head>
 <body class="favoritos-page">
@@ -33,6 +33,8 @@
                 <p class="conteudo-sub">Tudo o que você informou no cadastro — editável a qualquer momento.</p>
 
                 <form id="perfil-form" class="config-form perfil-form" novalidate>
+                    <div class="perfil-colunas">
+                    <div class="perfil-col">
                     <div class="perfil-foto-campo">
                         <span class="perfil-foto-rotulo">Foto de perfil</span>
                         <div class="perfil-foto-linha">
@@ -68,6 +70,16 @@
                         </select>
                     </label>
 
+                    <label for="perfil-email">E-mail *
+                        <input id="perfil-email" name="email" type="email" data-email-rm="1" autocomplete="email" required>
+                        <span id="perfil-email-status" class="campo-ajuda email-status" hidden>
+                            <span id="perfil-email-texto"></span>
+                            <button id="perfil-email-reenviar" type="button" class="link-botao" hidden>Reenviar link de confirmação</button>
+                        </span>
+                    </label>
+                    </div>
+
+                    <div class="perfil-col">
                     <div class="escolha-campo">
                         <span class="perfil-escolha-rotulo" id="perfil-ocupacao-rotulo">Ocupação <span class="perfil-escolha-hint">(papel / área)</span></span>
                         <div id="perfil-ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="perfil-ocupacao-rotulo"></div>
@@ -88,14 +100,8 @@
                         <select id="perfil-faculdade" name="faculdade" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
                         <span class="campo-ajuda">Digite ou selecione. No topo da lista: Limpar seleção, Nenhuma e Outra em SP.</span>
                     </div>
-
-                    <label for="perfil-email">E-mail *
-                        <input id="perfil-email" name="email" type="email" data-email-rm="1" autocomplete="email" required>
-                        <span id="perfil-email-status" class="campo-ajuda email-status" hidden>
-                            <span id="perfil-email-texto"></span>
-                            <button id="perfil-email-reenviar" type="button" class="link-botao" hidden>Reenviar link de confirmação</button>
-                        </span>
-                    </label>
+                    </div>
+                    </div>
 
                     <div class="escolha-campo perfil-papel-campo">
                         <span class="perfil-escolha-rotulo" id="perfil-papel-rotulo">Tipo de perfil *</span>

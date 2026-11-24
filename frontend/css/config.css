@@ -948,3 +948,101 @@
     justify-content: flex-end;
     margin-top: 8px;
 }
+
+/* Preferências no computador: ajustes à esquerda, destinos à direita, hábitos embaixo
+   em duas colunas (O que combina comigo | Meus limites). A grade de cima só existe
+   quando os destinos aparecem (Morador); o Locador vê só os hábitos, lado a lado. */
+@media (min-width: 1100px) {
+    #pref-form {
+        max-width: 1180px;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-rows: auto auto 1fr;
+        column-gap: 40px;
+        row-gap: 22px;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-orcamento-bloco {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-limiar-bloco {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-modo-bloco {
+        grid-column: 1;
+        grid-row: 3;
+        align-self: start;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-destino-bloco {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        align-self: start;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > :not(#pref-orcamento-bloco):not(#pref-limiar-bloco):not(#pref-modo-bloco):not(#pref-destino-bloco) {
+        grid-column: 1 / -1;
+    }
+
+    #pref-form .pref-tags-blocos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 40px;
+        row-gap: 1.25rem;
+        align-items: start;
+    }
+
+    #pref-form .pref-tags-blocos > :not(:has(.config-tags)) {
+        grid-column: 1 / -1;
+    }
+
+    /* Os dois títulos de hábitos ficam na mesma linha. */
+    #pref-form .pref-tags-blocos > div:has(.config-tags) {
+        margin-top: 0 !important;
+    }
+
+    #pref-form > button[type="submit"] {
+        justify-self: start;
+    }
+}
+
+/* Perfil: dados pessoais à esquerda, ocupação/emprego/faculdade à direita (computador).
+   No celular as duas colunas ficam uma embaixo da outra, como antes. */
+.perfil-colunas,
+.perfil-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.perfil-col > label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+@media (min-width: 1100px) {
+    .perfil-form {
+        max-width: 1180px;
+    }
+
+    .perfil-colunas {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 40px;
+        align-items: start;
+    }
+
+    .perfil-form > button[type="submit"] {
+        align-self: flex-start;
+        min-width: 240px;
+    }
+}
