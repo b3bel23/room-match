@@ -35,6 +35,33 @@ Noturno etc.) aparecem com o mesmo fundo vermelho, em vez de só a primeira.
 
 **Telas:** `frontend/pages/detalhe.html` (`detalhe.js`, classe `tag-destaque`).
 
+### Detalhe do imóvel exige `?id=` (sem fallback Kitnet Cambuí)
+
+**Status:** concluída.
+
+**O que faz:** a tela de detalhe deixa de abrir sempre o anúncio demo
+“Kitnet mobiliada · Cambuí” quando o `id` falta na URL. Sem `?id=`, mostra erro;
+com `id`, carrega o imóvel correspondente (mock ou live).
+
+**Regras de negócio e decisões**
+- Removido o fallback `kitnet-cambui` em `detalhe.js` e no chat de `chrome.js`.
+- O botão “Ver detalhes” dos favoritos passa a incluir `?id=` do imóvel.
+- O HTML estático do detalhe usa placeholders neutros (“Carregando…”) em vez do
+  copy da kitnet demo.
+
+**Telas / arquivos:** `detalhe.html`, `detalhe.js`, `favoritos.js`,
+`favoritos.html`, `chrome.js`.
+
+### CPF no cadastro do Locador
+
+**Status:** concluída.
+
+**O que faz:** no fluxo Locador (`escolha-papel` → `cadastro.html?papel=locador`),
+o formulário exibe o campo CPF obrigatório com máscara, valida 11/14 dígitos e
+envia `cpf_cnpj` no `POST /auth/register`. O mock aplica a mesma exigência.
+
+**Telas / arquivos:** `cadastro.html`, `cadastro.js`, `mock-api.js`.
+
 ### Afinidade e mural de imóveis (KAN-35)
 
 **Status:** concluída. Validada em Postgres 16 e com o site em modo `live` (ver
@@ -403,7 +430,8 @@ sem papel, tags, orçamento, limiar ou foto, e não devolvia token.
   usuário e o perfil do papel: Morador → `locatarios` (orçamento, limiar padrão 70, tags);
   Locador → `locadores`. Resposta 201 com `{ access_token, user }`, como o mock.
 - Locador precisa de CPF/CNPJ no cadastro (422 sem ele; 409 se repetido). O cadastro do
-  site mostra o campo só quando o papel é Locador.
+  site mostra o campo **CPF *** só quando `?papel=locador` (máscara automática; aceita
+  CPF 11 dígitos ou CNPJ 14). O mock espelha a mesma regra e grava `cpf_cnpj` no usuário.
 - E-mail repetido: 409 (antes 400), igual ao mock.
 - Senha mínima de 8 caracteres no site e no servidor (antes o site aceitava 6 e o servidor
   recusava com 422). As contas do modo demonstração continuam com `demo123`; as do seed do

@@ -1,5 +1,5 @@
 const params = new URLSearchParams(window.location.search);
-const ID_IMOVEL = params.get('id') || 'kitnet-cambui';
+const ID_IMOVEL = (params.get('id') || '').trim();
 const botaoFavoritar = document.getElementById('favoritar');
 const linkConversar = document.querySelector('a.btn-conversar, a[href="#conversar"]');
 let imovelAtual = null;
@@ -219,6 +219,19 @@ function preencher(imovel) {
 }
 
 async function iniciar() {
+    if (!ID_IMOVEL) {
+        const h2 = document.querySelector('.info > h2');
+        if (h2) h2.textContent = 'Imóvel não informado';
+        const local = document.querySelector('.page-bar .local');
+        if (local) {
+            local.childNodes.forEach((n) => {
+                if (n.nodeType === Node.TEXT_NODE) n.textContent = '';
+            });
+            local.append(' Abra um anúncio pelo mural');
+        }
+        return;
+    }
+
     try {
         const imovel = await RoomMatchApi.obterImovel(ID_IMOVEL);
         preencher(imovel);

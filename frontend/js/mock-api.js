@@ -580,6 +580,16 @@
                 throw erro(409, 'Este e-mail já está em uso.');
             }
             const telefone = exigirTelefoneBr(body.telefone);
+            const cpfCnpj = String(body.cpf_cnpj || '').trim();
+            if (papel === 'Locador') {
+                const digitos = cpfCnpj.replace(/\D/g, '');
+                if (digitos.length !== 11 && digitos.length !== 14) {
+                    throw erro(422, 'Informe o CPF ou CNPJ para anunciar como Locador.');
+                }
+                if (db.users.some((u) => u.cpf_cnpj && u.cpf_cnpj.replace(/\D/g, '') === digitos)) {
+                    throw erro(409, 'CPF/CNPJ já cadastrado.');
+                }
+            }
             const novo = {
                 id: `u-${Date.now()}`,
                 email,
@@ -587,6 +597,7 @@
                 nome,
                 papel,
                 telefone,
+                cpf_cnpj: papel === 'Locador' ? cpfCnpj : '',
                 genero: String(body.genero || '').trim(),
                 ocupacao: String(body.ocupacao || '').trim(),
                 emprego: String(body.emprego || '').trim(),

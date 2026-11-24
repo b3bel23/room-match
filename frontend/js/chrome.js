@@ -206,7 +206,11 @@
                 window.alert(conversar.title || 'Chat bloqueado: ajuste limiar/orçamento nas preferências.');
                 return;
             }
-            const id = new URLSearchParams(window.location.search).get('id') || 'kitnet-cambui';
+            const id = (new URLSearchParams(window.location.search).get('id') || '').trim();
+            if (!id) {
+                window.alert('Abra um anúncio pelo mural antes de conversar.');
+                return;
+            }
             try {
                 const conv = await RoomMatchApi.abrirConversa({ imovel_id: id });
                 window.location.href = `mensagens.html?id=${encodeURIComponent(conv.id)}`;

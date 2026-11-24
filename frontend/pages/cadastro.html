@@ -108,15 +108,16 @@
                         <input id="email" name="email" type="email" placeholder="exemplo@dominio.com" autocomplete="email" required>
                     </div>
 
-                    <div class="campo col-1" id="campo-cpf" hidden>
+                    <div class="campo col-1" id="campo-cpf" hidden data-somente-locador="1">
                         <label class="label-com-tip" for="cpf-cnpj">
-                            CPF ou CNPJ *
+                            CPF *
                             <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre CPF ou CNPJ">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório para quem anuncia. Identifica o responsável pelo anúncio e não aparece para outros usuários.</span>
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre CPF">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório para Locador. Use CPF (11 dígitos) ou CNPJ (14). Não aparece para outros usuários.</span>
                             </span>
                         </label>
-                        <input id="cpf-cnpj" name="cpf_cnpj" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" maxlength="18" pattern="[0-9./\- ]{11,18}">
+                        <input id="cpf-cnpj" name="cpf_cnpj" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" maxlength="18" data-cpf-cnpj="1" aria-describedby="cpf-ajuda">
+                        <p id="cpf-ajuda" class="face-check-status info">Obrigatório para anunciar. Só números; a máscara é automática.</p>
                     </div>
 
                     <div class="campo col-2">

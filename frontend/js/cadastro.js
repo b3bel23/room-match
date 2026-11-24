@@ -7,12 +7,51 @@ let atual = 0;
 const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
 document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
 
-// CPF/CNPJ só para quem anuncia (o backend exige para criar o perfil de Locador).
+/** Máscara de CPF (11) ou CNPJ (14), só dígitos no value formatado. */
+function formatarCpfCnpj(valor) {
+    const digitos = String(valor || '').replace(/\D/g, '').slice(0, 14);
+    if (digitos.length <= 11) {
+        return digitos
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+    return digitos
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+}
+
+function cpfCnpjValido(valor) {
+    const digitos = String(valor || '').replace(/\D/g, '');
+    return digitos.length === 11 || digitos.length === 14;
+}
+
+// CPF obrigatório no cadastro de Locador (API e mock exigem cpf_cnpj).
 const campoCpf = document.getElementById('campo-cpf');
 const inputCpf = document.getElementById('cpf-cnpj');
-if (campoCpf && inputCpf && papel === 'Locador') {
-    campoCpf.hidden = false;
-    inputCpf.required = true;
+if (campoCpf && inputCpf) {
+    const locador = papel === 'Locador';
+    campoCpf.hidden = !locador;
+    inputCpf.required = locador;
+    if (locador) {
+        inputCpf.addEventListener('input', () => {
+            const cursor = inputCpf.selectionStart;
+            const antes = inputCpf.value.length;
+            inputCpf.value = formatarCpfCnpj(inputCpf.value);
+            const depois = inputCpf.value.length;
+            const novo = Math.max(0, (cursor || 0) + (depois - antes));
+            try {
+                inputCpf.setSelectionRange(novo, novo);
+            } catch (erro) {
+                /* input type text ok; ignore se o browser negar */
+            }
+            inputCpf.setCustomValidity(
+                cpfCnpjValido(inputCpf.value) ? '' : 'Informe um CPF (11 dígitos) ou CNPJ (14).'
+            );
+        });
+    }
 }
 
 function mostrarEtapa(indice) {
@@ -85,6 +124,15 @@ async function finalizarCadastro() {
         limiar_compatibilidade: limiar,
         cpf_cnpj: papel === 'Locador' ? (inputCpf?.value || '').trim() : undefined
     };
+
+    if (papel === 'Locador' && !cpfCnpjValido(payload.cpf_cnpj)) {
+        mostrarEtapa(0);
+        if (inputCpf) {
+            inputCpf.setCustomValidity('Informe um CPF (11 dígitos) ou CNPJ (14).');
+            inputCpf.reportValidity();
+        }
+        return;
+    }
 
     try {
         const dados = await RoomMatchApi.register(payload);

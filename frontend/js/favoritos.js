@@ -31,9 +31,14 @@ function montarCartao(imovel) {
         favMatch.textContent = `${imovel.match}%`;
         favMatch.title = `${imovel.match}% de afinidade`;
     }
+    const linkDetalhe = cartao.querySelector('a.btn-secondary');
+    if (linkDetalhe) {
+        linkDetalhe.href = `detalhe.html?id=${encodeURIComponent(imovel.id)}`;
+    }
     cartao.style.cursor = 'pointer';
     cartao.addEventListener('click', (evento) => {
         if (evento.target.closest('.fav-coracao')) return;
+        if (evento.target.closest('a.btn-secondary')) return;
         window.location.href = `detalhe.html?id=${encodeURIComponent(imovel.id)}`;
     });
 
