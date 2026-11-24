@@ -9,6 +9,19 @@ if (typeof estaLogado === 'function' && estaLogado()) {
     window.location.replace(typeof paginaInicial === 'function' ? paginaInicial() : 'home.html');
 }
 
+/** Contagem live do hero (mesma fonte do mural: GET /stats). */
+(async function atualizarImoveisAtivos() {
+    const alvo = document.getElementById('login-stat-imoveis');
+    if (!alvo || typeof RoomMatchApi === 'undefined' || !RoomMatchApi.stats) return;
+    try {
+        const s = await RoomMatchApi.stats();
+        const n = Number(s?.imoveis_ativos);
+        if (Number.isFinite(n) && n >= 0) alvo.textContent = String(Math.trunc(n));
+    } catch (_) {
+        /* mantém o placeholder se a API estiver fria */
+    }
+}());
+
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
