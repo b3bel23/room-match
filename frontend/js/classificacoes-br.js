@@ -268,7 +268,8 @@
                 }
             });
 
-            host.append(btnMais, gradeExtra);
+            // O botão fica sempre depois de todas as opções, aberto ou fechado.
+            host.append(gradeExtra, btnMais);
         }
 
         function sincronizar() {
