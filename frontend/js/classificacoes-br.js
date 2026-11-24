@@ -252,8 +252,9 @@
             btnMais.setAttribute('aria-expanded', 'false');
             btnMais.textContent = 'Mais opções';
 
+            // As opções extras entram na mesma grade das rápidas, logo após a última.
             gradeExtra = document.createElement('div');
-            gradeExtra.className = 'escolha-grade escolha-grade-extra';
+            gradeExtra.className = 'escolha-grade-extra';
             gradeExtra.hidden = true;
             extras.forEach((item) => gradeExtra.append(criarChip(item, name)));
 
@@ -269,7 +270,8 @@
             });
 
             // O botão fica sempre depois de todas as opções, aberto ou fechado.
-            host.append(gradeExtra, btnMais);
+            gradeRapida.append(gradeExtra);
+            host.append(btnMais);
         }
 
         function sincronizar() {
