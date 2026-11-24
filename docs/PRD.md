@@ -14,11 +14,12 @@ este arquivo registra o que foi de fato implementado.
 papel e o "Sair" ficam agrupados à esquerda da foto de perfil, e a foto fica no canto direito.
 
 **Regras de negócio e decisões**
-- Locatário: Explorar, Favoritos, Mensagens, sino, Sair, foto.
-  Locador: Meus anúncios, Publicar, Mensagens, sino, Sair, foto.
+- Locatário: sino, Explorar, Favoritos, Mensagens, Sair, foto.
+  Locador: sino, Meus anúncios, Publicar, Mensagens, Sair, foto.
   (Descobrir e Visitas saíram do produto; ver "Removidos do produto".)
-- O sino de notificações (RF17/RF35) fica antes do "Sair"; mostra a contagem de não lidas e
-  abre a lista. Ver "Notificações no site".
+- O sino de notificações (RF17/RF35) é o primeiro item do menu (antes de Explorar / Meus
+  anúncios); mostra a contagem de não lidas e abre a lista, que se abre para a direita
+  para caber na tela também no celular. Ver "Notificações no site".
 - "Sobre nós", "FAQ" e "Contato" saem do menu de quem está logado; continuam no menu do
   visitante e no rodapé de todas as páginas.
 - "Sair" continua no menu, pois é o único ponto de saída da conta.

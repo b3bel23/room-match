@@ -113,7 +113,8 @@ function montarNavPorPapel(nav) {
     sairLink.href = '#';
     sairLink.textContent = 'Sair';
     nav.insertBefore(sairLink, nav.querySelector('.nav-usuario'));
-    nav.insertBefore(criarSino(), sairLink);
+    // Sino é o primeiro item do menu (antes de Explorar / Meus anúncios).
+    nav.prepend(criarSino());
 }
 
 /* ---------- Notificações (RF17/RF35): sino no menu, com contagem de não lidas ---------- */
