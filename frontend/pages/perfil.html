@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124rg">
     <link rel="stylesheet" href="../css/favoritos.css?v=20261124rf">
-    <link rel="stylesheet" href="../css/config.css?v=20261124hk">
+    <link rel="stylesheet" href="../css/config.css?v=20261124cc2">
     <link rel="stylesheet" href="../css/escolha-chips.css?v=20261124ee">
 </head>
 <body class="favoritos-page">
@@ -34,7 +34,8 @@
 
                 <form id="perfil-form" class="config-form perfil-form" novalidate>
                     <div class="perfil-colunas">
-                    <div class="perfil-col">
+                    <div class="perfil-col perfil-col--dados">
+                    <h3 class="perfil-card-titulo">Dados pessoais</h3>
                     <div class="perfil-foto-campo">
                         <span class="perfil-foto-rotulo">Foto de perfil</span>
                         <div class="perfil-foto-linha">
@@ -79,7 +80,8 @@
                     </label>
                     </div>
 
-                    <div class="perfil-col">
+                    <div class="perfil-col perfil-col--rotina">
+                    <h3 class="perfil-card-titulo">Rotina</h3>
                     <div class="escolha-campo">
                         <span class="perfil-escolha-rotulo" id="perfil-ocupacao-rotulo">Ocupação <span class="perfil-escolha-hint">(papel / área)</span></span>
                         <div id="perfil-ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="perfil-ocupacao-rotulo"></div>
@@ -103,6 +105,7 @@
                     </div>
                     </div>
 
+                    <div class="perfil-papel-card">
                     <div class="escolha-campo perfil-papel-campo">
                         <span class="perfil-escolha-rotulo" id="perfil-papel-rotulo">Tipo de perfil *</span>
                         <div class="perfil-papel-opcoes" role="radiogroup" aria-labelledby="perfil-papel-rotulo">
@@ -126,6 +129,7 @@
                         <input id="perfil-cpf" name="cpf_cnpj" type="text" inputmode="numeric" maxlength="18" pattern="[0-9./\- ]{11,18}" placeholder="000.000.000-00" autocomplete="off">
                         <span class="campo-ajuda">Obrigatório na primeira vez como Locador. Não aparece para outros usuários.</span>
                     </label>
+                    </div>
 
                     <p class="perfil-atalhos">
                         Hábitos, orçamento e limiar de afinidade:

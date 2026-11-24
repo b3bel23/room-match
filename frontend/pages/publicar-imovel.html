@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124rg">
     <link rel="stylesheet" href="../css/cadastro.css?v=20261124by">
-    <link rel="stylesheet" href="../css/publicar-imovel.css?v=20261124hl">
+    <link rel="stylesheet" href="../css/publicar-imovel.css?v=20261124cb">
 </head>
 <body class="publicar-page">
 
@@ -36,6 +36,8 @@
     <main class="publicar-main">
         <form id="publicar-form" class="publicar-form">
             <div class="campos">
+                <section class="pub-card pub-card--sobre" aria-labelledby="pub-sobre-titulo">
+                <h2 id="pub-sobre-titulo" class="pub-card-titulo">Sobre o imóvel</h2>
                 <div class="campo">
                     <label class="label-com-tip" for="titulo">Título do anúncio *</label>
                     <input id="titulo" type="text" placeholder="Quarto em república · Barão Geraldo" required>
@@ -61,6 +63,8 @@
                         <option>Casa</option>
                     </select>
                 </div>
+                </section>
+                <section class="pub-card pub-card--endereco">
                 <fieldset class="endereco-bloco">
                     <legend class="label-com-tip">
                         Endereço do imóvel *
@@ -111,6 +115,10 @@
                         </div>
                     </div>
                 </fieldset>
+                </section>
+                <section class="pub-card pub-card--valores" aria-labelledby="pub-valores-titulo">
+                <h2 id="pub-valores-titulo" class="pub-card-titulo">Valores mensais</h2>
+                <div class="pub-valores-grade">
                 <div class="campo">
                     <label class="label-com-tip" for="aluguel">Aluguel (R$) *</label>
                     <input id="aluguel" type="number" min="0" step="1" inputmode="numeric" placeholder="600" required>
@@ -133,6 +141,8 @@
                     </label>
                     <input id="contas" type="number" min="0" step="1" inputmode="numeric" placeholder="85" required>
                 </div>
+                </div>
+                </section>
             </div>
 
             <section class="fotos">
