@@ -3,7 +3,8 @@ if (!requerMorador()) {
 }
 
 const vistaLista = document.getElementById('vista-lista');
-const vistaVazia = document.getElementById('vista-vazia');
+const vazio = document.getElementById('favoritos-vazio');
+const filtros = document.querySelector('.conteudo .filtros');
 const contagem = document.getElementById('favoritos-contagem');
 const busca = document.getElementById('favoritos-busca');
 const ordem = document.getElementById('favoritos-ordem');
@@ -57,11 +58,20 @@ function montarCartao(imovel) {
     return cartao;
 }
 
+/* Sem favoritos: a mesma tela, com a lista "fantasma" e o aviso no lugar dos anúncios. */
+function mostrarVazio(semFavoritos) {
+    vazio.hidden = !semFavoritos;
+    filtros.classList.toggle('filtros-desativados', semFavoritos);
+    busca.disabled = semFavoritos;
+    ordem.disabled = semFavoritos;
+}
+
 function desenhar() {
-    vistaLista.hidden = cache.length === 0;
-    vistaVazia.hidden = cache.length > 0;
+    mostrarVazio(cache.length === 0);
     if (cache.length === 0) {
+        contagem.textContent = 'Nenhum imóvel salvo';
         lista.replaceChildren();
+        semResultado.hidden = true;
         return;
     }
 
@@ -81,7 +91,7 @@ function desenhar() {
 async function carregar() {
     contagem.textContent = 'Carregando…';
     vistaLista.hidden = false;
-    vistaVazia.hidden = true;
+    vazio.hidden = true;
     if (typeof RoomMatchLoading !== 'undefined') {
         RoomMatchLoading.preencherInline(lista, 'Carregando favoritos…');
     }

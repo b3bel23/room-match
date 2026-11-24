@@ -6,7 +6,7 @@
     <title>Favoritos · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124rg">
-    <link rel="stylesheet" href="../css/favoritos.css?v=20261124rf">
+    <link rel="stylesheet" href="../css/favoritos.css?v=20261124fv">
 </head>
 <body class="favoritos-page">
 
@@ -44,18 +44,23 @@
                 </div>
 
                 <div id="favoritos-lista" class="lista"></div>
+                <div id="favoritos-vazio" class="fav-vazio" hidden>
+                    <div class="fav-fantasma" aria-hidden="true"><span class="ff-img"></span><span class="ff-txt"><i></i><i></i><i></i></span><span class="ff-btn"></span></div>
+                    <div class="fav-fantasma" aria-hidden="true"><span class="ff-img"></span><span class="ff-txt"><i></i><i></i><i></i></span><span class="ff-btn"></span></div>
+                    <div class="fav-fantasma" aria-hidden="true"><span class="ff-img"></span><span class="ff-txt"><i></i><i></i><i></i></span><span class="ff-btn"></span></div>
+                    <div class="fav-vazio-aviso">
+                        <span class="fav-vazio-ico" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 2.9 4.5 6.4 4.5c2 0 3.6 1.1 4.6 2.7h2c1-1.6 2.6-2.7 4.6-2.7 3.5 0 5.5 3.7 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+                        </span>
+                        <h3>Nenhum anúncio favoritado</h3>
+                        <p>Os anúncios que você salvar aparecem nesta lista.</p>
+                        <a class="btn btn-primary" href="home.html">Explorar anúncios</a>
+                    </div>
+                </div>
                 <p id="favoritos-sem-resultado" class="sem-resultado" hidden>Nenhum favorito corresponde a este filtro.</p>
             </main>
         </div>
     </div>
-
-    <main id="vista-vazia" class="vista-vazia" hidden>
-        <div class="vazio-card">
-            <h1>Favoritos</h1>
-            <p>Você ainda não salvou anúncios. Os favoritos do mural aparecem aqui.</p>
-            <a class="btn btn-primary" href="home.html">Explorar anúncios</a>
-        </div>
-    </main>
 
     <template id="modelo-favorito">
         <article class="fav-row">
@@ -96,7 +101,7 @@
     <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/favoritos-armazenamento.js?v=20261123"></script>
     <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/favoritos.js?v=20261124"></script>
+    <script src="../js/favoritos.js?v=20261124fv"></script>
     <script>montarSidebarConfig('favoritos.html');</script>
 </body>
 </html>

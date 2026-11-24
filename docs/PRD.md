@@ -743,6 +743,11 @@ modo demonstração; com o site ligado ao servidor, essas telas davam 404.
 liga/desliga (como o mock); `DELETE /favoritos/{id_imovel}` só desliga → `{ favorito, ids }`.
 - Só Morador (403 para Locador). Usa a tabela `likes`. Anúncio pausado ou removido some da
   lista, mas o like fica guardado.
+- Sem favoritos (front): a própria tela de Favoritos continua aberta, sem trocar para uma tela
+  separada. Mostra uma lista "fantasma" (3 cartões apagados) com o aviso "Nenhum anúncio
+  favoritado" e o botão **Explorar anúncios** (vai para `home.html`). A busca e a ordenação
+  ficam desativadas e a contagem diz "Nenhum imóvel salvo". No celular, os cartões fantasma
+  ficam menores e sem o botão.
 
 **Chat (RF27/RF34)** — `GET /conversas`, `GET /conversas/{id}`, `POST /conversas`
 `{ imovel_id, texto? }`, `POST /conversas/{id}/mensagens` `{ texto }`,
