@@ -103,7 +103,10 @@ envia `cpf_cnpj` no `POST /auth/register`. O mock aplica a mesma exigência.
 
 **O que faz:** o campo de orçamento máximo mensal no cadastro mostra valores com
 separador de milhar e vírgula decimal (`1.200,00`, `10.000,00`), com dica
-explicando mil vs dez mil.
+explicando mil vs dez mil. A barra vai de R$ 0,00 a **R$ 30.000,00** (teto de
+aluguel realista); um valor digitado acima disso é corrigido para R$ 30.000,00.
+A tela de Preferências tem barra própria (R$ 500 a R$ 10.000, máximo = sem teto),
+que não mudou.
 
 **Telas / arquivos:** `cadastro.html`, `cadastro.js`, `cadastro.css`.
 
@@ -167,6 +170,8 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
 - Visual do cadastro: títulos dos campos em **negrito**; o campo Bio tem o mesmo
   retângulo do campo Faculdade / Universidade (altura, borda, cantos e letra) e pode
   ser esticado para baixo; o contador "0/500" segue o estilo dos textos de ajuda.
+- Tags de convivência no cadastro (O que combina comigo / Meus limites): **grade
+  alinhada**, com cartões da mesma largura (2 colunas no computador, 1 no celular).
 - Faculdade (cadastro/perfil): **caixa de busca** (nome/sigla/campus) + atalhos
   Nenhuma / Outra em SP; lista filtrável; mesmos valores estáveis do catálogo SP.
 - **Comodidades** (Wi-Fi, Ar-condicionado, Mobiliado, etc.) **não entram** no match.
