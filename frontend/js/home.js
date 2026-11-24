@@ -190,10 +190,6 @@ selectTag?.addEventListener('input', () => {
     carregar();
 });
 
-preencherSelectTags();
-atualizarSliderValor();
-carregar();
-
 function mostrarStatsLogado() {
     const logado = typeof estaLogado === 'function' && estaLogado();
     document.querySelectorAll('.stat-logado').forEach((el) => {
@@ -201,26 +197,37 @@ function mostrarStatsLogado() {
     });
 }
 
+function aplicarStats(s) {
+    const imoveis = document.querySelector('[data-stat="imoveis"] .stat-number');
+    if (imoveis) imoveis.textContent = String(s.imoveis_ativos);
+
+    if (typeof estaLogado === 'function' && estaLogado()) {
+        const match = document.querySelector('[data-stat="match"] .stat-number');
+        const desloc = document.querySelector('[data-stat="deslocamento"] .stat-number');
+        if (match) match.textContent = `${s.match_medio}%`;
+        if (desloc) desloc.textContent = `${s.deslocamento_medio} min`;
+    }
+}
+
 async function carregarStats() {
     // Visitante: só "imóveis ativos". Match e deslocamento só logado.
     mostrarStatsLogado();
     try {
-        const s = await RoomMatchApi.stats();
-        const imoveis = document.querySelector('[data-stat="imoveis"] .stat-number');
-        if (imoveis) imoveis.textContent = String(s.imoveis_ativos);
-
-        if (typeof estaLogado === 'function' && estaLogado()) {
-            const match = document.querySelector('[data-stat="match"] .stat-number');
-            const desloc = document.querySelector('[data-stat="deslocamento"] .stat-number');
-            if (match) match.textContent = `${s.match_medio}%`;
-            if (desloc) desloc.textContent = `${s.deslocamento_medio} min`;
-        }
+        aplicarStats(await RoomMatchApi.stats());
     } catch (erro) {
         /* mantém placeholders */
     }
 }
 
-carregarStats();
+async function iniciarHome() {
+    preencherSelectTags();
+    atualizarSliderValor();
+    mostrarStatsLogado();
+    // Mural e stats em paralelo (antes eram 2 RTTs em série no banco remoto).
+    await Promise.all([carregar(), carregarStats()]);
+}
+
+iniciarHome();
 
 const hero = document.querySelector('.hero');
 if (hero && typeof ImovelFotos !== 'undefined') {

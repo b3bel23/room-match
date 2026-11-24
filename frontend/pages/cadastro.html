@@ -247,9 +247,10 @@
                             <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Total mensal que você topa pagar (aluguel, condomínio, imposto predial e contas). O chat só libera se o anúncio couber nesse valor.</span>
                         </span>
                     </label>
-                    <span class="valor-digitado">R$ <input id="orcamento-valor" type="number" min="0" max="100000" step="0.01" inputmode="decimal" aria-label="Orçamento máximo mensal em reais"></span>
+                    <span class="valor-digitado">R$ <input id="orcamento-valor" type="text" inputmode="decimal" placeholder="1.200,00" autocomplete="off" aria-label="Orçamento máximo mensal em reais (ex.: 1.200,00 = mil e duzentos)" title="Use ponto para milhar e vírgula para centavos: 1.200,00 · 10.000,00"></span>
                     <input id="orcamento" name="orcamento" type="range" min="0" max="100000" step="100" value="0">
                     <div class="slider-limites"><span>R$ 0,00</span><span>R$ 100.000,00</span></div>
+                    <p class="slider-dica">Formato brasileiro: <strong>1.200,00</strong> = mil e duzentos · <strong>10.000,00</strong> = dez mil</p>
                 </div>
 
                 <div class="slider">

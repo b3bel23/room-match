@@ -93,8 +93,8 @@ async function finalizarCadastro() {
         || document.querySelector('input[type="email"]');
     const senhaCampo = document.getElementById('senha');
     const tags = [...form.querySelectorAll('input[name="tag"]:checked')].map((t) => t.value || t.nextElementSibling?.textContent?.trim()).filter(Boolean);
-    const orcamento = Number(document.getElementById('orcamento-valor')?.value
-        || document.getElementById('orcamento')?.value) || 1000;
+    const orcamentoLido = lerOrcamentoReais();
+    const orcamento = Number.isFinite(orcamentoLido) ? orcamentoLido : 1000;
     const limiar = Number(document.getElementById('limiar-valor')?.value
         || document.getElementById('limiar')?.value) || 70;
 
@@ -273,24 +273,72 @@ function preencherBarra(campo) {
     campo.style.setProperty('--preenchimento', `${porcentagem}%`);
 }
 
+/** pt-BR: 1.200,00 = mil e duzentos; 10.000,00 = dez mil. */
+function formatarReais(valor) {
+    const n = Number(valor);
+    if (!Number.isFinite(n)) return '0,00';
+    return n.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function parseReais(texto) {
+    const bruto = String(texto || '').trim();
+    if (!bruto) return NaN;
+    const limpo = bruto.replace(/[^\d.,-]/g, '');
+    if (limpo.includes(',')) {
+        return Number(limpo.replace(/\./g, '').replace(',', '.'));
+    }
+    // Só ponto: trata como milhar BR se houver 3 dígitos após o último ponto
+    // (ex.: 10.000 → 10000); senão, decimal EN (ex.: 1200.5).
+    const partes = limpo.split('.');
+    if (partes.length > 1 && partes[partes.length - 1].length === 3) {
+        return Number(limpo.replace(/\./g, ''));
+    }
+    return Number(limpo);
+}
+
 const orcamento = document.getElementById('orcamento');
 const orcamentoValor = document.getElementById('orcamento-valor');
+const ORCAMENTO_MIN = Number(orcamento?.min) || 0;
+const ORCAMENTO_MAX = Number(orcamento?.max) || 100000;
 
-orcamento.addEventListener('input', () => {
-    orcamentoValor.value = Number(orcamento.value).toFixed(2);
+function limitarOrcamento(n) {
+    if (!Number.isFinite(n)) return ORCAMENTO_MIN;
+    return Math.min(ORCAMENTO_MAX, Math.max(ORCAMENTO_MIN, n));
+}
+
+function sincronizarOrcamentoDoSlider() {
+    orcamentoValor.value = formatarReais(orcamento.value);
     preencherBarra(orcamento);
-});
-orcamentoValor.addEventListener('input', () => {
-    orcamento.value = orcamentoValor.value;
-    preencherBarra(orcamento);
-});
-orcamentoValor.addEventListener('change', () => {
-    if (orcamentoValor.value !== '') {
-        orcamentoValor.value = Number(orcamentoValor.value).toFixed(2);
+}
+
+function sincronizarOrcamentoDoTexto({ formatar = false } = {}) {
+    const lido = parseReais(orcamentoValor.value);
+    if (!Number.isFinite(lido)) {
+        if (formatar) orcamentoValor.value = formatarReais(orcamento.value);
+        return;
     }
-});
-orcamentoValor.value = Number(orcamento.value).toFixed(2);
-preencherBarra(orcamento);
+    const limitado = limitarOrcamento(lido);
+    const noSlider = Math.round(limitado / 100) * 100;
+    orcamento.value = String(noSlider);
+    if (formatar) orcamentoValor.value = formatarReais(noSlider);
+    preencherBarra(orcamento);
+}
+
+function lerOrcamentoReais() {
+    const doTexto = parseReais(orcamentoValor?.value);
+    if (Number.isFinite(doTexto)) return limitarOrcamento(doTexto);
+    const doSlider = Number(orcamento?.value);
+    return Number.isFinite(doSlider) ? limitarOrcamento(doSlider) : NaN;
+}
+
+orcamento.addEventListener('input', sincronizarOrcamentoDoSlider);
+orcamentoValor.addEventListener('input', () => sincronizarOrcamentoDoTexto());
+orcamentoValor.addEventListener('change', () => sincronizarOrcamentoDoTexto({ formatar: true }));
+orcamentoValor.addEventListener('blur', () => sincronizarOrcamentoDoTexto({ formatar: true }));
+sincronizarOrcamentoDoSlider();
 
 const limiar = document.getElementById('limiar');
 const limiarValor = document.getElementById('limiar-valor');

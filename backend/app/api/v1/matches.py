@@ -118,7 +118,7 @@ def _contexto_usuario(db: Session, usuario: Optional[Usuario]):
 
 def _anuncios_ativos(db: Session) -> List[Post]:
     return (
-        db.query(Post)
+        mural_service.query_posts(db)
         .filter(Post.status_anuncio == "ativo")
         .order_by(Post.data_publicacao.desc())
         .all()
@@ -172,7 +172,7 @@ def detalhe_imovel(
     db: Session = Depends(get_db),
 ):
     post = (
-        db.query(Post)
+        mural_service.query_posts(db)
         .filter(Post.id_imovel == id_imovel, Post.status_anuncio != "removido")
         .first()
     )

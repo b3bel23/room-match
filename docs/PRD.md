@@ -62,6 +62,34 @@ envia `cpf_cnpj` no `POST /auth/register`. O mock aplica a mesma exigência.
 
 **Telas / arquivos:** `cadastro.html`, `cadastro.js`, `mock-api.js`.
 
+### Orçamento mensal em formato brasileiro (cadastro)
+
+**Status:** concluída.
+
+**O que faz:** o campo de orçamento máximo mensal no cadastro mostra valores com
+separador de milhar e vírgula decimal (`1.200,00`, `10.000,00`), com dica
+explicando mil vs dez mil.
+
+**Telas / arquivos:** `cadastro.html`, `cadastro.js`, `cadastro.css`.
+
+### Performance do mural com Supabase remoto
+
+**Status:** concluída (parcial quanto à região do banco).
+
+**O que faz:** reduz a lentidão do `GET /imoveis` e telas ligadas quando o Postgres
+está no pooler remoto (RTT alto).
+
+**Regras / decisões**
+- Carga eager (`selectinload`/`joinedload`) de imóvel, endereço, fotos e moradores
+  evita N+1 por anúncio (`mural_service.query_posts`).
+- Pool SQLAlchemy com `pool_size=5`, `pool_recycle=280` e `pool_pre_ping`.
+- `/health` cacheia o ping do banco por 30s.
+- Home carrega mural e stats em paralelo (`Promise.all`).
+- Limite restante: latência geográfica (`us-west-2`); ideal migrar para `sa-east-1`.
+
+**Arquivos:** `mural_service.py`, `matches.py`, `imovel_service.py`, `contexto.py`,
+`database.py`, `main.py`, `home.js`.
+
 ### Afinidade e mural de imóveis (KAN-35)
 
 **Status:** concluída. Validada em Postgres 16 e com o site em modo `live` (ver

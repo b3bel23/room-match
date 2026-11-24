@@ -37,6 +37,14 @@ def contexto_usuario(db: Session, usuario: Optional[Usuario]):
 
 def montar_imoveis(db: Session, posts: list[Post], usuario: Optional[Usuario]) -> list[dict]:
     locatario, user_tags = contexto_usuario(db, usuario)
+    if posts:
+        # Garante carga eager mesmo se o caller trouxe posts "magros".
+        ids = [p.id_post for p in posts]
+        por_id = {
+            p.id_post: p
+            for p in mural_service.query_posts(db).filter(Post.id_post.in_(ids)).all()
+        }
+        posts = [por_id[i] for i in ids if i in por_id]
     tags = matching_service.tags_por_imovel(db, [p.id_imovel for p in posts])
     return [
         mural_service.montar_imovel(p, tags[p.id_imovel], user_tags, locatario) for p in posts
@@ -45,7 +53,7 @@ def montar_imoveis(db: Session, posts: list[Post], usuario: Optional[Usuario]) -
 
 def post_ativo(db: Session, id_imovel: int) -> Post:
     post = (
-        db.query(Post)
+        mural_service.query_posts(db)
         .filter(Post.id_imovel == id_imovel, Post.status_anuncio == "ativo")
         .first()
     )

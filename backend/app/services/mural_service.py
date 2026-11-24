@@ -10,6 +10,10 @@ from __future__ import annotations
 from datetime import date
 from typing import Any, Mapping, Optional, Sequence
 
+from sqlalchemy.orm import Query, Session, joinedload, selectinload
+
+from app.models.imovel import Imovel
+from app.models.integrante_imovel import IntegranteImovel
 from app.models.locatario import Locatario
 from app.models.post import Post
 from app.services.matching_service import (
@@ -18,6 +22,27 @@ from app.services.matching_service import (
     normalizar_tag,
     tags_correspondentes,
 )
+
+
+def opcoes_carga_anuncio():
+    """Evita N+1 no mural/detalhe: imóvel, endereço, fotos e moradores numa leva."""
+    return (
+        selectinload(Post.imovel).options(
+            joinedload(Imovel.endereco),
+            selectinload(Imovel.imagens),
+            selectinload(Imovel.integrantes).selectinload(IntegranteImovel.pessoa),
+        ),
+    )
+
+
+def query_posts(db: Session) -> Query:
+    """Query base de anúncios já com relacionamentos usados em `montar_imovel`."""
+    return db.query(Post).options(*opcoes_carga_anuncio())
+
+
+def recarregar_post(db: Session, post: Post) -> Post:
+    """Rebusca o post com carga eager (após criar/editar/fotos)."""
+    return query_posts(db).filter(Post.id_post == post.id_post).one()
 
 
 

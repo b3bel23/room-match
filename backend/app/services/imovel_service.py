@@ -40,8 +40,10 @@ def exigir_locador(db: Session, usuario: Usuario) -> Locador:
 
 def obter_post_do_dono(db: Session, id_imovel: int, usuario: Usuario) -> Post:
     """Anúncio não removido do imóvel; 404 se não existe, 403 se não é do usuário."""
+    from app.services import mural_service
+
     post = (
-        db.query(Post)
+        mural_service.query_posts(db)
         .filter(Post.id_imovel == id_imovel, Post.status_anuncio != "removido")
         .first()
     )
@@ -196,8 +198,10 @@ def remover_anuncio(db: Session, post: Post) -> None:
 
 
 def anuncios_do_locador(db: Session, usuario: Usuario) -> list[Post]:
+    from app.services import mural_service
+
     return (
-        db.query(Post)
+        mural_service.query_posts(db)
         .filter(Post.id_locador == usuario.id_usuario, Post.status_anuncio != "removido")
         .order_by(Post.data_publicacao.desc(), Post.id_post.desc())
         .all()

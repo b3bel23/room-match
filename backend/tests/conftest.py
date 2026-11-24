@@ -10,12 +10,20 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import app.models  # noqa: F401  (registra todos os models)
+from app.core.config import settings
 from app.core.database import Base
 
 for _tabela in Base.metadata.tables.values():
     for _coluna in _tabela.columns:
         if isinstance(_coluna.type, (ARRAY, JSONB)):
             _coluna.type = JSON()
+
+
+@pytest.fixture(autouse=True)
+def _storage_local_nos_testes(monkeypatch):
+    """Testes não devem falar com Supabase Storage (usa o .env da máquina)."""
+    monkeypatch.setattr(settings, "storage_backend", "local")
+    monkeypatch.setattr(settings, "supabase_service_key", "")
 
 
 @pytest.fixture()
