@@ -40,7 +40,7 @@ def _ok(resposta, esperado=200):
 def test_fluxo_completo(http):
     import httpx
 
-    assert httpx.get(f"{BASE}/health", timeout=30).json() == {"status": "ok"}
+    assert httpx.get(f"{BASE}/health", timeout=30).json() == {"status": "ok", "banco": "ok"}
     marca = int(time.time())
     senha = "fumaca12345"
 

@@ -1,8 +1,10 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 
 import app.models  # noqa: F401  (registra todos os models antes do primeiro uso)
 from app.api.v1.router import api_router
@@ -11,10 +13,32 @@ from app.core.database import engine
 from app.services.imovel_service import UPLOAD_DIR
 
 
+log = logging.getLogger("uvicorn.error")  # aparece no terminal do uvicorn
+
+
+def checar_banco() -> tuple[bool, str]:
+    """Conecta e conta usuários. Devolve (ok, mensagem para o terminal)."""
+    destino = f"{settings.db_host}:{settings.db_port}/{settings.db_name} (usuário {settings.db_user})"
+    try:
+        with engine.connect() as conexao:
+            usuarios = conexao.execute(text("select count(*) from usuarios")).scalar()
+        return True, f"Banco conectado: {destino} · {usuarios} usuários"
+    except Exception as erro:  # noqa: BLE001 - qualquer falha vira aviso no terminal
+        motivo = str(getattr(erro, "orig", erro)).strip().splitlines()[0][:300]
+        dica = (
+            " Rode 'alembic upgrade head'." if "usuarios" in motivo and "does not exist" in motivo
+            else " Confira o .env na raiz do repositório (DB_HOST, DB_USER, DB_PASSWORD, DB_SSLMODE)."
+        )
+        return False, f"SEM BANCO: {destino} · {motivo}.{dica}"
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Tabelas são gerenciadas pelo Alembic: rode "alembic upgrade head" antes de subir a API.
     from app.services import mobilidade_service
+
+    ok, mensagem = checar_banco()
+    (log.info if ok else log.error)(mensagem)
 
     mobilidade_service.carregar_em_segundo_plano()  # GTFS_PATHS: horários de ônibus
     yield
@@ -41,4 +65,6 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 @app.get("/health", tags=["health"])
 def health():
-    return {"status": "ok"}
+    """`status` é da API; `banco` diz se ela alcança o banco (detalhes no terminal)."""
+    ok, _ = checar_banco()
+    return {"status": "ok", "banco": "ok" if ok else "erro"}
