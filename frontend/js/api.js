@@ -21,7 +21,7 @@
      * Endereço da API publicada (ex.: 'https://roommatch-api.onrender.com'), sem barra no fim.
      * Preencha depois do deploy (ver README, "Deploy").
      */
-    const API_PRODUCAO = '';
+    const API_PRODUCAO = 'https://roommatch-api-ms1r.onrender.com';
     const EM_DESENVOLVIMENTO = ['localhost', '127.0.0.1', ''].includes(global.location.hostname);
 
     try {
@@ -49,8 +49,9 @@
             'papel'
         ]),
         /**
-         * Se `papel` mudar (Morador↔Locador), o backend DEVE migrar
-         * registro locatario ↔ locador e invalidar permissões antigas.
+         * Se `papel` mudar (Morador↔Locador), o backend ativa o papel em
+         * `preferencias_moradia.papel_ativo` (sleep): mantém as duas linhas
+         * e só exige CPF (1ª vez Locador) ou remover anúncios (→ Morador).
          */
         filtrosImoveis: Object.freeze([
             'tipo',
@@ -123,11 +124,28 @@
         }
     }
 
+    function traduzirMsgValidacao(msg, loc) {
+        const texto = String(msg || '');
+        const campo = Array.isArray(loc) ? String(loc[loc.length - 1] || '') : '';
+        if (/at most 3000000 characters/i.test(texto) || campo === 'foto_url') {
+            if (/at most \d+ characters/i.test(texto)) {
+                return 'Foto grande demais para enviar. Escolha outra ou aguarde a compactação automática.';
+            }
+        }
+        if (/string should have at most/i.test(texto) && campo === 'foto_url') {
+            return 'Foto grande demais para enviar. Escolha outra imagem.';
+        }
+        return texto;
+    }
+
     function detalheErro(dados, status) {
         const d = dados?.detail ?? dados?.message;
         if (typeof d === 'string') return d;
         if (Array.isArray(d)) {
-            return d.map((item) => item.msg || item.message || JSON.stringify(item)).join(' · ');
+            return d.map((item) => traduzirMsgValidacao(
+                item.msg || item.message || JSON.stringify(item),
+                item.loc
+            )).join(' · ');
         }
         if (d && typeof d === 'object') return JSON.stringify(d);
         return `Erro ${status}`;
@@ -277,6 +295,16 @@
                 silencioso: true
             });
         },
+        /** Bairros/cidades já cadastrados no mural (autocomplete do Explorar). */
+        listarLocais: (q = '') => {
+            const qs = new URLSearchParams();
+            if (q) qs.set('q', q);
+            const sufixo = qs.toString() ? `?${qs}` : '';
+            return request(`/imoveis/locais${sufixo}`, {
+                auth: false,
+                silencioso: true
+            });
+        },
         obterImovel: (id) => request(`/imoveis/${id}`, {
             auth: Boolean(lerToken()),
             silencioso: true
@@ -326,13 +354,47 @@
             auth: false,
             silencioso: true
         }),
-        listarConversas: () => request('/conversas'),
+        listarConversas: (opcoes = false) => {
+            // Compat: listarConversas(true) = incluir arquivadas.
+            const opts = typeof opcoes === 'boolean'
+                ? { incluirArquivadas: opcoes }
+                : (opcoes || {});
+            const q = new URLSearchParams();
+            if (opts.arquivadasApenas) q.set('arquivadas_apenas', 'true');
+            else if (opts.incluirArquivadas) q.set('incluir_arquivadas', 'true');
+            const qs = q.toString();
+            return request(`/conversas${qs ? `?${qs}` : ''}`);
+        },
         obterConversa: (id) => request(`/conversas/${id}`),
         abrirConversa: (payload) => request('/conversas', { method: 'POST', body: payload }),
         enviarMensagem: (id, texto) => request(`/conversas/${id}/mensagens`, {
             method: 'POST',
             body: { texto }
-        })
+        }),
+        marcarConversaLida: (id) => request(`/conversas/${id}/lidas`, {
+            method: 'POST',
+            silencioso: true
+        }),
+        atualizarConversa: (id, payload) => request(`/conversas/${id}`, {
+            method: 'PATCH',
+            body: payload
+        }),
+        criarDenuncia: (payload) => request('/denuncias', {
+            method: 'POST',
+            body: payload
+        }),
+        listarMotivosDenuncia: () => request('/denuncias/motivos', { silencioso: true }),
+        bloquearUsuario: (usuarioId, descricao) => request('/bloqueios', {
+            method: 'POST',
+            body: {
+                usuario_id: Number(usuarioId),
+                ...(descricao ? { descricao } : {}),
+            },
+        }),
+        desbloquearUsuario: (usuarioId) => request(`/bloqueios/${Number(usuarioId)}`, {
+            method: 'DELETE',
+        }),
+        listarBloqueios: () => request('/bloqueios', { silencioso: true }),
     };
 
     global.RoomMatchApi = api;
