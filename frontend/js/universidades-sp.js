@@ -593,7 +593,7 @@
         [
             { valor: 'nao-aplica', curto: 'Nenhuma' },
             { valor: 'outra-ies-sp', curto: 'Outra em SP' },
-            { valor: '', curto: 'Limpar' },
+            { valor: '', curto: 'Limpar seleção' },
         ].forEach((a) => {
             const b = document.createElement('button');
             b.type = 'button';
@@ -610,10 +610,10 @@
         input.type = 'text';
         input.id = `${uid}-pesquisa`;
         input.className = 'faculdade-busca-input';
-        input.placeholder = 'Buscar por nome, sigla ou campus…';
+        input.placeholder = 'Digite ou selecione a faculdade…';
         input.autocomplete = 'off';
         input.setAttribute('role', 'combobox');
-        input.setAttribute('aria-label', 'Faculdade ou universidade');
+        input.setAttribute('aria-label', 'Digite ou selecione a faculdade ou universidade');
         input.setAttribute('aria-controls', `${uid}-lista`);
         input.setAttribute('aria-autocomplete', 'list');
         input.setAttribute('aria-expanded', 'false');
@@ -664,11 +664,11 @@
             const v = selectEl.value;
             if (!v) {
                 input.value = '';
-                input.placeholder = 'Buscar por nome, sigla ou campus…';
+                input.placeholder = 'Digite ou selecione a faculdade…';
                 return;
             }
             input.value = rotuloSelecionado(v);
-            input.placeholder = 'Buscar por nome, sigla ou campus…';
+            input.placeholder = 'Digite ou selecione a faculdade…';
         }
 
         function atualizarAtalhos() {

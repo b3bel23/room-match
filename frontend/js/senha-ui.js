@@ -70,6 +70,24 @@
         return iguais;
     }
 
+    /** Senha aleatória forte (letras, números e símbolo), dentro do limite do bcrypt (72 bytes). */
+    function gerarSenhaAleatoria(tamanho) {
+        const n = Math.min(Math.max(Number(tamanho) || 16, 12), 48);
+        const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*?';
+        const bytes = new Uint8Array(n);
+        (global.crypto || window.crypto).getRandomValues(bytes);
+        let out = '';
+        for (let i = 0; i < n; i += 1) {
+            out += alfabeto[bytes[i] % alfabeto.length];
+        }
+        // Garante classes mínimas.
+        if (!/[A-Z]/.test(out)) out = `A${out.slice(1)}`;
+        if (!/[a-z]/.test(out)) out = `${out.slice(0, 1)}b${out.slice(2)}`;
+        if (!/\d/.test(out)) out = `${out.slice(0, 2)}3${out.slice(3)}`;
+        if (!/[^A-Za-z0-9]/.test(out)) out = `${out.slice(0, 3)}!${out.slice(4)}`;
+        return out;
+    }
+
     function ligarOlhos(raiz) {
         const escopo = raiz || document;
         escopo.querySelectorAll('.senha-olho[data-olho-para]').forEach((btn) => {
@@ -88,6 +106,48 @@
     }
 
     /**
+     * Botões [data-gerar-senha-para="id"] preenchem senha (e confirmação se data-gerar-confirma).
+     * @param {ParentNode} [raiz]
+     * @param {{ onGerou?: function(): void }} [opts]
+     */
+    function ligarGerador(raiz, opts) {
+        const escopo = raiz || document;
+        escopo.querySelectorAll('[data-gerar-senha-para]').forEach((btn) => {
+            if (btn.dataset.rmGerarBound) return;
+            btn.dataset.rmGerarBound = '1';
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-gerar-senha-para');
+                const senha = id ? document.getElementById(id) : null;
+                if (!senha) return;
+                const gerada = gerarSenhaAleatoria(16);
+                senha.type = 'text';
+                senha.value = gerada;
+                senha.dispatchEvent(new Event('input', { bubbles: true }));
+                const idConf = btn.getAttribute('data-gerar-confirma');
+                const confirma = idConf ? document.getElementById(idConf) : null;
+                if (confirma) {
+                    confirma.type = 'text';
+                    confirma.value = gerada;
+                    confirma.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                const olho = escopo.querySelector(`.senha-olho[data-olho-para="${id}"]`);
+                if (olho) {
+                    olho.setAttribute('aria-pressed', 'true');
+                    olho.setAttribute('aria-label', 'Ocultar senha');
+                    olho.innerHTML = ICONE_OLHO_OFF;
+                }
+                if (typeof opts?.onGerou === 'function') opts.onGerou();
+                senha.focus();
+                try {
+                    senha.select();
+                } catch (_) {
+                    /* ignore */
+                }
+            });
+        });
+    }
+
+    /**
      * @param {{ senha: HTMLInputElement, confirma?: HTMLInputElement, forcaBox?: HTMLElement, forcaTexto?: HTMLElement, matchTexto?: HTMLElement }} opts
      */
     function ligarParSenha(opts) {
@@ -101,16 +161,20 @@
 
         senha.addEventListener('input', atualizar);
         confirma?.addEventListener('input', atualizar);
-        ligarOlhos(senha.form || document);
+        const raiz = senha.form || document;
+        ligarOlhos(raiz);
+        ligarGerador(raiz, { onGerou: atualizar });
         atualizar();
         return { atualizar };
     }
 
     global.RoomMatchSenhaUi = {
         classificarSenha,
+        gerarSenhaAleatoria,
         aplicarForca,
         aplicarConfirmacao,
         ligarOlhos,
+        ligarGerador,
         ligarParSenha,
         ICONE_OLHO,
         ICONE_OLHO_OFF

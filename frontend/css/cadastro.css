@@ -145,6 +145,10 @@
     padding-right: 44px;
 }
 
+.senha-linha--com-gerar input {
+    padding-right: 118px;
+}
+
 .senha-olho {
     position: absolute;
     right: 6px;

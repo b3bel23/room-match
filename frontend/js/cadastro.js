@@ -511,3 +511,21 @@ if (typeof RoomMatchUniversidadesSp !== 'undefined') {
         RoomMatchUniversidadesSp.preencherSelect(document.getElementById('faculdade'), '');
     }
 }
+
+if (typeof RoomMatchCidadesRmc !== 'undefined' && RoomMatchCidadesRmc.montarBusca) {
+    RoomMatchCidadesRmc.montarBusca(
+        document.getElementById('cidade-atual-busca'),
+        document.getElementById('cidade-atual')
+    );
+}
+
+(function contadorBio() {
+    const bio = document.getElementById('bio');
+    const n = document.getElementById('bio-contador-n');
+    if (!bio || !n) return;
+    const atualizar = () => {
+        n.textContent = String(Math.min(bio.value.length, 500));
+    };
+    bio.addEventListener('input', atualizar);
+    atualizar();
+}());

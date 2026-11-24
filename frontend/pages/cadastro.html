@@ -63,7 +63,7 @@
                             Gênero *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre gênero">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Cis: identidade igual ao sexo de nascimento. Trans: identidade diferente. Não-binário: fora do binarismo. Você pode escolher “Outro/Não informar”.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Cisgênero: identidade alinhada ao sexo atribuído no nascimento. Transgênero: identidade diferente desse sexo. Não-binário: fora do binarismo homem/mulher. Use “Outro/Não informar” se preferir não declarar.</span>
                             </span>
                         </legend>
                         <div class="pilulas">
@@ -82,7 +82,7 @@
                             Ocupação
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre ocupação">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Toque na opção mais próxima do que você faz hoje.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Escolha a opção mais próxima da sua rotina atual.</span>
                             </span>
                         </span>
                         <div id="ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="ocupacao-rotulo"></div>
@@ -93,7 +93,7 @@
                             Situação de emprego
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre situação de emprego">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Como está seu trabalho agora — um toque basta.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Situação atual de trabalho (CLT, estágio, autônomo, só estudo etc.).</span>
                             </span>
                         </span>
                         <div id="emprego-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="emprego-rotulo"></div>
@@ -129,7 +129,7 @@
                             Faculdade / Universidade
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre faculdade">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Abra a lista suspensa, digite (PUC, Unicamp…) ou use Nenhuma / Outra em SP.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Digite para buscar ou abra a lista e selecione o campus. “Nenhuma” se não estudar; “Outra em SP” se a instituição não estiver na lista; “Limpar seleção” esvazia o campo.</span>
                             </span>
                         </span>
                         <div id="faculdade-busca" class="faculdade-busca" aria-labelledby="faculdade-rotulo"></div>
@@ -141,12 +141,26 @@
                         <input id="data-nascimento" name="data_nascimento" type="date" autocomplete="bday" max="2010-12-31">
                     </div>
                     <div class="campo col-2">
-                        <label class="label-com-tip" for="cidade-atual">Cidade atual</label>
-                        <input id="cidade-atual" name="cidade_atual" type="text" maxlength="100" placeholder="Campinas" autocomplete="address-level2">
+                        <label class="label-com-tip" for="cidade-atual">
+                            Cidade atual
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre cidade atual">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Digite para pesquisar ou selecione na lista da região de Campinas. Se a sua cidade não aparecer, mantenha o que digitou (até 100 caracteres).</span>
+                            </span>
+                        </label>
+                        <div id="cidade-atual-busca" class="cidade-busca" aria-label="Busca de cidade"></div>
+                        <input id="cidade-atual" name="cidade_atual" type="text" maxlength="100" placeholder="Digite ou selecione a cidade…" autocomplete="address-level2">
                     </div>
                     <div class="campo col-full">
-                        <label class="label-com-tip" for="bio">Bio</label>
-                        <textarea id="bio" name="bio" rows="2" maxlength="500" placeholder="Opcional. Uma frase sobre você…"></textarea>
+                        <label class="label-com-tip" for="bio">
+                            Bio
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre bio">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Texto curto sobre você, visível no perfil. Máximo 500 caracteres.</span>
+                            </span>
+                        </label>
+                        <textarea id="bio" name="bio" rows="2" maxlength="500" placeholder="Opcional. Uma frase sobre você…" aria-describedby="bio-contador"></textarea>
+                        <p class="campo-ajuda" id="bio-contador"><span id="bio-contador-n">0</span>/500</p>
                     </div>
 
                     <div class="foto col-full">
@@ -154,7 +168,7 @@
                             Foto de perfil *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre foto de perfil">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatória para chat e anúncios. JPG ou PNG, máx. 5 MB, mín. 400×400. Só você, de frente, nítido e bem iluminado (verificação automática). Sem grupo, filtro pesado, óculos escuros ou máscara. Não publique dados sensíveis.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatória para conversar e anunciar. Envie JPG ou PNG (até 5 MB, mínimo 400×400 pixels). A foto precisa ser só de você: sozinha, de frente, nítida e bem iluminada — a verificação é automática. Evite grupo, filtro pesado, óculos escuros ou máscara. Não envie documento nem dados sensíveis na imagem.</span>
                             </span>
                         </p>
                         <div class="foto-linha">
@@ -172,11 +186,12 @@
                             Senha *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre senha">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mínimo 8 caracteres. Quanto mais longa e variada (letras, números e símbolos), mais forte.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mínimo 8 caracteres. Use o botão “Sugerir senha” para gerar uma senha forte automaticamente; quanto mais longa e variada, melhor.</span>
                             </span>
                         </label>
-                        <div class="senha-linha">
+                        <div class="senha-linha senha-linha--com-gerar">
                             <input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="new-password" required minlength="8" aria-describedby="senha-forca-texto">
+                            <button type="button" class="senha-gerar" data-gerar-senha-para="senha" data-gerar-confirma="confirmar-senha" aria-label="Sugerir senha forte">Sugerir</button>
                             <button type="button" class="senha-olho" data-olho-para="senha" aria-label="Mostrar senha" aria-pressed="false">
                                 <svg class="senha-olho-icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
@@ -367,7 +382,7 @@
     <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
     <script src="../js/chrome.js?v=20261124"></script>
-    <script src="../js/senha-ui.js?v=20261123"></script>
+    <script src="../js/senha-ui.js?v=20261124ca"></script>
     <script src="../js/telefone-ui.js?v=20261124"></script>
     <script src="../js/email-ui.js?v=20261124"></script>
     <script src="../js/face-check.js?v=20261124bc"></script>
@@ -375,7 +390,8 @@
     <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/tip.js?v=20261123"></script>
     <script src="../js/classificacoes-br.js?v=20261124bi"></script>
-    <script src="../js/universidades-sp.js?v=20261124bt"></script>
-    <script src="../js/cadastro.js?v=20261124bz"></script>
+    <script src="../js/universidades-sp.js?v=20261124ca"></script>
+    <script src="../js/cidades-rmc.js?v=20261124ca"></script>
+    <script src="../js/cadastro.js?v=20261124ca"></script>
 </body>
 </html>

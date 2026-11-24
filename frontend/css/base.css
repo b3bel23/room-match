@@ -500,6 +500,34 @@ body:not(.visitante) .site-header .nav-logado {
     padding-right: 44px;
 }
 
+.senha-linha--com-gerar input {
+    padding-right: 118px;
+}
+
+.senha-gerar {
+    position: absolute;
+    right: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted, #f4f6f7);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.senha-gerar:hover,
+.senha-gerar:focus-visible {
+    border-color: var(--color-primary);
+    color: var(--color-primary-hover);
+}
+
 .senha-olho {
     position: absolute;
     right: 6px;

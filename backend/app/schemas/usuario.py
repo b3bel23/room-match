@@ -8,8 +8,8 @@ class UsuarioBase(BaseModel):
     telefone: Optional[str] = None
     data_nascimento: Optional[date] = None
     foto_perfil: Optional[str] = None
-    bio: Optional[str] = None
-    cidade_atual: Optional[str] = None
+    bio: Optional[str] = Field(None, max_length=500)
+    cidade_atual: Optional[str] = Field(None, max_length=100)
     tags_convivencia: Optional[List[str]] = None
 
 class UsuarioCreate(UsuarioBase):
@@ -40,7 +40,7 @@ class RegistroIn(BaseModel):
     emprego: Optional[str] = None
     faculdade: Optional[str] = None
     foto_url: Optional[str] = None
-    bio: Optional[str] = None
+    bio: Optional[str] = Field(None, max_length=500)
     cidade_atual: Optional[str] = Field(None, max_length=100)
     data_nascimento: Optional[date] = None
     raio_busca_km: Optional[float] = Field(None, ge=0, le=200)  # só Morador

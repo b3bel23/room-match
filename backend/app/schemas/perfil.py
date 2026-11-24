@@ -57,7 +57,7 @@ class PerfilUpdate(BaseModel):
     email: Optional[EmailStr] = None
     telefone: Optional[str] = Field(None, max_length=20)
     foto_url: Optional[str] = Field(None, max_length=3_000_000)  # URL ou data URL (~2 MB)
-    bio: Optional[str] = None
+    bio: Optional[str] = Field(None, max_length=500)
     cidade_atual: Optional[str] = Field(None, max_length=100)
     data_nascimento: Optional[date] = None
     genero: Optional[str] = Field(None, max_length=40)
