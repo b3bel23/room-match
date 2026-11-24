@@ -411,23 +411,44 @@ body:not(.visitante) .detalhe {
     display: none;
     position: absolute;
     inset: 0;
+    box-sizing: border-box;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 13px;
+    gap: 12px;
+    padding: 16px 14px;
     border-radius: var(--radius-tag);
-    background: rgba(20, 29, 34, 0.5);
+    background: rgba(20, 29, 34, 0.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     color: #fff;
     text-align: center;
+    z-index: 2;
 }
 
 .visitante .bloqueio {
     display: flex;
 }
 
+/* CTA de cadastro: em fluxo (não absoluto), para caber em telas estreitas */
+.visitante .restrito > .acoes,
+.visitante .restrito > .chat-bloqueio {
+    display: none;
+}
+
+.visitante .bloqueio.bloqueio-moradores {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: 0;
+    padding: 20px 16px;
+}
+
 .bloqueio p {
-    font-size: 16px;
+    margin: 0;
+    max-width: 28ch;
+    font-size: 15px;
+    line-height: 1.35;
     font-weight: var(--fw-semibold);
     color: #fff;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -435,18 +456,26 @@ body:not(.visitante) .detalhe {
 
 .bloqueio-botoes {
     display: flex;
-    gap: 23px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 340px;
 }
 
 .bloqueio-botoes .btn {
-    width: 135px;
-    padding-inline: 8px;
+    flex: 1 1 140px;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    padding-inline: 12px;
     white-space: nowrap;
     font-size: var(--fs-small);
 }
 
 .bloqueio-rateio {
-    inset: 20px 5px 62px;
+    inset: 12px 8px 56px;
+    padding: 14px 12px;
 }
 
 /* Galeria */
@@ -543,14 +572,59 @@ body:not(.visitante) .afinidade {
         min-height: var(--tap-min);
     }
 
+    .bloqueio {
+        gap: 10px;
+        padding: 14px 12px;
+    }
+
+    .bloqueio p {
+        font-size: 14px;
+        max-width: 22ch;
+    }
+
     .bloqueio-botoes {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 8px;
+        max-width: 260px;
     }
 
     .bloqueio-botoes .btn {
-        width: auto;
-        min-width: 120px;
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;
+        min-height: var(--tap-min, 44px);
+    }
+
+    .bloqueio-rateio {
+        inset: 10px 6px 48px;
+        padding: 12px 10px;
+        justify-content: flex-start;
+        overflow-y: auto;
+    }
+
+    .visitante .bloqueio.bloqueio-moradores {
+        padding: 18px 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .bloqueio p {
+        font-size: 13px;
+        max-width: none;
+        padding-inline: 4px;
+    }
+
+    .bloqueio-botoes {
+        max-width: none;
+    }
+
+    .bloqueio-botoes .btn {
+        white-space: normal;
+        text-align: center;
+        line-height: 1.25;
+        padding-block: 10px;
     }
 }
 

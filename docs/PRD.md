@@ -84,8 +84,11 @@ envia `cpf_cnpj` no `POST /auth/register`. O mock aplica a mesma exigência.
 
 **Status:** concluída.
 
-- Cadastro envia opcionais do banco: `data_nascimento`, `bio`, `cidade_atual` e, no
-  Morador, `raio_busca_km`.
+- Cadastro exige `data_nascimento`, `cidade_atual` e `ocupacao` (além de nome, e-mail,
+  telefone, gênero, foto e senha). `bio`, `emprego` e `faculdade` seguem opcionais;
+  Morador ainda envia `raio_busca_km` quando informado.
+- Ordem da etapa 1: nome → e-mail + telefone → CPF (Locador) → gênero → nascimento +
+  cidade → ocupação → emprego → faculdade → bio → foto → senha.
 - Tags do Morador sincronizam `usuario_tags`, `tags_convivencia` e a coluna legada
   `locatarios.tags_estilo_vida`. Tags **não** têm mínimo/máximo na UI: no schema são
   opcionais (`RegistroIn.tags = []`, anúncio `tags` opcional). Só o que é NOT NULL /
@@ -151,9 +154,12 @@ Para o locatário, cada imóvel traz a elegibilidade para abrir chat.
   **marcar 3 ou mais** hábitos (não é mínimo obrigatório).
 - Hábitos no Explorar (filtro) e Preferências/cadastro/anúncio mostram **ícone + texto**;
   seleção com transição suave (respeita `prefers-reduced-motion`).
-- Ocupação e situação de emprego (cadastro/perfil): **chips** com opções frequentes
-  à vista e “Mais opções” para o restante; `<select>` oculto mantém os mesmos valores
-  da API (`estudante`, `clt`, `cbo-*`, etc.).
+- Ocupação e situação de emprego (cadastro/perfil): **duas colunas** no BD
+  (`usuarios.ocupacao`, `usuarios.emprego`) sem migração. UI sem duplicar significado:
+  ocupação = papel/área (estudante, CBO…); emprego = vínculo (CLT, estágio, sem
+  vínculo…). Estágio e aposentadoria só em emprego; `ocupacao=estagiario` legado
+  normaliza para `estudante`. Chips + “Mais opções”; `<select>` oculto envia os
+  mesmos valores da API.
 - Faculdade (cadastro/perfil): **caixa de busca** (nome/sigla/campus) + atalhos
   Nenhuma / Outra em SP; lista filtrável; mesmos valores estáveis do catálogo SP.
 - **Comodidades** (Wi-Fi, Ar-condicionado, Mobiliado, etc.) **não entram** no match.

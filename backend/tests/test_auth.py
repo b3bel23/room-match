@@ -20,6 +20,7 @@ def test_cadastro_morador_devolve_sessao_e_grava_preferencias(client):
             "papel_schema": "locatario",
             "telefone": "(19) 98888-1001",
             "genero": "Outro/Não informar",
+            "ocupacao": "estudante",
             "foto_url": _FOTO,
             "bio": "Busco quarto perto da PUC",
             "cidade_atual": "Campinas",
@@ -64,6 +65,9 @@ def test_cadastro_email_repetido_409(client):
             "senha": "senha12345",
             "papel": "Morador",
             "telefone": "(19) 98888-1002",
+            "ocupacao": "estudante",
+            "cidade_atual": "Campinas",
+            "data_nascimento": "2000-05-10",
         },
     )
     assert r.status_code == 409
@@ -81,6 +85,9 @@ def test_cadastro_cpf_repetido_409(client):
             "email": "loc2@x.com",
             "senha": "senha12345",
             "papel": "Locador",
+            "ocupacao": "cbo-2",
+            "cidade_atual": "Campinas",
+            "data_nascimento": "1990-01-15",
             "cpf_cnpj": "529.982.247-25",
             "telefone": "(19) 98888-1002",
         },
@@ -108,10 +115,15 @@ def test_cadastro_telefone_ficticio_422(client):
             "senha": "senha12345",
             "papel": "Morador",
             "telefone": "(19) 99999-9999",
+            "ocupacao": "estudante",
+            "cidade_atual": "Campinas",
+            "data_nascimento": "2000-05-10",
         },
     )
     assert r.status_code == 422
-    assert "fictício" in r.json()["detail"].lower() or "telefone" in r.json()["detail"].lower()
+    detalhe = r.json()["detail"]
+    texto = detalhe if isinstance(detalhe, str) else str(detalhe)
+    assert "fictício" in texto.lower() or "telefone" in texto.lower()
 
 
 def test_cadastro_email_invalido_422(client):

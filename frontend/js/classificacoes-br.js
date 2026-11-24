@@ -40,11 +40,15 @@
         );
     }
 
-    /** destaque: aparece na grade rápida (1 toque). */
+    /**
+     * Ocupação = o que você faz (papel/área). Situação de emprego = vínculo.
+     * Estágio / CLT / só estudo ficam só em EMPREGOS (sem duplicar aqui).
+     * destaque: grade rápida.
+     */
     const OCUPACOES = Object.freeze([
-        { valor: '', rotulo: 'Não informar', curto: 'Não informar', ico: 'vazio', destaque: true },
+        // Placeholder só no <select> (obrigatório); não vira chip.
+        { valor: '', rotulo: 'Selecione…', curto: 'Selecione…', ico: 'vazio' },
         { valor: 'estudante', rotulo: 'Estudante', curto: 'Estudante', ico: 'estudante', destaque: true },
-        { valor: 'estagiario', rotulo: 'Estagiário(a)', curto: 'Estágio', ico: 'estagio', destaque: true },
         {
             valor: 'cbo-2',
             rotulo: 'Profissional (saúde, TI, educação, artes…)',
@@ -66,25 +70,31 @@
             ico: 'escritorio',
             destaque: true,
         },
-        { valor: 'sem-ocupacao', rotulo: 'Sem ocupação no momento', curto: 'Sem ocupação', ico: 'vazio', destaque: true },
+        {
+            valor: 'sem-ocupacao',
+            rotulo: 'Sem atividade profissional no momento',
+            curto: 'Sem atividade',
+            ico: 'vazio',
+            destaque: true,
+        },
         { valor: 'cbo-3', rotulo: 'Técnico(a) de nível médio', curto: 'Técnico(a)', ico: 'tecnico' },
         { valor: 'cbo-1', rotulo: 'Gestão ou cargo de chefia', curto: 'Gestão', ico: 'gestao' },
         { valor: 'cbo-7', rotulo: 'Indústria ou produção', curto: 'Indústria', ico: 'industria' },
         { valor: 'cbo-8', rotulo: 'Manutenção ou reparos', curto: 'Manutenção', ico: 'manutencao' },
         { valor: 'cbo-6', rotulo: 'Campo, agro ou pesca', curto: 'Agro', ico: 'agro' },
         { valor: 'cbo-0', rotulo: 'Forças armadas / segurança', curto: 'Segurança', ico: 'seguranca' },
-        { valor: 'aposentado', rotulo: 'Aposentado(a)', curto: 'Aposentado(a)', ico: 'aposentado' },
         { valor: 'outra', rotulo: 'Outra', curto: 'Outra', ico: 'outra' },
     ]);
 
+    /** Vínculo / forma de trabalho — não repetir “estudante” nem área profissional. */
     const EMPREGOS = Object.freeze([
         { valor: '', rotulo: 'Não informar', curto: 'Não informar', ico: 'vazio', destaque: true },
         { valor: 'clt', rotulo: 'CLT (carteira assinada)', curto: 'CLT', ico: 'clt', destaque: true },
-        { valor: 'estagio', rotulo: 'Estágio', curto: 'Estágio', ico: 'estagio', destaque: true },
+        { valor: 'estagio', rotulo: 'Estágio (com vínculo)', curto: 'Estágio', ico: 'estagio', destaque: true },
         {
             valor: 'estudante-sem-vinculo',
-            rotulo: 'Só estudo (sem emprego)',
-            curto: 'Só estudo',
+            rotulo: 'Sem vínculo — só estudo',
+            curto: 'Sem vínculo',
             ico: 'soEstudo',
             destaque: true,
         },
@@ -108,11 +118,14 @@
     function normalizarOcupacao(texto) {
         const t = String(texto || '').trim().toLowerCase();
         if (!t) return '';
+        // Valores antigos gravados em ocupacao (vínculo/status) → catálogo atual.
+        if (t === 'estagiario' || t.includes('estag')) return 'estudante';
+        if (t === 'aposentado' || t.includes('aposent') || t.includes('pension')) {
+            return 'sem-ocupacao';
+        }
         const direto = OCUPACOES.find((o) => o.valor && o.valor === t);
         if (direto) return direto.valor;
         if (t.includes('estud')) return 'estudante';
-        if (t.includes('estag')) return 'estagiario';
-        if (t.includes('aposent') || t.includes('pension')) return 'aposentado';
         if (t.includes('profission') || t.includes('cient') || t.includes('arte')
             || t.includes('saúde') || t.includes('saude') || t.includes('ti')
             || t.includes('educa')) return 'cbo-2';
@@ -212,7 +225,8 @@
         selectEl.tabIndex = -1;
 
         const lista = listaDoTipo(tipo);
-        const rapidas = lista.filter((o) => o.destaque);
+        // valor '' = placeholder do select; não entra na grade de chips.
+        const rapidas = lista.filter((o) => o.destaque && o.valor);
         const extras = lista.filter((o) => o.valor && !o.destaque);
         const name = selectEl.name || tipo;
 

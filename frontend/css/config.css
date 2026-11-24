@@ -22,6 +22,11 @@
     color: var(--color-text-primary, #142126);
 }
 
+.perfil-escolha-hint {
+    font-weight: 400;
+    color: var(--color-text-subtle);
+}
+
 .perfil-papel-opcoes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));

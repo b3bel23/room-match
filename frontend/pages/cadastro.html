@@ -41,9 +41,21 @@
                 </div>
 
                 <div class="grade">
-                    <div class="campo col-1">
+                    <div class="campo col-full">
                         <label class="label-com-tip" for="nome">Nome completo *</label>
                         <input id="nome" name="nome" type="text" placeholder="Digite seu nome completo" autocomplete="name" required>
+                    </div>
+
+                    <div class="campo col-1">
+                        <label class="label-com-tip" for="email">
+                            E-mail *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre e-mail">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Será seu login na plataforma.</span>
+                            </span>
+                        </label>
+                        <input id="email" name="email" type="email" data-email-rm="1" placeholder="nome@dominio.com" autocomplete="email" required>
+                        <p id="email-status" class="face-check-status info">Use um e-mail real — será seu login.</p>
                     </div>
 
                     <div class="campo col-2">
@@ -56,6 +68,18 @@
                         </label>
                         <input id="telefone" name="telefone" type="tel" data-tel-br="1" placeholder="(19) 9XXXX-XXXX" autocomplete="tel" required>
                         <p id="telefone-status" class="face-check-status info">Use DDD brasileiro + número real (celular preferencial).</p>
+                    </div>
+
+                    <div class="campo col-full" id="campo-cpf" hidden data-somente-locador="1">
+                        <label class="label-com-tip" for="cpf-cnpj">
+                            CPF *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre CPF">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório para Locador. Use CPF (11 dígitos) ou CNPJ (14). Não aparece para outros usuários.</span>
+                            </span>
+                        </label>
+                        <input id="cpf-cnpj" name="cpf_cnpj" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" maxlength="18" data-cpf-cnpj="1" aria-describedby="cpf-ajuda">
+                        <p id="cpf-ajuda" class="face-check-status info">Obrigatório para anunciar. Só números; a máscara é automática.</p>
                     </div>
 
                     <fieldset class="genero col-full">
@@ -77,51 +101,43 @@
                         </div>
                     </fieldset>
 
+                    <div class="campo col-1">
+                        <label class="label-com-tip" for="data-nascimento">Data de nascimento *</label>
+                        <input id="data-nascimento" name="data_nascimento" type="date" autocomplete="bday" max="2010-12-31" required>
+                    </div>
+                    <div class="campo col-2">
+                        <label class="label-com-tip" for="cidade-atual">
+                            Cidade atual *
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre cidade atual">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório. Digite para pesquisar ou abra a lista da região de Campinas. Se a cidade não aparecer, digite o nome (até 100 caracteres).</span>
+                            </span>
+                        </label>
+                        <div id="cidade-atual-busca" class="cidade-busca" aria-label="Busca de cidade"></div>
+                        <input id="cidade-atual" name="cidade_atual" type="text" maxlength="100" placeholder="Digite ou selecione a cidade…" autocomplete="address-level2" required>
+                    </div>
+
                     <div class="campo col-full escolha-campo">
                         <span class="label-com-tip" id="ocupacao-rotulo">
-                            Ocupação
+                            Ocupação *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre ocupação">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Escolha a opção mais próxima da sua rotina atual.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório. O que você faz no dia a dia (estudante, profissional, vendas…). CLT, estágio ou “sem vínculo” ficam em Situação de emprego.</span>
                             </span>
                         </span>
-                        <div id="ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="ocupacao-rotulo"></div>
-                        <select id="ocupacao" name="ocupacao" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
+                        <div id="ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="ocupacao-rotulo" aria-required="true"></div>
+                        <select id="ocupacao" name="ocupacao" class="escolha-select-sync" tabindex="-1" aria-hidden="true" required></select>
                     </div>
                     <div class="campo col-full escolha-campo">
                         <span class="label-com-tip" id="emprego-rotulo">
                             Situação de emprego
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre situação de emprego">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Situação atual de trabalho (CLT, estágio, autônomo, só estudo etc.).</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Tipo de vínculo: CLT, estágio, autônomo, bolsa, desempregado ou sem vínculo (só estudo). Não confunde com a área em Ocupação.</span>
                             </span>
                         </span>
                         <div id="emprego-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="emprego-rotulo"></div>
                         <select id="emprego" name="emprego" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
-                    </div>
-
-                    <div class="campo col-1">
-                        <label class="label-com-tip" for="email">
-                            E-mail *
-                            <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre e-mail">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Será seu login na plataforma.</span>
-                            </span>
-                        </label>
-                        <input id="email" name="email" type="email" data-email-rm="1" placeholder="nome@dominio.com" autocomplete="email" required>
-                        <p id="email-status" class="face-check-status info">Use um e-mail real — será seu login.</p>
-                    </div>
-
-                    <div class="campo col-1" id="campo-cpf" hidden data-somente-locador="1">
-                        <label class="label-com-tip" for="cpf-cnpj">
-                            CPF *
-                            <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre CPF">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatório para Locador. Use CPF (11 dígitos) ou CNPJ (14). Não aparece para outros usuários.</span>
-                            </span>
-                        </label>
-                        <input id="cpf-cnpj" name="cpf_cnpj" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" maxlength="18" data-cpf-cnpj="1" aria-describedby="cpf-ajuda">
-                        <p id="cpf-ajuda" class="face-check-status info">Obrigatório para anunciar. Só números; a máscara é automática.</p>
                     </div>
 
                     <div class="campo col-full escolha-campo">
@@ -136,21 +152,6 @@
                         <select id="faculdade" name="faculdade" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
                     </div>
 
-                    <div class="campo col-1">
-                        <label class="label-com-tip" for="data-nascimento">Data de nascimento</label>
-                        <input id="data-nascimento" name="data_nascimento" type="date" autocomplete="bday" max="2010-12-31">
-                    </div>
-                    <div class="campo col-2">
-                        <label class="label-com-tip" for="cidade-atual">
-                            Cidade atual
-                            <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre cidade atual">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Digite para pesquisar ou abra a lista da região de Campinas. “Limpar seleção” fica no topo da lista. Se a cidade não aparecer, mantenha o que digitou (até 100 caracteres).</span>
-                            </span>
-                        </label>
-                        <div id="cidade-atual-busca" class="cidade-busca" aria-label="Busca de cidade"></div>
-                        <input id="cidade-atual" name="cidade_atual" type="text" maxlength="100" placeholder="Digite ou selecione a cidade…" autocomplete="address-level2">
-                    </div>
                     <div class="campo col-full">
                         <label class="label-com-tip" for="bio">
                             Bio
@@ -377,7 +378,7 @@
     </footer>
 
         <script src="../js/tags-catalogo.js?v=20261124bv"></script>
-    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124cc"></script>
     <script src="../js/api.js?v=20261124bc"></script>
     <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
@@ -389,9 +390,9 @@
     <script src="../js/loading-ui.js?v=20261124af"></script>
     <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/tip.js?v=20261123"></script>
-    <script src="../js/classificacoes-br.js?v=20261124bi"></script>
+    <script src="../js/classificacoes-br.js?v=20261124cc"></script>
     <script src="../js/universidades-sp.js?v=20261124cb"></script>
     <script src="../js/cidades-rmc.js?v=20261124cb"></script>
-    <script src="../js/cadastro.js?v=20261124cb"></script>
+    <script src="../js/cadastro.js?v=20261124cc"></script>
 </body>
 </html>

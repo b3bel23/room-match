@@ -116,10 +116,31 @@ function validarEtapa() {
         }
         foto?.setCustomValidity('');
         parSenha.atualizar();
+
+        const ocupacao = document.getElementById('ocupacao');
+        if (ocupacao) {
+            ocupacao.setCustomValidity(
+                ocupacao.value ? '' : 'Escolha uma ocupação.'
+            );
+        }
+        const cidade = document.getElementById('cidade-atual');
+        if (cidade) {
+            cidade.setCustomValidity(
+                cidade.value.trim() ? '' : 'Informe a cidade atual.'
+            );
+        }
     }
-    for (const campo of etapas[atual].querySelectorAll('input')) {
+    const campos = etapas[atual].querySelectorAll('input, select, textarea');
+    for (const campo of campos) {
         if (campo.id === 'foto') continue;
         if (!campo.checkValidity()) {
+            // Select de chips fica oculto: foca a grade de ocupação.
+            if (campo.id === 'ocupacao') {
+                document.getElementById('ocupacao-escolha')?.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth',
+                });
+            }
             campo.reportValidity();
             return false;
         }

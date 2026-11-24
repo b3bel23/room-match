@@ -49,11 +49,13 @@ def test_fluxo_completo(http):
         "nome": "Locadora Fumaça", "email": f"fumaca-loc-{marca}@example.com", "senha": senha,
         "papel": "Locador", "cpf_cnpj": f"{marca % 10**11:011d}",
         "telefone": "(19) 98888-0000",
+        "ocupacao": "cbo-2", "cidade_atual": "Campinas", "data_nascimento": "1990-03-20",
     }), 201)
     mor = _ok(http.post("/auth/register", json={
         "nome": "Morador Fumaça", "email": f"fumaca-mor-{marca}@example.com", "senha": senha,
         "papel": "Morador", "telefone": "(19) 98888-0001", "tags": ["Aceita Animais", "Trabalho em Casa"],
         "orcamento_maximo": 2000, "limiar_compatibilidade": 50, "genero": "Outro/Não informar",
+        "ocupacao": "estudante", "cidade_atual": "Campinas", "data_nascimento": "2001-08-12",
     }), 201)
     assert loc["user"]["papel"] == "Locador" and mor["user"]["papel"] == "Morador"
 

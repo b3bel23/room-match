@@ -36,13 +36,13 @@ class RegistroIn(BaseModel):
     cpf_cnpj: Optional[str] = Field(None, max_length=20)  # obrigatório para Locador
     telefone: Optional[str] = Field(None, max_length=20)
     genero: Optional[str] = None
-    ocupacao: Optional[str] = None
+    ocupacao: str = Field(..., min_length=1, max_length=120)
     emprego: Optional[str] = None
     faculdade: Optional[str] = None
     foto_url: Optional[str] = None
     bio: Optional[str] = Field(None, max_length=500)
-    cidade_atual: Optional[str] = Field(None, max_length=100)
-    data_nascimento: Optional[date] = None
+    cidade_atual: str = Field(..., min_length=1, max_length=100)
+    data_nascimento: date
     raio_busca_km: Optional[float] = Field(None, ge=0, le=200)  # só Morador
     tags: List[str] = []
     orcamento_maximo: Optional[float] = Field(None, ge=0)

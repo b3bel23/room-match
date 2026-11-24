@@ -111,7 +111,7 @@ USUARIOS = [
     },
     {
         "email": "residente2@demo.com", "nome": "Julia Campos", "papel": None,
-        "telefone": "(19) 99118-7742", "genero": "Mulher Cisgênero", "ocupacao": "estagiario",
+        "telefone": "(19) 99118-7742", "genero": "Mulher Cisgênero", "ocupacao": "estudante",
         "emprego": "estagio", "faculdade": "unicamp-campinas",
         "cidade_atual": "Campinas", "data_nascimento": date(2002, 12, 1),
         "bio": "Estágio em design. Gosto de casa organizada e silêncio à noite.",

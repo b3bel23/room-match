@@ -705,6 +705,12 @@
                 );
             }
             const telefone = exigirTelefoneBr(body.telefone);
+            const ocupacao = String(body.ocupacao || '').trim();
+            const cidadeAtual = String(body.cidade_atual || '').trim();
+            const dataNascimento = body.data_nascimento || null;
+            if (!ocupacao) throw erro(422, 'Informe a ocupação.');
+            if (!cidadeAtual) throw erro(422, 'Informe a cidade atual.');
+            if (!dataNascimento) throw erro(422, 'Informe a data de nascimento.');
             const cpfCnpj = String(body.cpf_cnpj || '').trim();
             if (papel === 'Locador') {
                 const digitos = cpfCnpj.replace(/\D/g, '');
@@ -727,13 +733,13 @@
                 telefone,
                 cpf_cnpj: papel === 'Locador' ? cpfCnpj.replace(/\D/g, '') : '',
                 genero: String(body.genero || '').trim(),
-                ocupacao: String(body.ocupacao || '').trim(),
+                ocupacao,
                 emprego: String(body.emprego || '').trim(),
                 faculdade: String(body.faculdade || '').trim(),
                 foto_url: String(body.foto_url || ''),
                 bio: String(body.bio || '').trim(),
-                cidade_atual: String(body.cidade_atual || '').trim(),
-                data_nascimento: body.data_nascimento || null,
+                cidade_atual: cidadeAtual,
+                data_nascimento: dataNascimento,
                 raio_busca_km: body.raio_busca_km != null ? Number(body.raio_busca_km) : null,
                 tags: filtrarConvivencia(Array.isArray(body.tags) ? body.tags : []),
                 orcamento: Number(body.orcamento_maximo ?? body.orcamento) || 0,
