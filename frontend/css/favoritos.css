@@ -348,3 +348,63 @@ html:has(body.favoritos-page) {
         font-size: clamp(22px, 6vw, 28px);
     }
 }
+
+/* Celular e tablet: cartão do favorito com foto, textos e coração em cima e o botão embaixo. */
+@media (max-width: 960px) {
+    .filtros {
+        flex-wrap: wrap;
+    }
+
+    .filtro-busca {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .fav-row {
+        display: grid;
+        grid-template-columns: 88px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "img corpo coracao"
+            "botao botao botao";
+        align-items: start;
+        gap: 12px;
+    }
+
+    .fav-img {
+        grid-area: img;
+        width: 88px;
+        height: 72px;
+    }
+
+    .fav-corpo {
+        grid-area: corpo;
+    }
+
+    /* Ícone, local, preço e afinidade fluem como texto, sem quebrar o ícone sozinho. */
+    .fav-info {
+        display: block;
+        line-height: 1.45;
+    }
+
+    .fav-info svg {
+        display: inline-block;
+        vertical-align: -4px;
+        margin-right: 2px;
+    }
+
+    .fav-match {
+        margin-left: 4px;
+    }
+
+    .fav-coracao {
+        grid-area: coracao;
+        padding: 0 2px;
+    }
+
+    .fav-row .btn {
+        grid-area: botao;
+        width: 100%;
+        height: auto;
+        min-height: var(--tap-min);
+    }
+}

@@ -989,6 +989,23 @@ a.commute-cta:hover {
         grid-template-columns: 1fr;
     }
 
+    /* Uma coluna só: desfaz as colunas fixas da faixa de 960px (que criavam uma
+       segunda coluna "fantasma" e espremiam Tempo máximo e Hábitos). */
+    .filter-controles > * {
+        grid-column: 1 / -1;
+    }
+
+    /* "Tempo máximo" em uma linha só; o seletor de transporte fica ao lado. */
+    #filtro-desloc-label,
+    .filtro-desloc-cabecalho strong {
+        white-space: nowrap;
+    }
+
+    .filtro-desloc-cabecalho {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+
     .properties {
         grid-template-columns: 1fr;
         padding-bottom: 28px;
