@@ -362,6 +362,34 @@ tablet e celular) tudo continua uma coisa embaixo da outra.
 **Telas:** `preferencias.html`, `perfil.html`, `publicar-imovel.html`
 (`css/config.css`, `css/publicar-imovel.css`).
 
+### Responsividade (celular, tablet e computador)
+
+**Status:** concluída para as telas principais; falta testar em aparelhos reais (Safari/iPhone,
+Firefox).
+
+**O que faz:** o site se ajusta a telas de 320 px a 1920 px sem rolagem para o lado e sem
+elementos espremidos ou fora do lugar.
+
+**Regras de negócio e decisões**
+- Cabeçalho no celular (até 720 px): 1ª linha com o logo à esquerda e, à direita,
+  "Entrar / Cadastrar" (visitante) ou "Sair" + foto de perfil (logado); 2ª linha com os
+  demais links (sino, Explorar/Meus anúncios, Favoritos/Publicar, Mensagens). Abaixo de
+  380 px o menu fica um pouco mais compacto para caber em 2 linhas.
+- Explorar no celular: cada filtro ocupa a largura toda (antes uma regra de tablet criava
+  uma coluna "fantasma" que espremia Tempo máximo e Hábitos); "Tempo máximo" em uma linha.
+- Favoritos no celular e no tablet (até 960 px): foto, texto e coração em cima; "Ver
+  detalhes" embaixo, na largura toda.
+- Mensagens no celular: a lista de conversas não passa mais da largura da tela.
+- Login (e Recuperar/Redefinir senha, Verificar e-mail) no celular e no tablet: sem o
+  espaço vazio acima de "Entrar".
+- Detalhe do imóvel: a linha de distância não aparece quando o valor não é válido (antes
+  mostrava "NaN km").
+- Verificado por teste automático em 11 larguras (320 a 1920 px) para visitante, morador e
+  locador: nenhuma página com rolagem horizontal.
+
+**Pendências:** na página Termos, para visitante, o link "Termos" pode cair numa 3ª linha
+do menu em celulares estreitos.
+
 ### Tela "Conta criada" (pós-cadastro)
 
 **Status:** concluída.

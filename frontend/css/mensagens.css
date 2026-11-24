@@ -630,7 +630,8 @@
 
 @media (max-width: 960px) {
     .chat-layout {
-        grid-template-columns: 1fr;
+        /* minmax(0, 1fr): a coluna não cresce além da tela por causa de textos longos. */
+        grid-template-columns: minmax(0, 1fr);
         min-height: calc(100dvh - 64px - 96px);
     }
 
@@ -639,6 +640,7 @@
     }
 
     .chat-lista {
+        min-width: 0;
         max-height: none;
         min-height: calc(100dvh - 64px - 96px);
         border-right: none;

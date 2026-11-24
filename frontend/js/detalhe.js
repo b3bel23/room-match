@@ -241,7 +241,7 @@ function preencher(imovel) {
     if (trajetoSpan) {
         if (comTempo.length) {
             const km = comTempo
-                .filter((d) => d.distancia_km)
+                .filter((d) => Number(d.distancia_km) > 0)
                 .map((d) => `${Number(d.distancia_km).toFixed(1)} km · ${rotuloDest(d)}`)
                 .join('\n');
             trajetoSpan.textContent = km || 'até seus destinos de interesse';

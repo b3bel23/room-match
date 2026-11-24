@@ -322,3 +322,11 @@
     font-weight: var(--fw-bold);
     color: var(--color-primary);
 }
+
+/* A regra base do .login-card vem depois do @media acima e anulava o min-height: 0,
+   deixando um espaço vazio em cima de "Entrar" no celular e no tablet. */
+@media (max-width: 980px) {
+    .login-card {
+        min-height: 0;
+    }
+}
