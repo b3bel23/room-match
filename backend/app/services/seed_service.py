@@ -228,6 +228,51 @@ USUARIOS = [
         "foto": "perfil-ana.jpg",
         "tags": ["Silêncio Noturno", "Trabalho em Casa", "Sem Fumo"],
     },
+    {
+        "email": "locador13@demo.com", "nome": "Marlene Souza", "papel": "locador", "cpf_cnpj": "14141414141",
+        "telefone": "(19) 99120-5410", "genero": "Mulher Cisgênero", "ocupacao": "cbo-5",
+        "emprego": "autonomo", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1971, 4, 2),
+        "bio": "Alugo quarto simples em casa antiga perto do Centro. Valor baixo, sem frescura.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Sem Festas", "Organizado", "Aceita Animais"],
+    },
+    {
+        "email": "locador14@demo.com", "nome": "José Carlos Pinto", "papel": "locador", "cpf_cnpj": "15151515151",
+        "telefone": "(19) 99231-6521", "genero": "Homem Cisgênero", "ocupacao": "cbo-8",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1968, 10, 19),
+        "bio": "Kitnet simples no Campo Grande. Boa pra quem precisa economizar.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Sem Fumo", "Trabalho em Casa", "Organizado"],
+    },
+    {
+        "email": "locador15@demo.com", "nome": "Rosana Vieira", "papel": "locador", "cpf_cnpj": "16161616161",
+        "telefone": "(19) 98342-7632", "genero": "Mulher Cisgênero", "ocupacao": "cbo-4",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1975, 7, 11),
+        "bio": "República simples no Jardim São Marcos. Casa comum de família.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Sem Festas", "Aceita Animais", "Silêncio Noturno"],
+    },
+    {
+        "email": "locador16@demo.com", "nome": "Antônio Barbosa", "papel": "locador", "cpf_cnpj": "17171717171",
+        "telefone": "(19) 98453-8743", "genero": "Homem Cisgênero", "ocupacao": "cbo-7",
+        "emprego": "sem-carteira", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1965, 2, 27),
+        "bio": "Quarto em casa térrea no Parque Industrial. Longe do Cambuí, preço justo.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Sem Festas", "Organizado", "Sem Fumo"],
+    },
+    {
+        "email": "locador17@demo.com", "nome": "Célia Ramos", "papel": "locador", "cpf_cnpj": "18181818181",
+        "telefone": "(19) 98564-9854", "genero": "Mulher Cisgênero", "ocupacao": "sem-ocupacao",
+        "emprego": "aposentado", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1958, 12, 5),
+        "bio": "Alugo vaga simples em casa no Vila Costa e Silva. Ambiente calmo.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Sem Festas", "Silêncio Noturno", "Aceita Animais"],
+    },
 ]
 
 # `slug` é a pasta em frontend/assets/imoveis/ (4 fotos cada); `moradores` são e-mails de USUARIOS.
@@ -410,6 +455,72 @@ IMOVEIS = [
          "Suíte em apartamento no Cambuí (república feminina), com ar-condicionado e escrivaninha. "
          "Prédio silencioso, portaria e elevador. Foco em home office e descanso. "
          "Contas rateadas; sem fumantes."
+     )},
+    # Opções mais humildes (preço baixo, casa simples — sem estética “decorada”).
+    {"slug": "quarto-simples-centro", "locador": "locador13@demo.com",
+     "titulo": "Quarto simples em casa antiga · Centro",
+     "tipo": "Casa", "classificacao": "Mista",
+     "rua": "Rua Culto à Ciência", "numero": "412", "bairro": "Centro",
+     "cep": "13020-070", "lat": -22.9025, "lng": -47.0575,
+     "aluguel": 480, "condominio": 0, "iptu": 25, "contas": 90, "area_m2": 9,
+     "tags": ["Sem Festas", "Wi-Fi", "Mobiliado", "Organizado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto pequeno e simples em casa antiga perto do Centro. Cama, guarda-roupa e ventilador. "
+         "Banheiro compartilhado, cozinha básica. Contas no rateio. Ideal pra quem precisa de "
+         "preço baixo e aceita casa bem comum, sem luxo."
+     )},
+    {"slug": "kitnet-simples-campo-grande", "locador": "locador14@demo.com",
+     "titulo": "Kitnet bem simples · Campo Grande",
+     "tipo": "Kitnet", "classificacao": "Mista",
+     "rua": "Rua Dr. Quirino", "numero": "78", "bairro": "Campo Grande",
+     "cep": "13045-010", "lat": -22.9350, "lng": -47.0700,
+     "aluguel": 700, "condominio": 80, "iptu": 20, "contas": 70, "area_m2": 16,
+     "tags": ["Mobiliado", "Wi-Fi", "Sem Fumo", "Trabalho em Casa"],
+     "moradores": [],
+     "descricao": (
+         "Kitnet compacta e sem luxo no Campo Grande: cama, mesa pequena, chuveiro elétrico e "
+         "fogão de 2 bocas. Prédio antigo, sem elevador. Longe do Cambuí, mas dá pra chegar "
+         "de ônibus ao Centro. Bom custo-benefício pra quem está apertado."
+     )},
+    {"slug": "republica-simples-sao-marcos", "locador": "locador15@demo.com",
+     "titulo": "Quarto em casa simples · Jardim São Marcos",
+     "tipo": "República", "classificacao": "Mista",
+     "rua": "Rua das Acácias", "numero": "155", "bairro": "Jardim São Marcos",
+     "cep": "13056-200", "lat": -22.9550, "lng": -47.0450,
+     "aluguel": 520, "condominio": 0, "iptu": 20, "contas": 100, "area_m2": 10,
+     "tags": ["Sem Festas", "Aceita Animais", "Wi-Fi", "Mobiliado", "Silêncio Noturno"],
+     "moradores": [],
+     "descricao": (
+         "Quarto em casa térrea comum no Jardim São Marcos. Mobília básica (cama e armário), "
+         "sala e cozinha compartilhadas. Não é casa nova nem reformada — é limpa e funcional. "
+         "Pet pequeno sob conversa. Contas divididas."
+     )},
+    {"slug": "casa-simples-parque-industrial", "locador": "locador16@demo.com",
+     "titulo": "Quarto barato em casa · Parque Industrial",
+     "tipo": "Casa", "classificacao": "Masculina",
+     "rua": "Rua João Batista de Souza Soares", "numero": "890", "bairro": "Parque Industrial",
+     "cep": "13031-710", "lat": -22.9180, "lng": -47.1050,
+     "aluguel": 450, "condominio": 0, "iptu": 15, "contas": 0, "area_m2": 8,
+     "tags": ["Sem Festas", "Wi-Fi", "Mobiliado", "Sem Fumo", "Organizado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto bem simples em casa no Parque Industrial. Água, luz e Wi-Fi inclusos no valor. "
+         "Cama de solteiro, ventilador, banheiro compartilhado. Casa de gente trabalhadora, "
+         "sem festa e sem frescura — só um lugar barato pra dormir e trabalhar."
+     )},
+    {"slug": "vaga-simples-costa-silva", "locador": "locador17@demo.com",
+     "titulo": "Vaga simples em casa · Vila Costa e Silva",
+     "tipo": "Casa", "classificacao": "Feminina",
+     "rua": "Rua Paulo Setúbal", "numero": "220", "bairro": "Vila Costa e Silva",
+     "cep": "13081-010", "lat": -22.8680, "lng": -47.0180,
+     "aluguel": 500, "condominio": 0, "iptu": 20, "contas": 85, "area_m2": 9,
+     "tags": ["Sem Festas", "Silêncio Noturno", "Aceita Animais", "Wi-Fi", "Mobiliado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto individual em casa antiga na Vila Costa e Silva. Ambiente calmo, dona da casa "
+         "mora no local. Mobília simples, sem ar-condicionado. Contas no rateio. "
+         "Opção humilde e tranquila, longe da cara do Barão e do Cambuí."
      )},
 ]
 

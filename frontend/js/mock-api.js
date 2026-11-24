@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v11';
+    const CHAVE_DB = 'roommatch-mock-db-v12';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -377,6 +377,111 @@
             contas: 85,
             classificacao: 'Feminina',
             endereco: 'R. Maria Monteiro, 810 · Cambuí'
+        }),
+        imovelSeed({
+            id: 'quarto-simples-centro',
+            titulo: 'Quarto simples em casa antiga · Centro',
+            tipo: 'Casa',
+            bairro: 'Centro',
+            cidade: 'Campinas',
+            preco: 595,
+            match_percent: 62,
+            tags: ['Sem Festas', 'Organizado'],
+            badge: 'Casa',
+            area_m2: 9,
+            deslocamento_min: 10,
+            destino: 'Centro',
+            locador_id: 'u-locador13',
+            aluguel: 480,
+            condominio: 0,
+            iptu: 25,
+            contas: 90,
+            classificacao: 'Mista',
+            endereco: 'R. Culto à Ciência, 412 · Centro'
+        }),
+        imovelSeed({
+            id: 'kitnet-simples-campo-grande',
+            titulo: 'Kitnet bem simples · Campo Grande',
+            tipo: 'Kitnet',
+            bairro: 'Campo Grande',
+            cidade: 'Campinas',
+            preco: 870,
+            match_percent: 58,
+            tags: ['Mobiliado', 'Sem Fumo', 'Trabalho em Casa'],
+            badge: 'Kitnet',
+            area_m2: 16,
+            deslocamento_min: 30,
+            destino: 'Centro',
+            locador_id: 'u-locador14',
+            aluguel: 700,
+            condominio: 80,
+            iptu: 20,
+            contas: 70,
+            classificacao: 'Mista',
+            endereco: 'R. Dr. Quirino, 78 · Campo Grande'
+        }),
+        imovelSeed({
+            id: 'republica-simples-sao-marcos',
+            titulo: 'Quarto em casa simples · Jardim São Marcos',
+            tipo: 'República',
+            bairro: 'Jardim São Marcos',
+            cidade: 'Campinas',
+            preco: 640,
+            match_percent: 60,
+            tags: ['Sem Festas', 'Aceita Animais', 'Silêncio Noturno'],
+            badge: 'República',
+            area_m2: 10,
+            deslocamento_min: 45,
+            destino: 'UNICAMP',
+            locador_id: 'u-locador15',
+            aluguel: 520,
+            condominio: 0,
+            iptu: 20,
+            contas: 100,
+            classificacao: 'Mista',
+            endereco: 'R. das Acácias, 155 · Jardim São Marcos'
+        }),
+        imovelSeed({
+            id: 'casa-simples-parque-industrial',
+            titulo: 'Quarto barato em casa · Parque Industrial',
+            tipo: 'Casa',
+            bairro: 'Parque Industrial',
+            cidade: 'Campinas',
+            preco: 465,
+            match_percent: 55,
+            tags: ['Sem Festas', 'Sem Fumo', 'Organizado'],
+            badge: 'Casa',
+            area_m2: 8,
+            deslocamento_min: 40,
+            destino: 'Centro',
+            locador_id: 'u-locador16',
+            aluguel: 450,
+            condominio: 0,
+            iptu: 15,
+            contas: 0,
+            classificacao: 'Masculina',
+            endereco: 'R. João Batista de Souza Soares, 890 · Parque Industrial'
+        }),
+        imovelSeed({
+            id: 'vaga-simples-costa-silva',
+            titulo: 'Vaga simples em casa · Vila Costa e Silva',
+            tipo: 'Casa',
+            bairro: 'Vila Costa e Silva',
+            cidade: 'Campinas',
+            preco: 605,
+            match_percent: 64,
+            tags: ['Sem Festas', 'Silêncio Noturno', 'Aceita Animais'],
+            badge: 'Casa',
+            area_m2: 9,
+            deslocamento_min: 28,
+            destino: 'Taquaral',
+            locador_id: 'u-locador17',
+            aluguel: 500,
+            condominio: 0,
+            iptu: 20,
+            contas: 85,
+            classificacao: 'Feminina',
+            endereco: 'R. Paulo Setúbal, 220 · Vila Costa e Silva'
         })
     ];
 

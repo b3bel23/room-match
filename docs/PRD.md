@@ -641,12 +641,11 @@ telas e a afinidade funcionarem sem cadastro manual.
   Papéis: **12 locadores** (1 por anúncio novo + os 2 originais), **3 moradores**
   (orçamento, limiar, destinos, tags) e 3 contas `residente*` sem papel de busca (legado;
   anúncios **não** listam residentes).
-- **14 anúncios** com 4 fotos cada em `frontend/assets/imoveis/{slug}/`: 4 originais
-  (preços alinhados ao mercado — kitnet Cambuí ~R$ 2.400) + 10 novos realistas
-  (república masculina / pensionato feminino em Barão, studio Cambuí, quarto Centro,
-  casa Jardim Eulina, suíte Nova Campinas, kitnet Barão, república Taquaral, casa
-  Costa e Silva / Via Norte, suíte Cambuí). Textos e nomes fictícios; faixas de preço
-  inspiradas em anúncios reais da RMC.
+- **19 anúncios** com 4 fotos cada em `frontend/assets/imoveis/{slug}/` (e URL pública
+  no Supabase Storage no seed live): mix de opções “de revista” e **mais humildes**
+  (Centro antigo, Campo Grande, Jardim São Marcos, Parque Industrial, Vila Costa e
+  Silva — preços ~R$ 450–700, fotos limpas sem estética Pinterest). Textos e nomes
+  fictícios; faixas inspiradas em anúncios reais da RMC.
 - 2 favoritos.
 
 **Regras e decisões**
