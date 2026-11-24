@@ -6,7 +6,7 @@
     <title>Room Match · Moradia na região metropolitana de Campinas</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124by">
-    <link rel="stylesheet" href="../css/home.css?v=20261124by">
+    <link rel="stylesheet" href="../css/home.css?v=20261124bz">
 </head>
 <body class="home-page visitante">
 
@@ -107,18 +107,20 @@
 
                 <div class="filtro-desloc" role="group" aria-labelledby="filtro-desloc-label">
                     <div class="filtro-desloc-cabecalho">
-                        <span id="filtro-desloc-label">Tempo máximo</span>
+                        <div class="filtro-desloc-titulo">
+                            <span id="filtro-desloc-label">Tempo máximo</span>
+                            <label class="filtro-desloc-modo-wrap" for="filtro-desloc-modo">
+                                <span class="visually-hidden">Meio de transporte do filtro</span>
+                                <select id="filtro-desloc-modo" aria-label="Meio de transporte para o tempo máximo">
+                                    <option value="foot">A pé</option>
+                                    <option value="bike">Bicicleta</option>
+                                    <option value="car">Carro</option>
+                                    <option value="bus">Ônibus</option>
+                                </select>
+                            </label>
+                        </div>
                         <strong id="filtro-desloc-texto">Qualquer tempo</strong>
                     </div>
-                    <label class="filtro-desloc-modo-wrap" for="filtro-desloc-modo">
-                        <span class="visually-hidden">Meio de transporte do filtro</span>
-                        <select id="filtro-desloc-modo" aria-label="Meio de transporte para o tempo máximo">
-                            <option value="foot">A pé</option>
-                            <option value="bike">Bicicleta</option>
-                            <option value="car">Carro</option>
-                            <option value="bus">Ônibus</option>
-                        </select>
-                    </label>
                     <input
                         id="filtro-desloc-max"
                         type="range"
