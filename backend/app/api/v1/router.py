@@ -1,6 +1,17 @@
 from fastapi import APIRouter
 
-from app.api.v1 import auth, chat, favoritos, imoveis, matches, mobilidade, notificacoes, users
+from app.api.v1 import (
+    auth,
+    bloqueios,
+    chat,
+    denuncias,
+    favoritos,
+    imoveis,
+    matches,
+    mobilidade,
+    notificacoes,
+    users,
+)
 
 api_router = APIRouter()
 
@@ -14,6 +25,10 @@ api_router.include_router(users.router)
 # Favoritos e chat (paths completos nos routers, como o front chama).
 api_router.include_router(favoritos.router)
 api_router.include_router(chat.router)
+# Denúncias → tabela `denuncias` + e-mail para a equipe (sem mudar schema).
+api_router.include_router(denuncias.router)
+# Bloqueio de contato → mesma tabela `denuncias` (motivo bloqueio_contato; desfazer = revogado).
+api_router.include_router(bloqueios.router)
 # Avisos no site (RF17/RF35) e rotas de ônibus (RF31).
 api_router.include_router(notificacoes.router)
 api_router.include_router(mobilidade.router)

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Match · Moradia na região metropolitana de Campinas</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/home.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/home.css?v=20261124by">
 </head>
 <body class="home-page visitante">
 
@@ -27,23 +27,23 @@
     </header>
 
     <div class="page-content">
-        <section class="hero" aria-label="Campinas e Região Metropolitana">
+        <section class="hero hero-degrade" aria-label="Campinas e Região Metropolitana">
             <div class="hero-inner">
                 <img class="hero-logo" src="../assets/logo.svg" alt="RoomMatch">
-                <h1>A moradia certa, com as pessoas certas, na região metropolitana de Campinas</h1>
-                <p class="hero-lead">Combine hábitos, veja o custo real do mês e chegue mais rápido na faculdade ou no trabalho.</p>
+                <h1>Moradia compartilhada com afinidade real em Campinas e região</h1>
+                <p class="hero-lead">Encontre quarto ou vaga alinhados aos seus hábitos, com o custo mensal completo e o tempo até a faculdade ou o trabalho.</p>
                 <div class="stats" aria-label="Indicadores">
                     <div data-stat="imoveis">
-                        <span class="stat-number">4</span>
+                        <span class="stat-number is-loading" aria-busy="true">&nbsp;</span>
                         <span class="stat-label">imóveis ativos</span>
                     </div>
                     <!-- Só para quem está logado -->
                     <div class="stat-logado" data-stat="match" hidden>
-                        <span class="stat-number">—</span>
+                        <span class="stat-number is-loading" aria-busy="true">&nbsp;</span>
                         <span class="stat-label">afinidade média</span>
                     </div>
                     <div class="stat-logado" data-stat="deslocamento" hidden>
-                        <span class="stat-number">—</span>
+                        <span class="stat-number is-loading" aria-busy="true">&nbsp;</span>
                         <span class="stat-label">deslocamento médio</span>
                     </div>
                 </div>
@@ -51,28 +51,40 @@
         </section>
 
         <div class="cta-banner">
-            Crie sua conta ou faça login para ver seu match personalizado e salvar favoritos.
+            Entre na conta para ver a afinidade com cada anúncio e salvar favoritos.
         </div>
 
         <div class="filter-bar">
             <div class="filter-pills" role="group" aria-label="Tipo de imóvel">
                 <button class="pill active" type="button">Todos</button>
-                <button class="pill" type="button">Apart.</button>
+                <button class="pill" type="button">Apartamento</button>
                 <button class="pill" type="button">Kitnet</button>
                 <button class="pill" type="button">Casa</button>
                 <button class="pill" type="button">República</button>
             </div>
 
             <div class="filter-controles">
-                <div class="search-input">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <input id="filtro-bairro" type="search" placeholder="Bairro ou cidade" aria-label="Buscar por bairro ou cidade">
+                <div class="search-input-wrap">
+                    <div class="search-input">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input
+                            id="filtro-bairro"
+                            type="search"
+                            placeholder="Bairro ou cidade"
+                            aria-label="Buscar por bairro ou cidade"
+                            autocomplete="off"
+                            aria-autocomplete="list"
+                            aria-controls="filtro-bairro-sugestoes"
+                            aria-expanded="false"
+                        >
+                    </div>
+                    <ul id="filtro-bairro-sugestoes" class="filtro-bairro-sugestoes" role="listbox" hidden></ul>
                 </div>
 
                 <div class="filtro-valor" role="group" aria-labelledby="filtro-valor-label">
                     <div class="filtro-valor-cabecalho">
                         <span id="filtro-valor-label">Valor máximo mensal</span>
-                        <strong id="filtro-valor-texto">Sem limite</strong>
+                        <strong id="filtro-valor-texto">R$ 2.500 ou mais</strong>
                     </div>
                     <input
                         id="filtro-preco"
@@ -84,19 +96,87 @@
                         aria-valuemin="500"
                         aria-valuemax="2500"
                         aria-valuenow="2500"
-                        aria-label="Valor máximo mensal do total do imóvel"
+                        aria-valuetext="R$ 2.500 ou mais — sem teto de preço"
+                        aria-label="Valor máximo mensal do total do imóvel. No máximo: R$ 2.500 ou mais"
                     >
                     <div class="filtro-valor-limites" aria-hidden="true">
                         <span>R$ 500</span>
-                        <span>R$ 2.500</span>
+                        <span>R$ 2.500+</span>
                     </div>
                 </div>
 
-                <div class="filtro-select-wrap">
-                    <label class="visually-hidden" for="filtro-tag">Hábito de convivência</label>
-                    <select id="filtro-tag" class="filtro-select" aria-label="Filtrar por hábito de convivência">
-                        <option value="">Todos os hábitos</option>
-                    </select>
+                <div class="filtro-desloc" role="group" aria-labelledby="filtro-desloc-label">
+                    <div class="filtro-desloc-cabecalho">
+                        <span id="filtro-desloc-label">Tempo máximo</span>
+                        <strong id="filtro-desloc-texto">Qualquer tempo</strong>
+                    </div>
+                    <label class="filtro-desloc-modo-wrap" for="filtro-desloc-modo">
+                        <span class="visually-hidden">Meio de transporte do filtro</span>
+                        <select id="filtro-desloc-modo" aria-label="Meio de transporte para o tempo máximo">
+                            <option value="foot">A pé</option>
+                            <option value="bike">Bicicleta</option>
+                            <option value="car">Carro</option>
+                            <option value="bus">Ônibus</option>
+                        </select>
+                    </label>
+                    <input
+                        id="filtro-desloc-max"
+                        type="range"
+                        min="10"
+                        max="90"
+                        step="5"
+                        value="90"
+                        aria-valuemin="10"
+                        aria-valuemax="90"
+                        aria-valuenow="90"
+                        aria-valuetext="Qualquer tempo — sem teto"
+                        aria-label="Tempo máximo de deslocamento até seu destino"
+                    >
+                    <div class="filtro-valor-limites" aria-hidden="true">
+                        <span>10 min</span>
+                        <span>90 min+</span>
+                    </div>
+                </div>
+
+                <div class="filtro-tags-wrap" id="filtro-tags-wrap">
+                    <span class="visually-hidden" id="filtro-tags-label">Hábitos de convivência</span>
+                    <button
+                        type="button"
+                        class="filtro-tags-trigger"
+                        id="filtro-tags-trigger"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-controls="filtro-tags-painel"
+                        aria-labelledby="filtro-tags-label"
+                    >
+                        Todos os hábitos
+                    </button>
+                    <div
+                        class="filtro-tags-painel"
+                        id="filtro-tags-painel"
+                        role="group"
+                        aria-labelledby="filtro-tags-label"
+                        hidden
+                    >
+                        <p class="filtro-tags-dica">Marque hábitos. Opostos se desmarcam sozinhos. Digite para buscar.</p>
+                        <label class="filtro-tags-busca-wrap" for="filtro-tags-busca">
+                            <span class="visually-hidden">Buscar hábitos</span>
+                            <input
+                                id="filtro-tags-busca"
+                                type="search"
+                                class="filtro-tags-busca"
+                                placeholder="Buscar hábito…"
+                                autocomplete="off"
+                            >
+                        </label>
+                        <div class="filtro-tags-lista" id="filtro-tags-lista"></div>
+                        <p id="filtro-tags-vazio" class="filtro-tags-vazio" hidden>Nenhum hábito com esse texto.</p>
+                        <div class="filtro-tags-acoes">
+                            <button type="button" class="filtro-tags-limpar" id="filtro-tags-limpar" hidden>
+                                Limpar seleção
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="btn btn-primary btn-buscar" type="button">Buscar</button>
@@ -115,14 +195,15 @@
         <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/tags-catalogo.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
-    <script src="../js/tags-catalogo.js?v=20261123"></script>
-    <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/home.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
+    <script src="../js/imovel-fotos.js?v=20261124bl"></script>
+    <script src="../js/home.js?v=20261124bv"></script>
 </body>
 </html>

@@ -32,7 +32,7 @@ def novo_usuario(db, email, nome="Pessoa"):
     return usuario
 
 
-def novo_locador(db, email="loc@x.com", cpf="111"):
+def novo_locador(db, email="loc@x.com", cpf="11111111111"):
     usuario = novo_usuario(db, email, "Locador")
     db.add(Locador(id_locador=usuario.id_usuario, cpf_cnpj=cpf))
     db.commit()
@@ -56,7 +56,7 @@ DADOS = dict(
     condominio="120",
     iptu="45",
     contas="85",
-    tags=["Pet Friendly", "Home Office"],
+    tags=["Aceita Animais", "Trabalho em Casa"],
     classificacao="Mista",
 )
 
@@ -135,11 +135,30 @@ def test_publicar_cria_imovel_endereco_post_tags_e_contador(db):
     assert item["tipo"] == "República" and item["titulo"] == "Quarto em república"
     assert item["bairro"] == "Barão Geraldo" and item["cidade"] == "Campinas"
     assert item["endereco"] == "R. Benedito Alves Aranha, 450 · Barão Geraldo"
-    assert sorted(item["tags"]) == ["Home Office", "Pet Friendly"]
+    assert sorted(item["tags"]) == ["Aceita Animais", "Trabalho em Casa"]
     assert item["locador_id"] == dono.id_usuario and item["fotos"] == []
     assert db.query(Imovel).count() == db.query(EnderecoImovel).count() == db.query(Post).count() == 1
     assert db.query(ImovelTag).count() == 2
     assert db.get(Locador, dono.id_usuario).quantidade_imoveis_anunciados == 1
+
+
+def test_publicar_duplicado_na_janela_reusa_o_mesmo_anuncio(db):
+    """Clique duplo / retry: mesmo título+endereço em poucos segundos não cria cópia."""
+    dono = novo_locador(db)
+    a = publicar(db, dono)
+    b = publicar(db, dono)
+    assert a["id"] == b["id"]
+    assert db.query(Post).count() == 1
+    assert db.query(Imovel).count() == 1
+    assert db.get(Locador, dono.id_usuario).quantidade_imoveis_anunciados == 1
+
+
+def test_publicar_titulo_diferente_cria_outro_anuncio(db):
+    dono = novo_locador(db)
+    a = publicar(db, dono, titulo="Quarto A")
+    b = publicar(db, dono, titulo="Quarto B")
+    assert a["id"] != b["id"]
+    assert db.query(Post).count() == 2
 
 
 def test_publicar_usa_padroes_quando_faltam_campos_opcionais(db):
@@ -180,10 +199,20 @@ def test_novo_anuncio_aparece_no_mural_e_calcula_match(db):
     publicar(db, novo_locador(db))
     visitante = matches.listar_imoveis(tipo="", bairro="", q="", preco_max=0, tag="", usuario=None, db=db)
     assert [i["match"] for i in visitante["items"]] == [0]
-    morador = novo_morador(db, tags=["Pet Friendly", "Festas"])
+    # Adesão coberta + adesão faltando (Aberto a Festas não está no anúncio padrão).
+    morador = novo_morador(db, tags=["Aceita Animais", "Aberto a Festas"])
     item = matches.listar_imoveis(tipo="", bairro="", q="", preco_max=0, tag="", usuario=morador, db=db)["items"][0]
-    assert item["match"] == 50 and item["tags_correspondentes"] == ["Pet Friendly"]
+    assert item["match"] == 50 and item["tags_correspondentes"] == ["Aceita Animais"]
     assert matches.detalhe_imovel(item["id"], usuario=None, db=db)["titulo"] == "Quarto em república"
+
+
+def test_locais_autocomplete_usa_bairros_e_cidades_cadastrados(db):
+    publicar(db, novo_locador(db), bairro="Barão Geraldo", cidade="Campinas")
+    todos = matches.listar_locais(q="", db=db)["items"]
+    labels = {i["label"] for i in todos}
+    assert "Barão Geraldo" in labels and "Campinas" in labels
+    filtrados = matches.listar_locais(q="barão", db=db)["items"]
+    assert any(i["label"] == "Barão Geraldo" and i["tipo"] == "bairro" for i in filtrados)
 
 
 # --- editar -----------------------------------------------------------------

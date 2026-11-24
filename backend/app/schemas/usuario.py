@@ -40,6 +40,10 @@ class RegistroIn(BaseModel):
     emprego: Optional[str] = None
     faculdade: Optional[str] = None
     foto_url: Optional[str] = None
+    bio: Optional[str] = None
+    cidade_atual: Optional[str] = Field(None, max_length=100)
+    data_nascimento: Optional[date] = None
+    raio_busca_km: Optional[float] = Field(None, ge=0, le=200)  # só Morador
     tags: List[str] = []
     orcamento_maximo: Optional[float] = Field(None, ge=0)
     limiar_compatibilidade: Optional[float] = Field(None, ge=0, le=100)

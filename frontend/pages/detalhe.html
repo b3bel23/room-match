@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do imóvel · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="../css/detalhe.css?v=20261123">
+    <link rel="stylesheet" href="../css/detalhe.css?v=20261124bo">
 </head>
 <body class="detalhe-page">
 
@@ -41,7 +41,7 @@
             <h2>Carregando anúncio…</h2>
             <div class="tags"></div>
 
-            <p id="imovel-descricao" class="imovel-descricao"></p>
+            <div id="imovel-descricao" class="imovel-descricao"></div>
 
             <ul id="imovel-comodidades" class="imovel-comodidades" aria-label="Comodidades"></ul>
 
@@ -89,14 +89,59 @@
                     </button>
                     <ul id="rota-sugestoes" class="rota-sugestoes" role="listbox" aria-label="Sugestões de lugares" hidden></ul>
                 </form>
-                <p class="rota-dica">Ou clique no mapa ou arraste o marcador B para escolher o destino.</p>
-                <div id="rota-mapa" class="rota-mapa"></div>
-                <p id="rota-resumo" class="rota-resumo" aria-live="polite"></p>
-                <div class="rota-onibus-opcoes" id="rota-onibus-opcoes" hidden>
-                    <label for="rota-hora">Saindo às</label>
-                    <input id="rota-hora" type="time" value="07:30" step="300">
+                <div class="rota-horario" id="rota-onibus-opcoes" hidden>
+                    <div class="rota-horario-bloco">
+                        <p class="rota-horario-label" id="rota-dias-label">Dia da semana</p>
+                        <div class="rota-dias" id="rota-dias" role="group" aria-labelledby="rota-dias-label">
+                            <button type="button" class="rota-dia" data-dow="0" aria-pressed="false">Seg</button>
+                            <button type="button" class="rota-dia" data-dow="1" aria-pressed="false">Ter</button>
+                            <button type="button" class="rota-dia" data-dow="2" aria-pressed="false">Qua</button>
+                            <button type="button" class="rota-dia" data-dow="3" aria-pressed="false">Qui</button>
+                            <button type="button" class="rota-dia" data-dow="4" aria-pressed="false">Sex</button>
+                            <button type="button" class="rota-dia" data-dow="5" aria-pressed="false">Sáb</button>
+                            <button type="button" class="rota-dia" data-dow="6" aria-pressed="false">Dom</button>
+                        </div>
+                        <p class="rota-horario-sub" id="rota-dia-data" aria-live="polite"></p>
+                    </div>
+                    <div class="rota-horario-bloco">
+                        <p class="rota-horario-label" id="rota-ancora-label">Planejar por</p>
+                        <div class="rota-ancora" id="rota-ancora" role="tablist" aria-labelledby="rota-ancora-label">
+                            <button type="button" class="rota-ancora-btn ativo" role="tab" data-ancora="partida" aria-selected="true">Saída às</button>
+                            <button type="button" class="rota-ancora-btn" role="tab" data-ancora="chegada" aria-selected="false">Chegada às</button>
+                        </div>
+                        <p class="rota-horario-sub" id="rota-ancora-dica" aria-live="polite">
+                            Informe a saída para ver chegada, linhas e o trajeto no mapa.
+                        </p>
+                    </div>
+                    <div class="rota-horario-bloco">
+                        <div class="rota-hora-topo">
+                            <label class="rota-horario-label" for="rota-hora" id="rota-hora-rotulo">Horário de saída</label>
+                            <input id="rota-hora" class="rota-hora-input" type="time" value="07:30" step="300">
+                        </div>
+                        <div class="rota-presets" id="rota-presets" role="group" aria-label="Horários rápidos">
+                            <button type="button" class="rota-preset" data-hora="06:30">06:30</button>
+                            <button type="button" class="rota-preset" data-hora="07:00">07:00</button>
+                            <button type="button" class="rota-preset ativo" data-hora="07:30">07:30</button>
+                            <button type="button" class="rota-preset" data-hora="08:00">08:00</button>
+                            <button type="button" class="rota-preset" data-hora="08:30">08:30</button>
+                            <button type="button" class="rota-preset" data-hora="12:00">12:00</button>
+                            <button type="button" class="rota-preset" data-hora="17:30">17:30</button>
+                            <button type="button" class="rota-preset" data-hora="18:30">18:30</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary rota-calcular" id="rota-calcular">
+                        Calcular rota
+                    </button>
                 </div>
-                <button id="rota-salvar-destino" class="rota-salvar" type="button" hidden>Salvar como meu destino</button>
+                <p class="rota-chave" aria-label="Legenda dos marcadores">
+                    <span><strong class="rota-chave-a">A</strong> Imóvel (este anúncio)</span>
+                    <span><strong class="rota-chave-b">B</strong> Destino (arraste ou clique no mapa)</span>
+                </p>
+                <div id="rota-mapa" class="rota-mapa"></div>
+                <div id="rota-legenda" class="rota-legenda" hidden aria-label="Legenda das linhas"></div>
+                <div id="rota-resumo" class="rota-resumo" aria-live="polite"></div>
+                <p class="rota-dica">Destinos de trabalho ou faculdade ficam em <a href="preferencias.html">Preferências</a>; o mural mostra o tempo até eles.</p>
+                <button id="rota-salvar-destino" class="rota-salvar" type="button" hidden aria-hidden="true">Salvar destino</button>
                 <details id="rota-passos" class="rota-passos" hidden>
                     <summary>Passo a passo</summary>
                     <ol id="rota-passos-lista"></ol>
@@ -104,18 +149,21 @@
                 <a id="rota-osm" class="rota-osm" target="_blank" rel="noopener" hidden>Abrir no OpenStreetMap ↗</a>
             </div>
 
-            <div class="moradores-cabecalho">
-                <strong>Moradores atuais</strong>
-                <span>Mista</span>
+            <div class="convivencia-casa" aria-label="Perfil da moradia">
+                <strong>Perfil da moradia</strong>
+                <span id="imovel-classificacao" class="convivencia-selo">Mista</span>
             </div>
 
             <div class="restrito">
-                <ul id="moradores-lista" class="moradores"></ul>
-                <p id="moradores-vazio" class="moradores-vazio" hidden>Imóvel individual — sem moradores no mesmo cômodo.</p>
-
                 <div class="acoes">
                     <button id="favoritar" class="btn btn-secondary" type="button">♥ Favoritar</button>
+                    <button id="denunciar-anuncio" class="btn btn-secondary btn-denunciar" type="button">Denunciar</button>
                     <a class="btn btn-primary btn-conversar" href="#conversar">Conversar com locador</a>
+                </div>
+                <div id="chat-bloqueio" class="chat-bloqueio" hidden>
+                    <p id="chat-bloqueio-titulo" class="chat-bloqueio-titulo">Conversa ainda não liberada</p>
+                    <ul id="chat-bloqueio-motivos" class="chat-bloqueio-motivos"></ul>
+                    <a class="chat-bloqueio-link" href="preferencias.html">Ajustar preferências</a>
                 </div>
 
                 <div class="bloqueio bloqueio-moradores">
@@ -151,17 +199,20 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+        <script src="../js/tags-catalogo.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124i"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="../js/favoritos-armazenamento.js?v=20261123"></script>
     <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/detalhe.js?v=20261124"></script>
-    <script src="../js/mapa-rota.js?v=20261123"></script>
+    <script src="../js/denuncia-ui.js?v=20261124aq"></script>
+    <script src="../js/detalhe.js?v=20261124bq"></script>
+    <script src="../js/mapa-rota.js?v=20261124bz"></script>
 </body>
 </html>

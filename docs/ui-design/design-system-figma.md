@@ -8,7 +8,7 @@ Fonte: https://www.figma.com/design/i5KBOOplU4DoauF0D0DDSl/roommatch
 |---|---|---|
 | primary | `#5ea38f` | CTA principal, preço, links ativos |
 | secondary | `#fbb050` | Destaque de stats (hero), faixa CTA |
-| accent | `#f08070` | Tags especiais (ex: Pet Friendly) |
+| accent | `#f08070` | Tags especiais (ex: Aceita Animais) |
 | background | `#141d22` | Fundo escuro / texto principal |
 | surface | `#ffffff` | Cards, header, inputs |
 | surface-muted | `#f4f6f7` | Fundo da página |
@@ -28,7 +28,7 @@ Fonte: https://www.figma.com/design/i5KBOOplU4DoauF0D0DDSl/roommatch
 - `button.component-button-primary` / `-secondary` / `-ghost` / `-danger`
 - `article.card` / `div.component-card-imovel` (card de imóvel: imagem, badge de match %, tags, preço, localização)
 - `span.component-badge-afinidade` (badge de % de match)
-- `span.component-tag` (tags como Home Office, Pet Friendly, LGBTQIA+ Safe, República)
+- `span.component-tag` (tags como Trabalho em Casa, Aceita Animais, LGBTQIA+ Acolhedor, República)
 - `span.filter-input` (input de filtro com ícone)
 - `div.auth-card` (card de login/cadastro)
 - `div.chat-input-bar`, `div.chat-list-hdr`, `div.chat-main-hdr` (indica uma feature de chat/mensagens no design, ainda não implementada)

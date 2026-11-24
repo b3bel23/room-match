@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favoritos · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/favoritos.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/favoritos.css?v=20261124by">
 </head>
 <body class="favoritos-page">
 
@@ -38,13 +38,13 @@
                     <input id="favoritos-busca" class="filtro-busca" type="search" placeholder="Buscar nos favoritos" aria-label="Buscar nos favoritos">
                     <select id="favoritos-ordem" class="filtro-ordem" aria-label="Ordenar favoritos">
                         <option value="recentes">Mais recentes</option>
-                        <option value="match">Maior match</option>
+                        <option value="match">Maior afinidade</option>
                         <option value="preco">Menor preço</option>
                     </select>
                 </div>
 
                 <div id="favoritos-lista" class="lista"></div>
-                <p id="favoritos-sem-resultado" class="sem-resultado" hidden>Nenhum favorito encontrado.</p>
+                <p id="favoritos-sem-resultado" class="sem-resultado" hidden>Nenhum favorito corresponde a este filtro.</p>
             </main>
         </div>
     </div>
@@ -52,7 +52,7 @@
     <main id="vista-vazia" class="vista-vazia" hidden>
         <div class="vazio-card">
             <h1>Favoritos</h1>
-            <p>Você ainda não favoritou anúncios. Os corações do mural aparecem aqui.</p>
+            <p>Você ainda não salvou anúncios. Os favoritos do mural aparecem aqui.</p>
             <a class="btn btn-primary" href="home.html">Explorar anúncios</a>
         </div>
     </main>
@@ -85,16 +85,18 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+        <script src="../js/tags-catalogo.js?v=20261124bf"></script>
+    <script src="../js/mock-api.js?v=20261124al"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
     <script src="../js/config-shell.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/favoritos-armazenamento.js?v=20261123"></script>
     <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/favoritos.js?v=20261123"></script>
+    <script src="../js/favoritos.js?v=20261124"></script>
     <script>montarSidebarConfig('favoritos.html');</script>
 </body>
 </html>

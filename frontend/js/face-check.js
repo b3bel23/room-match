@@ -1,14 +1,28 @@
 /**
- * Verificação de rosto em foto de perfil (todas as telas com data-face-perfil).
- * FaceDetector nativo → fallback BlazeFace (CDN).
+ * Verificação rigorosa de foto de perfil (data-face-perfil).
+ * Aceita só retrato de uma pessoa, de frente, nítido e bem enquadrado.
+ * Motor principal: BlazeFace (confiança + geometria). Fallback: FaceDetector.
  */
 (function (global) {
     const SCRIPTS_BLAZE = [
         'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js',
-        'https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js'
+        'https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js',
     ];
+
     const TAMANHO_MAXIMO = 5 * 1024 * 1024;
-    const LADO_MINIMO = 200;
+    const LADO_MINIMO = 400;
+    /** Confiança mínima BlazeFace (0–1). */
+    const PROB_MIN = 0.85;
+    /** Rosto precisa ocupar pelo menos esta fração da área da imagem. */
+    const AREA_MIN = 0.055;
+    /** Largura do rosto ≥ fração da largura da imagem. */
+    const LARGURA_MIN = 0.14;
+    /** Centro do rosto deve ficar nesta faixa horizontal/vertical (0–1). */
+    const CENTRO_MIN = 0.18;
+    const CENTRO_MAX = 0.82;
+    /** Proporção largura/altura do box do rosto. */
+    const ASPECTO_MIN = 0.55;
+    const ASPECTO_MAX = 1.45;
 
     let blazeModelPromise = null;
     const scriptsPendentes = new Map();
@@ -64,12 +78,103 @@
         });
     }
 
+    function erroFoto(code, mensagem) {
+        const err = new Error(mensagem);
+        err.code = code;
+        return err;
+    }
+
+    function boxDePredicao(pred) {
+        // BlazeFace: topLeft / bottomRight (arrays) ou box
+        if (pred.topLeft && pred.bottomRight) {
+            const x1 = Number(pred.topLeft[0]);
+            const y1 = Number(pred.topLeft[1]);
+            const x2 = Number(pred.bottomRight[0]);
+            const y2 = Number(pred.bottomRight[1]);
+            return {
+                x: Math.min(x1, x2),
+                y: Math.min(y1, y2),
+                width: Math.abs(x2 - x1),
+                height: Math.abs(y2 - y1),
+                prob: Array.isArray(pred.probability)
+                    ? Number(pred.probability[0])
+                    : Number(pred.probability || 1),
+            };
+        }
+        // FaceDetector: boundingBox DOMRectReadOnly
+        const b = pred.boundingBox || pred;
+        return {
+            x: Number(b.x ?? b.left ?? 0),
+            y: Number(b.y ?? b.top ?? 0),
+            width: Number(b.width || 0),
+            height: Number(b.height || 0),
+            prob: 1,
+        };
+    }
+
+    function avaliarGeometria(box, imgW, imgH) {
+        if (!box || box.width < 28 || box.height < 28) {
+            return erroFoto(
+                'ROSTO_PEQUENO',
+                'Rosto pequeno demais. Aproxime um pouco a câmera.'
+            );
+        }
+
+        const areaImg = imgW * imgH;
+        const areaRosto = box.width * box.height;
+        if (areaImg > 0 && areaRosto / areaImg < AREA_MIN) {
+            return erroFoto(
+                'ROSTO_DISTANTE',
+                'Rosto um pouco longe. Aproxime a câmera ou recorte a foto deixando o rosto mais no centro.'
+            );
+        }
+        if (box.width / imgW < LARGURA_MIN) {
+            return erroFoto(
+                'ROSTO_ESTREITO',
+                'Enquadre melhor: o rosto precisa aparecer com mais destaque na foto.'
+            );
+        }
+
+        const aspecto = box.width / box.height;
+        if (aspecto < ASPECTO_MIN || aspecto > ASPECTO_MAX) {
+            return erroFoto(
+                'ENQUADRAMENTO',
+                'Enquadramento inválido. Foto de frente, sem corte estranho na cabeça ou no queixo.'
+            );
+        }
+
+        const cx = (box.x + box.width / 2) / imgW;
+        const cy = (box.y + box.height / 2) / imgH;
+        if (cx < CENTRO_MIN || cx > CENTRO_MAX || cy < CENTRO_MIN || cy > CENTRO_MAX) {
+            return erroFoto(
+                'FORA_DO_CENTRO',
+                'Centralize o rosto na foto. Evite cantos e margens.'
+            );
+        }
+
+        // Margem: box não pode colar nas bordas (corta testa/queixo).
+        const margem = 0.02;
+        if (
+            box.x / imgW < margem
+            || box.y / imgH < margem
+            || (box.x + box.width) / imgW > 1 - margem
+            || (box.y + box.height) / imgH > 1 - margem
+        ) {
+            return erroFoto(
+                'CORTADO',
+                'Rosto cortado nas bordas. Deixe um pouco de espaço acima da cabeça e abaixo do queixo.'
+            );
+        }
+
+        return null;
+    }
+
     async function detectarComFaceDetector(img) {
         if (typeof FaceDetector !== 'function') return null;
         try {
-            const detector = new FaceDetector({ fastMode: true, maxDetectedFaces: 5 });
+            const detector = new FaceDetector({ fastMode: false, maxDetectedFaces: 3 });
             const faces = await detector.detect(img);
-            return Array.isArray(faces) ? faces.length : 0;
+            return Array.isArray(faces) ? faces : [];
         } catch (erro) {
             return null;
         }
@@ -92,7 +197,7 @@
                 await tf.setBackend('cpu');
             }
             await tf.ready();
-            return api.load();
+            return api.load({ maxFaces: 3, scoreThreshold: PROB_MIN * 0.85 });
         })().catch((erro) => {
             blazeModelPromise = null;
             throw erro;
@@ -110,7 +215,8 @@
         } catch (erro) {
             entrada = img;
         }
-        const predicoes = await model.estimateFaces(entrada, false);
+        // returnTensors=false; flipHorizontal=false
+        const predicoes = await model.estimateFaces(entrada, false, false);
         if (entrada && typeof entrada.close === 'function' && entrada !== img) {
             try {
                 entrada.close();
@@ -118,36 +224,98 @@
                 /* ignore */
             }
         }
-        return Array.isArray(predicoes) ? predicoes.length : 0;
+        return Array.isArray(predicoes) ? predicoes : [];
+    }
+
+    function filtrarPorConfianca(predicoes, motor) {
+        if (motor !== 'BlazeFace') return predicoes;
+        return predicoes.filter((p) => {
+            const box = boxDePredicao(p);
+            return Number.isFinite(box.prob) && box.prob >= PROB_MIN;
+        });
     }
 
     async function exigirRosto(dataUrl) {
         const img = await carregarImagem(dataUrl);
-        let rostos = await detectarComFaceDetector(img);
-        let motor = 'FaceDetector';
+        const imgW = img.naturalWidth || img.width;
+        const imgH = img.naturalHeight || img.height;
 
-        if (rostos == null) {
-            try {
-                rostos = await detectarComBlazeFace(img);
-                motor = 'BlazeFace';
-            } catch (erro) {
+        let predicoes = null;
+        let motor = 'BlazeFace';
+
+        // BlazeFace primeiro (confiança + landmarks); FaceDetector só como reserva.
+        try {
+            predicoes = await detectarComBlazeFace(img);
+        } catch (erroBlaze) {
+            predicoes = await detectarComFaceDetector(img);
+            motor = 'FaceDetector';
+            if (predicoes == null) {
                 const falha = new Error(
-                    erro.message || 'Verificador de rosto indisponível. Verifique a conexão e tente de novo.'
+                    erroBlaze.message
+                        || 'Verificador de rosto indisponível. Verifique a conexão e tente de novo.'
                 );
                 falha.code = 'VERIFICADOR_INDISPONIVEL';
                 throw falha;
             }
         }
 
-        if (!rostos || rostos < 1) {
-            const err = new Error(
-                'Não detectamos um rosto na foto. Use uma imagem nítida do seu rosto (de frente, bem iluminada).'
+        const confiaveis = filtrarPorConfianca(predicoes, motor);
+
+        if (!confiaveis.length) {
+            throw erroFoto(
+                'SEM_ROSTO',
+                'Não detectamos um rosto nítido. Use foto sua, de frente, bem iluminada, sem óculos escuros nem máscara.'
             );
-            err.code = 'SEM_ROSTO';
-            throw err;
         }
 
-        return { ok: true, rostos, motor };
+        if (confiaveis.length > 1) {
+            throw erroFoto(
+                'VARIOS_ROSTOS',
+                'Detectamos mais de uma pessoa. Envie só a sua foto (retrato individual).'
+            );
+        }
+
+        const box = boxDePredicao(confiaveis[0]);
+        if (motor === 'BlazeFace' && box.prob < PROB_MIN) {
+            throw erroFoto(
+                'BAIXA_CONFIANCA',
+                'Qualidade insuficiente. Foto mais nítida, boa luz e rosto de frente.'
+            );
+        }
+
+        const geo = avaliarGeometria(box, imgW, imgH);
+        if (geo) throw geo;
+
+        return {
+            ok: true,
+            rostos: 1,
+            motor,
+            confianca: box.prob,
+            cobertura: (box.width * box.height) / (imgW * imgH),
+        };
+    }
+
+    /** Redimensiona/comprime para caber no PATCH (limite ~3M chars no data URL). */
+    function comprimirParaEnvio(img, { ladoMax = 1280, qualidade = 0.82 } = {}) {
+        const w0 = img.naturalWidth || img.width;
+        const h0 = img.naturalHeight || img.height;
+        const escala = Math.min(1, ladoMax / Math.max(w0, h0));
+        const w = Math.max(1, Math.round(w0 * escala));
+        const h = Math.max(1, Math.round(h0 * escala));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+        ctx.drawImage(img, 0, 0, w, h);
+        let dataUrl = canvas.toDataURL('image/jpeg', qualidade);
+        // Se ainda passar do teto do schema (~3M), baixa a qualidade.
+        let q = qualidade;
+        while (dataUrl.length > 2_800_000 && q > 0.45) {
+            q -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', q);
+        }
+        return dataUrl;
     }
 
     async function processarArquivo(arquivo) {
@@ -158,13 +326,22 @@
         if (arquivo.size > TAMANHO_MAXIMO) {
             throw new Error('A foto deve ter no máximo 5 MB.');
         }
-        const dataUrl = await lerArquivoComoDataUrl(arquivo);
-        const img = await carregarImagem(dataUrl);
+        const dataUrlBruto = await lerArquivoComoDataUrl(arquivo);
+        const img = await carregarImagem(dataUrlBruto);
         if (img.naturalWidth < LADO_MINIMO || img.naturalHeight < LADO_MINIMO) {
-            throw new Error('A foto deve ter no mínimo 200×200 px.');
+            throw new Error(`A foto deve ter no mínimo ${LADO_MINIMO}×${LADO_MINIMO} px.`);
         }
-        await exigirRosto(dataUrl);
-        return dataUrl;
+        // Retratos muito panorâmicos / faixa estreita costumam ser ruins.
+        const razao = img.naturalWidth / img.naturalHeight;
+        if (razao < 0.45 || razao > 2.2) {
+            throw new Error('Proporção inválida. Use uma foto vertical ou quadrada de retrato.');
+        }
+        await exigirRosto(dataUrlBruto);
+        const comprimida = comprimirParaEnvio(img);
+        if (!comprimida || comprimida.length > 2_950_000) {
+            throw new Error('Foto ainda grande demais após compactar. Tente outra imagem ou recorte mais perto do rosto.');
+        }
+        return comprimida;
     }
 
     function garantirStatusEl(input, statusEl) {
@@ -189,10 +366,11 @@
         if (tipo) el.classList.add(tipo);
     }
 
+    const DICA =
+        'Só foto sua, sozinha, de frente, nítida e bem iluminada. Sem grupo, filtro pesado, óculos escuros ou máscara.';
+
     /**
-     * Liga um <input type=file data-face-perfil> com verificação de rosto.
-     * @param {HTMLInputElement} input
-     * @param {{ statusEl?: HTMLElement, onAceita?: (dataUrl: string) => void, onRecusa?: (erro: Error) => void }} [opts]
+     * Liga um <input type=file data-face-perfil> com verificação rigorosa.
      */
     function ligarEntrada(input, opts = {}) {
         if (!input || input.dataset.rmFaceBound === '1') return;
@@ -203,7 +381,7 @@
         const statusEl = garantirStatusEl(input, opts.statusEl);
         if (!statusEl.dataset.rmHint) {
             statusEl.dataset.rmHint = '1';
-            pintarStatus(statusEl, 'Verificação de rosto ativa nesta foto.', 'info');
+            pintarStatus(statusEl, DICA, 'info');
             statusEl.hidden = false;
         }
 
@@ -212,13 +390,13 @@
             input.value = '';
             if (!arquivo) return;
 
-            pintarStatus(statusEl, 'Verificando rosto na foto…', 'info');
-            input.setCustomValidity('Verificando rosto na foto…');
+            pintarStatus(statusEl, 'Analisando rosto e qualidade da foto…', 'info');
+            input.setCustomValidity('Analisando foto…');
 
             try {
                 const dataUrl = await processarArquivo(arquivo);
                 input.setCustomValidity('');
-                pintarStatus(statusEl, 'Rosto detectado. Foto aceita.', 'ok');
+                pintarStatus(statusEl, 'Foto aprovada: rosto único, nítido e bem enquadrado.', 'ok');
                 if (typeof opts.onAceita === 'function') opts.onAceita(dataUrl);
                 input.dispatchEvent(new CustomEvent('rm-face-ok', { detail: { dataUrl }, bubbles: true }));
             } catch (erro) {
@@ -248,19 +426,18 @@
         processarArquivo,
         ligarEntrada,
         ligarTodos,
+        DICA,
         aquecer() {
             garantirBlazeFace().catch(() => {});
-        }
+        },
     };
 
     function boot() {
-        // Hooks específicos das páginas (se os handlers já existirem, eles registram depois).
-        // Aqui só marca inputs padrão para o status visível; páginas chamam ligarEntrada com onAceita.
         document.querySelectorAll('input[data-face-perfil]').forEach((input) => {
             garantirStatusEl(input);
             const el = document.getElementById(`${input.id || 'foto'}-face-status`);
-            if (el && el.hidden) {
-                pintarStatus(el, 'Verificação de rosto ativa nesta foto.', 'info');
+            if (el && (el.hidden || el.classList.contains('info'))) {
+                pintarStatus(el, DICA, 'info');
             }
         });
     }

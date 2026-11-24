@@ -16,6 +16,29 @@
         return `${d.slice(0, 5)}-${d.slice(5)}`;
     }
 
+    /**
+     * Validação local antes do ViaCEP.
+     * @returns {{ ok: boolean, mensagem: string, cep?: string, digitos?: string }}
+     */
+    function validarCep(valor) {
+        const digitos = soDigitos(valor);
+        if (!digitos) {
+            return { ok: false, mensagem: 'Informe o CEP.' };
+        }
+        if (digitos.length !== 8) {
+            return { ok: false, mensagem: 'CEP incompleto. Use 8 dígitos (ex.: 13085-000).' };
+        }
+        if (/^(\d)\1{7}$/.test(digitos)) {
+            return { ok: false, mensagem: 'CEP inválido (sequência repetida).' };
+        }
+        return {
+            ok: true,
+            digitos,
+            cep: formatarCep(digitos),
+            mensagem: 'CEP com formato válido.'
+        };
+    }
+
     function montarEnderecoExibicao(dados) {
         const rua = (dados.rua || '').trim();
         const numero = (dados.numero || '').trim();
@@ -33,14 +56,13 @@
     }
 
     async function buscarCep(cep) {
-        const digitos = soDigitos(cep);
-        if (digitos.length !== 8) {
-            throw new Error('Informe um CEP com 8 dígitos.');
-        }
+        const check = validarCep(cep);
+        if (!check.ok) throw new Error(check.mensagem);
+        const digitos = check.digitos;
         const resp = await fetch(`${VIA_CEP}/${digitos}/json/`);
         if (!resp.ok) throw new Error('Não foi possível consultar o CEP.');
         const dados = await resp.json();
-        if (dados.erro) throw new Error('CEP não encontrado.');
+        if (dados.erro) throw new Error('CEP não encontrado. Confira os dígitos.');
         return {
             cep: formatarCep(dados.cep || digitos),
             rua: String(dados.logradouro || '').trim(),
@@ -102,11 +124,16 @@
         async function consultar(forcar) {
             const formatado = formatarCep(cepInput.value);
             cepInput.value = formatado;
-            const digitos = soDigitos(formatado);
-            if (digitos.length !== 8) {
-                if (forcar) status(statusEl, 'CEP incompleto.', true);
+            const check = validarCep(formatado);
+            if (!check.ok) {
+                cepInput.setCustomValidity(check.mensagem);
+                if (forcar || soDigitos(formatado).length > 0) {
+                    status(statusEl, check.mensagem, true);
+                }
                 return;
             }
+            cepInput.setCustomValidity('');
+            const digitos = check.digitos;
             if (!forcar && digitos === ultimo) return;
             if (busy) return;
             busy = true;
@@ -115,6 +142,7 @@
                 const dados = await buscarCep(digitos);
                 preencherCampos(form, dados, { sobrescrever: true });
                 ultimo = digitos;
+                cepInput.setCustomValidity('');
                 const numero = form.querySelector('#numero');
                 status(
                     statusEl,
@@ -126,7 +154,9 @@
                 if (numero && !numero.value) numero.focus();
             } catch (erro) {
                 ultimo = '';
-                status(statusEl, erro.message || 'Falha ao buscar CEP.', true);
+                const msg = erro.message || 'Falha ao buscar CEP.';
+                cepInput.setCustomValidity(msg);
+                status(statusEl, msg, true);
             } finally {
                 busy = false;
             }
@@ -164,6 +194,7 @@
     global.RoomMatchCep = {
         formatarCep,
         soDigitos,
+        validarCep,
         buscarCep,
         montarEnderecoExibicao,
         lerCampos,

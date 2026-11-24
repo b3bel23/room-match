@@ -137,7 +137,7 @@
     color: var(--color-text-subtle);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
     .papeis {
         grid-template-columns: 1fr;
         width: 100%;

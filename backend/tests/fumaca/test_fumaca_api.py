@@ -47,11 +47,12 @@ def test_fluxo_completo(http):
     # cadastro dos dois papéis (contrato do cadastro.js)
     loc = _ok(http.post("/auth/register", json={
         "nome": "Locadora Fumaça", "email": f"fumaca-loc-{marca}@example.com", "senha": senha,
-        "papel": "Locador", "cpf_cnpj": f"fumaca-{marca}", "telefone": "(19) 98888-0000",
+        "papel": "Locador", "cpf_cnpj": f"{marca % 10**11:011d}",
+        "telefone": "(19) 98888-0000",
     }), 201)
     mor = _ok(http.post("/auth/register", json={
         "nome": "Morador Fumaça", "email": f"fumaca-mor-{marca}@example.com", "senha": senha,
-        "papel": "Morador", "telefone": "(19) 98888-0001", "tags": ["Pet Friendly", "Home Office"],
+        "papel": "Morador", "telefone": "(19) 98888-0001", "tags": ["Aceita Animais", "Trabalho em Casa"],
         "orcamento_maximo": 2000, "limiar_compatibilidade": 50, "genero": "Outro/Não informar",
     }), 201)
     assert loc["user"]["papel"] == "Locador" and mor["user"]["papel"] == "Morador"
@@ -66,7 +67,7 @@ def test_fluxo_completo(http):
     imovel = _ok(http.post("/imoveis", headers=H_LOC, json={
         "titulo": f"Fumaça {marca}", "tipo": "Kitnet", "rua": "Rua Teste", "numero": "1",
         "bairro": "Centro", "aluguel": 800, "contas": 100, "classificacao": "Mista",
-        "tags": ["Pet Friendly", "Home Office", "Silêncio Noturno"],
+        "tags": ["Aceita Animais", "Trabalho em Casa", "Silêncio Noturno"],
     }), 201)
     iid = imovel["id"]
     try:

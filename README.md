@@ -107,7 +107,7 @@ O projeto está associado a três Objetivos de Desenvolvimento Sustentável:
 
 Entre as tags disponíveis poderão estar:
 
-`Pet Friendly` · `420 Friendly` · `Vegetariano/Vegano` · `Silêncio Noturno` · `LGBTQIA+ Safe` · `Home Office/Estudo Intensivo` · `Sem Festas/Social Moderado`
+`Aceita Animais` · `Vegetariano/Vegano` · `Silêncio Noturno` · `LGBTQIA+ Acolhedor` · `Trabalho em Casa` · `Sem Festas`
 
 ---
 
@@ -123,7 +123,7 @@ O sistema apresenta perfis e imóveis em uma interface de cards no modelo swipe,
 - 📜 Histórico de curtidas e matches
 - 🚫 Denúncia e bloqueio de perfis
 
-**Exemplo de simulação:** perfil com 85% de afinidade calculada, limiar do usuário em 70% (aprovado), tags em comum (Silêncio, Home Office, Pet Friendly) e orçamento dentro do limite → chat habilitado automaticamente.
+**Exemplo de simulação:** perfil com 85% de afinidade calculada, limiar do usuário em 70% (aprovado), tags em comum (Silêncio, Trabalho em Casa, Aceita Animais) e orçamento dentro do limite → chat habilitado automaticamente.
 
 ---
 
@@ -401,15 +401,16 @@ E2E_API_LOG=/caminho/do/log/da/api python3 ../tests/e2e/fase4_navegador.py
 
 ### Rotas de ônibus (GTFS)
 
-A rota de ônibus usa arquivos GTFS. Coloque os `.zip` em `backend/data/gtfs/` e aponte
-`GTFS_PATHS` para eles (vírgula para mais de um, ex.: EMDEC + EMTU). Sem GTFS, o resto
-funciona e o modo "Ônibus" avisa que não há horários. Situação `GET /api/v1/mobilidade/status`.
+A rota de ônibus usa arquivos GTFS. O repositório já traz
+`backend/data/gtfs/rmc-emdec-emtu.zip` (corredores da RMC alinhados aos anúncios demo).
+Gere de novo com `python -m scripts.gerar_gtfs_rmc` (de `backend/`). Ou aponte
+`GTFS_PATHS` para um ou mais `.zip` (vírgula). Sem `GTFS_PATHS`, a API carrega
+automaticamente os zips de `data/gtfs/`. Situação: `GET /api/v1/mobilidade/status`.
 
-De onde tirar os dados:
+Trocar pelo feed oficial quando houver URL estável:
 - **EMTU** (linhas metropolitanas da RMC): portal de dados abertos da EMTU.
-- **EMDEC** (linhas municipais de Campinas): não há feed oficial publicado; o projeto
-  comunitário [`paulo-raca/emdec-gtfs`](https://github.com/paulo-raca/emdec-gtfs) gera o GTFS
-  a partir do site da EMDEC, ou peça o arquivo à EMDEC (Lei de Acesso à Informação).
+- **EMDEC** (linhas municipais de Campinas): gerador comunitário
+  [`paulo-raca/emdec-gtfs`](https://github.com/paulo-raca/emdec-gtfs), ou pedido à EMDEC (LAI).
 
 ---
 
@@ -475,7 +476,7 @@ Ações prioritárias do grupo de trabalho:
 
 - [x] **Modelo Relacional:** tabelas no PostgreSQL via Alembic
 - [x] **Desenvolvimento do MVP:** cadastro, perfil, mural com afinidade, favoritos, chat, notificações, anúncios com fotos, rotas a pé/bicicleta/carro/ônibus
-- [x] **Integração GTFS:** roteirizador pronto; falta carregar o GTFS real da EMDEC/EMTU
+- [x] **Integração GTFS:** roteirizador + feed RMC (`data/gtfs/rmc-emdec-emtu.zip`); trocar pelo oficial quando houver URL estável
 - [ ] **Deploy da API** (Render + Supabase) e ligar o site a ela (`API_PRODUCAO`)
 - [ ] Validação dos requisitos com usuários do público-alvo
 - [ ] Testes de usabilidade e de segurança

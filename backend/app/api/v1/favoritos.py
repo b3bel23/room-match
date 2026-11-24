@@ -50,8 +50,12 @@ def _alternar(db: Session, usuario: Usuario, id_imovel: int, remover_apenas: boo
     elif not remover_apenas:
         db.add(Like(id_locatario=locatario.id_locatario, id_post=post.id_post))
         notificacao_service.notificar(
-            db, post.id_locador, "favorito",
-            f"{usuario.nome.split()[0]} favoritou “{post.titulo}”.", "meus-imoveis.html",
+            db,
+            post.id_locador,
+            "favorito",
+            f"{usuario.nome.split()[0]} favoritou “{post.titulo}”.",
+            f"meus-imoveis.html?de={usuario.id_usuario}",
+            upsert=True,
         )
     db.commit()
     ids = [p.id_imovel for p in _posts_favoritos(db, locatario.id_locatario)]

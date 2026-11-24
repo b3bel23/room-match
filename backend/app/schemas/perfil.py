@@ -10,6 +10,7 @@ class Destino(BaseModel):
     nome: str = Field(..., min_length=1, max_length=100)
     lat: float = Field(..., ge=-90, le=90)
     lng: float = Field(..., ge=-180, le=180)
+    tipo: Optional[str] = Field(None, max_length=20)  # trabalho | faculdade | outro
 
 
 class PerfilOut(BaseModel):
@@ -18,6 +19,8 @@ class PerfilOut(BaseModel):
     id: int
     email: str
     email_verificado: bool = False
+    # False = SMTP não configurado; front esconde “reenviar confirmação” / recuperar senha.
+    email_envio_disponivel: bool = False
     nome: str
     papel: str  # "Morador" (locatarios) ou "Locador" (locadores)
     papel_schema: str  # "locatario" ou "locador"
@@ -32,7 +35,11 @@ class PerfilOut(BaseModel):
     cidade_atual: str = ""
     data_nascimento: Optional[date] = None
     tags: List[str] = []
-    destino: Optional[dict] = None  # destino salvo do Morador: { nome, lat, lng }
+    destino: Optional[dict] = None  # primeiro destino (compat): { nome, lat, lng }
+    destinos: List[dict] = []  # até 3 em preferencias_moradia.destinos
+    # foot | bike | car | bus — preferencias_moradia.modo_transporte (sem coluna nova)
+    modo_transporte: str = "foot"
+    raio_busca_km: Optional[float] = None
     orcamento_maximo: float = 0
     limiar_compatibilidade: float = 0
     # aliases curtos que o front ainda lê
@@ -60,7 +67,10 @@ class PerfilUpdate(BaseModel):
     papel: Optional[str] = None
     cpf_cnpj: Optional[str] = Field(None, max_length=20)  # exigido ao virar Locador pela 1ª vez
     tags: Optional[List[Tag]] = None
-    destino: Optional[Destino] = None  # faculdade/trabalho para o tempo de ônibus no mural
+    destino: Optional[Destino] = None  # legado: grava como lista de 1 (ou mescla em destinos)
+    destinos: Optional[List[Destino]] = Field(None, max_length=3)  # até 3 destinos padrão
+    modo_transporte: Optional[str] = Field(None, max_length=20)  # foot|bike|car|bus
+    raio_busca_km: Optional[float] = Field(None, ge=0, le=200)
     orcamento_maximo: Optional[float] = Field(None, ge=0)
     limiar_compatibilidade: Optional[float] = Field(None, ge=0, le=100)
     orcamento: Optional[float] = Field(None, ge=0)  # alias legado

@@ -27,6 +27,14 @@ def _storage_local_nos_testes(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _smtp_nos_testes(monkeypatch):
+    """Com SMTP_HOST vazio a API auto-confirma e-mail e esconde o fluxo.
+    Nos testes mantém o fluxo (mensagem em ENVIADOS; falha SMTP é engolida)."""
+    monkeypatch.setattr(settings, "smtp_host", "localhost")
+    monkeypatch.setattr(settings, "frontend_url", "http://test/frontend/pages")
+
+
+@pytest.fixture(autouse=True)
 def _limpar_cache_resposta():
     from app.core import cache_resposta
 
@@ -76,6 +84,14 @@ def entrar(client, email, senha="senha12345"):
     return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
 
+def cpf_teste(chave: str) -> str:
+    """11 dígitos estáveis a partir de uma chave (e-mail, etc.)."""
+    import hashlib
+
+    digest = hashlib.sha256(chave.encode()).hexdigest()
+    return "".join(str(int(c, 16) % 10) for c in digest)[:11]
+
+
 def cadastrar(client, email="ana@x.com", papel="Morador", **extra):
     corpo = {
         "nome": "Ana Souza",
@@ -83,13 +99,13 @@ def cadastrar(client, email="ana@x.com", papel="Morador", **extra):
         "senha": "senha12345",
         "papel": papel,
         "telefone": "(19) 98888-1001",
-        "tags": ["Pet Friendly", "Silêncio Noturno"],
+        "tags": ["Aceita Animais", "Silêncio Noturno"],
         "orcamento_maximo": 1500,
         "limiar_compatibilidade": 50,
         **extra,
     }
     if papel == "Locador":
-        corpo.setdefault("cpf_cnpj", f"cpf-{email}")
+        corpo.setdefault("cpf_cnpj", cpf_teste(email))
     r = client.post("/api/v1/auth/register", json=corpo)
     assert r.status_code == 201, r.text
     return {"Authorization": f"Bearer {r.json()['access_token']}"}

@@ -30,6 +30,7 @@
 }
 
 .login-hero {
+    position: relative;
     flex: 1 1 52%;
     width: min(620px, 100%);
     max-width: 100%;
@@ -38,13 +39,13 @@
     padding: 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 28px;
     border-radius: 28px;
     color: #fff;
-    background:
-        linear-gradient(105deg, rgba(20, 29, 34, 0.88) 20%, rgba(20, 29, 34, 0.55) 70%),
-        url('../assets/campinas/hero.jpg') center / cover no-repeat,
-        var(--color-background);
+    overflow: hidden;
+    background-color: #141d22;
+    background-image: none;
 }
 
 @media (max-width: 980px) {
@@ -79,28 +80,62 @@
     }
 
     .login-hero {
-        min-height: 220px;
+        min-height: 260px;
         padding: 28px 24px;
+        gap: 20px;
+    }
+
+    .login-hero-corpo {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .login-hero h2 {
         max-width: none;
     }
+
+    .login-hero-logo {
+        height: 30px;
+    }
+
+    .login-stats strong {
+        font-size: 22px;
+    }
+}
+
+.login-hero-corpo {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.login-hero-rodape {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.login-hero-rodape--so-logo {
+    justify-content: flex-end;
 }
 
 .login-hero-logo {
     display: block;
-    height: 40px;
+    height: 36px;
     width: auto;
-    margin-bottom: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    /* Alinha a base da logo com a linha “imóveis ativos” */
+    margin-bottom: 2px;
 }
 
-.login-hero-rua {
-    background:
-        linear-gradient(105deg, rgba(20, 29, 34, 0.88) 20%, rgba(20, 29, 34, 0.55) 70%),
-        url('../assets/campinas/rua.jpg') center / cover no-repeat,
-        var(--color-background);
-}
+/* login-hero-rua: mesmo carrossel Campinas (auth-hero.js); sem foto fixa */
 
 .login-hero h2 {
     font-family: var(--font-heading), sans-serif;
@@ -122,19 +157,22 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px 24px;
-    margin-top: 32px;
+    margin: 0;
+    min-width: 0;
 }
 
 .login-stats li {
     list-style: none;
     padding-right: 0;
     font-size: 16px;
+    line-height: 1.25;
     min-width: max-content;
 }
 
 .login-stats strong {
     display: block;
-    font-size: 20px;
+    font-size: 28px;
+    line-height: 1.05;
     color: var(--color-secondary);
     white-space: nowrap;
 }
@@ -257,6 +295,20 @@
     color: #fff;
     font-size: 16px;
     font-weight: var(--fw-bold);
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.btn-entrar:hover:not(:disabled) {
+    background: var(--color-primary-hover, #185a50);
+}
+
+.btn-entrar:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.btn-entrar[aria-busy="true"] {
+    opacity: 0.88;
+    cursor: wait;
 }
 
 .login-cadastro {

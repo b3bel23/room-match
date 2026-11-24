@@ -57,13 +57,11 @@
 
         overlay.innerHTML = `
             <div class="rm-cookie-dialog">
-                <h2 id="rm-cookie-titulo">Usamos cookies e tecnologias semelhantes</h2>
+                <h2 id="rm-cookie-titulo">Cookies e privacidade</h2>
                 <p>
-                    O RoomMatch usa cookies e armazenamento local para manter sua sessão,
-                    lembrar preferências, entender o uso da plataforma e melhorar a busca
-                    por moradia compatível. Parte do processamento pode envolver serviços
-                    de terceiros. Você escolhe o que autorizar — o essencial para o site
-                    funcionar permanece ativo.
+                    Usamos cookies e armazenamento local para manter a sessão, lembrar preferências
+                    e entender o uso da plataforma, inclusive com serviços de terceiros quando necessário.
+                    Você escolhe o que autorizar; o essencial para o site funcionar permanece ativo.
                 </p>
                 <div class="rm-cookie-config" id="rm-cookie-config" hidden>
                     <label>

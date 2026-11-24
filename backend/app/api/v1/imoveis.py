@@ -31,7 +31,13 @@ router = APIRouter(tags=["imoveis"])
 def _serializar(db: Session, post: Post, usuario: Usuario) -> dict:
     post = mural_service.recarregar_post(db, post)
     tags = matching_service.tags_do_imovel(db, post.id_imovel)
-    return mural_service.montar_imovel(post, tags, matching_service.tags_do_usuario(db, usuario), None)
+    return mural_service.montar_imovel(
+        post,
+        tags,
+        matching_service.tags_do_usuario(db, usuario),
+        None,
+        endereco_exato=True,  # dono vê número/CEP para gerenciar o anúncio
+    )
 
 
 @router.get("/imoveis/meus", response_model=ListaImoveis)

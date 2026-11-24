@@ -119,7 +119,7 @@
         }
         const { raizJs } = raizScripts();
         const script = document.createElement('script');
-        script.src = `${raizJs}face-check.js`;
+        script.src = `${raizJs}face-check.js?v=20261124`;
         script.dataset.rmFaceCheck = '1';
         script.onload = () => {
             if (typeof RoomMatchFaceCheck !== 'undefined') {
@@ -141,11 +141,33 @@
         }
         const { raizJs } = raizScripts();
         const script = document.createElement('script');
-        script.src = `${raizJs}telefone-ui.js`;
+        script.src = `${raizJs}telefone-ui.js?v=20261124`;
         script.dataset.rmTelUi = '1';
         script.onload = () => {
             if (typeof RoomMatchTelefone !== 'undefined') {
                 RoomMatchTelefone.ligarPagina();
+            }
+        };
+        document.body.appendChild(script);
+    }
+
+    /** Garante verificador de e-mail em cadastro/perfil. */
+    function garantirEmailUi() {
+        const precisa = document.querySelector(
+            'input[data-email-rm], input#email, input#perfil-email, input[type="email"][name="email"]'
+        );
+        if (!precisa) return;
+        if (document.querySelector('script[src*="email-ui.js"]')) {
+            if (typeof RoomMatchEmail !== 'undefined') RoomMatchEmail.ligarPagina();
+            return;
+        }
+        const { raizJs } = raizScripts();
+        const script = document.createElement('script');
+        script.src = `${raizJs}email-ui.js?v=20261124`;
+        script.dataset.rmEmailUi = '1';
+        script.onload = () => {
+            if (typeof RoomMatchEmail !== 'undefined') {
+                RoomMatchEmail.ligarPagina();
             }
         };
         document.body.appendChild(script);
@@ -203,7 +225,14 @@
                 return;
             }
             if (conversar.getAttribute('aria-disabled') === 'true') {
-                window.alert(conversar.title || 'Chat bloqueado: ajuste limiar/orçamento nas preferências.');
+                const msg = conversar.dataset.bloqueioMsg
+                    || conversar.title
+                    || 'A conversa ainda não está liberada. Veja o aviso abaixo do botão ou ajuste suas Preferências.';
+                window.alert(msg);
+                const aviso = document.getElementById('chat-bloqueio');
+                if (aviso && !aviso.hidden) {
+                    aviso.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
                 return;
             }
             const id = (new URLSearchParams(window.location.search).get('id') || '').trim();
@@ -211,10 +240,16 @@
                 window.alert('Abra um anúncio pelo mural antes de conversar.');
                 return;
             }
+            if (typeof RoomMatchLoading !== 'undefined') {
+                RoomMatchLoading.mostrar('Abrindo conversa…');
+            }
             try {
                 const conv = await RoomMatchApi.abrirConversa({ imovel_id: id });
                 window.location.href = `mensagens.html?id=${encodeURIComponent(conv.id)}`;
             } catch (erro) {
+                if (typeof RoomMatchLoading !== 'undefined') {
+                    RoomMatchLoading.forcarEsconder();
+                }
                 window.alert(erro.detail || erro.message);
             }
         });
@@ -227,6 +262,7 @@
         garantirCookieConsent();
         garantirFaceCheck();
         garantirTelefoneUi();
+        garantirEmailUi();
     }
 
     if (document.readyState === 'loading') {

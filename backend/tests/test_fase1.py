@@ -12,7 +12,7 @@ API = "/api/v1"
 
 @pytest.fixture()
 def cenario(client):
-    """Locador com um anúncio de R$ 1000 com tags Pet Friendly e Silêncio Noturno,
+    """Locador com um anúncio de R$ 1000 com tags Aceita Animais e Silêncio Noturno,
     e uma moradora com as mesmas tags, orçamento 1500 e limiar 50."""
     loc = cadastrar(client, "loc@x.com", papel="Locador")
     r = client.post(
@@ -26,7 +26,7 @@ def cenario(client):
             "bairro": "Cambuí",
             "aluguel": 900,
             "contas": 100,
-            "tags": ["Pet Friendly", "Silêncio Noturno"],
+            "tags": ["Aceita Animais", "Silêncio Noturno"],
         },
     )
     assert r.status_code == 201, r.text

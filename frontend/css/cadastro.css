@@ -98,6 +98,7 @@
 }
 
 .campo label,
+.campo .label-com-tip,
 .genero legend,
 .foto-rotulo {
     font-size: var(--fs-small);
@@ -121,11 +122,7 @@
 .campo select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235c6b78' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 12px;
-    padding-right: 36px;
+    padding-right: 2.75rem;
 }
 
 .campo input::placeholder {
@@ -257,32 +254,112 @@
     gap: 6px 8px;
 }
 
-.pilula span {
+.pilula > span,
+.pilula .pilula-corpo {
     display: inline-flex;
-    align-items: center;
-    height: 26px;
-    padding: 0 16px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    min-height: 26px;
+    max-width: 260px;
+    padding: 7px 14px 7px 10px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-tag);
     background: var(--color-surface);
     font-size: var(--fs-small);
     color: var(--color-text-primary);
     cursor: pointer;
+    line-height: 1.25;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.22s ease,
+        transform 0.18s ease,
+        color 0.2s ease;
 }
 
-.pilula input:checked + span {
+.pilula .tag-ico-wrap {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--color-text-subtle);
+    transition: color 0.2s ease;
+}
+
+.pilula .tag-ico {
+    width: 16px;
+    height: 16px;
+    display: block;
+    transition: transform 0.22s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.pilula-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.pilula-nome {
+    font-weight: var(--fw-semibold, 600);
+}
+
+.pilula-significado {
+    font-size: 10px;
+    font-weight: 450;
+    color: var(--color-text-subtle);
+}
+
+.pilula:hover .pilula-corpo {
+    border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+}
+
+.pilula:active .pilula-corpo {
+    transform: scale(0.985);
+}
+
+.pilula input:checked + span,
+.pilula input:checked + .pilula-corpo {
     border-color: var(--color-primary);
     background: var(--color-primary-soft);
     color: var(--color-primary-hover);
-    font-weight: var(--fw-semibold);
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--color-primary) 16%, transparent);
+    transform: translateY(-1px);
 }
 
-.pilula input:focus-visible + span {
+.pilula input:checked + .pilula-corpo .tag-ico-wrap {
+    color: var(--color-primary);
+}
+
+.pilula input:checked + .pilula-corpo .tag-ico {
+    transform: scale(1.12);
+}
+
+.pilula input:checked + span .pilula-significado,
+.pilula input:checked + .pilula-corpo .pilula-significado {
+    color: color-mix(in srgb, var(--color-primary-hover) 75%, #64748b);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pilula .pilula-corpo,
+    .pilula .tag-ico {
+        transition: none;
+    }
+
+    .pilula:active .pilula-corpo,
+    .pilula input:checked + .pilula-corpo,
+    .pilula input:checked + .pilula-corpo .tag-ico {
+        transform: none;
+    }
+}
+
+.pilula input:focus-visible + span,
+.pilula input:focus-visible + .pilula-corpo {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
 
-.pilula input:disabled + span {
+.pilula input:disabled + span,
+.pilula input:disabled + .pilula-corpo {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -569,14 +646,19 @@
     cursor: not-allowed;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
     .cadastro-card {
         padding: 24px 16px;
         border-radius: 18px;
     }
 
+    .grade {
+        grid-template-columns: 1fr;
+    }
+
     .col-1,
-    .col-2 {
+    .col-2,
+    .col-full {
         grid-column: 1 / -1;
     }
 

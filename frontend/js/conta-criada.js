@@ -1,13 +1,13 @@
 const papel = new URLSearchParams(window.location.search).get('papel') === 'locador'
-    || ehLocador()
+    || (typeof ehLocador === 'function' && ehLocador())
     ? 'Locador'
     : 'Morador';
 
-// Tela de confirmação: mostra o recado por 8 segundos e leva à página principal do papel.
+// Tela de confirmação: mostra o recado e leva à ação principal do papel.
 const ESPERA_SEGUNDOS = 8;
 const destino = papel === 'Locador'
-    ? { href: 'meus-imoveis.html', nome: 'Meus anúncios' }
-    : { href: 'home.html', nome: 'Explorar' };
+    ? { href: 'publicar-imovel.html', nome: 'primeiro anúncio', lugar: 'à publicação do primeiro anúncio' }
+    : { href: 'home.html', nome: 'Explorar', lugar: 'ao Explorar' };
 
 const texto = document.querySelector('.conta-criada-texto');
 const contagem = document.getElementById('conta-criada-contagem');
@@ -15,21 +15,22 @@ const barra = document.querySelector('.conta-criada-barra span');
 const botaoIr = document.getElementById('conta-criada-ir');
 
 texto.textContent = papel === 'Locador'
-    ? 'Sua conta de Locador está pronta. Agora você já pode publicar seus anúncios.'
+    ? 'Sua conta de Locador está pronta. Agora publique seu primeiro anúncio — preço, endereço e fotos ficam nele.'
     : 'Sua conta de Morador está pronta. Explore o mural e veja seus matches.';
 // Com o servidor, o cadastro envia um link de confirmação de e-mail (RF02).
-if (RoomMatchApi.modo() === 'live') {
+if (typeof RoomMatchApi !== 'undefined' && RoomMatchApi.modo() === 'live') {
     texto.textContent += ' Enviamos um link para confirmar seu e-mail.';
 }
 botaoIr.href = destino.href;
-botaoIr.textContent = `Ir agora para ${destino.nome === 'Explorar' ? 'o Explorar' : destino.nome}`;
+botaoIr.textContent = papel === 'Locador'
+    ? 'Publicar meu primeiro anúncio'
+    : 'Ir agora para o Explorar';
 
 let restante = ESPERA_SEGUNDOS;
 
 function mostrarContagem() {
     const unidade = restante === 1 ? 'segundo' : 'segundos';
-    const lugar = destino.nome === 'Explorar' ? 'ao Explorar' : 'a Meus anúncios';
-    contagem.textContent = `Você será levado ${lugar} em ${restante} ${unidade}.`;
+    contagem.textContent = `Você será levado ${destino.lugar} em ${restante} ${unidade}.`;
 }
 
 mostrarContagem();

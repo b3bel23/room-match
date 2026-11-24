@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     smtp_user: str = ""
     smtp_password: str = ""
     smtp_from: str = "RoomMatch <nao-responda@roommatch.app>"
+    # Destino das denúncias (moderação). Vazio → usa o e-mail de smtp_from.
+    moderacao_email: str = ""
+
     # Fotos dos anúncios: "local" (backend/uploads) ou "supabase" (Supabase Storage).
     storage_backend: str = "local"
     supabase_url: str = ""  # https://<projeto>.supabase.co

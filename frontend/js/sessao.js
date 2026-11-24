@@ -139,10 +139,27 @@ function criarSino() {
         if (abrir) carregarNotificacoes();
     });
     caixa.querySelector('.nav-sino-lidas').addEventListener('click', async () => {
+        const btn = caixa.querySelector('.nav-sino-lidas');
         try {
-            await RoomMatchApi.marcarNotificacoesLidas();
-            await carregarNotificacoes();
+            const run = async () => {
+                await RoomMatchApi.marcarNotificacoesLidas();
+                await carregarNotificacoes();
+            };
+            if (typeof RoomMatchLoading !== 'undefined') {
+                RoomMatchLoading.botaoEspera(btn, true, 'Marcando…');
+                await RoomMatchLoading.durante(run(), 'Marcando notificações como lidas…');
+            } else {
+                if (btn) btn.disabled = true;
+                await run();
+            }
         } catch (erro) { /* tenta de novo no próximo ciclo */ }
+        finally {
+            if (typeof RoomMatchLoading !== 'undefined') {
+                RoomMatchLoading.botaoEspera(btn, false);
+            } else if (btn) {
+                btn.disabled = false;
+            }
+        }
     });
     document.addEventListener('click', (evento) => {
         if (!caixa.contains(evento.target)) {
@@ -174,15 +191,53 @@ function desenharSino(caixa) {
         const item = document.createElement('li');
         const link = document.createElement('a');
         link.href = n.link || '#';
-        link.className = n.lida ? '' : 'nao-lida';
-        link.textContent = n.texto;
+        link.className = `nav-sino-item${n.lida ? '' : ' nao-lida'}`;
+
+        const avatar = document.createElement('span');
+        avatar.className = 'nav-sino-avatar';
+        avatar.setAttribute('aria-hidden', 'true');
+        if (n.foto_url) {
+            avatar.style.backgroundImage = `url("${n.foto_url}")`;
+        } else {
+            avatar.textContent = n.iniciais || (n.tipo === 'favorito' ? '♥' : '?');
+        }
+
+        const corpo = document.createElement('span');
+        corpo.className = 'nav-sino-corpo';
+        const titulo = document.createElement('strong');
+        titulo.textContent = n.nome || (n.tipo === 'favorito' ? 'Favorito' : 'RoomMatch');
+        const texto = document.createElement('span');
+        texto.className = 'nav-sino-texto';
+        texto.textContent = n.texto || '';
         const quando = document.createElement('small');
         quando.textContent = n.criada_em
-            ? new Date(n.criada_em).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+            ? new Date(n.criada_em).toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+            })
             : '';
-        link.append(quando);
-        link.addEventListener('click', () => {
-            if (!n.lida) RoomMatchApi.marcarNotificacoesLidas([n.id]).catch(() => {});
+        corpo.append(titulo, texto, quando);
+
+        link.append(avatar, corpo);
+        if (!n.lida && Number(n.nao_lidas) > 0) {
+            const badge = document.createElement('span');
+            badge.className = 'nav-sino-badge';
+            badge.textContent = Number(n.nao_lidas) > 9 ? '9+' : String(n.nao_lidas);
+            link.append(badge);
+        }
+
+        link.addEventListener('click', (ev) => {
+            if (n.lida) return;
+            const ids = Array.isArray(n.ids) && n.ids.length ? n.ids : [n.id];
+            // Marca como lida em paralelo à navegação; se for âncora vazia, espera o loading.
+            const marcar = () => RoomMatchApi.marcarNotificacoesLidas(ids)
+                .then(() => carregarNotificacoes())
+                .catch(() => {});
+            if ((link.getAttribute('href') || '#') === '#' && typeof RoomMatchLoading !== 'undefined') {
+                ev.preventDefault();
+                RoomMatchLoading.durante(marcar(), 'Marcando como lida…');
+            } else {
+                marcar();
+            }
         });
         item.append(link);
         lista.append(item);

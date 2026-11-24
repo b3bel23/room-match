@@ -15,7 +15,9 @@ let fotos = [];
 
 function validarFotos() {
     entradaFotos.setCustomValidity(
-        fotos.length < FOTOS_MINIMO ? `Adicione no mínimo ${FOTOS_MINIMO} fotos.` : ''
+        fotos.length < FOTOS_MINIMO
+            ? `Adicione no mínimo ${FOTOS_MINIMO} fotos.`
+            : ''
     );
     botaoAdicionar.hidden = fotos.length >= RoomMatchFotosUpload.FOTOS_MAX;
 }
@@ -69,21 +71,51 @@ entradaFotos.addEventListener('change', async () => {
 
 validarFotos();
 
-const TAGS_MINIMO = 3;
-const TAGS_MAXIMO = 8;
-const tags = [...form.querySelectorAll('input[name="tag"]')];
-const contador = document.getElementById('tags-contador');
-
-function atualizarTags() {
-    const marcadas = tags.filter((tag) => tag.checked).length;
-    contador.textContent = `${marcadas} selecionada${marcadas === 1 ? '' : 's'}`;
-    tags.forEach((tag) => { tag.disabled = !tag.checked && marcadas >= TAGS_MAXIMO; });
-    tags[0].setCustomValidity(
-        marcadas < TAGS_MINIMO ? `Selecione no mínimo ${TAGS_MINIMO} tags.` : ''
-    );
+function montarPilulas(container, nomes, name) {
+    if (!container) return;
+    container.replaceChildren();
+    (nomes || []).forEach((nome) => {
+        if (typeof RoomMatchTags !== 'undefined' && RoomMatchTags.criarPilula) {
+            container.append(RoomMatchTags.criarPilula(nome, { name }));
+            return;
+        }
+        const label = document.createElement('label');
+        label.className = 'pilula';
+        label.innerHTML =
+            `<input class="visually-hidden" type="checkbox" name="${name}" value="${nome}">` +
+            `<span>${nome}</span>`;
+        container.append(label);
+    });
 }
 
-tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
+const catalogo = typeof RoomMatchTags !== 'undefined' ? RoomMatchTags : null;
+montarPilulas(document.getElementById('tags-adesao'), catalogo?.ADESAO || [], 'tag');
+montarPilulas(document.getElementById('tags-restricao'), catalogo?.RESTRICAO || [], 'tag');
+montarPilulas(document.getElementById('tags-comodidades'), catalogo?.COMODIDADES || [], 'comodidade');
+
+// Tags/comodidades opcionais — sem min/máx inventados na UI.
+const tags = [...form.querySelectorAll('input[name="tag"]')];
+const comodidades = [...form.querySelectorAll('input[name="comodidade"]')];
+const contador = document.getElementById('tags-contador');
+const contadorComod = document.getElementById('comodidades-contador');
+
+function textoContador(n) {
+    return `${n} selecionada${n === 1 ? '' : 's'}`;
+}
+
+function atualizarTags() {
+    if (contador) contador.textContent = textoContador(tags.filter((t) => t.checked).length);
+    if (contadorComod) {
+        contadorComod.textContent = textoContador(comodidades.filter((t) => t.checked).length);
+    }
+}
+
+if (catalogo?.ligarConflitos) {
+    catalogo.ligarConflitos(tags, { onChange: atualizarTags });
+    comodidades.forEach((el) => el.addEventListener('change', atualizarTags));
+} else {
+    [...tags, ...comodidades].forEach((el) => el.addEventListener('change', atualizarTags));
+}
 atualizarTags();
 
 function tipoCurto(valor) {
@@ -105,53 +137,102 @@ document.getElementById('voltar').addEventListener('click', (evento) => {
     }
 });
 
+/* Trava contra clique duplo e evita novo create se só o upload de fotos falhou. */
+let publicando = false;
+let anuncioCriadoId = null;
+
 form.addEventListener('submit', async (evento) => {
     evento.preventDefault();
+    if (publicando) return;
     if (!form.reportValidity()) return;
 
+    const cepCampo = document.getElementById('cep');
+    if (typeof RoomMatchCep !== 'undefined' && cepCampo) {
+        const cepOk = RoomMatchCep.validarCep(cepCampo.value);
+        if (!cepOk.ok) {
+            cepCampo.setCustomValidity(cepOk.mensagem);
+            cepCampo.reportValidity();
+            return;
+        }
+        cepCampo.value = cepOk.cep;
+        cepCampo.setCustomValidity('');
+    }
+
     const tagsMarcadas = tags
+        .filter((t) => t.checked)
+        .map((t) => t.value || t.parentElement?.textContent?.trim())
+        .filter(Boolean);
+    const comodidadesMarcadas = comodidades
         .filter((t) => t.checked)
         .map((t) => t.value || t.parentElement?.textContent?.trim())
         .filter(Boolean);
     const classificacao = form.querySelector('input[name="classificacao"]:checked')?.value || 'Mista';
     const enderecoSchema = cepUi ? cepUi.ler() : RoomMatchCep.lerCampos(form);
     const endereco = RoomMatchCep.montarEnderecoExibicao(enderecoSchema);
+    const botao = form.querySelector('button[type="submit"]');
 
+    publicando = true;
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.botaoEspera(botao, true, anuncioCriadoId ? 'Enviando fotos…' : 'Publicando…');
+        RoomMatchLoading.mostrar(anuncioCriadoId ? 'Enviando fotos…' : 'Publicando anúncio…');
+    } else if (botao) {
+        botao.disabled = true;
+    }
     try {
-        const criado = await RoomMatchApi.criarImovel({
-            titulo: document.getElementById('titulo').value.trim(),
-            tipo: tipoCurto(document.getElementById('tipo').value),
-            // Schema enderecos_imovel / EnderecoImovel
-            cep: RoomMatchCep.formatarCep(enderecoSchema.cep),
-            rua: enderecoSchema.rua,
-            numero: enderecoSchema.numero,
-            complemento: enderecoSchema.complemento || null,
-            bairro: enderecoSchema.bairro,
-            cidade: enderecoSchema.cidade,
-            estado: String(enderecoSchema.estado || '').toUpperCase().slice(0, 2),
-            // Compatível com listagens atuais do mock
-            endereco,
-            aluguel: document.getElementById('aluguel').value,
-            condominio: document.getElementById('condominio').value,
-            iptu: document.getElementById('iptu').value,
-            contas: document.getElementById('contas').value,
-            tags: tagsMarcadas,
-            classificacao
-        });
+        let id = anuncioCriadoId;
+        if (!id) {
+            const criado = await RoomMatchApi.criarImovel({
+                titulo: document.getElementById('titulo').value.trim(),
+                descricao: (document.getElementById('descricao')?.value || '').trim() || null,
+                tipo: tipoCurto(document.getElementById('tipo').value),
+                // Schema enderecos_imovel / EnderecoImovel
+                cep: RoomMatchCep.formatarCep(enderecoSchema.cep),
+                rua: enderecoSchema.rua,
+                numero: enderecoSchema.numero,
+                complemento: enderecoSchema.complemento || null,
+                bairro: enderecoSchema.bairro,
+                cidade: enderecoSchema.cidade,
+                estado: String(enderecoSchema.estado || '').toUpperCase().slice(0, 2),
+                // Compatível com listagens atuais do mock
+                endereco,
+                aluguel: document.getElementById('aluguel').value,
+                condominio: document.getElementById('condominio').value,
+                iptu: document.getElementById('iptu').value,
+                contas: document.getElementById('contas').value,
+                tags: tagsMarcadas,
+                comodidades: comodidadesMarcadas,
+                classificacao
+            });
+            id = criado.id;
+            anuncioCriadoId = id;
+        }
         // Fotos: multipart no servidor; no mock ficam no próprio anúncio (data URL).
         if (RoomMatchApi.modo() === 'live') {
-            await RoomMatchApi.enviarFotos(criado.id, fotos.map((f) => f.arquivo));
+            if (typeof RoomMatchLoading !== 'undefined') {
+                RoomMatchLoading.mostrar('Enviando fotos…');
+            }
+            await RoomMatchApi.enviarFotos(id, fotos.map((f) => f.arquivo));
         } else {
             const urls = fotos.map((f) => f.url);
-            await RoomMatchApi.atualizarImovel(criado.id, { fotos: urls, capa: urls[0] });
+            await RoomMatchApi.atualizarImovel(id, { fotos: urls, capa: urls[0] });
         }
         retorno.textContent = 'Anúncio publicado.';
         retorno.hidden = false;
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.mostrar('Abrindo seus anúncios…');
+        }
         window.setTimeout(() => {
-            window.location.href = `meus-imoveis.html?novo=${encodeURIComponent(criado.id)}`;
+            window.location.href = `meus-imoveis.html?novo=${encodeURIComponent(id)}`;
         }, 600);
     } catch (erro) {
+        publicando = false;
         retorno.textContent = erro.detail || erro.message;
         retorno.hidden = false;
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.forcarEsconder();
+            RoomMatchLoading.botaoEspera(botao, false);
+        } else if (botao) {
+            botao.disabled = false;
+        }
     }
 });

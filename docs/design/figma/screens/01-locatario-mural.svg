@@ -13,9 +13,9 @@
 </g></g><g id="component/page-title">
 <rect x="0" y="64" width="1440" height="48" fill="#FFFFFF"/>
 <text x="32" y="96" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Encontre sua moradia ideal</text>
-</g><g id="component/category-tab/Apart.">
+</g><g id="component/category-tab/Apartamento">
 <rect x="32" y="136" width="108" height="40" rx="8" fill="#141D22" stroke="#E2E8EB"/>
-<text x="86" y="162" text-anchor="middle" font-size="13" fill="#FFFFFF">Apart.</text>
+<text x="86" y="162" text-anchor="middle" font-size="13" fill="#FFFFFF">Apartamento</text>
 </g><g id="component/category-tab/Kitnet">
 <rect x="152" y="136" width="108" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8EB"/>
 <text x="206" y="162" text-anchor="middle" font-size="13" fill="#141D22">Kitnet</text>

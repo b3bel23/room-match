@@ -14,7 +14,7 @@
 
 .contato-grade {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 20px;
     align-items: start;
 }
@@ -61,6 +61,12 @@
     font-size: var(--fs-body);
     color: var(--color-text-primary);
     outline: none;
+}
+
+.contato-campo select {
+    appearance: none;
+    padding-right: 2.75rem;
+    cursor: pointer;
 }
 
 .contato-campo textarea {

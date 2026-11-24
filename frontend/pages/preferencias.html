@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preferências · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/favoritos.css?v=20261123">
-    <link rel="stylesheet" href="../css/config.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/favoritos.css?v=20261124by">
+    <link rel="stylesheet" href="../css/config.css?v=20261124by">
 </head>
 <body class="favoritos-page">
     <header class="site-header">
@@ -23,7 +23,7 @@
     <div class="vista-lista">
         <div class="page-bar">
             <h1>Configurações</h1>
-            <span class="page-bar-sub">Afinidade e orçamento</span>
+            <span class="page-bar-sub">Afinidade, orçamento e destinos</span>
         </div>
         <div class="layout">
             <aside class="sidebar"></aside>
@@ -32,41 +32,166 @@
                     Preferências
                     <span class="tip">
                         <button type="button" class="tip-btn" aria-label="Sobre preferências">?</button>
-                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Os mesmos campos do cadastro (etapa 2): orçamento máximo, limiar de afinidade e hábitos de convivência. Vale para morador e locador.</span>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mesmos campos da etapa 2 do cadastro: orçamento, limiar de afinidade e hábitos de convivência, para Morador e Locador.</span>
                     </span>
                 </h2>
                 <form id="pref-form" class="config-form">
-                    <label for="pref-orcamento">
-                        <span class="label-com-tip">
-                            Orçamento máximo (R$)
-                            <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre orçamento">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Campo orcamento_maximo. Total mensal que você topa. Chat só libera se o anúncio couber neste valor.</span>
+                    <div id="pref-orcamento-bloco" class="pref-slider">
+                        <div class="pref-slider-cabecalho">
+                            <span class="label-com-tip">
+                                Orçamento máximo mensal
+                                <span class="tip">
+                                    <button type="button" class="tip-btn" aria-label="Ajuda sobre orçamento">?</button>
+                                    <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Total mensal que você topa (aluguel + condomínio + imposto + contas). O chat só libera se o anúncio couber neste valor.</span>
+                                </span>
                             </span>
-                        </span>
-                        <input id="pref-orcamento" name="orcamento_maximo" type="number" min="0" step="50" required>
-                    </label>
+                            <strong id="pref-orcamento-texto">R$ 1.200</strong>
+                        </div>
+                        <input
+                            id="pref-orcamento"
+                            name="orcamento_maximo"
+                            type="range"
+                            min="500"
+                            max="10000"
+                            step="50"
+                            value="1200"
+                            required
+                            aria-valuemin="500"
+                            aria-valuemax="10000"
+                            aria-valuenow="1200"
+                            aria-label="Orçamento máximo mensal em reais"
+                        >
+                        <div class="pref-slider-limites" aria-hidden="true">
+                            <span>R$ 500</span>
+                            <span>R$ 10.000+</span>
+                        </div>
+                        <p id="pref-orcamento-dica" class="pref-slider-dica">Arraste para ajustar. Anúncios acima desse valor não liberam conversa.</p>
+                    </div>
 
-                    <label for="pref-limiar">
-                        <span class="label-com-tip">
-                            Limiar de compatibilidade (%)
-                            <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre limiar">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Campo limiar_compatibilidade. Match mínimo para liberar conversa com o locador.</span>
+                    <div id="pref-limiar-bloco" class="pref-slider">
+                        <div class="pref-slider-cabecalho">
+                            <span class="label-com-tip">
+                                Compatibilidade mínima
+                                <span class="tip">
+                                    <button type="button" class="tip-btn" aria-label="Ajuda sobre compatibilidade">?</button>
+                                    <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Percentual mínimo para liberar o chat. A afinidade é a média do que você marcou: hábitos cobertos pelo anúncio e limites sem conflito; conflito duro limita a 35%.</span>
+                                </span>
                             </span>
-                        </span>
-                        <input id="pref-limiar" name="limiar_compatibilidade" type="number" min="0" max="100" required>
-                    </label>
+                            <strong id="pref-limiar-texto">70%</strong>
+                        </div>
+                        <input
+                            id="pref-limiar"
+                            name="limiar_compatibilidade"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="5"
+                            value="70"
+                            required
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow="70"
+                            aria-label="Compatibilidade mínima em porcentagem"
+                        >
+                        <div class="pref-slider-limites" aria-hidden="true">
+                            <span>0% · mais opções</span>
+                            <span>100% · mais exigente</span>
+                        </div>
+                        <p id="pref-limiar-dica" class="pref-slider-dica">Um meio-termo deixa o mural seletivo sem fechar opções demais.</p>
+                    </div>
 
-                    <div>
-                        <p class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
-                            Tags de convivência
+                    <div id="pref-modo-bloco" class="pref-destino">
+                        <p class="label-com-tip pref-destino-titulo">
+                            Meio de transporte padrão
                             <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Tags usadas no cálculo do match com o anúncio. Escolha as que representam sua rotina.</span>
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre transporte">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Define o tempo até seus destinos no Explorar e a opção inicial no mapa do anúncio — você ainda pode trocar o meio no mapa.</span>
                             </span>
                         </p>
-                        <div id="pref-tags" class="config-tags"></div>
+                        <p class="pref-destino-ajuda">Como você prefere chegar ao trabalho, à faculdade ou a outros destinos.</p>
+                        <div id="pref-modo-opcoes" class="pref-destino-opcoes" role="group" aria-label="Meio de transporte padrão">
+                            <button type="button" class="pref-destino-pill" data-modo="foot" aria-pressed="true">A pé</button>
+                            <button type="button" class="pref-destino-pill" data-modo="bike" aria-pressed="false">Bicicleta</button>
+                            <button type="button" class="pref-destino-pill" data-modo="car" aria-pressed="false">Carro</button>
+                            <button type="button" class="pref-destino-pill" data-modo="bus" aria-pressed="false">Ônibus</button>
+                        </div>
+                    </div>
+
+                    <div id="pref-destino-bloco" class="pref-destino">
+                        <p class="label-com-tip pref-destino-titulo">
+                            Meus destinos
+                            <span class="tip">
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre destinos">?</button>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Até 3 lugares de interesse; no mural e no anúncio você vê o tempo até cada um.</span>
+                            </span>
+                        </p>
+                        <p class="pref-destino-ajuda">Até 3 lugares; o marcado como <strong>Principal</strong> aparece no mural.</p>
+                        <ul id="pref-destinos-salvos" class="pref-destinos-salvos" aria-label="Destinos salvos"></ul>
+                        <p id="pref-destinos-vazio" class="pref-destino-ajuda">Nenhum destino ainda: escolha o tipo e busque o lugar abaixo.</p>
+
+                        <p class="pref-destino-subtitulo">1. Que tipo de destino?</p>
+                        <div id="pref-destino-tipos" class="pref-destino-opcoes" role="group" aria-label="Tipo do destino">
+                            <button type="button" class="pref-destino-pill pref-destino-pill--trabalho" data-tipo="trabalho" aria-pressed="false">Trabalho</button>
+                            <button type="button" class="pref-destino-pill pref-destino-pill--faculdade" data-tipo="faculdade" aria-pressed="false">Faculdade</button>
+                            <button type="button" class="pref-destino-pill pref-destino-pill--outro" data-tipo="outro" aria-pressed="false">Outro</button>
+                        </div>
+                        <p id="pref-destino-tipo-dica" class="pref-destino-ajuda">Selecione Trabalho, Faculdade ou Outro.</p>
+
+                        <label id="pref-destino-titulo-wrap" class="pref-destino-campo" hidden>
+                            Título personalizado
+                            <input id="pref-destino-titulo" type="text" maxlength="100"
+                                placeholder="Ex.: Academia, casa dos pais…" autocomplete="off">
+                        </label>
+
+                        <div class="pref-destino-campo">
+                            <p class="label-com-tip" style="margin:0 0 6px;font-size:13px;font-weight:600">
+                                <label for="pref-destino-busca">2. Onde fica?</label>
+                                <span class="tip">
+                                    <button type="button" class="tip-btn" aria-label="Ajuda sobre a busca do local">?</button>
+                                    <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Busque por CEP, nome do local (ex.: PUC-Campinas), rua ou bairro e escolha uma sugestão na lista.</span>
+                                </span>
+                            </p>
+                            <input id="pref-destino-busca" type="search" maxlength="120"
+                                placeholder="CEP, nome do local, rua ou bairro…"
+                                autocomplete="off"
+                                aria-autocomplete="list" aria-controls="pref-destino-sugestoes" aria-expanded="false">
+                            <p class="pref-destino-ajuda">Busque por CEP, local, rua ou bairro e escolha na lista.</p>
+                        </div>
+                        <ul id="pref-destino-sugestoes" class="pref-destino-sugestoes" hidden role="listbox"></ul>
+                        <p id="pref-destino-lugar" class="pref-destino-lugar" hidden></p>
+                        <button id="pref-destino-add" class="btn btn-secondary pref-destino-add" type="button" disabled>
+                            Adicionar à lista
+                        </button>
+                    </div>
+
+                    <div class="pref-tags-blocos">
+                        <div>
+                            <p id="pref-adesao-titulo" class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
+                                O que combina comigo
+                                <span class="tip">
+                                    <button type="button" class="tip-btn" aria-label="Ajuda sobre hábitos desejados">?</button>
+                                    <span id="pref-adesao-tip" class="tip-panel" role="tooltip" hidden aria-hidden="true">Hábitos que você busca: só o marcado entra na afinidade; desmarcado é neutro. Opções opostas se desmarcam sozinhas.</span>
+                                </span>
+                            </p>
+                            <div id="pref-tags-adesao" class="config-tags"></div>
+                        </div>
+                        <div style="margin-top:1rem">
+                            <p id="pref-restricao-titulo" class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
+                                Meus limites
+                                <span class="tip">
+                                    <button type="button" class="tip-btn" aria-label="Ajuda sobre limites">?</button>
+                                    <span id="pref-restricao-tip" class="tip-panel" role="tooltip" hidden aria-hidden="true">O que você não aceita: deixar em branco é neutro; se for inaceitável, marque aqui. Conflitos com o que você busca se resolvem sozinhos.</span>
+                                </span>
+                            </p>
+                            <div id="pref-tags-restricao" class="config-tags"></div>
+                        </div>
+                        <p id="pref-tags-contador" class="slider-dica" style="margin-top:0.75rem">0 selecionadas</p>
+                        <p id="pref-tags-dica" class="slider-dica" style="margin-top:0.25rem">
+                            Em <strong>O que combina</strong>, o % sobe quando o anúncio também tem o hábito; em <strong>Meus limites</strong>, só cai se houver conflito (silêncio no anúncio é neutro). Tags extras no anúncio não baixam o %, conflito duro limita a 35%, e um perfil com <strong>3 ou mais</strong> hábitos fica mais justo.
+                        </p>
+                        <p id="pref-tags-nota-locador" class="slider-dica" hidden style="margin-top:0.75rem">
+                            Comodidades (Wi-Fi, garagem…), aluguel e endereço ficam no anúncio, não nesta tela.
+                        </p>
                     </div>
                     <button class="btn btn-primary" type="submit">Salvar</button>
                     <p id="pref-retorno" class="config-retorno" hidden></p>
@@ -82,15 +207,16 @@
         </nav>
         <small>© 2026 RoomMatch</small>
     </footer>
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/tags-catalogo.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
     <script src="../js/config-shell.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/tip.js?v=20261123"></script>
-    <script src="../js/tags-catalogo.js?v=20261123"></script>
-    <script src="../js/preferencias.js?v=20261123"></script>
+    <script src="../js/preferencias.js?v=20261124bv"></script>
 </body>
 </html>

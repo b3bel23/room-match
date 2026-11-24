@@ -37,6 +37,8 @@ class _Campos(BaseModel):
     quartos: Optional[int] = Field(None, ge=1)
     vagas: Optional[int] = Field(None, ge=0)
     tags: Optional[List[Tag]] = None
+    # Comodidades do anúncio (Wi-Fi etc.): mesmas `imovel_tags`, fora do match.
+    comodidades: Optional[List[Tag]] = None
     classificacao: Optional[str] = None  # Mista, Masculina ou Feminina
 
     @field_validator("condominio", "iptu", "contas", "area_m2", mode="before")

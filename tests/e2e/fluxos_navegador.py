@@ -129,7 +129,7 @@ with sync_playwright() as p:
     pg.fill("#bairro", "Centro"); pg.fill("#cidade", "Campinas"); pg.fill("#estado", "SP")
     pg.fill("#aluguel", "700"); pg.fill("#condominio", "0"); pg.fill("#iptu", "0"); pg.fill("#contas", "100")
     pg.locator("label.pilula:has(input[name=classificacao][value=Feminina])").click()
-    for t in ["Pet Friendly", "Home Office", "Silêncio Noturno"]:
+    for t in ["Aceita Animais", "Trabalho em Casa", "Silêncio Noturno"]:
         pg.locator(f"label.pilula:has(input[name=tag][value='{t}'])").first.click()
     pg.set_input_files("#fotos-entrada", FOTOS)
     pg.wait_for_function("document.querySelectorAll('#fotos-grade .foto-slot img').length >= 3", timeout=10000)
@@ -185,7 +185,7 @@ with sync_playwright() as p:
         pg.set_input_files("#foto", FOTO_ROSTO); pg.wait_for_timeout(500)
         pg.fill("#senha", "Senha#Forte123"); pg.fill("#confirmar-senha", "Senha#Forte123")
         pg.locator("[data-acao=continuar]").first.click(); pg.wait_for_timeout(300)
-        for t in ["Pet Friendly", "Home Office", "Silêncio Noturno"]:
+        for t in ["Aceita Animais", "Trabalho em Casa", "Silêncio Noturno"]:
             pg.locator(f"label:has(input[name=tag][value='{t}'])").first.click()
         pg.fill("#orcamento-valor", "1500"); pg.fill("#limiar-valor", "60")
         pg.locator("section[data-etapa='2'] [data-acao=continuar]").click(); pg.wait_for_timeout(300)

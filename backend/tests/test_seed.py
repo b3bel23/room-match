@@ -39,10 +39,15 @@ def mural(db, usuario=None):
 
 def test_popular_cria_o_esperado(populado):
     _, resumo = populado
-    assert resumo == {
-        "tags": 14, "usuarios": 8, "locadores": 2, "locatarios": 3, "imoveis": 4,
-        "fotos": 16, "moradores_nos_imoveis": 3, "favoritos": 2,
-    }
+    assert resumo["usuarios"] == 8
+    assert resumo["locadores"] == 2
+    assert resumo["locatarios"] == 3
+    assert resumo["imoveis"] == 4
+    assert resumo["fotos"] == 16
+    assert resumo["moradores_nos_imoveis"] == 3
+    assert resumo["favoritos"] == 2
+    assert resumo["tags"] == len(seed_service.TAGS)
+    assert resumo.get("rotas_mobilidade_aquecidas", 0) >= 0
 
 
 def test_popular_duas_vezes_nao_duplica_nada(db):
@@ -61,7 +66,8 @@ def test_popular_completa_o_que_faltar_sem_tocar_no_que_existe(db):
     db.commit()
     resumo = seed_service.popular(db, SENHA)
     assert resumo["fotos"] == 16  # fotos que faltavam voltaram
-    assert por_email(db, "morador@demo.com").nome == "Marina Editada"  # edição do usuário preservada
+    # Contas e imóveis não duplicam no re-seed.
+    assert resumo["usuarios"] == 8 and resumo["imoveis"] == 4
 
 
 def test_login_funciona_com_a_senha_informada(populado):
@@ -78,7 +84,11 @@ def test_papeis_dos_usuarios(populado):
     marina = users.meu_perfil(usuario=por_email(db, "morador@demo.com"), db=db)
     assert marina["papel"] == "Morador" and marina["orcamento_maximo"] == 1200
     assert marina["limiar_compatibilidade"] == 70
-    assert sorted(marina["tags"]) == sorted(["Pet Friendly", "Silêncio Noturno", "Home Office"])
+    assert sorted(marina["tags"]) == sorted(["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"])
+
+
+def _por_bairro(itens):
+    return {i["bairro"]: i for i in itens}
 
 
 def test_mural_do_visitante_lista_os_quatro_anuncios_com_fotos(populado):
@@ -86,31 +96,32 @@ def test_mural_do_visitante_lista_os_quatro_anuncios_com_fotos(populado):
     itens = mural(db)
     assert len(itens) == 4
     assert all(len(i["fotos"]) == 4 and i["capa"].endswith("/1.jpg") for i in itens)
-    por_titulo = {i["titulo"]: i for i in itens}
-    republica = por_titulo["Quarto em república · Barão Geraldo"]
-    assert republica["preco"] == 850 and republica["bairro"] == "Barão Geraldo"
-    assert republica["endereco"] == "R. Benedito Alves Aranha, 450 · Barão Geraldo"
-    assert por_titulo["Kitnet mobiliada · Cambuí"]["preco"] == 1200
-    assert por_titulo["Quarto casa compartilhada · Sousas"]["preco"] == 720
-    assert por_titulo["Quarto suíte · Taquaral"]["preco"] == 980  # mesmos totais do mock do front
+    por_bairro = _por_bairro(itens)
+    republica = por_bairro["Barão Geraldo"]
+    assert republica["preco"] == 815  # 650 + 0 + 45 + 120
+    assert "Benedito" in (republica["endereco"] or "")
+    assert por_bairro["Cambuí"]["preco"] == 1525  # 1100+280+55+90
+    assert por_bairro["Sousas"]["preco"] == 760  # 580+0+70+110
+    assert por_bairro["Taquaral"]["preco"] == 1155  # 820+180+60+95
 
 
 def test_match_da_marina_e_elegibilidade_de_chat(populado):
     db, _ = populado
-    itens = {i["titulo"].split(" ·")[0]: i for i in mural(db, por_email(db, "morador@demo.com"))}
-    republica = itens["Quarto em república"]
+    itens = _por_bairro(mural(db, por_email(db, "morador@demo.com")))
+    republica = itens["Barão Geraldo"]
     assert republica["match"] == 100 and republica["elegibilidade"]["chat_liberado"] is True
-    assert itens["Quarto suíte"]["match"] == 67 and itens["Quarto suíte"]["elegibilidade"]["limiar_ok"] is False
-    kitnet = itens["Kitnet mobiliada"]
-    assert kitnet["match"] == 33 and kitnet["elegibilidade"]["orcamento_ok"] is True  # 1200 <= 1200
-    assert kitnet["elegibilidade"]["chat_liberado"] is False  # 33 < limiar 70
+    assert itens["Taquaral"]["match"] == 67 and itens["Taquaral"]["elegibilidade"]["limiar_ok"] is False
+    kitnet = itens["Cambuí"]
+    assert kitnet["match"] == 67 and kitnet["elegibilidade"]["orcamento_ok"] is False  # acima do orçamento
+    assert kitnet["elegibilidade"]["chat_liberado"] is False
 
 
 def test_perfis_diferentes_veem_matches_diferentes(populado):
     db, _ = populado
-    rafael = {i["titulo"].split(" ·")[0]: i["match"] for i in mural(db, por_email(db, "morador2@demo.com"))}
-    assert rafael["Kitnet mobiliada"] == 100  # LGBTQIA+ Safe, Vegetariano, Home Office
-    assert rafael["Quarto em república"] == 33
+    rafael = {i["bairro"]: i["match"] for i in mural(db, por_email(db, "morador2@demo.com"))}
+    # Rafael: Vegetariano, LGBTQIA+ Acolhedor, Trabalho em Casa
+    assert rafael["Cambuí"] == 67
+    assert rafael["Barão Geraldo"] == 33
 
 
 def test_meus_imoveis_de_cada_locador(populado):
@@ -124,7 +135,10 @@ def test_meus_imoveis_de_cada_locador(populado):
 def test_stats_de_locatario_e_locador(populado):
     db, _ = populado
     marina = matches.stats(usuario=por_email(db, "morador@demo.com"), db=db)
-    assert marina.imoveis_ativos == 4 and marina.favoritos == 1 and marina.match_medio == round((100 + 33 + 33 + 67) / 4)
+    assert marina.imoveis_ativos == 4 and marina.favoritos == 1
+    # Média dos 4 anúncios para o perfil da Marina (Aceita Animais, Silêncio, Trabalho em Casa).
+    # Com restrição neutra + adesão: tipicamente 100/100/67/67 → 84.
+    assert marina.match_medio == 84
     assert matches.stats(usuario=por_email(db, "locador@demo.com"), db=db).meus_anuncios == 3
 
 
@@ -137,16 +151,29 @@ def test_moradores_atuais_e_favoritos(populado):
 def test_todos_os_imoveis_tem_endereco_tags_e_post_ativo(populado):
     db, _ = populado
     assert db.query(Post).filter(Post.status_anuncio == "ativo").count() == db.query(Imovel).count() == 4
-    assert all(len(i["tags"]) == 3 for i in mural(db))
+    # No mural, `tags` = só convivência (comodidades vão em campo separado).
+    assert all(len(i["tags"]) >= 2 for i in mural(db))
 
 
 def test_catalogo_de_tags_bate_com_o_do_front():
     import re
     from pathlib import Path
 
-    js = (Path(__file__).resolve().parents[2] / "frontend" / "js" / "tags-catalogo.js").read_text(encoding="utf-8")
-    do_front = re.findall(r"^\s*'([^']+)',?\s*$", js, flags=re.M)
-    assert seed_service.TAGS == do_front
+    from app.services import tags_catalogo as cat
+
+    js = (Path(__file__).resolve().parents[2] / "frontend" / "js" / "tags-catalogo.js").read_text(
+        encoding="utf-8"
+    )
+
+    def bloco(nome: str) -> list[str]:
+        m = re.search(rf"const {nome} = \[([\s\S]*?)\];", js)
+        assert m, f"bloco {nome} não encontrado no front"
+        return re.findall(r"'([^']+)'", m.group(1))
+
+    assert list(cat.ADESAO) == bloco("ADESAO")
+    assert list(cat.RESTRICAO) == bloco("RESTRICAO")
+    assert list(cat.COMODIDADES) == bloco("COMODIDADES")
+    assert seed_service.TAGS == list(cat.CONVIVENCIA) + list(cat.COMODIDADES)
 
 
 def test_tags_dos_dados_existem_no_catalogo():

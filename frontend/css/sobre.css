@@ -32,11 +32,13 @@
 
 .sobre-secoes {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Empilha cedo: com sidebar, 2 colunas esmagam “O que defendemos”. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 18px;
 }
 
 .sobre-secoes .sobre-secao:first-child,
+.sobre-secoes .sobre-secao:nth-child(4),
 .sobre-secoes .sobre-secao:last-child {
     grid-column: 1 / -1;
 }
@@ -46,6 +48,7 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
+    min-width: 0;
 }
 
 .sobre-secao h2 {
@@ -68,7 +71,7 @@
 
 .sobre-valores {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
     gap: 12px;
     margin-top: 12px;
 }
@@ -77,6 +80,7 @@
     padding: 14px 12px;
     border-radius: var(--radius-md);
     background: var(--color-surface-muted);
+    min-width: 0;
 }
 
 .sobre-valor strong {
@@ -84,12 +88,16 @@
     margin-bottom: 4px;
     font-size: var(--fs-small);
     color: var(--color-primary-hover);
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
 .sobre-valor span {
+    display: block;
     font-size: var(--fs-small);
     line-height: 1.4;
     color: var(--color-text-muted);
+    overflow-wrap: break-word;
 }
 
 .sobre-equipe {
@@ -125,12 +133,13 @@
     min-height: var(--tap-min);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
     .sobre-secoes {
         grid-template-columns: 1fr;
     }
 
     .sobre-secoes .sobre-secao:first-child,
+    .sobre-secoes .sobre-secao:nth-child(4),
     .sobre-secoes .sobre-secao:last-child {
         grid-column: auto;
     }

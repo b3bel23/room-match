@@ -16,10 +16,15 @@ log = logging.getLogger("roommatch.email")
 ENVIADOS: list[dict] = []
 
 
+def envio_ativo() -> bool:
+    """True só com SMTP_HOST — aí o link chega de verdade na caixa de entrada."""
+    return bool((settings.smtp_host or "").strip())
+
+
 def enviar(para: str, assunto: str, texto: str) -> None:
     ENVIADOS.append({"para": para, "assunto": assunto, "texto": texto})
     del ENVIADOS[:-50]
-    if not settings.smtp_host:
+    if not envio_ativo():
         log.warning("E-mail (sem SMTP configurado) para %s: %s\n%s", para, assunto, texto)
         return
     msg = EmailMessage()

@@ -5,7 +5,52 @@ const rotulo = document.getElementById('etapa-rotulo');
 let atual = 0;
 
 const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
+const ehCadastroLocador = papel === 'Locador';
 document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
+
+document.querySelectorAll('[data-somente-morador]').forEach((el) => {
+    el.hidden = ehCadastroLocador;
+});
+document.querySelectorAll('[data-somente-locador]').forEach((el) => {
+    el.hidden = !ehCadastroLocador;
+});
+
+(function personalizarPorPapel() {
+    const tipCadastro = document.querySelector('.etapa[data-etapa="1"] .tip-panel');
+    if (tipCadastro) {
+        tipCadastro.textContent = ehCadastroLocador
+            ? 'Crie a conta de Locador para anunciar na região metropolitana de Campinas; o anúncio em si vem depois.'
+            : 'Crie a conta de Morador para buscar moradia compatível na região metropolitana de Campinas.';
+    }
+
+    const titulo2 = document.getElementById('etapa2-titulo');
+    const tip2 = document.getElementById('etapa2-tip');
+    const sub2 = document.getElementById('etapa2-subtitulo');
+    const adesaoTitulo = document.getElementById('tags-adesao-titulo');
+    const adesaoTip = document.getElementById('tags-adesao-tip');
+    const restricaoTitulo = document.getElementById('tags-restricao-titulo');
+    const restricaoTip = document.getElementById('tags-restricao-tip');
+
+    if (ehCadastroLocador) {
+        if (titulo2) titulo2.textContent = 'Estilo da casa';
+        if (tip2) {
+            tip2.textContent = 'Hábitos e regras que descrevem o imóvel anunciado. Orçamento e limiar de afinidade são só do Morador.';
+        }
+        if (sub2) {
+            sub2.textContent = 'Sem orçamento nesta etapa: o valor do aluguel entra quando você publicar o anúncio.';
+        }
+        if (adesaoTitulo) adesaoTitulo.textContent = 'O que a casa oferece';
+        if (adesaoTip) {
+            adesaoTip.textContent = 'Características positivas do imóvel ou da república (ex.: aceita animais, trabalho em casa).';
+        }
+        if (restricaoTitulo) restricaoTitulo.textContent = 'Regras da casa';
+        if (restricaoTip) {
+            restricaoTip.textContent = 'Limites do imóvel (ex.: silêncio noturno, sem festas). Opcional, mas melhora a afinidade.';
+        }
+    } else if (sub2) {
+        sub2.textContent = 'Defina orçamento, afinidade mínima e hábitos para encontrar anúncios compatíveis.';
+    }
+}());
 
 /** Máscara de CPF (11) ou CNPJ (14), só dígitos no value formatado. */
 function formatarCpfCnpj(valor) {
@@ -91,12 +136,26 @@ async function finalizarCadastro() {
         || 'Novo usuário';
     const emailCampo = document.getElementById('email')
         || document.querySelector('input[type="email"]');
+    const telefoneCampo = document.getElementById('telefone');
     const senhaCampo = document.getElementById('senha');
     const tags = [...form.querySelectorAll('input[name="tag"]:checked')].map((t) => t.value || t.nextElementSibling?.textContent?.trim()).filter(Boolean);
-    const orcamentoLido = lerOrcamentoReais();
-    const orcamento = Number.isFinite(orcamentoLido) ? orcamentoLido : 1000;
-    const limiar = Number(document.getElementById('limiar-valor')?.value
-        || document.getElementById('limiar')?.value) || 70;
+
+    if (typeof RoomMatchEmail !== 'undefined' && emailCampo) {
+        const emailOk = RoomMatchEmail.aplicarNoInput(emailCampo);
+        if (!emailOk.ok) {
+            mostrarEtapa(0);
+            emailCampo.reportValidity();
+            return;
+        }
+    }
+    if (typeof RoomMatchTelefone !== 'undefined' && telefoneCampo) {
+        const telOk = RoomMatchTelefone.aplicarNoInput(telefoneCampo);
+        if (!telOk.ok) {
+            mostrarEtapa(0);
+            telefoneCampo.reportValidity();
+            return;
+        }
+    }
 
     const genero = form.querySelector('input[name="genero"]:checked')?.value || '';
     const foto_url = fotoDataUrl || '';
@@ -107,6 +166,7 @@ async function finalizarCadastro() {
         return;
     }
 
+    const nascimento = document.getElementById('data-nascimento')?.value || '';
     const payload = {
         nome,
         email: emailCampo.value.trim(),
@@ -119,11 +179,23 @@ async function finalizarCadastro() {
         emprego: document.getElementById('emprego')?.value || '',
         faculdade: document.getElementById('faculdade')?.value || '',
         foto_url,
+        bio: document.getElementById('bio')?.value?.trim() || '',
+        cidade_atual: document.getElementById('cidade-atual')?.value?.trim() || '',
+        data_nascimento: nascimento || undefined,
         tags,
-        orcamento_maximo: orcamento,
-        limiar_compatibilidade: limiar,
-        cpf_cnpj: papel === 'Locador' ? (inputCpf?.value || '').trim() : undefined
+        // API grava só dígitos; máscara fica só na tela.
+        cpf_cnpj: papel === 'Locador' ? (inputCpf?.value || '').replace(/\D/g, '') : undefined
     };
+
+    // Orçamento, limiar e raio são só do Morador (locatário). Locador informa preço no anúncio.
+    if (!ehCadastroLocador) {
+        const orcamentoLido = lerOrcamentoReais();
+        payload.orcamento_maximo = Number.isFinite(orcamentoLido) ? orcamentoLido : 1000;
+        payload.limiar_compatibilidade = Number(document.getElementById('limiar-valor')?.value
+            || document.getElementById('limiar')?.value) || 70;
+        const raio = Number(document.getElementById('raio-busca')?.value);
+        if (Number.isFinite(raio) && raio >= 0) payload.raio_busca_km = raio;
+    }
 
     if (papel === 'Locador' && !cpfCnpjValido(payload.cpf_cnpj)) {
         mostrarEtapa(0);
@@ -134,15 +206,33 @@ async function finalizarCadastro() {
         return;
     }
 
+    const botao = form.querySelector('[data-acao="finalizar"]');
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.botaoEspera(botao, true, 'Criando conta…');
+        RoomMatchLoading.mostrar('Criando sua conta…');
+    }
     try {
         const dados = await RoomMatchApi.register(payload);
         entrar(dados.access_token, dados.user);
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.mostrar('Quase lá…');
+        }
         window.location.href = `conta-criada.html?papel=${papel === 'Locador' ? 'locador' : 'morador'}`;
     } catch (falha) {
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.forcarEsconder();
+            RoomMatchLoading.botaoEspera(botao, false);
+        }
         const msg = falha.detail || falha.message || 'Não foi possível criar a conta.';
         if (falha.status === 403) {
             const ir = window.confirm(`${msg}\n\nAbrir a tela de Entrar?`);
             if (ir) window.location.href = 'login.html';
+            return;
+        }
+        // E-mail ou CPF/CNPJ já cadastrado: impede criação e oferece Contato.
+        if (falha.status === 409) {
+            const ir = window.confirm(`${msg}\n\nAbrir a página de Contato?`);
+            if (ir) window.location.href = 'contato.html';
             return;
         }
         window.alert(msg);
@@ -183,7 +273,7 @@ function conferirSenhas() {
 }
 
 const TAMANHO_MAXIMO = 5 * 1024 * 1024;
-const LADO_MINIMO = 200;
+const LADO_MINIMO = 400;
 const foto = document.getElementById('foto');
 const previa = document.getElementById('foto-previa');
 const avatar = previa?.closest('.avatar');
@@ -223,7 +313,7 @@ function validarDimensoes(dataUrl) {
         const imagem = new Image();
         imagem.onload = () => {
             if (imagem.naturalWidth < LADO_MINIMO || imagem.naturalHeight < LADO_MINIMO) {
-                reject(new Error('A foto deve ter no mínimo 200×200 px.'));
+                reject(new Error('A foto deve ter no mínimo 400×400 px.'));
                 return;
             }
             resolve(dataUrl);
@@ -252,20 +342,58 @@ if (typeof RoomMatchFaceCheck !== 'undefined' && foto) {
     });
 }
 
-const TAGS_MINIMO = 3;
-const TAGS_MAXIMO = 8;
+// Tags do catálogo (schema: opcionais). Conflitos se auto-desmarcam.
+function montarPilulasCadastro(container, nomes) {
+    if (!container) return;
+    container.replaceChildren();
+    (nomes || []).forEach((nome) => {
+        if (typeof RoomMatchTags !== 'undefined' && RoomMatchTags.criarPilula) {
+            container.append(RoomMatchTags.criarPilula(nome, { name: 'tag' }));
+            return;
+        }
+        const label = document.createElement('label');
+        label.className = 'pilula';
+        label.innerHTML =
+            `<input class="visually-hidden" type="checkbox" name="tag" value="${nome}">` +
+            `<span>${nome}</span>`;
+        container.append(label);
+    });
+}
+const catTags = typeof RoomMatchTags !== 'undefined' ? RoomMatchTags : null;
+montarPilulasCadastro(document.getElementById('tags-adesao'), catTags?.ADESAO || []);
+montarPilulasCadastro(document.getElementById('tags-restricao'), catTags?.RESTRICAO || []);
+
 const tags = [...form.querySelectorAll('input[name="tag"]')];
 const contador = document.getElementById('tags-contador');
 
+const dicaMinimo = document.getElementById('tags-dica-minimo');
+
 function atualizarTags() {
     const marcadas = tags.filter((tag) => tag.checked).length;
-    contador.textContent = `${marcadas} ${marcadas === 1 ? 'selecionada' : 'selecionadas'}`;
-    tags.forEach((tag) => { tag.disabled = !tag.checked && marcadas >= TAGS_MAXIMO; });
-    tags[0].setCustomValidity(
-        marcadas < TAGS_MINIMO ? `Selecione no mínimo ${TAGS_MINIMO} tags.` : ''
-    );
+    if (contador) {
+        contador.textContent = `${marcadas} ${marcadas === 1 ? 'selecionada' : 'selecionadas'}`;
+    }
+    if (dicaMinimo) {
+        if (ehCadastroLocador) {
+            dicaMinimo.innerHTML = marcadas >= 3
+                ? 'Bom perfil: hábitos da casa e regras claros para a afinidade.'
+                : 'Marque o que a casa oferece e as regras que valem — <strong>3 ou mais</strong> deixam o perfil mais justo.';
+        } else {
+            dicaMinimo.innerHTML = marcadas >= 3
+                ? 'Hábitos em <strong>O que combina</strong> sobem o % quando o anúncio também os tem; <strong>Meus limites</strong> só caem com conflito. Tags extras no anúncio não baixam; conflito duro limita a 35%.'
+                : 'Só o marcado entra na conta (desmarcado é neutro). Limites: silêncio no anúncio é ok; conflito limita a 35%. Um perfil com <strong>3 ou mais</strong> hábitos fica mais justo.';
+        }
+    }
+    tags.forEach((tag) => {
+        tag.disabled = false;
+        tag.setCustomValidity('');
+    });
 }
-tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
+if (catTags?.ligarConflitos) {
+    catTags.ligarConflitos(tags, { onChange: atualizarTags });
+} else {
+    tags.forEach((tag) => tag.addEventListener('change', atualizarTags));
+}
 atualizarTags();
 
 function preencherBarra(campo) {
@@ -359,9 +487,27 @@ const finalizar = document.getElementById('finalizar');
 aceite.addEventListener('change', () => { finalizar.disabled = !aceite.checked; });
 
 if (typeof RoomMatchClassificacoes !== 'undefined') {
-    RoomMatchClassificacoes.preencherSelect(document.getElementById('ocupacao'), 'ocupacao', '');
-    RoomMatchClassificacoes.preencherSelect(document.getElementById('emprego'), 'emprego', '');
+    RoomMatchClassificacoes.montarEscolha(
+        document.getElementById('ocupacao-escolha'),
+        document.getElementById('ocupacao'),
+        'ocupacao',
+        ''
+    );
+    RoomMatchClassificacoes.montarEscolha(
+        document.getElementById('emprego-escolha'),
+        document.getElementById('emprego'),
+        'emprego',
+        ''
+    );
 }
 if (typeof RoomMatchUniversidadesSp !== 'undefined') {
-    RoomMatchUniversidadesSp.preencherSelect(document.getElementById('faculdade'), '');
+    if (RoomMatchUniversidadesSp.montarBusca) {
+        RoomMatchUniversidadesSp.montarBusca(
+            document.getElementById('faculdade-busca'),
+            document.getElementById('faculdade'),
+            ''
+        );
+    } else {
+        RoomMatchUniversidadesSp.preencherSelect(document.getElementById('faculdade'), '');
+    }
 }

@@ -3,6 +3,7 @@ Mural de imóveis com match (KAN-35), no contrato que o front espera:
 docs/frontend/papeis-e-rotas-api-v1.md e frontend/js/mock-api.js.
 
   GET /imoveis        mural; match personalizado se autenticado (filtros: tipo, bairro, preco_max, tag)
+  GET /imoveis/locais bairros/cidades dos anúncios ativos (autocomplete do Explorar)
   GET /imoveis/{id}   detalhe, com `elegibilidade` para chat se o usuário for locatário
   GET /stats          totais públicos do mural (match_medio personalizado)
 """
@@ -66,6 +67,7 @@ class ImovelMural(BaseModel):
     bairro: Optional[str] = None
     cidade: Optional[str] = None
     endereco: Optional[str] = None
+    endereco_exato: bool = False
     preco: float
     aluguel: float
     condominio: float
@@ -76,6 +78,7 @@ class ImovelMural(BaseModel):
     vagas: int
     quartos: int
     tags: List[str]
+    comodidades: List[str] = []
     capa: Optional[str] = None
     fotos: List[str]
     fotos_ids: List[int] = []
@@ -87,10 +90,14 @@ class ImovelMural(BaseModel):
     longitude: Optional[float] = None
     badge: Optional[str] = None
     moradores_atuais: List[dict] = []
-    # Preenchidos quando o usuário tem destino salvo (mobilidade, RF28/29).
+    # Preenchidos quando o usuário tem destino(s) salvo(s) (mobilidade, RF28/29/30).
     deslocamento_min: Optional[int] = None
     distancia_km: Optional[float] = None
     destino: Optional[str] = None
+    # Até 3 destinos padrão das preferências, com tempo/distância de cada um.
+    deslocamentos: List[dict] = []
+    # foot | bike | car | bus — preferencias_moradia.modo_transporte
+    modo_transporte: Optional[str] = None
     locador_id: int
     classificacao: str = "Mista"
     status_anuncio: str = "ativo"
@@ -137,6 +144,7 @@ def _montar_todos(
     user_tags,
     *,
     incluir_moradores: bool = False,
+    usuario: Optional[Usuario] = None,
 ) -> List[dict]:
     tags = matching_service.tags_por_imovel(db, [p.id_imovel for p in posts])
     itens = [
@@ -146,6 +154,10 @@ def _montar_todos(
             user_tags,
             locatario,
             incluir_moradores=incluir_moradores,
+            # Número/CEP só para o dono do anúncio (estilo Airbnb).
+            endereco_exato=bool(
+                usuario is not None and p.id_locador == usuario.id_usuario
+            ),
         )
         for p in posts
     ]
@@ -163,17 +175,114 @@ def _chave_mural(usuario_id: Optional[int], tipo: str, bairro: str, preco_max: f
     )
 
 
+def _destinos_salvos(locatario) -> list:
+    from app.services.destinos_service import ler_destinos
+
+    if locatario is None:
+        return []
+    return ler_destinos(locatario.preferencias_moradia)
+
+
 def _destino_salvo(locatario) -> Optional[dict]:
-    return (locatario.preferencias_moradia or {}).get("destino") if locatario is not None else None
+    destinos = _destinos_salvos(locatario)
+    return destinos[0] if destinos else None
+
+
+def _estimativa_modo(
+    origem: tuple[float, float], destino: tuple[float, float], modo: str
+) -> tuple[Optional[int], Optional[float]]:
+    """Tempo estimado (min) e distância (km) para foot/bike/car — sem coluna nova."""
+    from app.utils.gtfs_loader import distancia_m
+
+    # Velocidades urbanas efetivas (km/h), alinhadas ao uso no mural.
+    velocidades = {"foot": 4.8, "bike": 14.0, "car": 22.0}
+    speed = velocidades.get(modo) or velocidades["foot"]
+    dist_m = distancia_m(origem[0], origem[1], destino[0], destino[1])
+    dist_km = round(dist_m / 1000.0, 2)
+    # Fator de caminho (~1.3× linha reta) + margem mínima.
+    tempo = max(1, int(round((dist_km * 1.3) / speed * 60.0)))
+    return tempo, dist_km
 
 
 def _com_deslocamento(db: Session, itens: List[dict], locatario) -> None:
-    """Tempo de ônibus até o destino salvo do morador, se já calculado (cache)."""
-    from app.api.v1.mobilidade import deslocamentos_salvos
+    """Tempos até os até 3 destinos: a pé / bike / carro (estimativa) + ônibus (cache GTFS).
 
-    tempos = deslocamentos_salvos(db, [i["id"] for i in itens], _destino_salvo(locatario))
+    `modo_transporte` das preferências só escolhe o valor legado `deslocamento_min`.
+    O card do mural usa `tempos_modos` para listar todos os meios.
+    """
+    from app.api.v1.mobilidade import deslocamentos_salvos
+    from app.services.destinos_service import ler_modo_transporte, rotulo_curto
+
+    destinos = _destinos_salvos(locatario)
+    modo = (
+        ler_modo_transporte(locatario.preferencias_moradia)
+        if locatario is not None
+        else "foot"
+    )
+    ids = [i["id"] for i in itens]
+    # Sempre tenta ônibus no cache (pode não ter rota aquecida ainda).
+    por_destino_bus = [deslocamentos_salvos(db, ids, d) for d in destinos]
+
     for item in itens:
-        item.update(tempos.get(item["id"], {}))
+        lista = []
+        o_lat, o_lng = item.get("latitude"), item.get("longitude")
+        origem = None
+        try:
+            if o_lat is not None and o_lng is not None:
+                origem = (float(o_lat), float(o_lng))
+        except (TypeError, ValueError):
+            origem = None
+
+        for idx, d in enumerate(destinos):
+            curto = rotulo_curto(d)
+            tempos: dict[str, int] = {}
+            dist_km = None
+            if origem is not None:
+                try:
+                    dest = (float(d["lat"]), float(d["lng"]))
+                    for m in ("foot", "bike", "car"):
+                        tempo, dist = _estimativa_modo(origem, dest, m)
+                        if tempo is not None:
+                            tempos[m] = int(tempo)
+                        if dist is not None:
+                            dist_km = dist
+                except (KeyError, TypeError, ValueError):
+                    pass
+
+            info_bus = (por_destino_bus[idx] if idx < len(por_destino_bus) else {}).get(
+                item["id"]
+            ) or {}
+            if info_bus.get("deslocamento_min") is not None:
+                tempos["bus"] = int(info_bus["deslocamento_min"])
+            if info_bus.get("distancia_km") is not None and dist_km is None:
+                dist_km = info_bus.get("distancia_km")
+
+            # Legado: meio das preferências; se faltar (ex.: sem coords), cai no cache ônibus.
+            preferido = tempos.get(modo)
+            if preferido is None:
+                preferido = tempos.get("bus")
+            entrada = {
+                "nome": curto,
+                "nome_completo": d.get("nome"),
+                "deslocamento_min": preferido,
+                "distancia_km": dist_km,
+                "modo_transporte": modo,
+                "tempos_modos": tempos,
+            }
+            if d.get("tipo"):
+                entrada["tipo"] = d["tipo"]
+            lista.append(entrada)
+
+        item["deslocamentos"] = lista
+        item["modo_transporte"] = modo
+        # Campos legados = primeiro destino (cards/stats antigos).
+        if lista:
+            prim = lista[0]
+            item["destino"] = prim.get("nome")
+            item["deslocamento_min"] = prim.get("deslocamento_min")
+            item["distancia_km"] = prim.get("distancia_km")
+        else:
+            item.setdefault("deslocamentos", [])
 
 
 @router.get("/imoveis", response_model=ListaImoveis)
@@ -201,11 +310,48 @@ def listar_imoveis(
         locatario,
         user_tags,
         incluir_moradores=False,
+        usuario=usuario,
     )
     itens = mural_service.filtrar_imoveis(
         itens, tipo=tipo, bairro=bairro_q, tag=tag, preco_max=preco_max
     )
     corpo = {"items": itens}
+    cache_resposta.set(chave, corpo, _TTL_MURAL_S)
+    return corpo
+
+
+class LocalSugestao(BaseModel):
+    label: str
+    tipo: str  # bairro | cidade
+    bairro: Optional[str] = None
+    cidade: Optional[str] = None
+
+
+class LocaisOut(BaseModel):
+    items: List[LocalSugestao]
+
+
+@router.get("/imoveis/locais", response_model=LocaisOut)
+def listar_locais(
+    q: str = "",
+    db: Session = Depends(get_db),
+):
+    """Sugestões de bairro/cidade a partir do que já está cadastrado no mural."""
+    chave = "locais:{q}".format(q=(q or "").strip().lower())
+    cached = cache_resposta.get(chave)
+    if cached is not None:
+        return cached
+
+    itens = mural_service.locais_cadastrados(db)
+    termo = (q or "").strip().casefold()
+    if termo:
+        itens = [
+            i
+            for i in itens
+            if termo in i["label"].casefold()
+            or (i.get("cidade") and termo in str(i["cidade"]).casefold())
+        ]
+    corpo = {"items": itens[:40]}
     cache_resposta.set(chave, corpo, _TTL_MURAL_S)
     return corpo
 
@@ -226,8 +372,9 @@ def detalhe_imovel(
     if post is None or (post.status_anuncio != "ativo" and not dono):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Imóvel não encontrado.")
     locatario, user_tags = _contexto_usuario(db, usuario)
+    # Sem lista de moradores atuais no detalhe: só classificacao (Feminina/Masculina/Mista).
     return _montar_todos(
-        db, [post], locatario, user_tags, incluir_moradores=True
+        db, [post], locatario, user_tags, incluir_moradores=False, usuario=usuario
     )[0]
 
 
@@ -260,16 +407,50 @@ def stats(
         conversas = (
             db.query(Conversa).filter(Conversa.id_locatario == locatario.id_locatario).count()
         )
-    elif usuario is not None and db.get(Locador, usuario.id_usuario) is not None:
-        meus_anuncios = sum(1 for p in posts if p.id_locador == usuario.id_usuario)
+    elif usuario is not None:
+        from app.services.contexto import eh_locador
 
-    from app.api.v1.mobilidade import deslocamentos_salvos
+        if eh_locador(db, usuario):
+            meus_anuncios = sum(1 for p in posts if p.id_locador == usuario.id_usuario)
 
-    tempos = [
-        t["deslocamento_min"]
-        for t in deslocamentos_salvos(db, ids, _destino_salvo(locatario)).values()
-        if t["deslocamento_min"] is not None
-    ]
+    # Mesma regra do mural: média do 1º destino no meio preferido (fallback ônibus).
+    tempos: list[int] = []
+    if locatario is not None and ids:
+        from app.models.endereco_imovel import EnderecoImovel
+        from app.api.v1.mobilidade import deslocamentos_salvos
+        from app.services.destinos_service import ler_modo_transporte
+
+        dest = _destino_salvo(locatario)
+        modo = ler_modo_transporte(locatario.preferencias_moradia)
+        bus_por_id = deslocamentos_salvos(db, ids, dest) if dest else {}
+        coords = {
+            r.id_imovel: (float(r.latitude), float(r.longitude))
+            for r in db.query(EnderecoImovel)
+            .filter(
+                EnderecoImovel.id_imovel.in_(ids),
+                EnderecoImovel.latitude.isnot(None),
+                EnderecoImovel.longitude.isnot(None),
+            )
+            .all()
+        }
+        dest_pt = None
+        if dest:
+            try:
+                dest_pt = (float(dest["lat"]), float(dest["lng"]))
+            except (KeyError, TypeError, ValueError):
+                dest_pt = None
+        for id_imovel in ids:
+            info = bus_por_id.get(id_imovel) or {}
+            # `deslocamentos_salvos` preenche placeholder sem tempo — ignora esses.
+            if info.get("deslocamento_min") is None:
+                continue
+            t = None
+            if dest_pt is not None and id_imovel in coords and modo in ("foot", "bike", "car"):
+                t, _ = _estimativa_modo(coords[id_imovel], dest_pt, modo)
+            if t is None:
+                t = info.get("deslocamento_min")
+            if t is not None:
+                tempos.append(int(t))
     corpo = Stats(
         imoveis_ativos=len(posts),
         match_medio=match_medio,

@@ -64,7 +64,7 @@ parts += [
 
 # Tags
 for i, (label, active) in enumerate([
-    ("Pet Friendly", True), ("Silêncio", False), ("Home Office", False),
+    ("Aceita Animais", True), ("Silêncio", False), ("Trabalho em Casa", False),
 ]):
     fill = C["salmon"] if active else C["white"]
     stroke = C["salmon"] if active else C["gray200"]

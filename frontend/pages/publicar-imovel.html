@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicar anúncio · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/cadastro.css?v=20261123">
-    <link rel="stylesheet" href="../css/publicar-imovel.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/cadastro.css?v=20261124by">
+    <link rel="stylesheet" href="../css/publicar-imovel.css?v=20261124ae">
 </head>
 <body class="publicar-page">
 
@@ -28,7 +28,7 @@
             Novo anúncio
             <span class="tip">
                 <button type="button" class="tip-btn" aria-label="Ajuda para publicar">?</button>
-                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Preencha valores com transparência: o total mensal é a soma de aluguel, condomínio, imposto predial e contas.</span>
+                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Informe os valores com clareza: o total mensal soma aluguel, condomínio, IPTU e contas.</span>
             </span>
         </span>
     </div>
@@ -39,6 +39,16 @@
                 <div class="campo">
                     <label class="label-com-tip" for="titulo">Título do anúncio *</label>
                     <input id="titulo" type="text" placeholder="Quarto em república · Barão Geraldo" required>
+                </div>
+                <div class="campo campo-descricao">
+                    <label class="label-com-tip" for="descricao">
+                        Descrição
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre descrição">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Conte o que torna o imóvel interessante: bairro, regras da casa, o que está incluso. Campo opcional (já existe no banco).</span>
+                        </span>
+                    </label>
+                    <textarea id="descricao" name="descricao" rows="4" maxlength="2000" placeholder="Ex.: Quarto privativo em casa compartilhada, silêncio após 22h, perto do centro de Paulínia…"></textarea>
                 </div>
                 <div class="campo">
                     <label class="label-com-tip" for="tipo">Tipo *</label>
@@ -130,7 +140,7 @@
                     Fotos do imóvel
                     <span class="tip">
                         <button type="button" class="tip-btn" aria-label="Ajuda sobre fotos">?</button>
-                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mínimo 3 fotos. Clique em + para adicionar. Prefira ambientes bem iluminados.</span>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mínimo 3 fotos, máximo 10. Clique em + para adicionar. Prefira ambientes bem iluminados.</span>
                     </span>
                 </h2>
                 <div id="fotos-grade" class="fotos-grade">
@@ -157,49 +167,47 @@
                 </div>
             </fieldset>
 
-            <section class="tags-secao">
+            <section class="tags-secao" aria-label="Convivência e comodidades">
                 <div class="tags-cabecalho">
                     <h2 class="label-com-tip">
                         Tags de convivência
                         <span class="tip">
                             <button type="button" class="tip-btn" aria-label="Ajuda sobre tags">?</button>
-                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Escolha de 3 a 8 tags. Elas entram no cálculo de match com o morador.</span>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Mesmas opções do cadastro Locador. Entram no match com o morador. Opcional.</span>
                         </span>
                     </h2>
                     <span id="tags-contador">0 selecionadas</span>
                 </div>
 
-                <h3>Adesão</h3>
-                <div class="pilulas">
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Pet Friendly"><span>Pet Friendly</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Home Office"><span>Home Office</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="LGBTQIA+ Safe"><span>LGBTQIA+ Safe</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Aberto a Festas"><span>Aberto a Festas</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Vegetariano"><span>Vegetariano</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="420 Friendly"><span>420 Friendly</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Limpeza Compartilhada"><span>Limpeza Compartilhada</span></label>
-                </div>
+                <h3 class="label-com-tip">
+                    O que a casa oferece
+                    <span class="tip">
+                        <button type="button" class="tip-btn" aria-label="Ajuda sobre adesão">?</button>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Características positivas do imóvel ou da república (ex.: pet friendly, home office).</span>
+                    </span>
+                </h3>
+                <div id="tags-adesao" class="pilulas"></div>
 
-                <h3>Restrição</h3>
-                <div class="pilulas">
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno"><span>Silêncio Noturno</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Festas"><span>Sem Festas</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Fumo"><span>Sem Fumo</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Pets"><span>Sem Pets</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
-                </div>
+                <h3 class="label-com-tip">
+                    Regras da casa
+                    <span class="tip">
+                        <button type="button" class="tip-btn" aria-label="Ajuda sobre regras">?</button>
+                        <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Limites que valem no imóvel (ex.: silêncio noturno, sem festas). Opcional — melhora o match.</span>
+                    </span>
+                </h3>
+                <div id="tags-restricao" class="pilulas"></div>
 
-                <h3>Comodidades</h3>
-                <div class="pilulas">
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Ar-condicionado"><span>Ar-condicionado</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Lavanderia"><span>Lavanderia</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Garagem"><span>Garagem</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Mobiliado"><span>Mobiliado</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Área de Lazer"><span>Área de Lazer</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Portaria 24h"><span>Portaria 24h</span></label>
-                    <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Wi-Fi"><span>Wi-Fi</span></label>
+                <div class="tags-cabecalho" style="margin-top:1.25rem">
+                    <h2 class="label-com-tip">
+                        Comodidades
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre comodidades">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Infraestrutura do imóvel (Wi-Fi, garagem…). Aparece no anúncio e não entra no cálculo de afinidade.</span>
+                        </span>
+                    </h2>
+                    <span id="comodidades-contador">0 selecionadas</span>
                 </div>
+                <div id="tags-comodidades" class="pilulas"></div>
             </section>
 
             <button class="btn btn-primary btn-publicar" type="submit">Publicar anúncio</button>
@@ -217,15 +225,17 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/tags-catalogo.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/tip.js?v=20261123"></script>
-    <script src="../js/cep-ui.js?v=20261123"></script>
+    <script src="../js/cep-ui.js?v=20261124"></script>
     <script src="../js/fotos-upload.js?v=20261123"></script>
-    <script src="../js/publicar-imovel.js?v=20261123"></script>
+    <script src="../js/publicar-imovel.js?v=20261124aj"></script>
 </body>
 </html>

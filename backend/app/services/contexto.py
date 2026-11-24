@@ -15,6 +15,12 @@ from app.services import matching_service, mural_service
 
 
 def exigir_locatario(db: Session, usuario: Usuario) -> Locatario:
+    from app.services.perfil_service import MORADOR, papel_do_usuario
+
+    if papel_do_usuario(db, usuario) != MORADOR:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, "Disponível apenas para moradores (locatário)."
+        )
     locatario = db.get(Locatario, usuario.id_usuario)
     if locatario is None:
         raise HTTPException(
@@ -24,14 +30,21 @@ def exigir_locatario(db: Session, usuario: Usuario) -> Locatario:
 
 
 def eh_locador(db: Session, usuario: Usuario) -> bool:
-    return db.get(Locador, usuario.id_usuario) is not None
+    from app.services.perfil_service import LOCADOR, papel_do_usuario
+
+    return papel_do_usuario(db, usuario) == LOCADOR
 
 
 def contexto_usuario(db: Session, usuario: Optional[Usuario]):
-    """(locatario, tags do usuário). Visitante: sem perfil e sem tags."""
+    """(locatario ativo, tags). Visitante / Locador ativo: sem perfil de busca."""
     if usuario is None:
         return None, []
+    from app.services.perfil_service import MORADOR, papel_do_usuario
+
     locatario = db.get(Locatario, usuario.id_usuario)
+    if papel_do_usuario(db, usuario) != MORADOR:
+        # Locador ativo: locatário (e favoritos) dormem — mural sem personalização de match.
+        return None, matching_service.tags_do_usuario(db, usuario, locatario)
     return locatario, matching_service.tags_do_usuario(db, usuario, locatario)
 
 

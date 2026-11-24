@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Termos e privacidade · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/favoritos.css?v=20261123">
-    <link rel="stylesheet" href="../css/config.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/favoritos.css?v=20261124by">
+    <link rel="stylesheet" href="../css/config.css?v=20261124by">
 </head>
 <body class="auth-page favoritos-page">
     <header class="site-header">
@@ -35,13 +35,13 @@
             <main class="conteudo">
                 <h2>Termos de uso</h2>
                 <div class="conteudo-prosa">
-                    <p>O RoomMatch é uma plataforma de combinação de perfis para moradia compartilhada na região metropolitana de Campinas. Esta página descreve o tratamento de dados da plataforma.</p>
+                    <p>O RoomMatch é uma plataforma de afinidade para moradia compartilhada na região metropolitana de Campinas. Esta página resume como tratamos dados pessoais.</p>
                     <h3>Dados coletados</h3>
-                    <p>Nome, e-mail, preferências de convivência, orçamento, limiar de match, favoritos e mensagens trocadas na plataforma.</p>
+                    <p>Nome, e-mail, preferências de convivência, orçamento, limiar de afinidade, favoritos e mensagens trocadas na plataforma.</p>
                     <h3>Finalidade</h3>
-                    <p>Calcular afinidade, exibir anúncios e permitir contato entre morador e locador.</p>
+                    <p>Calcular afinidade, exibir anúncios e permitir o contato entre morador e locador.</p>
                     <h3 id="privacidade">Base legal (Lei Geral de Proteção de Dados)</h3>
-                    <p>Consentimento no cadastro e legítimo interesse para segurança da conta. Você pode solicitar exclusão dos seus dados pelos canais de suporte da plataforma.</p>
+                    <p>Consentimento no cadastro e legítimo interesse para segurança da conta. Você pode solicitar a exclusão dos seus dados pelos canais de suporte.</p>
                     <h3>Contato</h3>
                     <p>Dúvidas: equipe RoomMatch · PUC-Campinas · Projeto Integrador 2026. Abra uma issue em <a href="https://github.com/silverwying/room-match/issues" target="_blank" rel="noopener noreferrer">github.com/silverwying/room-match/issues</a> ou use a página de <a href="contato.html">Contato</a>.</p>
                 </div>
@@ -56,13 +56,14 @@
         </nav>
         <small>© 2026 RoomMatch</small>
     </footer>
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/mock-api.js?v=20261124al"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
     <script src="../js/config-shell.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script>
         if (estaLogado()) montarSidebarConfig('termos.html');
         else document.querySelector('.sidebar').innerHTML = '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a href="login.html">Entrar</a>';

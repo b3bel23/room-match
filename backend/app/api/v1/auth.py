@@ -31,9 +31,15 @@ def _sessao(db: Session, usuario: Usuario) -> Token:
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 def register(dados: RegistroIn, db: Session = Depends(get_db)):
     """Cria a conta e já devolve a sessão: `{ access_token, user }` (contrato do front).
-    Envia o link de confirmação de e-mail (RF02)."""
+    Com SMTP: envia link de confirmação (RF02). Sem SMTP: não promete e-mail."""
     usuario = auth_service.registrar(db, dados)
-    verificacao_service.enviar_link(usuario)
+    if email_service.envio_ativo():
+        verificacao_service.enviar_link(usuario)
+    else:
+        # Sem caixa de entrada real: não deixa a conta “pendente” de um e-mail que não chega.
+        usuario.status_verificacao = True
+        db.commit()
+        db.refresh(usuario)
     return _sessao(db, usuario)
 
 
@@ -85,7 +91,13 @@ MSG_RECUPERAR = "Se o e-mail estiver cadastrado, enviaremos um link para redefin
 
 @router.post("/recuperar")
 def recuperar_senha(dados: RecuperarIn, db: Session = Depends(get_db)):
-    """Sempre 200 com a mesma mensagem: não revela se o e-mail existe."""
+    """Sem SMTP: avisa indisponível. Com SMTP: 200 genérico (não revela se o e-mail existe)."""
+    if not email_service.envio_ativo():
+        return {
+            "ok": False,
+            "email_envio_disponivel": False,
+            "message": "Recuperação por e-mail indisponível neste ambiente (SMTP não configurado).",
+        }
     usuario = auth_service.get_usuario_by_email(db, dados.email)
     if usuario is not None:
         token = create_reset_token(usuario.id_usuario, usuario.senha_hash)
@@ -97,7 +109,7 @@ def recuperar_senha(dados: RecuperarIn, db: Session = Depends(get_db)):
             f"(vale por {settings.reset_token_expire_minutes} minutos):\n\n{link}\n\n"
             "Se você não pediu, ignore este e-mail.",
         )
-    return {"ok": True, "message": MSG_RECUPERAR}
+    return {"ok": True, "email_envio_disponivel": True, "message": MSG_RECUPERAR}
 
 
 @router.post("/redefinir")

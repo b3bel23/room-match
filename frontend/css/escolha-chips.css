@@ -1,0 +1,334 @@
+/* Ocupação / situação — chips rápidos (cadastro + perfil). */
+
+.escolha-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+.escolha-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 148px), 1fr));
+    gap: 8px;
+    width: 100%;
+}
+
+.escolha-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border, #e2e8eb);
+    border-radius: 14px;
+    background: var(--color-surface, #fff);
+    color: var(--color-text-primary, #142126);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+    min-height: 44px;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.22s ease,
+        transform 0.18s ease,
+        color 0.2s ease;
+}
+
+.escolha-chip:hover {
+    border-color: color-mix(in srgb, var(--color-primary, #1f6f63) 30%, var(--color-border, #e2e8eb));
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 5%, #fff);
+}
+
+.escolha-chip:active {
+    transform: scale(0.985);
+}
+
+.escolha-chip:focus-visible {
+    outline: 2px solid var(--color-primary, #1f6f63);
+    outline-offset: 2px;
+}
+
+.escolha-chip.ativo {
+    border-color: var(--color-primary, #1f6f63);
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 10%, #fff);
+    color: var(--color-primary-hover, #16574e);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary, #1f6f63) 14%, transparent);
+    transform: translateY(-1px);
+}
+
+.escolha-chip-ico {
+    flex-shrink: 0;
+    color: var(--color-text-subtle, #6b7c7a);
+    display: flex;
+    transition: color 0.2s ease;
+}
+
+.escolha-ico {
+    width: 18px;
+    height: 18px;
+    display: block;
+    transition: transform 0.22s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.escolha-chip.ativo .escolha-chip-ico {
+    color: var(--color-primary, #1f6f63);
+}
+
+.escolha-chip.ativo .escolha-ico {
+    transform: scale(1.1);
+}
+
+.escolha-chip-texto {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.escolha-chip-curto {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.escolha-mais {
+    align-self: flex-start;
+    margin: 0;
+    padding: 4px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary, #1f6f63);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.escolha-mais:hover {
+    color: var(--color-primary-hover, #16574e);
+}
+
+.escolha-select-sync {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.campo.escolha-campo,
+.perfil-form .escolha-campo {
+    position: relative;
+}
+
+.perfil-form .escolha-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.perfil-form .escolha-campo > .campo-ajuda {
+    order: 3;
+}
+
+@media (max-width: 560px) {
+    .escolha-grade {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 148px), 1fr));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .escolha-chip,
+    .escolha-ico {
+        transition: none;
+    }
+
+    .escolha-chip:active,
+    .escolha-chip.ativo,
+    .escolha-chip.ativo .escolha-ico {
+        transform: none;
+    }
+}
+
+/* Faculdade — busca + atalhos */
+.faculdade-busca {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.faculdade-atalhos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.faculdade-atalho {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border, #e2e8eb);
+    border-radius: 999px;
+    background: var(--color-surface, #fff);
+    color: var(--color-text-primary, #142126);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease;
+}
+
+.faculdade-atalho:hover {
+    border-color: color-mix(in srgb, var(--color-primary, #1f6f63) 35%, var(--color-border, #e2e8eb));
+}
+
+.faculdade-atalho.ativo {
+    border-color: var(--color-primary, #1f6f63);
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 10%, #fff);
+    color: var(--color-primary-hover, #16574e);
+}
+
+.faculdade-atalho:active {
+    transform: scale(0.98);
+}
+
+.faculdade-busca-campo {
+    position: relative;
+    width: 100%;
+}
+
+.faculdade-busca-input {
+    width: 100%;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 12px 40px 12px 14px;
+    border: 1px solid var(--color-border, #e2e8eb);
+    border-radius: 12px;
+    background: var(--color-surface, #fff);
+    font: inherit;
+    font-size: 13.2px;
+    color: var(--color-text-primary, #142126);
+    outline: none;
+}
+
+.faculdade-busca-input:focus {
+    border-color: var(--color-primary, #1f6f63);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #1f6f63) 18%, transparent);
+}
+
+.faculdade-busca-seta {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-subtle, #6b7c7a);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.faculdade-busca-seta:hover {
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 8%, #fff);
+    color: var(--color-primary, #1f6f63);
+}
+
+.faculdade-busca--aberta .faculdade-busca-seta {
+    color: var(--color-primary, #1f6f63);
+}
+
+.faculdade-lista {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 240px;
+    overflow: auto;
+    padding: 6px;
+    margin: 0;
+    border: 1px solid color-mix(in srgb, var(--color-border, #e2e8eb) 80%, #fff);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 28px rgba(20, 29, 34, 0.12);
+}
+
+.faculdade-lista[hidden] {
+    display: none !important;
+}
+
+.faculdade-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    margin: 0;
+    padding: 9px 11px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        background-color 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.faculdade-item:hover,
+.faculdade-item.foco-teclado {
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 7%, #fff);
+    border-color: color-mix(in srgb, var(--color-primary, #1f6f63) 22%, transparent);
+}
+
+.faculdade-item.ativo {
+    background: color-mix(in srgb, var(--color-primary, #1f6f63) 10%, #fff);
+    border-color: color-mix(in srgb, var(--color-primary, #1f6f63) 40%, transparent);
+}
+
+.faculdade-item-titulo {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--color-text-primary, #142126);
+}
+
+.faculdade-item-sub {
+    font-size: 11px;
+    color: var(--color-text-subtle, #6b7c7a);
+}
+
+.faculdade-lista-vazia {
+    margin: 0;
+    padding: 12px 10px;
+    font-size: 12px;
+    color: var(--color-text-subtle, #6b7c7a);
+    text-align: center;
+}

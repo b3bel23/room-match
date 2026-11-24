@@ -250,13 +250,14 @@
 /* Match playground */
 .cf-match-board {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 20px;
     align-items: start;
     padding: 24px;
     background: #fff;
     border: 1px solid var(--color-border);
     border-radius: 16px;
+    min-width: 0;
 }
 
 .cf-match-col h3 {
@@ -671,6 +672,18 @@ button.cf-tag:active {
     box-shadow: 0 6px 16px rgba(20, 29, 34, 0.18);
 }
 
+@media (max-width: 900px) {
+    .cf-match-board,
+    .cf-demo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cf-match-score {
+        order: -1;
+        padding: 0 0 8px;
+    }
+}
+
 @media (max-width: 720px) {
     .cf-main {
         padding: 28px 16px 0;
@@ -684,15 +697,8 @@ button.cf-tag:active {
         font-size: 24px;
     }
 
-    .cf-papel-switch,
-    .cf-demo-grid,
-    .cf-match-board {
+    .cf-papel-switch {
         grid-template-columns: 1fr;
-    }
-
-    .cf-match-score {
-        order: -1;
-        padding: 0 0 8px;
     }
 
     .cf-steps {

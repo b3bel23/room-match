@@ -34,6 +34,11 @@ form.addEventListener('submit', async (evento) => {
         return;
     }
 
+    const botao = form.querySelector('button[type="submit"]');
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.botaoEspera(botao, true, 'Salvando…');
+        RoomMatchLoading.mostrar('Atualizando senha…');
+    }
     try {
         await RoomMatchApi.alterarSenha({
             senha_atual: senhaAtual.value,
@@ -48,5 +53,10 @@ form.addEventListener('submit', async (evento) => {
         retorno.textContent = erro.detail || erro.message;
         retorno.classList.add('erro');
         retorno.hidden = false;
+    } finally {
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.forcarEsconder();
+            RoomMatchLoading.botaoEspera(botao, false);
+        }
     }
 });

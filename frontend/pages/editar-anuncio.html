@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar anúncio · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/cadastro.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/cadastro.css?v=20261124by">
     <link rel="stylesheet" href="../css/editar-anuncio.css?v=20261123">
 </head>
 <body class="editar-page">
@@ -31,6 +31,10 @@
             <div class="campo">
                 <label for="titulo">Título</label>
                 <input id="titulo" type="text" value="Quarto em república · Barão Geraldo" required>
+            </div>
+            <div class="campo">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" rows="4" maxlength="2000" placeholder="Descreva o imóvel, regras da casa e o que está incluso…"></textarea>
             </div>
             <div class="campo">
                 <label for="aluguel">Aluguel (R$)</label>
@@ -60,6 +64,26 @@
                 </div>
             </section>
 
+            <section class="tags-secao" aria-label="Convivência e comodidades">
+                <div class="tags-cabecalho">
+                    <h2>Tags de convivência</h2>
+                    <span id="tags-contador">0 selecionadas</span>
+                </div>
+                <p class="etapa-subtitulo" style="margin-top:-0.35rem;margin-bottom:0.75rem">
+                    Só as tags que você marcar entram na afinidade com o morador (comodidades não contam).
+                    Recomendamos 3 ou mais.
+                </p>
+                <h3>O que a casa oferece</h3>
+                <div id="tags-adesao" class="pilulas"></div>
+                <h3>Regras da casa</h3>
+                <div id="tags-restricao" class="pilulas"></div>
+                <div class="tags-cabecalho" style="margin-top:1rem">
+                    <h2>Comodidades</h2>
+                    <span id="comodidades-contador">0 selecionadas</span>
+                </div>
+                <div id="tags-comodidades" class="pilulas"></div>
+            </section>
+
             <p class="editar-total">Total mensal: <strong id="editar-total">R$ 850</strong></p>
 
             <div class="editar-acoes">
@@ -79,15 +103,16 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/tags-catalogo.js?v=20261124bf"></script>
+    <script src="../js/mock-api.js?v=20261124al"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
     <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
-    <script src="../js/fotos-upload.js?v=20261123"></script>
-
-    <script src="../js/editar-anuncio.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
+    <script src="../js/fotos-upload.js?v=20261123"></script>    <script src="../js/tip.js?v=20261123"></script>
+    <script src="../js/editar-anuncio.js?v=20261124be"></script>
 </body>
 </html>

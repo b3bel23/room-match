@@ -15,7 +15,7 @@ PROPERTIES = [
         "pct": 92,
         "route": "28 min · PUC-Campinas",
         "dist": "3,8 km",
-        "tags": ["Pet Friendly", "Silêncio Noturno", "Home Office"],
+        "tags": ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"],
         "gradient": "linear-gradient(135deg,#5EA38F 0%,#3d7a6a 40%,#141D22 100%)",
         "rooms": 1,
         "size": "12 m²",
@@ -29,7 +29,7 @@ PROPERTIES = [
         "pct": 78,
         "route": "18 min · UNICAMP",
         "dist": "2,1 km",
-        "tags": ["LGBTQIA+ Safe", "Vegetariano", "Home Office"],
+        "tags": ["LGBTQIA+ Acolhedor", "Vegetariano", "Trabalho em Casa"],
         "gradient": "linear-gradient(135deg,#FBB050 0%,#e8953a 50%,#5EA38F 100%)",
         "rooms": 1,
         "size": "28 m²",
@@ -43,21 +43,21 @@ PROPERTIES = [
         "pct": 88,
         "route": "35 min · PUC-Campinas",
         "dist": "5,4 km",
-        "tags": ["Pet Friendly", "Sem Festas", "420 Friendly"],
+        "tags": ["Aceita Animais", "Sem Festas", "Trabalho em Casa"],
         "gradient": "linear-gradient(160deg,#F08070 0%,#c45a4d 45%,#141D22 100%)",
         "rooms": 1,
         "size": "14 m²",
     },
     {
         "title": "Quarto suite · Taquaral",
-        "type": "Apart.",
+        "type": "Apartamento",
         "bairro": "Taquaral, Campinas",
         "price": 980,
         "breakdown": [("Aluguel", 750), ("Cond.", 160), ("IPTU", 35), ("Contas", 35)],
         "pct": 81,
         "route": "22 min · PUCC",
         "dist": "2,9 km",
-        "tags": ["Silêncio Noturno", "Home Office", "LGBTQIA+ Safe"],
+        "tags": ["Silêncio Noturno", "Trabalho em Casa", "LGBTQIA+ Acolhedor"],
         "gradient": "linear-gradient(120deg,#667eea 0%,#764ba2 60%,#141D22 100%)",
         "rooms": 1,
         "size": "16 m²",
@@ -71,21 +71,21 @@ PROPERTIES = [
         "pct": 95,
         "route": "15 min · UNICAMP",
         "dist": "1,6 km",
-        "tags": ["Vegetariano", "Silêncio Noturno", "Home Office"],
+        "tags": ["Vegetariano", "Silêncio Noturno", "Trabalho em Casa"],
         "gradient": "linear-gradient(145deg,#11998e 0%,#38ef7d 50%,#141D22 100%)",
         "rooms": 1,
         "size": "11 m²",
     },
     {
         "title": "Quarto amplo · Nova Campinas",
-        "type": "Apart.",
+        "type": "Apartamento",
         "bairro": "Nova Campinas, Campinas",
         "price": 1100,
         "breakdown": [("Aluguel", 880), ("Cond.", 150), ("IPTU", 40), ("Contas", 30)],
         "pct": 74,
         "route": "25 min · PUC-Campinas",
         "dist": "4,0 km",
-        "tags": ["Pet Friendly", "Social Moderado"],
+        "tags": ["Aceita Animais", "Social Moderado"],
         "gradient": "linear-gradient(135deg,#fa709a 0%,#fee140 50%,#5EA38F 100%)",
         "rooms": 1,
         "size": "18 m²",
@@ -399,13 +399,13 @@ def screen_mural() -> str:
     </div>
     <div class="filters">
       <span class="chip on">Todos</span>
-      <span class="chip">Apart.</span>
+      <span class="chip">Apartamento</span>
       <span class="chip">Kitnet</span>
       <span class="chip">Casa</span>
       <span class="chip">República</span>
       <span class="filter-input">{ICON["search"]} Barão Geraldo, Campinas</span>
       <span class="filter-input">Até R$ 1.200</span>
-      <span class="filter-input">Pet Friendly</span>
+      <span class="filter-input">Aceita Animais</span>
       <span class="btn btn-primary btn-sm">Buscar match</span>
     </div>
     <div class="grid">{cards}</div>
@@ -512,8 +512,8 @@ def screen_cadastro(title: str, subtitle: str, step: int, fields: list,
     )
     extra = ""
     if "Preferências" in title:
-        tags = ["Pet Friendly", "Silêncio Noturno", "Home Office",
-                "LGBTQIA+ Safe", "Vegetariano", "Sem Festas"]
+        tags = ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa",
+                "LGBTQIA+ Acolhedor", "Vegetariano", "Sem Festas"]
         extra = '<div class="tag-grid">' + "".join(
             f'<span class="tag{" tag-on" if i < 3 else ""}">{t}</span>'
             for i, t in enumerate(tags)
@@ -577,8 +577,8 @@ def body_perfil() -> str:
 
 
 def body_preferencias() -> str:
-    tags_active = ["Pet Friendly", "Silêncio Noturno", "Home Office", "LGBTQIA+ Safe", "Vegetariano"]
-    tags_trend = ["420 Friendly", "Sem Festas", "Pet Friendly", "Vegano", "Social Moderado"]
+    tags_active = ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa", "LGBTQIA+ Acolhedor", "Vegetariano"]
+    tags_trend = ["Trabalho em Casa", "Sem Festas", "Aceita Animais", "Vegano", "Social Moderado"]
     active = "".join(f'<span class="tag tag-on">{t} ✕</span>' for t in tags_active)
     trend = "".join(f'<span class="tag">{t} +</span>' for t in tags_trend)
     return f"""
@@ -698,7 +698,7 @@ def screen_chat(role: str) -> str:
         <div class="rateio-row"><span>Total</span><span style="color:var(--menthe)">{money(p["price"])}</span></div></div>
         <p style="font-size:11px;font-weight:600;color:var(--slate);margin-bottom:8px">TAGS EM COMUM</p>
         <div class="tag-grid" style="margin-bottom:16px">
-          <span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio</span>
+          <span class="tag tag-on">Aceita Animais</span><span class="tag tag-on">Silêncio</span>
         </div>
         <span class="btn btn-primary" style="width:100%">Ver imóvel</span>
         <p class="plus-note">[Plus] Compartilhar WhatsApp (RF36)</p>
@@ -768,8 +768,8 @@ def screen_publicar() -> str:
       <div style="grid-column:1/-1">
         <label style="font-size:12px;font-weight:500;color:var(--g600)">Tags de convivência do imóvel</label>
         <div class="tag-grid" style="margin-top:8px">
-          <span class="tag tag-on">Pet Friendly</span><span class="tag tag-on">Silêncio Noturno</span>
-          <span class="tag tag-on">Home Office</span><span class="tag">420 Friendly</span>
+          <span class="tag tag-on">Aceita Animais</span><span class="tag tag-on">Silêncio Noturno</span>
+          <span class="tag tag-on">Trabalho em Casa</span><span class="tag">Organizado</span>
           <span class="tag">Sem Festas</span><span class="tag">+ adicionar</span>
         </div>
       </div>

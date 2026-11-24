@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mensagens · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/mensagens.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/mensagens.css?v=20261124as">
 </head>
 <body class="mensagens-page">
 
@@ -23,17 +23,39 @@
 
     <div class="chat-layout">
         <aside class="chat-lista">
-            <h2>Conversas</h2>
+            <div class="chat-lista-cabecalho">
+                <h2>Conversas</h2>
+                <div class="chat-abas" role="tablist" aria-label="Filtro de conversas">
+                    <button id="chat-aba-ativas" class="chat-aba ativa" type="button" role="tab" aria-selected="true">Ativas</button>
+                    <button id="chat-aba-arquivadas" class="chat-aba" type="button" role="tab" aria-selected="false">Arquivadas</button>
+                </div>
+            </div>
+            <p id="chat-feedback" class="chat-feedback" hidden role="status"></p>
             <div id="chat-itens" class="chat-itens"></div>
         </aside>
 
         <section class="chat-thread">
             <div class="chat-thread-topo">
                 <a id="chat-voltar" class="btn-voltar-pagina" data-voltar href="home.html">← Voltar</a>
-                <h2 id="chat-titulo">Selecione uma conversa</h2>
+                <button id="chat-voltar-lista" class="chat-voltar-lista" type="button" hidden>← Conversas</button>
+                <div id="chat-topo-pessoa" class="chat-topo-pessoa" hidden>
+                    <span id="chat-topo-avatar" class="chat-avatar" aria-hidden="true">?</span>
+                    <div class="chat-topo-textos">
+                        <h2 id="chat-titulo">Selecione uma conversa</h2>
+                        <p id="chat-topo-meta" class="chat-topo-meta"></p>
+                    </div>
+                    <span id="chat-topo-match" class="chat-match" hidden></span>
+                </div>
+                <h2 id="chat-titulo-vazio" class="chat-titulo-vazio">Selecione uma conversa</h2>
+                <div id="chat-acoes" class="chat-acoes" hidden>
+                    <button id="chat-marcar-lida" class="chat-acao" type="button">Marcar como lida</button>
+                    <button id="chat-arquivar" class="chat-acao" type="button">Arquivar</button>
+                    <button id="chat-bloquear" class="chat-acao" type="button">Bloquear</button>
+                    <button id="chat-denunciar" class="chat-acao chat-acao-denunciar" type="button">Denunciar</button>
+                </div>
             </div>
             <div id="chat-mensagens" class="chat-mensagens">
-                <p class="chat-vazio">Escolha uma conversa à esquerda ou inicie pelo anúncio.</p>
+                <p class="chat-vazio">Escolha uma conversa à esquerda ou inicie a partir de um anúncio.</p>
             </div>
             <form id="chat-form" class="chat-composer" hidden>
                 <input id="chat-texto" type="text" placeholder="Escreva uma mensagem…" autocomplete="off" required>
@@ -43,10 +65,21 @@
 
         <aside class="chat-info">
             <h2 style="font-size:16px">Imóvel</h2>
-            <div id="chat-imovel-foto" class="chat-imovel-foto" aria-hidden="true"></div>
-            <p id="chat-imovel-titulo">—</p>
-            <p id="chat-imovel-meta" class="chat-imovel-meta"></p>
-            <a id="chat-imovel-link" class="btn btn-secondary" href="home.html">Ver anúncio</a>
+
+            <div id="chat-info-vazio" class="chat-info-vazio">
+                <p id="chat-info-vazio-texto" class="chat-info-vazio-texto">
+                    Quando uma conversa começar, o anúncio correspondente aparece aqui.
+                </p>
+                <a id="chat-info-vazio-primario" class="btn btn-primary" href="home.html">Explorar mural</a>
+                <a id="chat-info-vazio-secundario" class="btn btn-secondary" href="favoritos.html" hidden>Ver favoritos</a>
+            </div>
+
+            <div id="chat-info-detalhe" class="chat-info-detalhe" hidden>
+                <div id="chat-imovel-foto" class="chat-imovel-foto" aria-hidden="true"></div>
+                <p id="chat-imovel-titulo">—</p>
+                <p id="chat-imovel-meta" class="chat-imovel-meta"></p>
+                <a id="chat-imovel-link" class="btn btn-secondary" href="home.html">Ver anúncio</a>
+            </div>
         </aside>
     </div>
 
@@ -59,13 +92,16 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+        <script src="../js/tags-catalogo.js?v=20261124bf"></script>
+    <script src="../js/mock-api.js?v=20261124ap"></script>
+    <script src="../js/api.js?v=20261124al"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/imovel-fotos.js?v=20261123"></script>
-    <script src="../js/mensagens.js?v=20261123"></script>
+    <script src="../js/denuncia-ui.js?v=20261124aq"></script>
+    <script src="../js/mensagens.js?v=20261124ba"></script>
 </body>
 </html>

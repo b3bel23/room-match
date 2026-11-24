@@ -5,7 +5,7 @@ from types import SimpleNamespace as NS
 
 from app.services.mural_service import filtrar_imoveis, limiar_do_locatario, montar_imovel
 
-TAGS_USER = ["Pet Friendly", "Silêncio Noturno", "Home Office"]
+TAGS_USER = ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"]
 
 
 def _post(**over):
@@ -42,13 +42,23 @@ def test_fotos_ordenadas_e_capa():
 
 
 def test_campos_basicos_e_endereco():
-    item = montar_imovel(_post(), ["Pet Friendly"], [], None)
+    item = montar_imovel(_post(), ["Aceita Animais"], [], None)
     assert item["id"] == 1 and item["id_post"] == 10 and item["locador_id"] == 5
     assert item["bairro"] == "Barão Geraldo" and item["cidade"] == "Campinas"
-    assert item["endereco"] == "R. Benedito, 450 · Barão Geraldo"
+    # Público: aproximado (rua · bairro), sem número/CEP.
+    assert item["endereco"] == "R. Benedito · Barão Geraldo"
+    assert item["endereco_exato"] is False
+    assert item["numero"] is None
     assert item["descricao"] == "desc do imóvel"  # post sem descrição cai na do imóvel
-    assert item["tags"] == ["Pet Friendly"]
+    assert item["tags"] == ["Aceita Animais"]
     assert item["classificacao"] == "Feminina" and item["status_anuncio"] == "ativo"
+
+
+def test_endereco_exato_so_para_dono():
+    item = montar_imovel(_post(), [], [], None, endereco_exato=True)
+    assert item["endereco"] == "R. Benedito, 450 · Barão Geraldo"
+    assert item["endereco_exato"] is True
+    assert item["numero"] == "450"
 
 
 def test_sem_endereco_nem_fotos():
@@ -61,7 +71,7 @@ def test_sem_endereco_nem_fotos():
 
 
 def test_visitante_tem_match_zero_e_sem_elegibilidade():
-    item = montar_imovel(_post(), ["Pet Friendly"], [], None)
+    item = montar_imovel(_post(), ["Aceita Animais"], [], None)
     assert item["match"] == item["match_percent"] == 0
     assert item["elegibilidade"] is None
 
@@ -69,10 +79,10 @@ def test_visitante_tem_match_zero_e_sem_elegibilidade():
 def test_locatario_recebe_match_tags_e_elegibilidade():
     locatario = NS(orcamento_maximo=Decimal("1200"), limiar_compatibilidade=70)
     item = montar_imovel(
-        _post(), ["Pet Friendly", "Silêncio Noturno", "Home Office"], TAGS_USER, locatario
+        _post(), ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"], TAGS_USER, locatario
     )
     assert item["match_percent"] == 100
-    assert item["tags_correspondentes"] == ["Pet Friendly", "Silêncio Noturno", "Home Office"]
+    assert item["tags_correspondentes"] == ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"]
     eleg = item["elegibilidade"]
     assert eleg["chat_liberado"] is True
     assert eleg["limiar_compatibilidade"] == eleg["limiar"] == 70
@@ -81,12 +91,13 @@ def test_locatario_recebe_match_tags_e_elegibilidade():
 
 def test_chat_bloqueado_por_orcamento_ou_limiar():
     caro = NS(orcamento_maximo=Decimal("800"), limiar_compatibilidade=None)
-    assert montar_imovel(_post(), ["Pet Friendly"], ["Pet Friendly"], caro)["elegibilidade"][
+    assert montar_imovel(_post(), ["Aceita Animais"], ["Aceita Animais"], caro)["elegibilidade"][
         "chat_liberado"
     ] is False
     exigente = NS(orcamento_maximo=Decimal("0"), limiar_compatibilidade=90)
-    eleg = montar_imovel(_post(), ["Home Office"], TAGS_USER, exigente)["elegibilidade"]
-    assert eleg["match"] == 33 and eleg["limiar_ok"] is False and eleg["chat_liberado"] is False
+    eleg = montar_imovel(_post(), ["Trabalho em Casa"], TAGS_USER, exigente)["elegibilidade"]
+    # Trabalho em Casa coberto + Silêncio Noturno (restrição) sem conflito = 2/3 → 67%.
+    assert eleg["match"] == 67 and eleg["limiar_ok"] is False and eleg["chat_liberado"] is False
 
 
 def test_limiar_do_locatario():
@@ -100,9 +111,9 @@ def test_limiar_do_locatario():
 CATALOGO = [
     {"titulo": "Quarto em república · Barão Geraldo", "tipo": "República", "bairro": "Barão Geraldo",
      "cidade": "Campinas", "endereco": "R. Benedito · Barão Geraldo", "preco": 850,
-     "tags": ["Pet Friendly", "Silêncio Noturno"]},
+     "tags": ["Aceita Animais", "Silêncio Noturno"]},
     {"titulo": "Kitnet mobiliada · Cambuí", "tipo": "Kitnet", "bairro": "Cambuí",
-     "cidade": "Campinas", "endereco": None, "preco": 1200, "tags": ["Home Office"]},
+     "cidade": "Campinas", "endereco": None, "preco": 1200, "tags": ["Trabalho em Casa"]},
     {"titulo": "Suíte · Taquaral", "tipo": "Apartamento", "bairro": "Taquaral",
      "cidade": "Campinas", "endereco": None, "preco": 1500, "tags": ["Vegetariano"]},
 ]
@@ -119,7 +130,7 @@ def test_sem_filtros_devolve_tudo():
 def test_filtro_tipo_e_todos():
     assert _titulos(filtrar_imoveis(CATALOGO, tipo="Kitnet")) == ["Kitnet mobiliada"]
     assert _titulos(filtrar_imoveis(CATALOGO, tipo="todos")) == _titulos(CATALOGO)
-    assert _titulos(filtrar_imoveis(CATALOGO, tipo="Apart.")) == ["Suíte"]
+    assert _titulos(filtrar_imoveis(CATALOGO, tipo="Apartamento")) == ["Suíte"]
 
 
 def test_filtro_bairro_busca_em_titulo_bairro_e_endereco():
@@ -129,9 +140,18 @@ def test_filtro_bairro_busca_em_titulo_bairro_e_endereco():
 
 
 def test_filtro_tag_ignora_caixa_e_aceita_parte():
-    assert len(filtrar_imoveis(CATALOGO, tag="pet friendly")) == 1
-    assert len(filtrar_imoveis(CATALOGO, tag="Silêncio")) == 1  # alias -> "silêncio noturno"
-    assert filtrar_imoveis(CATALOGO, tag="420 Friendly") == []
+    assert len(filtrar_imoveis(CATALOGO, tag="aceita animais")) == 1
+    assert len(filtrar_imoveis(CATALOGO, tag="Silêncio")) == 1  # parte de "silêncio noturno"
+    assert filtrar_imoveis(CATALOGO, tag="tag-inexistente") == []
+
+
+def test_filtro_varias_tags_exige_todas_and():
+    # Nenhum imóvel do catálogo tem Aceita Animais e Trabalho em Casa juntos.
+    assert filtrar_imoveis(CATALOGO, tag="Aceita Animais,Trabalho em Casa") == []
+    assert _titulos(filtrar_imoveis(CATALOGO, tags=["Trabalho em Casa"])) == ["Kitnet mobiliada"]
+    assert _titulos(filtrar_imoveis(CATALOGO, tag="Aceita Animais,Silêncio Noturno")) == [
+        "Quarto em república"
+    ]
 
 
 def test_filtro_preco_max_inclui_o_limite():
@@ -140,6 +160,6 @@ def test_filtro_preco_max_inclui_o_limite():
 
 
 def test_filtros_combinados():
-    assert _titulos(filtrar_imoveis(CATALOGO, bairro="campinas", preco_max=1200, tag="home")) == [
+    assert _titulos(filtrar_imoveis(CATALOGO, bairro="campinas", preco_max=1200, tag="trabalho")) == [
         "Kitnet mobiliada"
     ]

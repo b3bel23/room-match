@@ -56,8 +56,15 @@ def alterar_senha(
 
 @router.post("/me/verificacao")
 def reenviar_verificacao(usuario: Usuario = Depends(get_current_user)):
-    """Reenvia o link de confirmação de e-mail."""
+    """Reenvia o link de confirmação de e-mail (só com SMTP configurado)."""
+    from app.services import email_service
+
     if usuario.status_verificacao:
         return {"ok": True, "message": "Seu e-mail já está confirmado."}
+    if not email_service.envio_ativo():
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Confirmação por e-mail indisponível neste ambiente (SMTP não configurado).",
+        )
     verificacao_service.enviar_link(usuario)
     return {"ok": True, "message": f"Enviamos um novo link para {usuario.email}."}

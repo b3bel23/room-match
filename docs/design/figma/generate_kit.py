@@ -291,7 +291,7 @@ def screen_mural() -> str:
     s += comp_header()
     s += comp_page_title("Encontre sua moradia ideal")
     y = HEADER_H + TITLE_H + 24
-    cats = ["Apart.", "Kitnet", "Casa", "República"]
+    cats = ["Apartamento", "Kitnet", "Casa", "República"]
     for i, c in enumerate(cats):
         fill = C["slate"] if i == 0 else C["white"]
         tf = C["white"] if i == 0 else C["slate"]
@@ -368,7 +368,7 @@ def screen_imovel_expandido(blur: bool) -> str:
         f'<text x="{info_x}" y="{y + 290}" font-size="12" '
         f'fill="{C["gray600"]}">32 min até PUC · 4,2 km (GTFS)</text>\n'
     )
-    s += comp_tag(info_x, y + 304, "Pet Friendly", True)
+    s += comp_tag(info_x, y + 304, "Aceita Animais", True)
     s += comp_tag(info_x + 120, y + 304, "Silêncio", False)
     if not blur:
         s += comp_btn(info_x, y + 352, 160, 44, "Favoritar", "secondary", "fav")
@@ -509,8 +509,8 @@ def body_preferencias() -> str:
         f'<text x="{x}" y="{y + 24}" font-size="12" fill="{C["gray600"]}">'
         f'Suas tags de convivência · 5/12</text>\n'
     )
-    tags = ["Pet Friendly", "Silêncio Noturno", "Home Office",
-            "LGBTQIA+ Safe", "Vegetariano"]
+    tags = ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa",
+            "LGBTQIA+ Acolhedor", "Vegetariano"]
     tx, ty = x, y + 48
     for i, t in enumerate(tags):
         s += comp_tag(tx, ty, t, True)
@@ -524,7 +524,7 @@ def body_preferencias() -> str:
         f'<text x="{x}" y="{ty + 120}" font-size="13" font-weight="600" '
         f'fill="{C["slate"]}">Em alta na sua região</text>\n'
     )
-    trending = ["420 Friendly", "Sem Festas", "Pet Friendly", "Vegano"]
+    trending = ["Trabalho em Casa", "Sem Festas", "Aceita Animais", "Vegano"]
     tx = x
     for t in trending:
         s += comp_tag(tx, ty + 136, t, False)
@@ -681,7 +681,7 @@ def screen_chat(role: str) -> str:
         f'<text x="{ix + 24}" y="{y0 + 300}" font-size="12" font-weight="600" '
         f'fill="{C["slate"]}">TAGS EM COMUM</text>\n'
     )
-    s += comp_tag(ix + 24, y0 + 312, "Pet Friendly", True)
+    s += comp_tag(ix + 24, y0 + 312, "Aceita Animais", True)
     s += comp_tag(ix + 140, y0 + 312, "Silêncio", True)
     s += comp_btn(ix + 24, H - 80, info_w - 48, 44, "VER IMÓVEL", "primary", "ver")
     s += "</g>"
@@ -730,7 +730,7 @@ def screen_publicar() -> str:
         f'<text x="{px}" y="{y + 320}" font-size="14" font-weight="600" '
         f'fill="{C["slate"]}">Tags de convivência</text>\n'
     )
-    tags = ["Pet Friendly", "Silêncio", "Home Office"]
+    tags = ["Aceita Animais", "Silêncio", "Trabalho em Casa"]
     for i, t in enumerate(tags):
         s += comp_tag(px + i * 140, y + 336, t, i == 0)
     s += "</g>"
@@ -820,9 +820,9 @@ def write_components_library() -> str:
     parts.append(comp_btn(488, y + 16, 140, 44, "Ghost", "ghost", "lib-ghost"))
     y += 100
     parts.append(f'<text x="32" y="{y}" font-size="14" font-weight="600" fill="{C["slate"]}">Tags</text>')
-    parts.append(comp_tag(32, y + 16, "Pet Friendly", True))
+    parts.append(comp_tag(32, y + 16, "Aceita Animais", True))
     parts.append(comp_tag(160, y + 16, "Silêncio", False))
-    parts.append(comp_tag(260, y + 16, "Home Office", False))
+    parts.append(comp_tag(260, y + 16, "Trabalho em Casa", False))
     parts.append(comp_badge(400, y + 16, "85%"))
     y += 80
     parts.append(f'<text x="32" y="{y}" font-size="14" font-weight="600" fill="{C["slate"]}">Input</text>')
@@ -1051,9 +1051,9 @@ body {{ font-family: 'DM Sans', sans-serif; padding: 48px; background: #1a1a1a; 
   <div class="section" data-component="tags">
     <h2>Tags & Badge</h2>
     <div class="row">
-      <span class="component-tag component-tag-active">Pet Friendly</span>
+      <span class="component-tag component-tag-active">Aceita Animais</span>
       <span class="component-tag">Silêncio</span>
-      <span class="component-tag">Home Office</span>
+      <span class="component-tag">Trabalho em Casa</span>
       <span class="component-badge-afinidade">85% afinidade</span>
     </div>
   </div>

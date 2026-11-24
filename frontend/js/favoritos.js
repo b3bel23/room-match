@@ -79,11 +79,21 @@ function desenhar() {
 }
 
 async function carregar() {
+    contagem.textContent = 'Carregando…';
+    vistaLista.hidden = false;
+    vistaVazia.hidden = true;
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.preencherInline(lista, 'Carregando favoritos…');
+    }
     try {
-        cache = await listarFavoritosDetalhados();
+        const loader = typeof RoomMatchLoading !== 'undefined'
+            ? RoomMatchLoading.durante(listarFavoritosDetalhados(), 'Carregando favoritos…')
+            : listarFavoritosDetalhados();
+        cache = await loader;
         desenhar();
     } catch (erro) {
         contagem.textContent = erro.message;
+        if (lista) lista.replaceChildren();
     }
 }
 

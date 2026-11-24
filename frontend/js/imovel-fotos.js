@@ -158,14 +158,36 @@
         });
     }
 
+    /** Mesmas fotos do hero do mural (paths relativos a /pages/*.html). */
+    const FOTOS_CAMPINAS = Object.freeze([
+        '../assets/campinas/hero.jpg',
+        '../assets/campinas/taquaral.jpg',
+        '../assets/campinas/rua.jpg',
+    ]);
+
+    /**
+     * Carrossel + classe para degradê animado (login, mural, como funciona…).
+     * @param {HTMLElement} el
+     * @param {{ intervalo?: number, fotos?: string[] }} [opts]
+     */
+    function iniciarHeroCampinas(el, opts = {}) {
+        if (!el) return null;
+        el.classList.add('hero-degrade');
+        return iniciarCarrossel(el, opts.fotos || FOTOS_CAMPINAS, {
+            intervalo: opts.intervalo || 6500,
+        });
+    }
+
     global.ImovelFotos = {
         BASE,
+        FOTOS_CAMPINAS,
         caminhosPadrao,
         lista,
         capa,
         aplicarFundo,
         iniciarCarrossel,
         pararCarrossel,
-        preencherGaleria
+        preencherGaleria,
+        iniciarHeroCampinas,
     };
 }(window));

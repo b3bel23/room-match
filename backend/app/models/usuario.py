@@ -22,7 +22,7 @@ class Usuario(Pessoa):
     bio = Column(Text)
     cidade_atual = Column(String(100))
     status_verificacao = Column(Boolean, default=False)
-    # Lista de tags nativa do Postgres (ex: ["Pet Friendly", "Silêncio Noturno"]),
+    # Lista de tags nativa do Postgres (ex: ["Aceita Animais", "Silêncio Noturno"]),
     # em vez de uma string CSV - ver observações no chat.
     tags_convivencia = Column(ARRAY(String))
     # Dados de perfil do cadastro (opcionais, exceto gênero no site).

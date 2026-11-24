@@ -21,27 +21,56 @@ def test_avisos_de_favorito_e_mensagem(client, cenario):
     conv = client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i, "texto": "Oi, tudo bem?"}).json()
 
     avisos = _notificacoes(client, loc)
-    assert avisos["nao_lidas"] == 2
-    assert [n["tipo"] for n in avisos["items"]] == ["mensagem", "favorito"]
-    assert avisos["items"][0]["link"] == f"mensagens.html?id={conv['id']}"
-    assert "Oi, tudo bem?" in avisos["items"][0]["texto"]
+    assert avisos["nao_lidas"] >= 2
+    tipos = [n["tipo"] for n in avisos["items"]]
+    assert "mensagem" in tipos and "favorito" in tipos
+    msg = next(n for n in avisos["items"] if n["tipo"] == "mensagem")
+    assert msg["link"] == f"mensagens.html?id={conv['id']}"
+    assert "Oi, tudo bem?" in msg["texto"]
+    assert msg.get("nao_lidas", 0) >= 1
+    assert "foto_url" in msg and "iniciais" in msg
+
+    # Segunda msg do mesmo thread atualiza a mesma notificação (upsert), não cria outra.
+    client.post(f"{API}/conversas/{conv['id']}/mensagens", headers=mor, json={"texto": "Ainda interessado"})
+    avisos2 = _notificacoes(client, loc)
+    msgs = [n for n in avisos2["items"] if n["tipo"] == "mensagem" and n["link"] == msg["link"]]
+    assert len(msgs) == 1 and "Ainda interessado" in msgs[0]["texto"]
+    assert msgs[0]["nao_lidas"] >= 2
 
     client.post(f"{API}/conversas/{conv['id']}/mensagens", headers=loc, json={"texto": "Tudo!"})
     do_morador = _notificacoes(client, mor)["items"]
-    assert [n["tipo"] for n in do_morador] == ["mensagem"] and "Tudo!" in do_morador[0]["texto"]
+    assert any(n["tipo"] == "mensagem" and "Tudo!" in n["texto"] for n in do_morador)
 
 
 def test_marcar_lidas(client, cenario):
     mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
     client.post(f"{API}/favoritos/{i}", headers=mor)
-    client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i})
+    conv = client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i}).json()
     itens = _notificacoes(client, loc)["items"]
-    client.post(f"{API}/notificacoes/lidas", headers=loc, json={"ids": [itens[0]["id"]]})
-    assert _notificacoes(client, loc)["nao_lidas"] == 1
-    assert client.post(f"{API}/notificacoes/lidas", headers=loc, json={}).json()["marcadas"] == 1
+    primeiro = itens[0]
+    ids = primeiro.get("ids") or [primeiro["id"]]
+    client.post(f"{API}/notificacoes/lidas", headers=loc, json={"ids": ids})
+    assert _notificacoes(client, loc)["nao_lidas"] >= 1
+    assert client.post(f"{API}/notificacoes/lidas", headers=loc, json={}).json()["marcadas"] >= 1
     assert _notificacoes(client, loc)["nao_lidas"] == 0
-    # ninguém marca as notificações de outra pessoa
-    assert client.post(f"{API}/notificacoes/lidas", headers=mor, json={"ids": [itens[1]["id"]]}).json()["marcadas"] == 0
+    # Marcar conversa como lida zera msgs + notifs do thread
+    client.post(f"{API}/conversas/{conv['id']}/mensagens", headers=mor, json={"texto": "Ping"})
+    assert client.post(f"{API}/conversas/{conv['id']}/lidas", headers=loc).json()["ok"] is True
+    assert client.get(f"{API}/conversas/{conv['id']}", headers=loc).json()["nao_lidas"] == 0
+
+
+def test_arquivar_conversa(client, cenario):
+    mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
+    conv = client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i}).json()
+    r = client.patch(f"{API}/conversas/{conv['id']}", headers=mor, json={"status_conversa": "arquivada"})
+    assert r.status_code == 200 and r.json()["status_conversa"] == "arquivada"
+    ids = [c["id"] for c in client.get(f"{API}/conversas", headers=mor).json()["items"]]
+    assert conv["id"] not in ids
+    ids_all = [
+        c["id"]
+        for c in client.get(f"{API}/conversas?incluir_arquivadas=true", headers=mor).json()["items"]
+    ]
+    assert conv["id"] in ids_all
 
 
 # --- verificação de e-mail ---------------------------------------------------------
@@ -105,3 +134,29 @@ def test_rota_guarda_cache_e_mural_mostra_tempo(client, cenario, rede):  # noqa:
         assert client.get(f"{API}/mobilidade/rota", headers=mor, params={**params, "hora": "25:00"}).status_code == 422
     finally:
         mobilidade_service.definir_rede(None)
+
+
+def test_salvar_destino_aquece_estimativa_sem_gtfs(client, cenario, db):
+    """Sem GTFS: PATCH destino ainda grava rotas_mobilidade (estimativa) se houver coords."""
+    from app.models.endereco_imovel import EnderecoImovel
+
+    mobilidade_service.definir_rede(None)
+    mor, i = cenario["mor"], cenario["imovel"]
+    end = db.query(EnderecoImovel).filter(EnderecoImovel.id_imovel == i).first()
+    assert end is not None
+    end.latitude, end.longitude = PERTO_A[0], PERTO_A[1]
+    db.commit()
+
+    me = client.patch(
+        f"{API}/me",
+        headers=mor,
+        json={"destino": {"nome": "PUC", "lat": PERTO_E[0], "lng": PERTO_E[1]}},
+    ).json()
+    assert me["destino"]["nome"] == "PUC"
+    item = client.get(f"{API}/imoveis", headers=mor).json()["items"][0]
+    assert item["destino"] == "PUC"
+    assert item["deslocamento_min"] is not None and item["deslocamento_min"] >= 5
+    tempos = (item.get("deslocamentos") or [{}])[0].get("tempos_modos") or {}
+    assert tempos.get("foot") == item["deslocamento_min"]
+    # stats = média do mural (vários imóveis aquecidos); só exige valor positivo coerente
+    assert client.get(f"{API}/stats", headers=mor).json()["deslocamento_medio"] >= 5

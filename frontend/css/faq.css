@@ -31,7 +31,7 @@
 
 .faq-item summary {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
@@ -41,6 +41,8 @@
     font-size: var(--fs-card-title);
     font-weight: var(--fw-semibold);
     color: var(--color-text-primary);
+    min-width: 0;
+    overflow-wrap: break-word;
 }
 
 .faq-item summary::-webkit-details-marker {

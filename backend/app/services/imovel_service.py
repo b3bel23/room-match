@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import re
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models.carrossel_imagem import CarrosselImagem
 from app.models.endereco_imovel import EnderecoImovel
@@ -29,15 +30,22 @@ from app.services.storage_service import UPLOAD_DIR, URL_UPLOADS  # noqa: F401  
 def _invalidar_caches_mural() -> None:
     cache_resposta.invalidate_prefix("mural:")
     cache_resposta.invalidate_prefix("stats:")
+    cache_resposta.invalidate_prefix("locais:")
 
 MAX_FOTOS = 10
 MAX_BYTES_FOTO = 5 * 1024 * 1024
+# Clique duplo / retry após timeout: mesmo anúncio em poucos segundos não cria cópia.
+JANELA_ANTI_DUPLICATA_SEG = 120
 
 CAMPOS_ENDERECO = ("endereco", "rua", "numero", "bairro", "cidade", "estado", "cep", "latitude", "longitude")
 CIDADE_PADRAO, ESTADO_PADRAO = "Campinas", "SP"  # o front só atende Campinas por enquanto
 
 
 def exigir_locador(db: Session, usuario: Usuario) -> Locador:
+    from app.services.perfil_service import LOCADOR, papel_do_usuario
+
+    if papel_do_usuario(db, usuario) != LOCADOR:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Apenas locadores podem gerenciar anúncios.")
     locador = db.get(Locador, usuario.id_usuario)
     if locador is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Apenas locadores podem gerenciar anúncios.")
@@ -79,13 +87,15 @@ def resolver_endereco(dados) -> dict:
                 rua = esquerda.strip()
     if not rua or not bairro:
         raise HTTPException(422, "Informe rua e bairro do imóvel.")
+    from app.utils.contato import validar_cep
+
     return {
         "rua": rua,
         "numero": numero,
         "bairro": bairro,
         "cidade": dados.cidade or CIDADE_PADRAO,
         "estado": (dados.estado or ESTADO_PADRAO).upper(),
-        "cep": dados.cep,
+        "cep": validar_cep(getattr(dados, "cep", None), obrigatorio=False),
         "latitude": dados.latitude,
         "longitude": dados.longitude,
     }
@@ -129,8 +139,60 @@ def _valores_do_imovel(campos: dict) -> dict:
     return {coluna: campos[campo] for campo, coluna in mapa.items() if campo in campos}
 
 
+def _norm(valor: Optional[str]) -> str:
+    return re.sub(r"\s+", " ", (valor or "").strip().lower())
+
+
+def _mesmo_endereco(atual: EnderecoImovel, novo: dict) -> bool:
+    return (
+        _norm(atual.rua) == _norm(novo.get("rua"))
+        and _norm(str(atual.numero or "")) == _norm(str(novo.get("numero") or ""))
+        and re.sub(r"\D", "", str(atual.cep or "")) == re.sub(r"\D", "", str(novo.get("cep") or ""))
+        and _norm(atual.bairro) == _norm(novo.get("bairro"))
+    )
+
+
+def buscar_duplicata_recente(
+    db: Session,
+    id_locador: int,
+    titulo: str,
+    endereco: dict,
+    janela_seg: int = JANELA_ANTI_DUPLICATA_SEG,
+) -> Optional[Post]:
+    """Devolve o post ativo mais recente do mesmo locador/título/endereço na janela."""
+    limite = datetime.now(timezone.utc) - timedelta(seconds=janela_seg)
+    candidatos = (
+        db.query(Post)
+        .options(joinedload(Post.imovel).joinedload(Imovel.endereco))
+        .filter(
+            Post.id_locador == id_locador,
+            Post.titulo == titulo,
+            Post.status_anuncio == "ativo",
+            Post.data_publicacao >= limite,
+        )
+        .order_by(Post.data_publicacao.desc(), Post.id_post.desc())
+        .all()
+    )
+    for post in candidatos:
+        atual = post.imovel.endereco if post.imovel is not None else None
+        if atual is not None and _mesmo_endereco(atual, endereco):
+            return post
+    return None
+
+
 def criar_anuncio(db: Session, locador: Locador, dados: AnuncioCreate) -> Post:
+    # Serializa publicações do mesmo locador (evita 2 POSTs paralelos criarem cópias).
+    locador = (
+        db.query(Locador)
+        .filter(Locador.id_locador == locador.id_locador)
+        .with_for_update()
+        .one()
+    )
     endereco = resolver_endereco(dados)
+    existente = buscar_duplicata_recente(db, locador.id_locador, dados.titulo, endereco)
+    if existente is not None:
+        return existente
+
     campos = dados.model_dump(exclude_unset=True)
     # null explícito no JSON conta como ausente (tipo_imovel, quartos e vagas são NOT NULL)
     valores = {c: v for c, v in _valores_do_imovel(campos).items() if v is not None}
@@ -148,7 +210,16 @@ def criar_anuncio(db: Session, locador: Locador, dados: AnuncioCreate) -> Post:
         descricao=dados.descricao,
     )
     db.add(post)
-    sincronizar_tags(db, imovel.id_imovel, dados.tags or [])
+    from app.services.tags_catalogo import mesclar_tags, sem_conflitos
+
+    sincronizar_tags(
+        db,
+        imovel.id_imovel,
+        mesclar_tags(
+            sem_conflitos(dados.tags),
+            getattr(dados, "comodidades", None),
+        ),
+    )
     locador.quantidade_imoveis_anunciados = (locador.quantidade_imoveis_anunciados or 0) + 1
     db.commit()
     db.refresh(post)
@@ -185,8 +256,28 @@ def atualizar_anuncio(db: Session, post: Post, dados: AnuncioUpdate) -> Post:
             for coluna, valor in novo.items():
                 setattr(atual, coluna, valor)
 
-    if campos.get("tags") is not None:
-        sincronizar_tags(db, imovel.id_imovel, campos["tags"])
+    if campos.get("tags") is not None or campos.get("comodidades") is not None:
+        from app.services.matching_service import tags_do_imovel
+        from app.services.tags_catalogo import (
+            filtrar_comodidades,
+            filtrar_convivencia,
+            mesclar_tags,
+            sem_conflitos,
+        )
+
+        atuais = tags_do_imovel(db, imovel.id_imovel)
+        # Se só um dos lados veio no PATCH, preserva o outro já gravado.
+        conv = (
+            campos["tags"]
+            if campos.get("tags") is not None
+            else filtrar_convivencia(atuais)
+        )
+        comod = (
+            campos["comodidades"]
+            if campos.get("comodidades") is not None
+            else filtrar_comodidades(atuais)
+        )
+        sincronizar_tags(db, imovel.id_imovel, mesclar_tags(sem_conflitos(conv), comod))
 
     db.commit()
     db.refresh(post)

@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro · Room Match</title>
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
-    <link rel="stylesheet" href="../css/base.css?v=20261123">
-    <link rel="stylesheet" href="../css/cadastro.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261124by">
+    <link rel="stylesheet" href="../css/cadastro.css?v=20261124by">
+    <link rel="stylesheet" href="../css/escolha-chips.css?v=20261124by">
 </head>
 <body class="auth-page">
 
@@ -76,25 +77,27 @@
                         </div>
                     </fieldset>
 
-                    <div class="campo col-1">
-                        <label class="label-com-tip" for="ocupacao">
+                    <div class="campo col-full escolha-campo">
+                        <span class="label-com-tip" id="ocupacao-rotulo">
                             Ocupação
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre ocupação">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Use os grupos da Classificação Brasileira de Ocupações (CBO), o padrão do Ministério do Trabalho.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Toque na opção mais próxima do que você faz hoje.</span>
                             </span>
-                        </label>
-                        <select id="ocupacao" name="ocupacao"></select>
+                        </span>
+                        <div id="ocupacao-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="ocupacao-rotulo"></div>
+                        <select id="ocupacao" name="ocupacao" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
                     </div>
-                    <div class="campo col-2">
-                        <label class="label-com-tip" for="emprego">
+                    <div class="campo col-full escolha-campo">
+                        <span class="label-com-tip" id="emprego-rotulo">
                             Situação de emprego
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre situação de emprego">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Informe seu vínculo atual (CLT, autônomo, estágio, estudante sem vínculo etc.), no padrão de cadastros brasileiros.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Como está seu trabalho agora — um toque basta.</span>
                             </span>
-                        </label>
-                        <select id="emprego" name="emprego"></select>
+                        </span>
+                        <div id="emprego-escolha" class="escolha-chips" role="radiogroup" aria-labelledby="emprego-rotulo"></div>
+                        <select id="emprego" name="emprego" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
                     </div>
 
                     <div class="campo col-1">
@@ -105,7 +108,8 @@
                                 <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Será seu login na plataforma.</span>
                             </span>
                         </label>
-                        <input id="email" name="email" type="email" placeholder="exemplo@dominio.com" autocomplete="email" required>
+                        <input id="email" name="email" type="email" data-email-rm="1" placeholder="nome@dominio.com" autocomplete="email" required>
+                        <p id="email-status" class="face-check-status info">Use um e-mail real — será seu login.</p>
                     </div>
 
                     <div class="campo col-1" id="campo-cpf" hidden data-somente-locador="1">
@@ -120,15 +124,29 @@
                         <p id="cpf-ajuda" class="face-check-status info">Obrigatório para anunciar. Só números; a máscara é automática.</p>
                     </div>
 
-                    <div class="campo col-2">
-                        <label class="label-com-tip" for="faculdade">
+                    <div class="campo col-full escolha-campo">
+                        <span class="label-com-tip" id="faculdade-rotulo">
                             Faculdade / Universidade
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre faculdade">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Escolha a universidade e o campus em São Paulo (referência e-MEC/MEC). Use “Outra IES” para centro universitário, faculdade ou instituto.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Abra a lista suspensa, digite (PUC, Unicamp…) ou use Nenhuma / Outra em SP.</span>
                             </span>
-                        </label>
-                        <select id="faculdade" name="faculdade"></select>
+                        </span>
+                        <div id="faculdade-busca" class="faculdade-busca" aria-labelledby="faculdade-rotulo"></div>
+                        <select id="faculdade" name="faculdade" class="escolha-select-sync" tabindex="-1" aria-hidden="true"></select>
+                    </div>
+
+                    <div class="campo col-1">
+                        <label class="label-com-tip" for="data-nascimento">Data de nascimento</label>
+                        <input id="data-nascimento" name="data_nascimento" type="date" autocomplete="bday" max="2010-12-31">
+                    </div>
+                    <div class="campo col-2">
+                        <label class="label-com-tip" for="cidade-atual">Cidade atual</label>
+                        <input id="cidade-atual" name="cidade_atual" type="text" maxlength="100" placeholder="Campinas" autocomplete="address-level2">
+                    </div>
+                    <div class="campo col-full">
+                        <label class="label-com-tip" for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="2" maxlength="500" placeholder="Opcional. Uma frase sobre você…"></textarea>
                     </div>
 
                     <div class="foto col-full">
@@ -136,7 +154,7 @@
                             Foto de perfil *
                             <span class="tip">
                                 <button type="button" class="tip-btn" aria-label="Ajuda sobre foto de perfil">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatória para chat e anúncios. JPG ou PNG, máx. 5 MB, mín. 200×200. Precisa mostrar um rosto nítido (verificação automática). Não publique dados sensíveis.</span>
+                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Obrigatória para chat e anúncios. JPG ou PNG, máx. 5 MB, mín. 400×400. Só você, de frente, nítido e bem iluminado (verificação automática). Sem grupo, filtro pesado, óculos escuros ou máscara. Não publique dados sensíveis.</span>
                             </span>
                         </p>
                         <div class="foto-linha">
@@ -144,7 +162,7 @@
                             <div class="foto-info">
                                 <label for="foto" class="btn-foto">Adicionar foto</label>
                                 <input id="foto" class="visually-hidden" name="foto" type="file" accept="image/jpeg,image/png" data-face-perfil="1">
-                                <p id="foto-face-status" class="face-check-status info">Verificação de rosto ativa nesta foto.</p>
+                                <p id="foto-face-status" class="face-check-status info">Só foto sua, sozinha, de frente, nítida e bem iluminada. Sem grupo, filtro pesado, óculos escuros ou máscara.</p>
                             </div>
                         </div>
                     </div>
@@ -191,60 +209,50 @@
             <section class="etapa" data-etapa="2" hidden>
                 <div class="etapa-titulo">
                     <h1 class="label-com-tip">
-                        Preferências de convivência
+                        <span id="etapa2-titulo">Preferências de convivência</span>
                         <span class="tip">
                             <button type="button" class="tip-btn" aria-label="Sobre preferências">?</button>
-                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Tags, orçamento e limiar definem o match e quando o chat é liberado.</span>
+                            <span id="etapa2-tip" class="tip-panel" role="tooltip" hidden aria-hidden="true">Hábitos, orçamento e limiar definem a afinidade e quando o chat é liberado.</span>
                         </span>
                     </h1>
+                    <p id="etapa2-subtitulo" class="etapa-subtitulo">Defina orçamento, afinidade mínima e hábitos para encontrar anúncios compatíveis.</p>
                 </div>
 
                 <div class="tags-secao">
                     <div class="tags-cabecalho">
                         <h2 class="label-com-tip">
-                            Tags de adesão
+                            <span id="tags-adesao-titulo">O que combina comigo</span>
                             <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags de adesão">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Hábitos ou valores que você busca na casa (ex.: pet friendly, home office).</span>
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre hábitos desejados">?</button>
+                                <span id="tags-adesao-tip" class="tip-panel" role="tooltip" hidden aria-hidden="true">Hábitos que você busca: só o marcado entra na afinidade; desmarcado é neutro.</span>
                             </span>
                         </h2>
                         <span id="tags-contador">0 selecionadas</span>
                     </div>
-                    <div class="pilulas">
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Pet Friendly"><span>Pet Friendly</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Home Office"><span>Home Office</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Aberto a Festas"><span>Aberto a Festas</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Vegetariano"><span>Vegetariano</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="420 Friendly"><span>420 Friendly</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="LGBTQIA+ Safe"><span>LGBTQIA+ Safe</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Limpeza Compartilhada"><span>Limpeza Compartilhada</span></label>
-                    </div>
+                    <p id="tags-dica-minimo" class="etapa-subtitulo" style="margin-top:-0.25rem;margin-bottom:0.75rem">
+                        A afinidade usa só o que você marcar: hábitos em comum sobem o %; o que ficar desmarcado é neutro.
+                        Se algo for inaceitável, use <strong>Meus limites</strong>. Um perfil com 3 ou mais hábitos fica mais justo.
+                    </p>
+                    <div id="tags-adesao" class="pilulas" role="group" aria-label="O que combina comigo"></div>
 
                     <div class="tags-cabecalho">
                         <h2 class="label-com-tip">
-                            Tags de restrição
+                            <span id="tags-restricao-titulo">Meus limites</span>
                             <span class="tip">
-                                <button type="button" class="tip-btn" aria-label="Ajuda sobre tags de restrição">?</button>
-                                <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Limites que importam para você (ex.: silêncio noturno, sem festas). Escolha de 3 a 8 tags no total — adesão + restrição.</span>
+                                <button type="button" class="tip-btn" aria-label="Ajuda sobre limites">?</button>
+                                <span id="tags-restricao-tip" class="tip-panel" role="tooltip" hidden aria-hidden="true">O que você não aceita: se for inaceitável, marque aqui; deixar em branco é neutro, não significa rejeitar.</span>
                             </span>
                         </h2>
                     </div>
-                    <div class="pilulas">
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Silêncio Noturno"><span>Silêncio Noturno</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Festas"><span>Sem Festas</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Fumo"><span>Sem Fumo</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Sem Pets"><span>Sem Pets</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Visitas Restritas"><span>Visitas Restritas</span></label>
-                        <label class="pilula"><input class="visually-hidden" type="checkbox" name="tag" value="Itens Individuais"><span>Itens Individuais</span></label>
-                    </div>
+                    <div id="tags-restricao" class="pilulas" role="group" aria-label="Meus limites"></div>
                 </div>
 
-                <div class="slider">
+                <div class="slider" data-somente-morador="1">
                     <label class="label-com-tip" for="orcamento">
                         Orçamento máximo mensal
                         <span class="tip">
                             <button type="button" class="tip-btn" aria-label="Ajuda sobre orçamento">?</button>
-                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Total mensal que você topa pagar (aluguel, condomínio, imposto predial e contas). O chat só libera se o anúncio couber nesse valor.</span>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Total mensal que você topa pagar (aluguel, condomínio, IPTU e contas). O chat só libera se o anúncio couber nesse valor.</span>
                         </span>
                     </label>
                     <span class="valor-digitado">R$ <input id="orcamento-valor" type="text" inputmode="decimal" placeholder="1.200,00" autocomplete="off" aria-label="Orçamento máximo mensal em reais (ex.: 1.200,00 = mil e duzentos)" title="Use ponto para milhar e vírgula para centavos: 1.200,00 · 10.000,00"></span>
@@ -253,18 +261,34 @@
                     <p class="slider-dica">Formato brasileiro: <strong>1.200,00</strong> = mil e duzentos · <strong>10.000,00</strong> = dez mil</p>
                 </div>
 
-                <div class="slider">
+                <div class="slider" data-somente-morador="1">
                     <label class="label-com-tip" for="limiar">
                         Limiar mínimo de compatibilidade
                         <span class="tip">
                             <button type="button" class="tip-btn" aria-label="Ajuda sobre limiar">?</button>
-                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Match mínimo (%) para liberar o chat. Ex.: 70% exige bastante afinidade de tags com o anúncio.</span>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Percentual mínimo para liberar o chat. A afinidade mede o que você marcou frente ao anúncio; o que ficar desmarcado é neutro.</span>
                         </span>
                     </label>
                     <span class="valor-digitado valor-curto"><input id="limiar-valor" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Limiar mínimo de compatibilidade em porcentagem"> %</span>
                     <input id="limiar" name="limiar" type="range" min="0" max="100" step="5" value="70">
                     <div class="slider-limites"><span>0%</span><span>100%</span></div>
                 </div>
+
+                <div class="campo" data-somente-morador="1">
+                    <label class="label-com-tip" for="raio-busca">
+                        Raio de busca (km)
+                        <span class="tip">
+                            <button type="button" class="tip-btn" aria-label="Ajuda sobre raio">?</button>
+                            <span class="tip-panel" role="tooltip" hidden aria-hidden="true">Opcional. Distância máxima em quilômetros que você topa considerar nos anúncios.</span>
+                        </span>
+                    </label>
+                    <input id="raio-busca" name="raio_busca_km" type="number" min="0" max="200" step="1" inputmode="decimal" placeholder="Ex.: 15">
+                </div>
+
+                <p id="locador-etapa2-nota" class="slider-dica" data-somente-locador="1" hidden>
+                    Depois de criar a conta, publique o anúncio com preço, endereço e fotos.
+                    Os hábitos acima descrevem o estilo da casa; o valor do aluguel entra no anúncio, não nesta etapa.
+                </p>
 
                 <div class="acoes acoes-linha">
                     <button type="button" class="btn btn-secondary" data-acao="voltar">Voltar</button>
@@ -337,18 +361,21 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js?v=20261123"></script>
-    <script src="../js/api.js?v=20261123"></script>
-    <script src="../js/sessao.js?v=20261123"></script>
+        <script src="../js/tags-catalogo.js?v=20261124bv"></script>
+    <script src="../js/mock-api.js?v=20261124bv"></script>
+    <script src="../js/api.js?v=20261124bc"></script>
+    <script src="../js/sessao.js?v=20261124aq"></script>
     <script src="../js/papel-ui.js?v=20261123"></script>
-    <script src="../js/chrome.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261124"></script>
     <script src="../js/senha-ui.js?v=20261123"></script>
-    <script src="../js/telefone-ui.js?v=20261123"></script>
-    <script src="../js/face-check.js?v=20261123"></script>
-    <script src="../js/page-motion.js?v=20261123"></script>
+    <script src="../js/telefone-ui.js?v=20261124"></script>
+    <script src="../js/email-ui.js?v=20261124"></script>
+    <script src="../js/face-check.js?v=20261124bc"></script>
+    <script src="../js/loading-ui.js?v=20261124af"></script>
+    <script src="../js/page-motion.js?v=20261124ae"></script>
     <script src="../js/tip.js?v=20261123"></script>
-    <script src="../js/classificacoes-br.js?v=20261123"></script>
-    <script src="../js/universidades-sp.js?v=20261123"></script>
-    <script src="../js/cadastro.js?v=20261123"></script>
+    <script src="../js/classificacoes-br.js?v=20261124bi"></script>
+    <script src="../js/universidades-sp.js?v=20261124bt"></script>
+    <script src="../js/cadastro.js?v=20261124bz"></script>
 </body>
 </html>

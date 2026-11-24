@@ -85,20 +85,91 @@ def test_rota_com_baldeacao_a_pe(rede):
 def test_respeita_calendario(rede):
     # sábado: só a viagem FDS da linha 101 roda; a 202 (útil) não, então não chega de ônibus
     sab = mob.calcular(PERTO_A, PERTO_E, SAB, 7 * 3600 + 30 * 60, rede=rede)
-    assert all(t.get("linha") != "202" for t in sab["trechos"])
+    assert sab.get("disponivel") is False or sab.get("somente_caminhada")
+    assert all(t.get("linha") != "202" for t in sab.get("trechos") or [])
     # quarta 25/11 foi excluída no calendar_dates
     qua = mob.calcular(PERTO_A, PERTO_E, date(2026, 11, 25), 7 * 3600 + 30 * 60, rede=rede)
-    assert all(t.get("linha") not in ("101", "202") for t in qua["trechos"])
+    assert qua.get("disponivel") is False or qua.get("somente_caminhada")
+    assert all(t.get("linha") not in ("101", "202") for t in qua.get("trechos") or [])
 
 
 def test_perdeu_o_onibus(rede):
     r = mob.calcular(PERTO_A, PERTO_E, SEG, 7 * 3600 + 36 * 60, rede=rede)
-    assert all(t.get("linha") != "101" for t in r["trechos"])
+    assert all(t.get("linha") != "101" for t in r.get("trechos") or [])
+    # Sem a 101, o destino longe não vira "3 h a pé = melhor que ônibus".
+    if r.get("somente_caminhada"):
+        assert r["tempo_min"] <= 25
+    elif not r.get("disponivel"):
+        assert "ônibus" in (r.get("motivo") or "").lower()
 
 
 def test_perto_demais_vai_a_pe(rede):
     r = mob.calcular(PERTO_A, (-22.9003, -47.0600), SEG, 8 * 3600, rede=rede)
     assert r["somente_caminhada"] and [t["tipo"] for t in r["trechos"]] == ["a_pe"]
+
+
+def test_longe_sem_onibus_nao_finge_pe(rede):
+    longe = (-22.9800, -47.1000)  # sem parada no raio de caminhada
+    r = mob.calcular(PERTO_A, longe, SEG, 8 * 3600, "Longe demais", rede=rede)
+    assert r["disponivel"] is False
+    assert "ônibus" in r["motivo"].lower()
+    assert r.get("tempo_min_caminhada", 0) > 25
+
+
+def test_rmc_barao_centro_uma_linha():
+    """Feed RMC: Barão → Centro deve preferir a linha 100 direta (sem baldeação inútil)."""
+    from pathlib import Path
+
+    from app.utils.gtfs_loader import carregar
+
+    zip_rmc = Path(__file__).resolve().parents[1] / "data" / "gtfs" / "rmc-emdec-emtu.zip"
+    if not zip_rmc.is_file():
+        pytest.skip("GTFS RMC ausente")
+    rede_rmc = carregar([str(zip_rmc)])
+    origem = (-22.8190, -47.0760)
+    centro = (-22.9056, -47.0608)
+    r = mob.calcular(origem, centro, SEG, 7 * 3600 + 30 * 60, "Centro", rede=rede_rmc)
+    assert r["disponivel"] and r["baldeacoes"] == 0
+    assert r["linhas"] == ["100"]
+
+
+def test_rmc_puc_geocode_snap():
+    """Geocode sul da PUC (fora do ponto GTFS) ainda encontra ônibus via snap."""
+    from pathlib import Path
+
+    from app.utils.gtfs_loader import carregar
+
+    zip_rmc = Path(__file__).resolve().parents[1] / "data" / "gtfs" / "rmc-emdec-emtu.zip"
+    if not zip_rmc.is_file():
+        pytest.skip("GTFS RMC ausente")
+    rede_rmc = carregar([str(zip_rmc)])
+    origem = (-22.8190, -47.0760)
+    puc_sul = (-22.9210, -47.0680)
+    r = mob.calcular(origem, puc_sul, SEG, 7 * 3600 + 30 * 60, "PUC", rede=rede_rmc)
+    assert r["disponivel"] and r["linhas"]
+    assert not r.get("somente_caminhada")
+    assert "Destino longe" in (r.get("aviso") or "")
+
+
+def test_rmc_paulinia_campus_ii_com_baldeacao():
+    """Paulínia (Vila Bressani) → PUC Campus II: EMTU 650 + EMDEC 361 (baldeação)."""
+    from pathlib import Path
+
+    from app.utils.gtfs_loader import carregar
+
+    zip_rmc = Path(__file__).resolve().parents[1] / "data" / "gtfs" / "rmc-emdec-emtu.zip"
+    if not zip_rmc.is_file():
+        pytest.skip("GTFS RMC ausente")
+    rede_rmc = carregar([str(zip_rmc)])
+    origem = (-22.7640, -47.1480)  # kitnet id=13
+    campus_ii = (-22.9199, -47.1208)
+    r = mob.calcular(origem, campus_ii, SEG, 7 * 3600 + 30 * 60, "PUC Campus II", rede=rede_rmc)
+    assert r["disponivel"] and not r.get("somente_caminhada")
+    assert r["baldeacoes"] >= 1
+    assert "650" in r["linhas"] and "361" in r["linhas"]
+    assert r["tempo_min"] < 120
+    # Preferível: uma baldeação (650→361), não três linhas.
+    assert r["baldeacoes"] == 1 or len(r["linhas"]) == 2
 
 
 def test_sem_rede_indisponivel():
@@ -110,3 +181,15 @@ def test_sem_rede_indisponivel():
 def test_proximo_dia_util():
     assert mob.proximo_dia_util(SAB) == date(2026, 11, 30)
     assert mob.proximo_dia_util(SEG) == SEG
+
+
+def test_ancora_chegada_atrasa_saida(rede):
+    # Chegar até 08:15: a busca deve achar uma saída (não necessariamente 07:30).
+    alvo = 8 * 3600 + 15 * 60
+    r = mob.calcular_ate_chegar(PERTO_A, PERTO_E, SEG, alvo, "Faculdade", rede=rede)
+    assert r["disponivel"] and r.get("ancora") == "chegada"
+    assert r["hora_alvo"] == "08:15"
+    # Chegada efetiva ≤ alvo (tempo_min a partir da partida escolhida).
+    h, m = map(int, r["partida"].split(":"))
+    partida_s = h * 3600 + m * 60
+    assert partida_s + r["tempo_min"] * 60 <= alvo

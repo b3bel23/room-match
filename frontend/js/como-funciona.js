@@ -4,7 +4,7 @@
  * passo e afinidade que conta até o valor.
  */
 (function () {
-    const IMOVEL_TAGS = ['Pet Friendly', 'Silêncio Noturno', 'Home Office'];
+    const IMOVEL_TAGS = ['Aceita Animais', 'Silêncio Noturno', 'Trabalho em Casa'];
     const REDUZIDO = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const COM_MOVIMENTO = !REDUZIDO && 'IntersectionObserver' in window;
 
@@ -82,21 +82,27 @@
 
         let pct = 0;
         if (userTags.length) {
-            const comuns = userTags.filter((t) => IMOVEL_TAGS.includes(t)).length;
-            pct = Math.round((comuns / userTags.length) * 100);
+            if (typeof RoomMatchTags !== 'undefined' && RoomMatchTags.matchPercent) {
+                pct = RoomMatchTags.matchPercent(userTags, IMOVEL_TAGS);
+            } else {
+                const comuns = userTags.filter((t) => IMOVEL_TAGS.includes(t)).length;
+                pct = Math.round((comuns / userTags.length) * 100);
+            }
         }
 
         if (ring) ring.style.setProperty('--match', String(pct));
         if (num) num.textContent = String(pct);
         if (label) {
             if (!userTags.length) {
-                label.textContent = 'Escolha ao menos um hábito para calcular a afinidade.';
+                label.textContent = 'Marque hábitos à esquerda: o que você busca precisa aparecer no anúncio; limites só falham se houver conflito.';
+            } else if (userTags.length < 3) {
+                label.textContent = `${pct}% — com 3 ou mais hábitos a afinidade fica mais justa e o chat com limiar alto fica mais realista.`;
             } else if (pct >= 70) {
-                label.textContent = 'Afinidade alta. A conversa pode ser liberada.';
+                label.textContent = 'Afinidade alta — a conversa pode ser liberada.';
             } else if (pct >= 40) {
-                label.textContent = 'Afinidade média. Ajuste hábitos ou o mínimo aceito no perfil.';
+                label.textContent = 'Afinidade média — ajuste hábitos ou o mínimo aceito no perfil.';
             } else {
-                label.textContent = 'Afinidade baixa. Poucos hábitos em comum com este anúncio.';
+                label.textContent = 'Afinidade baixa: hábitos em falta ou conflito com o anúncio.';
             }
         }
     }

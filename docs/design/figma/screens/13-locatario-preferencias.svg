@@ -50,18 +50,18 @@
 </g><g id="content/preferencias">
 <text x="252" y="144" font-family="Comfortaa,sans-serif" font-size="18" font-weight="700" fill="#141D22">Preferências</text>
 <text x="252" y="168" font-size="12" fill="#4A5568">Suas tags de convivência · 5/12</text>
-<g id="component/tag/Pet Friendly">
+<g id="component/tag/Aceita Animais">
 <rect x="252" y="192" width="112" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
-<text x="308" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Pet Friendly</text>
+<text x="308" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Aceita Animais</text>
 </g><g id="component/tag/Silêncio Noturno">
 <rect x="392" y="192" width="140" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
 <text x="462" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Silêncio Noturno</text>
-</g><g id="component/tag/Home Office">
+</g><g id="component/tag/Trabalho em Casa">
 <rect x="532" y="192" width="105" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
-<text x="584" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Home Office</text>
-</g><g id="component/tag/LGBTQIA+ Safe">
+<text x="584" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Trabalho em Casa</text>
+</g><g id="component/tag/LGBTQIA+ Acolhedor">
 <rect x="672" y="192" width="119" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
-<text x="731" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">LGBTQIA+ Safe</text>
+<text x="731" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">LGBTQIA+ Acolhedor</text>
 </g><g id="component/tag/Vegetariano">
 <rect x="812" y="192" width="105" height="32" rx="16" fill="#F08070" stroke="#F08070" stroke-width="1"/>
 <text x="864" y="213" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#FFFFFF">Vegetariano</text>
@@ -74,15 +74,15 @@
 <rect x="672" y="276" width="200" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
 <text x="686" y="304" font-family="DM Sans,sans-serif" font-size="14" fill="#94A3AD">70%</text>
 </g><text x="252" y="356" font-size="13" font-weight="600" fill="#141D22">Em alta na sua região</text>
-<g id="component/tag/420 Friendly">
+<g id="component/tag/Trabalho em Casa">
 <rect x="252" y="372" width="112" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
-<text x="308" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">420 Friendly</text>
+<text x="308" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Trabalho em Casa</text>
 </g><g id="component/tag/Sem Festas">
 <rect x="382" y="372" width="98" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
 <text x="431" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Sem Festas</text>
-</g><g id="component/tag/Pet Friendly">
+</g><g id="component/tag/Aceita Animais">
 <rect x="512" y="372" width="112" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
-<text x="568" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Pet Friendly</text>
+<text x="568" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Aceita Animais</text>
 </g><g id="component/tag/Vegano">
 <rect x="642" y="372" width="88" height="32" rx="16" fill="#FFFFFF" stroke="#E2E8EB" stroke-width="1"/>
 <text x="686" y="393" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#141D22">Vegano</text>

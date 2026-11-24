@@ -42,18 +42,19 @@ def test_perfil_de_usuario_novo_e_morador_zerado(db):
 
 def test_patch_campos_simples_e_foto_url(db):
     u = novo_usuario(db)
-    perfil = patch(db, u, nome="Ana Maria", telefone="1999", foto_url="a.png", bio="oi")
+    perfil = patch(db, u, nome="Ana Maria", telefone="(19) 98888-1001", foto_url="a.png", bio="oi")
     assert (perfil["nome"], perfil["telefone"], perfil["foto_url"], perfil["bio"]) == (
-        "Ana Maria", "1999", "a.png", "oi",
+        "Ana Maria", "(19) 98888-1001", "a.png", "oi",
     )
     assert u.foto_perfil == "a.png"
+    assert codigo_do_erro(lambda: patch(db, u, telefone="1999")) == 422
 
 
 def test_patch_so_altera_o_que_foi_enviado(db):
     u = novo_usuario(db)
-    patch(db, u, telefone="1999")
+    patch(db, u, telefone="(19) 98888-1001")
     perfil = patch(db, u, bio="nova")
-    assert perfil["telefone"] == "1999" and perfil["nome"] == "Ana Souza"
+    assert perfil["telefone"] == "(19) 98888-1001" and perfil["nome"] == "Ana Souza"
 
 
 def test_patch_ignora_id_e_senha(db):
@@ -80,12 +81,12 @@ def test_email_em_minusculas_e_conflito(db):
 
 def test_tags_substitui_deduplica_e_reaproveita_tag(db):
     u = novo_usuario(db)
-    perfil = patch(db, u, tags=["Pet Friendly", "Home Office", "Pet Friendly"])
-    assert perfil["tags"] == ["Pet Friendly", "Home Office"]
-    assert u.tags_convivencia == ["Pet Friendly", "Home Office"]
-    perfil = patch(db, u, tags=["Home Office", "Vegetariano"])
-    assert sorted(perfil["tags"]) == ["Home Office", "Vegetariano"]
-    assert db.query(Tag).filter(Tag.nome == "Home Office").count() == 1
+    perfil = patch(db, u, tags=["Aceita Animais", "Trabalho em Casa", "Aceita Animais"])
+    assert perfil["tags"] == ["Aceita Animais", "Trabalho em Casa"]
+    assert u.tags_convivencia == ["Aceita Animais", "Trabalho em Casa"]
+    perfil = patch(db, u, tags=["Trabalho em Casa", "Vegetariano"])
+    assert sorted(perfil["tags"]) == ["Trabalho em Casa", "Vegetariano"]
+    assert db.query(Tag).filter(Tag.nome == "Trabalho em Casa").count() == 1
     assert db.query(UsuarioTag).filter(UsuarioTag.id_usuario == u.id_usuario).count() == 2
     assert patch(db, u, tags=[])["tags"] == []
 
@@ -117,12 +118,15 @@ def test_aliases_legados_orcamento_e_limiar(db):
     assert perfil["orcamento_maximo"] == 900 and perfil["limiar_compatibilidade"] == 50
 
 
-def test_preferencias_so_valem_para_morador(db):
+def test_preferencias_dormem_ao_virar_locador(db):
     u = novo_usuario(db)
-    patch(db, u, orcamento_maximo=500)  # ainda sem perfil de locatário
-    assert db.get(Locatario, u.id_usuario) is None
-    patch(db, u, papel="Locador", cpf_cnpj="111")
-    assert patch(db, u, orcamento_maximo=500)["orcamento_maximo"] == 0
+    patch(db, u, papel="Morador", orcamento_maximo=500)
+    patch(db, u, papel="Locador", cpf_cnpj="11111111111")
+    # API do Locador ativo não expõe orçamento; o valor dorme no locatário.
+    assert patch(db, u, orcamento_maximo=999)["orcamento_maximo"] == 0
+    assert float(db.get(Locatario, u.id_usuario).orcamento_maximo) == 500
+    # Voltar a Morador reativa o valor sem refazer.
+    assert patch(db, u, papel="Morador")["orcamento_maximo"] == 500
 
 
 def test_limiar_vai_para_a_coluna_e_preserva_outras_preferencias(db):
@@ -133,16 +137,54 @@ def test_limiar_vai_para_a_coluna_e_preserva_outras_preferencias(db):
     assert patch(db, u, limiar_compatibilidade=60)["limiar_compatibilidade"] == 60
     locatario = db.get(Locatario, u.id_usuario)
     assert locatario.limiar_compatibilidade == 60
-    assert locatario.preferencias_moradia == {"fumante": False}
+    # papel_ativo pode ter sido gravado na troca; fumante permanece.
+    assert locatario.preferencias_moradia.get("fumante") is False
 
 
-def test_morador_vira_locador_troca_o_registro(db):
+def test_modo_transporte_salva_mesmo_se_aquecer_falhar(db, monkeypatch):
+    """Commit de modo/destinos não pode depender do GTFS (KAN — transporte padrão)."""
     u = novo_usuario(db)
     patch(db, u, papel="Morador")
+
+    def _falha(*_a, **_k):
+        raise RuntimeError("gtfs indisponível")
+
+    monkeypatch.setattr(
+        "app.api.v1.mobilidade.aquecer_cache_destino", _falha, raising=False
+    )
+    # Garante o import path usado em perfil_service
+    import app.api.v1.mobilidade as mob
+
+    monkeypatch.setattr(mob, "aquecer_cache_destino", _falha)
+
+    destinos = [
+        {"nome": "PUC", "lat": -22.83, "lng": -47.05, "tipo": "faculdade"},
+    ]
+    perfil = patch(db, u, destinos=destinos, modo_transporte="bus")
+    assert perfil["modo_transporte"] == "bus"
+    loc = db.get(Locatario, u.id_usuario)
+    assert loc.preferencias_moradia["modo_transporte"] == "bus"
+    assert len(loc.preferencias_moradia["destinos"]) == 1
+
+    perfil2 = patch(db, u, modo_transporte="bike")
+    assert perfil2["modo_transporte"] == "bike"
+    assert db.get(Locatario, u.id_usuario).preferencias_moradia["modo_transporte"] == "bike"
+
+
+def test_morador_vira_locador_mantem_locatario_em_sleep(db):
+    u = novo_usuario(db)
+    patch(db, u, papel="Morador", orcamento_maximo=800, tags=["Aceita Animais"])
     perfil = patch(db, u, papel="Locador", cpf_cnpj="123.456.789-00")
     assert perfil["papel"] == "Locador" and perfil["papel_schema"] == "locador"
-    assert db.get(Locatario, u.id_usuario) is None
-    assert db.get(Locador, u.id_usuario).cpf_cnpj == "123.456.789-00"
+    locatario = db.get(Locatario, u.id_usuario)
+    assert locatario is not None  # sleep — não apaga
+    assert locatario.preferencias_moradia["papel_ativo"] == "Locador"
+    assert db.get(Locador, u.id_usuario).cpf_cnpj == "12345678900"
+    assert perfil["orcamento_maximo"] == 0  # oculto no papel Locador
+    # Volta a Morador: favoritos/orçamento reaparecem sem recriar perfil.
+    de_novo = patch(db, u, papel="Morador")
+    assert de_novo["papel"] == "Morador" and de_novo["orcamento_maximo"] == 800
+    assert locatario.preferencias_moradia["papel_ativo"] == "Morador"
 
 
 def test_virar_locador_sem_cpf_da_422_e_nao_apaga_o_locatario(db):
@@ -154,8 +196,8 @@ def test_virar_locador_sem_cpf_da_422_e_nao_apaga_o_locatario(db):
 
 def test_cpf_duplicado_da_409(db):
     a, b = novo_usuario(db), novo_usuario(db, "b@x.com", "Bia")
-    patch(db, a, papel="Locador", cpf_cnpj="111")
-    assert codigo_do_erro(lambda: patch(db, b, papel="Locador", cpf_cnpj="111")) == 409
+    patch(db, a, papel="Locador", cpf_cnpj="11111111111")
+    assert codigo_do_erro(lambda: patch(db, b, papel="Locador", cpf_cnpj="11111111111")) == 409
 
 
 def test_papel_invalido_da_400(db):
@@ -164,7 +206,7 @@ def test_papel_invalido_da_400(db):
 
 def test_locador_com_anuncio_nao_vira_morador(db):
     u = novo_usuario(db)
-    patch(db, u, papel="Locador", cpf_cnpj="111")
+    patch(db, u, papel="Locador", cpf_cnpj="11111111111")
     imovel = Imovel(valor_aluguel=1, tipo_imovel="Kitnet", quantidade_quartos=1, vagas_disponiveis=1)
     db.add(imovel)
     db.flush()
@@ -175,9 +217,9 @@ def test_locador_com_anuncio_nao_vira_morador(db):
     assert patch(db, u)["papel"] == "Locador"  # a sessão continua utilizável
 
 
-def test_morador_com_favorito_nao_vira_locador(db):
+def test_morador_com_favorito_vira_locador_em_sleep(db):
     dono = novo_usuario(db, "dono@x.com", "Dono")
-    patch(db, dono, papel="Locador", cpf_cnpj="999")
+    patch(db, dono, papel="Locador", cpf_cnpj="99999999999")
     imovel = Imovel(valor_aluguel=1, tipo_imovel="Kitnet", quantidade_quartos=1, vagas_disponiveis=1)
     db.add(imovel)
     db.flush()
@@ -188,13 +230,18 @@ def test_morador_com_favorito_nao_vira_locador(db):
     db.flush()
     db.add(Like(id_post=post.id_post, id_locatario=u.id_usuario))
     db.commit()
-    assert codigo_do_erro(lambda: patch(db, u, papel="Locador", cpf_cnpj="111")) == 409
+    perfil = patch(db, u, papel="Locador", cpf_cnpj="11111111111")
+    assert perfil["papel"] == "Locador"
     assert db.get(Locatario, u.id_usuario) is not None
+    assert db.query(Like).filter(Like.id_locatario == u.id_usuario).count() == 1
+    # Favoritos dormem; ao voltar, o like continua.
+    assert patch(db, u, papel="Morador")["papel"] == "Morador"
+    assert db.query(Like).filter(Like.id_locatario == u.id_usuario).count() == 1
 
 
 def test_excluir_conta_remove_tudo(db):
     u = novo_usuario(db)
-    patch(db, u, papel="Morador", tags=["Pet Friendly"])
+    patch(db, u, papel="Morador", tags=["Aceita Animais"])
     id_usuario = u.id_usuario
     users.excluir_minha_conta(usuario=u, db=db)
     assert db.get(Usuario, id_usuario) is None
@@ -204,7 +251,7 @@ def test_excluir_conta_remove_tudo(db):
 
 def test_excluir_conta_com_vinculos_da_409_e_preserva(db):
     u = novo_usuario(db)
-    patch(db, u, papel="Locador", cpf_cnpj="111")
+    patch(db, u, papel="Locador", cpf_cnpj="11111111111")
     imovel = Imovel(valor_aluguel=1, tipo_imovel="Kitnet", quantidade_quartos=1, vagas_disponiveis=1)
     db.add(imovel)
     db.flush()

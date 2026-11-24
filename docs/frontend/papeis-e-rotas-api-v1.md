@@ -22,6 +22,7 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 | Método | Rota | Uso |
 |--------|------|-----|
 | GET | `/imoveis` | Mural (match se autenticado). Query opcional: `tipo`, `bairro`, `preco_max`, `tag` |
+| GET | `/imoveis/locais` | Autocomplete de bairro/cidade a partir dos anúncios ativos (`?q=` opcional) |
 | GET | `/imoveis/{id}` | Detalhe (`capa`, `fotos[]` — URLs ou paths) |
 | GET/POST | `/favoritos`, `/favoritos/{id}` | Lista e toggle (≈ `likes`) |
 | GET/POST | `/conversas`, `/conversas/{id}/mensagens` | Chat com locador |
@@ -78,4 +79,4 @@ match% = round( |tags_usuario ∩ tags_imovel| / |tags_usuario| × 100 )
 - Chat (`POST /conversas`) só se `match >= limiar` **e** `preco <= orcamento`
   (papel Morador/locatário). Resposta inclui `elegibilidade` no GET imóvel.
 - `GET /stats` → `match_medio` personalizado com as tags do usuário logado.
-- Tags: catálogo `frontend/js/tags-catalogo.js` (inclui Vegetariano, 420 Friendly).
+- Tags: catálogo `frontend/js/tags-catalogo.js` (convivência + comodidades; sem substâncias ilegais).

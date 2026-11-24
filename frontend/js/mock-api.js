@@ -102,7 +102,7 @@
             cidade: 'Campinas',
             preco: 850,
             match_percent: 92,
-            tags: ['Pet Friendly', 'Silêncio Noturno', 'Home Office'],
+            tags: ['Aceita Animais', 'Silêncio Noturno', 'Trabalho em Casa'],
             badge: 'República',
             area_m2: 12,
             deslocamento_min: 28,
@@ -123,7 +123,7 @@
             cidade: 'Campinas',
             preco: 1200,
             match_percent: 78,
-            tags: ['LGBTQIA+ Safe', 'Vegetariano', 'Home Office'],
+            tags: ['LGBTQIA+ Acolhedor', 'Vegetariano', 'Trabalho em Casa'],
             badge: 'Kitnet',
             area_m2: 28,
             deslocamento_min: 18,
@@ -144,7 +144,7 @@
             cidade: 'Campinas',
             preco: 720,
             match_percent: 88,
-            tags: ['Pet Friendly', 'Sem Festas', '420 Friendly'],
+            tags: ['Aceita Animais', 'Sem Festas', 'Trabalho em Casa'],
             badge: 'Casa',
             area_m2: 14,
             deslocamento_min: 35,
@@ -165,8 +165,8 @@
             cidade: 'Campinas',
             preco: 980,
             match_percent: 81,
-            tags: ['Silêncio Noturno', 'Home Office', 'LGBTQIA+ Safe'],
-            badge: 'Apart.',
+            tags: ['Silêncio Noturno', 'Trabalho em Casa', 'LGBTQIA+ Acolhedor'],
+            badge: 'Apartamento',
             area_m2: 16,
             deslocamento_min: 22,
             destino: 'PUCC',
@@ -186,15 +186,17 @@
             id: 'u-morador',
             email: 'morador@demo.com',
             senha: 'demo123',
-            nome: 'Morador Exemplo Mock',
+            nome: 'Marina Souza',
             papel: 'Morador',
             telefone: '(19) 99471-2830',
-            genero: 'Não-binário',
+            genero: 'Mulher Cisgênero',
             ocupacao: 'estudante',
-            emprego: 'estudante-sem-vinculo',
-            faculdade: 'unicamp-campinas',
-            foto_url: '',
-            tags: ['Pet Friendly', 'Silêncio Noturno', 'Home Office'],
+            emprego: 'estagio',
+            faculdade: 'puc-campinas-campus1',
+            bio: 'Estudante de Psicologia na PUC. Busco quarto calmo, pet friendly, perto do campus.',
+            cidade_atual: 'Campinas',
+            foto_url: '../assets/perfis/perfil-marina.jpg',
+            tags: ['Aceita Animais', 'Silêncio Noturno', 'Trabalho em Casa'],
             orcamento: 1200,
             limiar: 70
         },
@@ -202,15 +204,17 @@
             id: 'u-locador',
             email: 'locador@demo.com',
             senha: 'demo123',
-            nome: 'Locador Exemplo Mock',
+            nome: 'Ana Ribeiro',
             papel: 'Locador',
-            telefone: '(19) 98852-7164',
+            telefone: '(19) 99712-4408',
             genero: 'Mulher Cisgênero',
             ocupacao: 'cbo-2',
             emprego: 'autonomo',
             faculdade: 'puc-campinas-campus1',
-            foto_url: '',
-            tags: ['Pet Friendly', 'Sem Festas', 'Silêncio Noturno'],
+            bio: 'Arquiteta e locadora na região de Barão Geraldo. Prefiro casas tranquilas e bem cuidadas.',
+            cidade_atual: 'Campinas',
+            foto_url: '../assets/perfis/perfil-ana.jpg',
+            tags: ['Aceita Animais', 'Sem Festas', 'Silêncio Noturno'],
             orcamento: 5000,
             limiar: 60
         }
@@ -246,6 +250,8 @@
         return {
             id: user.id,
             email: user.email,
+            email_verificado: true,
+            email_envio_disponivel: false,
             nome: user.nome,
             papel: user.papel,
             papel_schema: user.papel === 'Locador' ? 'locador' : 'locatario',
@@ -257,7 +263,13 @@
             faculdade: user.faculdade || '',
             foto_url: user.foto_url || '',
             tags: user.tags || [],
-            destino: user.destino || null,
+            destino: (Array.isArray(user.destinos) && user.destinos[0]) || user.destino || null,
+            destinos: Array.isArray(user.destinos)
+                ? user.destinos.slice(0, 3)
+                : (user.destino ? [user.destino] : []),
+            modo_transporte: ['foot', 'bike', 'car', 'bus'].includes(
+                String(user.modo_transporte || '').toLowerCase()
+            ) ? String(user.modo_transporte).toLowerCase() : 'foot',
             orcamento: orcamento_maximo,
             limiar: limiar_compatibilidade,
             orcamento_maximo,
@@ -291,6 +303,8 @@
             favoritos: {
                 'u-morador': ['republica-barao', 'kitnet-cambui', 'casa-sousas', 'suite-taquaral']
             },
+            // Bloqueios: { bloqueador_id, bloqueado_id } — espelha POST/DELETE /bloqueios.
+            bloqueios: [],
             conversas: [
                 {
                     id: 'c1',
@@ -429,15 +443,43 @@
         if (typeof global.RoomMatchTelefone === 'undefined') {
             const digitos = String(valor || '').replace(/\D/g, '');
             if (digitos.length < 10) {
-                throw erro(400, 'Informe um telefone brasileiro com DDD.');
+                throw erro(422, 'Informe um telefone brasileiro com DDD.');
             }
             return String(valor || '').trim();
         }
         const resultado = global.RoomMatchTelefone.validar(valor);
         if (!resultado.ok) {
-            throw erro(400, resultado.mensagem || 'Telefone inválido.');
+            throw erro(422, resultado.mensagem || 'Telefone inválido.');
         }
         return resultado.formatado || String(valor || '').trim();
+    }
+
+    function exigirEmail(valor) {
+        if (typeof global.RoomMatchEmail !== 'undefined') {
+            const resultado = global.RoomMatchEmail.validar(valor);
+            if (!resultado.ok) {
+                throw erro(422, resultado.mensagem || 'E-mail inválido.');
+            }
+            return resultado.email;
+        }
+        const email = String(valor || '').trim().toLowerCase();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw erro(422, 'Informe um e-mail válido.');
+        }
+        return email;
+    }
+
+    function exigirCepOpcional(valor) {
+        const bruto = String(valor || '').trim();
+        if (!bruto) return '';
+        if (typeof global.RoomMatchCep !== 'undefined') {
+            const check = global.RoomMatchCep.validarCep(bruto);
+            if (!check.ok) throw erro(422, check.mensagem || 'CEP inválido.');
+            return check.cep;
+        }
+        const digitos = bruto.replace(/\D/g, '');
+        if (digitos.length !== 8) throw erro(422, 'CEP inválido. Use 8 dígitos.');
+        return `${digitos.slice(0, 5)}-${digitos.slice(5)}`;
     }
 
     /** Normaliza aliases de tags para comparação estável. */
@@ -448,19 +490,56 @@
         return t;
     }
 
+    function filtrarConvivencia(lista) {
+        if (global.RoomMatchTags?.filtrarConvivencia) {
+            return global.RoomMatchTags.filtrarConvivencia(lista);
+        }
+        return lista || [];
+    }
+
+    function separarTagsLista(lista) {
+        if (global.RoomMatchTags?.separar) {
+            return global.RoomMatchTags.separar(lista);
+        }
+        return { convivencia: lista || [], comodidades: [] };
+    }
+
+    /** Normaliza anúncio: tags = convivência; comodidades = infra (+ texto livre). */
+    function anuncioComTagsSeparadas(imovel) {
+        const sep = separarTagsLista(imovel.tags || []);
+        const canonicas = new Set((sep.comodidades || []).map(normalizarTag));
+        const extras = (imovel.comodidades || []).filter((c) => {
+            const n = normalizarTag(c);
+            if (canonicas.has(n)) return false;
+            // Mantém frases livres ("Wi-Fi 300 Mbps"); evita duplicar a tag canônica.
+            if (global.RoomMatchTags?.COMODIDADES?.some((x) => normalizarTag(x) === n)) {
+                return false;
+            }
+            return true;
+        });
+        return {
+            ...imovel,
+            tags: sep.convivencia,
+            comodidades: [...sep.comodidades, ...extras],
+        };
+    }
+
     /**
-     * Match = % das tags do usuário presentes no imóvel.
-     * Visitante (sem user/tags): usa match_percent do seed.
-     * Zero overlap → 0 (nunca cai no seed).
-     * Sem piso/teto artificiais — resultado 0–100.
+     * Match inteligente (adesão × restrição × conflitos). Ver RoomMatchTags.matchPercent.
+     * Visitante / sem tags de catálogo: seed do anúncio.
      */
     function matchPercent(user, imovel) {
-        if (!user || !Array.isArray(user.tags) || !user.tags.length) {
+        const tagsUser = filtrarConvivencia(user?.tags || []);
+        if (!user || !tagsUser.length) {
             return Number(imovel.match_percent) || 0;
         }
-        const tagsUser = user.tags.map(normalizarTag);
-        const tagsImovel = new Set((imovel.tags || []).map(normalizarTag));
-        const comum = tagsUser.filter((t) => tagsImovel.has(t)).length;
+        if (global.RoomMatchTags?.matchPercent) {
+            return global.RoomMatchTags.matchPercent(tagsUser, imovel.tags || []);
+        }
+        const tagsImovel = new Set(
+            filtrarConvivencia(imovel.tags || []).map(normalizarTag).filter(Boolean)
+        );
+        const comum = tagsUser.map(normalizarTag).filter((t) => tagsImovel.has(t)).length;
         return Math.round((comum / tagsUser.length) * 100);
     }
 
@@ -484,17 +563,56 @@
         };
     }
 
+    function rotuloCurtoMock(d) {
+        const tipo = String(d?.tipo || '').toLowerCase();
+        if (tipo === 'trabalho') return 'Trabalho';
+        if (tipo === 'faculdade') return 'Faculdade';
+        const nome = String(d?.nome || '').trim();
+        return (nome.includes(' — ') ? nome.split(' — ')[0] : nome).slice(0, 40) || 'destino';
+    }
+
     function comMatch(imovel, user) {
-        const match = matchPercent(user, imovel);
+        const base = anuncioComTagsSeparadas(imovel);
+        const match = matchPercent(user, base);
         const eleg = user && user.papel === 'Morador'
-            ? avaliarElegibilidadeChat(user, imovel)
+            ? avaliarElegibilidadeChat(user, base)
             : null;
-        return {
-            ...imovel,
+        const destinos = Array.isArray(user?.destinos) && user.destinos.length
+            ? user.destinos.slice(0, 3)
+            : (user?.destino ? [user.destino] : []);
+        const modo = ['foot', 'bike', 'car', 'bus'].includes(
+            String(user?.modo_transporte || '').toLowerCase()
+        ) ? String(user.modo_transporte).toLowerCase() : 'foot';
+        const baseMin = Number(imovel.deslocamento_min) || 25;
+        const fatores = { foot: 1.6, bike: 0.7, car: 0.45, bus: 1.05 };
+        const deslocamentos = destinos.map((d, i) => {
+            const tempos_modos = {
+                foot: Math.max(1, Math.round(baseMin * fatores.foot) + i * 4),
+                bike: Math.max(1, Math.round(baseMin * fatores.bike) + i * 2),
+                car: Math.max(1, Math.round(baseMin * fatores.car) + i),
+                bus: Math.max(1, Math.round(baseMin * fatores.bus) + i * 3),
+            };
+            return {
+                nome: rotuloCurtoMock(d),
+                tipo: d.tipo || undefined,
+                deslocamento_min: tempos_modos[modo] || tempos_modos.foot,
+                modo_transporte: modo,
+                tempos_modos,
+            };
+        });
+        const out = {
+            ...base,
             match_percent: match,
             match,
-            elegibilidade: eleg
+            elegibilidade: eleg,
+            modo_transporte: modo,
+            deslocamentos,
         };
+        if (deslocamentos.length) {
+            out.destino = deslocamentos[0].nome;
+            out.deslocamento_min = deslocamentos[0].deslocamento_min;
+        }
+        return out;
     }
 
     function usuarioAutenticado(db, token) {
@@ -533,12 +651,18 @@
             items = items.filter((i) =>
                 `${i.titulo} ${i.bairro} ${i.cidade} ${i.endereco || ''}`.toLowerCase().includes(bairro));
         }
-        if (tag) {
-            items = items.filter((i) => (i.tags || []).some((t) => {
-                const nt = normalizarTag(t);
-                const nq = normalizarTag(tag);
-                return nt === nq || nt.includes(nq) || nq.includes(nt);
-            }));
+        const tagsPedidas = String(query.tag || '')
+            .split(',')
+            .map((t) => normalizarTag(t.trim()))
+            .filter(Boolean);
+        // AND: imóvel precisa ter todos os hábitos marcados.
+        if (tagsPedidas.length) {
+            items = items.filter((i) => {
+                const doImovel = (i.tags || []).map(normalizarTag);
+                return tagsPedidas.every((nq) => doImovel.some((nt) => (
+                    nt === nq || nt.includes(nq) || nq.includes(nt)
+                )));
+            });
         }
         if (Number.isFinite(precoMax) && precoMax > 0) {
             items = items.filter((i) => Number(i.preco) <= precoMax);
@@ -562,13 +686,10 @@
         const user = usuarioAutenticado(db, token);
 
         if (m === 'POST' && pathname === '/auth/register') {
-            const email = String(body.email || '').trim().toLowerCase();
+            const email = exigirEmail(body.email);
             const senha = String(body.senha || '');
             const nome = String(body.nome || '').trim();
             const papel = String(body.papel || '').trim();
-            if (!email || !email.includes('@')) {
-                throw erro(400, 'Informe um e-mail válido.');
-            }
             if (senha.length < 8) {
                 throw erro(400, 'A senha deve ter ao menos 8 caracteres.');
             }
@@ -576,8 +697,12 @@
             if (!PAPEIS_UI.includes(papel)) {
                 throw erro(400, 'Tipo de perfil inválido. Use Morador ou Locador.');
             }
+            const msgContato = 'Se achar que é um erro, contate o suporte pela página Contato.';
             if (db.users.some((u) => u.email === email)) {
-                throw erro(409, 'Este e-mail já está em uso.');
+                throw erro(
+                    409,
+                    `Este e-mail já está cadastrado. Não é possível criar outra conta com ele. ${msgContato}`
+                );
             }
             const telefone = exigirTelefoneBr(body.telefone);
             const cpfCnpj = String(body.cpf_cnpj || '').trim();
@@ -587,7 +712,10 @@
                     throw erro(422, 'Informe o CPF ou CNPJ para anunciar como Locador.');
                 }
                 if (db.users.some((u) => u.cpf_cnpj && u.cpf_cnpj.replace(/\D/g, '') === digitos)) {
-                    throw erro(409, 'CPF/CNPJ já cadastrado.');
+                    throw erro(
+                        409,
+                        `Este CPF/CNPJ já está cadastrado. Não é possível criar outra conta com ele. ${msgContato}`
+                    );
                 }
             }
             const novo = {
@@ -597,13 +725,17 @@
                 nome,
                 papel,
                 telefone,
-                cpf_cnpj: papel === 'Locador' ? cpfCnpj : '',
+                cpf_cnpj: papel === 'Locador' ? cpfCnpj.replace(/\D/g, '') : '',
                 genero: String(body.genero || '').trim(),
                 ocupacao: String(body.ocupacao || '').trim(),
                 emprego: String(body.emprego || '').trim(),
                 faculdade: String(body.faculdade || '').trim(),
                 foto_url: String(body.foto_url || ''),
-                tags: Array.isArray(body.tags) ? body.tags : [],
+                bio: String(body.bio || '').trim(),
+                cidade_atual: String(body.cidade_atual || '').trim(),
+                data_nascimento: body.data_nascimento || null,
+                raio_busca_km: body.raio_busca_km != null ? Number(body.raio_busca_km) : null,
+                tags: filtrarConvivencia(Array.isArray(body.tags) ? body.tags : []),
                 orcamento: Number(body.orcamento_maximo ?? body.orcamento) || 0,
                 limiar: Number(body.limiar_compatibilidade ?? body.limiar) || 70,
                 orcamento_maximo: Number(body.orcamento_maximo ?? body.orcamento) || 0,
@@ -627,12 +759,148 @@
             return { items: filtrarImoveis(db.imoveis, query, user) };
         }
 
+        if (m === 'GET' && pathname === '/imoveis/locais') {
+            const termo = String(query.q || '').trim().toLowerCase();
+            const vistos = new Set();
+            const items = [];
+            const add = (label, tipo, bairro, cidade) => {
+                const texto = String(label || '').trim();
+                if (!texto) return;
+                const chave = `${tipo}:${texto.toLowerCase()}`;
+                if (vistos.has(chave)) return;
+                vistos.add(chave);
+                items.push({
+                    label: texto,
+                    tipo,
+                    bairro: bairro || null,
+                    cidade: cidade || null
+                });
+            };
+            (db.imoveis || []).forEach((i) => {
+                if (i.status && i.status !== 'ativo') return;
+                add(i.bairro, 'bairro', i.bairro, i.cidade);
+                add(i.cidade, 'cidade', null, i.cidade);
+            });
+            items.sort((a, b) => {
+                if (a.tipo !== b.tipo) return a.tipo === 'bairro' ? -1 : 1;
+                return a.label.localeCompare(b.label, 'pt-BR');
+            });
+            const filtrados = termo
+                ? items.filter((i) => (
+                    i.label.toLowerCase().includes(termo)
+                    || (i.cidade && String(i.cidade).toLowerCase().includes(termo))
+                ))
+                : items;
+            return { items: filtrados.slice(0, 40) };
+        }
+
         if (m === 'GET' && pathname === '/notificacoes') {
             if (!user) throw erro(401, 'Não autenticado.');
             return { items: [], nao_lidas: 0 };
         }
         if (m === 'POST' && pathname === '/notificacoes/lidas') {
             return { ok: true, marcadas: 0 };
+        }
+        if (m === 'GET' && pathname === '/denuncias/motivos') {
+            return {
+                items: [
+                    { valor: 'assedio', rotulo: 'Assédio ou comportamento abusivo' },
+                    { valor: 'golpe_fraude', rotulo: 'Golpe ou fraude' },
+                    { valor: 'conteudo_inadequado', rotulo: 'Conteúdo inadequado' },
+                    { valor: 'spam', rotulo: 'Spam ou propaganda' },
+                    { valor: 'anuncio_falso', rotulo: 'Anúncio falso ou enganoso' },
+                    { valor: 'outro', rotulo: 'Outro' }
+                ]
+            };
+        }
+        if (m === 'POST' && pathname === '/denuncias') {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const motivo = String(body.motivo || '').trim();
+            if (!motivo) throw erro(422, 'Informe o motivo.');
+            if (!body.usuario_id && !body.imovel_id && !body.conversa_id) {
+                throw erro(422, 'Informe usuario_id, imovel_id ou conversa_id.');
+            }
+            db.denuncias = db.denuncias || [];
+            const id = db.denuncias.length + 1;
+            db.denuncias.push({
+                id,
+                motivo,
+                descricao: body.descricao || '',
+                usuario_id: body.usuario_id || null,
+                imovel_id: body.imovel_id || null,
+                conversa_id: body.conversa_id || null,
+                denunciante_id: user.id,
+                em: new Date().toISOString(),
+                status: 'pendente'
+            });
+            return {
+                ok: true,
+                id,
+                status: 'pendente',
+                motivo,
+                mensagem: 'Denúncia registrada. Nossa equipe vai analisar.'
+            };
+        }
+
+        if (m === 'GET' && pathname === '/bloqueios') {
+            if (!user) throw erro(401, 'Não autenticado.');
+            db.bloqueios = db.bloqueios || [];
+            const items = db.bloqueios
+                .filter((b) => b.bloqueador_id === user.id)
+                .map((b) => {
+                    const alvo = db.users.find((u) => u.id === b.bloqueado_id);
+                    return alvo ? publico(alvo) : null;
+                })
+                .filter(Boolean);
+            return { items, total: items.length };
+        }
+
+        if (m === 'POST' && pathname === '/bloqueios') {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const alvoId = body.usuario_id;
+            if (alvoId == null || alvoId === '') throw erro(422, 'Informe usuario_id.');
+            if (String(alvoId) === String(user.id)) {
+                throw erro(400, 'Você não pode bloquear a si mesmo.');
+            }
+            if (!db.users.find((u) => String(u.id) === String(alvoId))) {
+                throw erro(404, 'Usuário não encontrado.');
+            }
+            db.bloqueios = db.bloqueios || [];
+            const ja = db.bloqueios.some(
+                (b) => b.bloqueador_id === user.id && String(b.bloqueado_id) === String(alvoId)
+            );
+            if (!ja) {
+                db.bloqueios.push({
+                    bloqueador_id: user.id,
+                    bloqueado_id: alvoId,
+                    em: agoraIso(),
+                });
+                salvarDb(db);
+            }
+            return {
+                ok: true,
+                usuario_id: alvoId,
+                status: 'ativo',
+                mensagem: 'Pessoa bloqueada. Vocês não poderão conversar até desbloquear.',
+            };
+        }
+
+        const delBloq = pathname.match(/^\/bloqueios\/([^/]+)$/);
+        if (m === 'DELETE' && delBloq) {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const alvoId = delBloq[1];
+            db.bloqueios = db.bloqueios || [];
+            const antes = db.bloqueios.length;
+            db.bloqueios = db.bloqueios.filter(
+                (b) => !(b.bloqueador_id === user.id && String(b.bloqueado_id) === String(alvoId))
+            );
+            salvarDb(db);
+            return {
+                ok: true,
+                mensagem: antes === db.bloqueios.length
+                    ? 'Não havia bloqueio ativo.'
+                    : 'Bloqueio removido. O contato pode voltar.',
+            };
         }
         if (m === 'GET' && pathname === '/mobilidade/rota') {
             return {
@@ -674,7 +942,7 @@
             const bairro = String(body.bairro || '').trim() || 'Campinas';
             const cidade = String(body.cidade || '').trim() || 'Campinas';
             const estado = String(body.estado || 'SP').trim().toUpperCase().slice(0, 2) || 'SP';
-            const cep = String(body.cep || '').trim();
+            const cep = exigirCepOpcional(body.cep);
             const endereco = String(body.endereco || '').trim() || [
                 [rua, numero].filter(Boolean).join(', '),
                 complemento ? `(${complemento})` : '',
@@ -698,7 +966,11 @@
                 endereco,
                 preco: aluguel + condominio + iptu + contas,
                 match_percent: 70,
-                tags: body.tags || [],
+                tags: [
+                    ...(Array.isArray(body.tags) ? body.tags : []),
+                    ...(Array.isArray(body.comodidades) ? body.comodidades : []),
+                ],
+                comodidades: [],
                 badge: body.tipo || 'Anúncio',
                 area_m2: Number(body.area_m2) || 12,
                 deslocamento_min: 30,
@@ -713,7 +985,7 @@
             };
             db.imoveis.unshift(criado);
             salvarDb(db);
-            return criado;
+            return comMatch(criado, user);
         }
 
         const patchImovel = pathname.match(/^\/imoveis\/([^/]+)$/);
@@ -723,6 +995,15 @@
             if (idx < 0) throw erro(404, 'Imóvel não encontrado.');
             if (db.imoveis[idx].locador_id !== user.id) throw erro(403, 'Sem permissão.');
             const atual = { ...db.imoveis[idx], ...body };
+            if (Array.isArray(body.tags) || Array.isArray(body.comodidades)) {
+                const prev = separarTagsLista(db.imoveis[idx].tags || []);
+                const conv = Array.isArray(body.tags) ? body.tags : prev.convivencia;
+                const comod = Array.isArray(body.comodidades)
+                    ? body.comodidades
+                    : (prev.comodidades.length ? prev.comodidades : (db.imoveis[idx].comodidades || []));
+                atual.tags = [...conv, ...comod];
+                atual.comodidades = [];
+            }
             atual.aluguel = Number(atual.aluguel) || 0;
             atual.condominio = Number(atual.condominio) || 0;
             atual.iptu = Number(atual.iptu) || 0;
@@ -730,7 +1011,7 @@
             atual.preco = atual.aluguel + atual.condominio + atual.iptu + atual.contas;
             db.imoveis[idx] = atual;
             salvarDb(db);
-            return atual;
+            return comMatch(atual, user);
         }
 
         const delImovel = pathname.match(/^\/imoveis\/([^/]+)$/);
@@ -814,14 +1095,16 @@
             CAMPOS_PERFIL.forEach((campo) => {
                 if (body[campo] === undefined) return;
                 if (campo === 'email') {
-                    const email = String(body.email || '').trim().toLowerCase();
-                    if (!email || !email.includes('@')) {
-                        throw erro(400, 'Informe um e-mail válido.');
-                    }
+                    const email = exigirEmail(body.email);
                     const conflito = db.users.some(
                         (u, i) => i !== idx && u.email === email
                     );
-                    if (conflito) throw erro(409, 'Este e-mail já está em uso.');
+                    if (conflito) {
+                        throw erro(
+                            409,
+                            'Este e-mail já está em uso. Se achar que é um erro, contate o suporte pela página Contato.'
+                        );
+                    }
                     db.users[idx].email = email;
                     return;
                 }
@@ -844,8 +1127,35 @@
                 db.users[idx][campo] = String(body[campo] ?? '').trim();
             });
 
-            if (Array.isArray(body.tags)) db.users[idx].tags = body.tags;
-            if (body.destino && typeof body.destino === 'object') db.users[idx].destino = body.destino;
+            if (Array.isArray(body.tags)) {
+                db.users[idx].tags = filtrarConvivencia(body.tags);
+            }
+            if (Array.isArray(body.destinos)) {
+                const lista = body.destinos
+                    .filter((d) => d && Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng)))
+                    .slice(0, 3)
+                    .map((d) => {
+                        const item = {
+                            nome: String(d.nome || 'Destino').slice(0, 100),
+                            lat: Number(d.lat),
+                            lng: Number(d.lng),
+                        };
+                        const tipo = String(d.tipo || '').toLowerCase();
+                        if (['trabalho', 'faculdade', 'outro'].includes(tipo)) item.tipo = tipo;
+                        return item;
+                    });
+                db.users[idx].destinos = lista;
+                db.users[idx].destino = lista[0] || null;
+            } else if (body.destino && typeof body.destino === 'object') {
+                db.users[idx].destino = body.destino;
+                db.users[idx].destinos = [body.destino];
+            }
+            if (body.modo_transporte != null) {
+                const m = String(body.modo_transporte || '').toLowerCase();
+                db.users[idx].modo_transporte = ['foot', 'bike', 'car', 'bus'].includes(m)
+                    ? m
+                    : 'foot';
+            }
             // Schema: orcamento_maximo / limiar_compatibilidade (aliases legados: orcamento / limiar)
             if (body.orcamento_maximo !== undefined || body.orcamento !== undefined) {
                 const v = Number(body.orcamento_maximo ?? body.orcamento);
@@ -893,6 +1203,24 @@
             const outroId = c.participantes.find((id) => id !== (user && user.id));
             const outro = db.users.find((u) => u.id === outroId);
             const ultima = c.mensagens[c.mensagens.length - 1];
+            const lista = db.bloqueios || [];
+            const euBloqueei = Boolean(user && outroId && lista.some(
+                (b) => b.bloqueador_id === user.id && String(b.bloqueado_id) === String(outroId)
+            ));
+            const meBloquearam = Boolean(user && outroId && lista.some(
+                (b) => String(b.bloqueador_id) === String(outroId) && b.bloqueado_id === user.id
+            ));
+            const contatoBloqueado = euBloqueei || meBloquearam;
+            let outroPub = outro ? publico(outro) : null;
+            if (meBloquearam && !euBloqueei && outroPub) {
+                outroPub = {
+                    ...outroPub,
+                    nome: 'Indisponível',
+                    iniciais: '—',
+                    foto_url: '',
+                    indisponivel: true,
+                };
+            }
             return {
                 id: c.id,
                 imovel_id: c.imovel_id,
@@ -900,21 +1228,37 @@
                 imovel_preco: imovel ? imovel.preco : null,
                 imovel_bairro: imovel ? imovel.bairro : null,
                 imovel_capa: imovel ? (imovel.capa || (imovel.fotos && imovel.fotos[0]) || null) : null,
-                outro: outro ? publico(outro) : null,
-                ultima_mensagem: ultima ? ultima.texto : '',
+                outro: outroPub,
+                eu_bloqueei: euBloqueei,
+                me_bloquearam: meBloquearam,
+                contato_bloqueado: contatoBloqueado,
+                status_conversa: c.status_conversa || 'ativa',
+                ultima_mensagem: contatoBloqueado && !ultima
+                    ? 'Conversa indisponível'
+                    : (ultima ? ultima.texto : ''),
                 atualizado_em: ultima ? ultima.em : null,
                 mensagens: c.mensagens.map((msg) => ({
                     ...msg,
                     minha: user ? msg.autor_id === user.id : false,
-                    autor_nome: (db.users.find((u) => u.id === msg.autor_id) || {}).nome || 'Usuário'
+                    autor_nome: (meBloquearam && !euBloqueei && msg.autor_id === outroId)
+                        ? 'Indisponível'
+                        : ((db.users.find((u) => u.id === msg.autor_id) || {}).nome || 'Usuário')
                 }))
             };
         }
 
         if (m === 'GET' && pathname === '/conversas') {
             if (!user) throw erro(401, 'Não autenticado.');
+            const soArquivadas = query.arquivadas_apenas === 'true';
+            const incluirArquivadas = query.incluir_arquivadas === 'true';
             const items = db.conversas
                 .filter((c) => c.participantes.includes(user.id))
+                .filter((c) => {
+                    const st = c.status_conversa || 'ativa';
+                    if (soArquivadas) return st === 'arquivada';
+                    if (!incluirArquivadas) return st !== 'arquivada';
+                    return true;
+                })
                 .map(enriquecerConversa)
                 .sort((a, b) => String(b.atualizado_em).localeCompare(String(a.atualizado_em)));
             return { items };
@@ -928,6 +1272,21 @@
                 throw erro(404, 'Conversa não encontrada.');
             }
             return enriquecerConversa(conv);
+        }
+
+        if (m === 'PATCH' && getConv) {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const idx = db.conversas.findIndex((c) => c.id === getConv[1]);
+            if (idx < 0 || !db.conversas[idx].participantes.includes(user.id)) {
+                throw erro(404, 'Conversa não encontrada.');
+            }
+            const status = String(body.status_conversa || '').trim().toLowerCase();
+            if (status && !['ativa', 'arquivada'].includes(status)) {
+                throw erro(422, 'Use status_conversa: ativa ou arquivada.');
+            }
+            if (status) db.conversas[idx].status_conversa = status;
+            salvarDb(db);
+            return enriquecerConversa(db.conversas[idx]);
         }
 
         if (m === 'POST' && pathname === '/conversas') {
@@ -989,6 +1348,15 @@
             }
             const texto = String(body.texto || '').trim();
             if (!texto) throw erro(400, 'Mensagem vazia.');
+            const outroId = conv.participantes.find((id) => id !== user.id);
+            const lista = db.bloqueios || [];
+            const bloqueado = lista.some(
+                (b) => (b.bloqueador_id === user.id && String(b.bloqueado_id) === String(outroId))
+                    || (String(b.bloqueador_id) === String(outroId) && b.bloqueado_id === user.id)
+            );
+            if (bloqueado) {
+                throw erro(403, 'Conversa indisponível: há um bloqueio de contato entre vocês.');
+            }
             conv.mensagens.push({
                 id: `m-${Date.now()}`,
                 autor_id: user.id,

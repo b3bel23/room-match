@@ -62,7 +62,7 @@ html:has(body.publicar-page) {
 
 .endereco-grade {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
     gap: 12px;
 }
 
@@ -122,6 +122,9 @@ html:has(body.publicar-page) {
 .campo select {
     height: 44px;
     width: 100%;
+    appearance: none;
+    padding-right: 2.75rem;
+    cursor: pointer;
 }
 
 .campo textarea {

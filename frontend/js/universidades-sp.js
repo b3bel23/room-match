@@ -348,9 +348,9 @@
     ]);
 
     const EXTRAS = Object.freeze([
-        { valor: '', rotulo: 'Selecione a universidade e o campus' },
-        { valor: 'outra-ies-sp', rotulo: 'Outra IES credenciada em São Paulo (centro universitário, faculdade ou instituto)' },
-        { valor: 'nao-aplica', rotulo: 'Não estudo / não se aplica' }
+        { valor: '', rotulo: 'Selecione (opcional)' },
+        { valor: 'nao-aplica', rotulo: 'Nenhuma — não estou estudando' },
+        { valor: 'outra-ies-sp', rotulo: 'Outra faculdade / universidade em SP' }
     ]);
 
     const TODOS = Object.freeze([
@@ -504,8 +504,10 @@
 
         selectEl.replaceChildren();
 
-        const placeholder = new Option(EXTRAS[0].rotulo, '');
-        selectEl.append(placeholder);
+        // Placeholder + “Nenhuma” primeiro (quem não estuda acha na hora).
+        selectEl.append(new Option(EXTRAS[0].rotulo, ''));
+        const nenhuma = EXTRAS.find((e) => e.valor === 'nao-aplica');
+        if (nenhuma) selectEl.append(new Option(nenhuma.rotulo, nenhuma.valor));
 
         GRUPOS.forEach((grupo) => {
             const og = document.createElement('optgroup');
@@ -516,7 +518,7 @@
             selectEl.append(og);
         });
 
-        EXTRAS.filter((e) => e.valor).forEach((item) => {
+        EXTRAS.filter((e) => e.valor && e.valor !== 'nao-aplica').forEach((item) => {
             selectEl.append(new Option(item.rotulo, item.valor));
         });
 
@@ -527,10 +529,356 @@
         }
     }
 
+    function semAcento(s) {
+        return String(s || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    /** Itens pesquisáveis: campus com nome da IES + extras. */
+    function catalogoBusca() {
+        const itens = [];
+        EXTRAS.filter((e) => e.valor).forEach((e) => {
+            itens.push({
+                valor: e.valor,
+                rotulo: e.rotulo,
+                grupo: '',
+                busca: semAcento(e.rotulo + ' ' + e.valor),
+            });
+        });
+        GRUPOS.forEach((g) => {
+            const nomeCurto = (g.nome.split('—')[0] || g.nome).trim();
+            g.campi.forEach((c) => {
+                itens.push({
+                    valor: c.valor,
+                    rotulo: c.rotulo,
+                    grupo: nomeCurto,
+                    busca: semAcento(`${nomeCurto} ${g.nome} ${c.rotulo} ${c.valor}`),
+                });
+            });
+        });
+        return itens;
+    }
+
+    function rotuloSelecionado(valor) {
+        if (!valor) return '';
+        const item = catalogoBusca().find((i) => i.valor === valor);
+        if (!item) return valor;
+        return item.grupo ? `${item.grupo} · ${item.rotulo}` : item.rotulo;
+    }
+
+    /**
+     * Combobox (lista suspensa): atalhos + campo que abre/fecha a lista.
+     * Sincroniza o <select> oculto. Após escolher, a lista fecha.
+     * @param {HTMLElement} host
+     * @param {HTMLSelectElement} selectEl
+     * @param {string} [valorAtual]
+     */
+    function montarBusca(host, selectEl, valorAtual) {
+        if (!host || !selectEl) return;
+        preencherSelect(selectEl, valorAtual);
+        selectEl.classList.add('escolha-select-sync');
+        selectEl.setAttribute('aria-hidden', 'true');
+        selectEl.tabIndex = -1;
+
+        const catalogo = catalogoBusca();
+        const uid = selectEl.id || 'faculdade';
+
+        host.replaceChildren();
+        host.classList.add('faculdade-busca');
+
+        const atalhos = document.createElement('div');
+        atalhos.className = 'faculdade-atalhos';
+        [
+            { valor: 'nao-aplica', curto: 'Nenhuma' },
+            { valor: 'outra-ies-sp', curto: 'Outra em SP' },
+            { valor: '', curto: 'Limpar' },
+        ].forEach((a) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'faculdade-atalho';
+            b.dataset.valor = a.valor;
+            b.textContent = a.curto;
+            atalhos.append(b);
+        });
+
+        const campo = document.createElement('div');
+        campo.className = 'faculdade-busca-campo';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `${uid}-pesquisa`;
+        input.className = 'faculdade-busca-input';
+        input.placeholder = 'Buscar por nome, sigla ou campus…';
+        input.autocomplete = 'off';
+        input.setAttribute('role', 'combobox');
+        input.setAttribute('aria-label', 'Faculdade ou universidade');
+        input.setAttribute('aria-controls', `${uid}-lista`);
+        input.setAttribute('aria-autocomplete', 'list');
+        input.setAttribute('aria-expanded', 'false');
+        input.setAttribute('aria-haspopup', 'listbox');
+
+        const seta = document.createElement('button');
+        seta.type = 'button';
+        seta.className = 'faculdade-busca-seta';
+        seta.setAttribute('aria-label', 'Abrir lista de faculdades');
+        seta.tabIndex = -1;
+        seta.innerHTML = '<span aria-hidden="true">▾</span>';
+
+        const lista = document.createElement('div');
+        lista.id = `${uid}-lista`;
+        lista.className = 'faculdade-lista';
+        lista.hidden = true;
+        lista.setAttribute('role', 'listbox');
+        lista.setAttribute('aria-label', 'Sugestões de faculdade');
+
+        campo.append(input, seta, lista);
+        host.append(atalhos, campo);
+
+        let aberta = false;
+        let indiceAtivo = -1;
+        let filtroAtual = '';
+        let blurTimer = 0;
+        let editando = false;
+
+        function fecharLista() {
+            aberta = false;
+            lista.hidden = true;
+            input.setAttribute('aria-expanded', 'false');
+            host.classList.remove('faculdade-busca--aberta');
+            indiceAtivo = -1;
+            lista.querySelectorAll('.faculdade-item').forEach((el) => {
+                el.classList.remove('foco-teclado');
+            });
+        }
+
+        function abrirLista() {
+            aberta = true;
+            lista.hidden = false;
+            input.setAttribute('aria-expanded', 'true');
+            host.classList.add('faculdade-busca--aberta');
+        }
+
+        function textoNoCampo() {
+            const v = selectEl.value;
+            if (!v) {
+                input.value = '';
+                input.placeholder = 'Buscar por nome, sigla ou campus…';
+                return;
+            }
+            input.value = rotuloSelecionado(v);
+            input.placeholder = 'Buscar por nome, sigla ou campus…';
+        }
+
+        function atualizarAtalhos() {
+            const v = selectEl.value;
+            atalhos.querySelectorAll('.faculdade-atalho').forEach((b) => {
+                b.classList.toggle('ativo', b.dataset.valor === v);
+            });
+        }
+
+        function aplicarValor(valor) {
+            selectEl.value = valor;
+            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+            editando = false;
+            filtroAtual = '';
+            textoNoCampo();
+            atualizarAtalhos();
+            fecharLista();
+        }
+
+        function marcarTeclado(i) {
+            const itens = [...lista.querySelectorAll('.faculdade-item')];
+            itens.forEach((el) => el.classList.remove('foco-teclado'));
+            if (!itens.length) {
+                indiceAtivo = -1;
+                return;
+            }
+            indiceAtivo = ((i % itens.length) + itens.length) % itens.length;
+            const el = itens[indiceAtivo];
+            el.classList.add('foco-teclado');
+            el.scrollIntoView({ block: 'nearest' });
+        }
+
+        function pintarLista(filtro) {
+            const q = semAcento(filtro).trim();
+            filtroAtual = filtro;
+            lista.replaceChildren();
+            let hits = catalogo;
+            if (q) {
+                hits = catalogo.filter((i) => i.busca.includes(q));
+            } else {
+                const prioridade = new Set([
+                    'nao-aplica',
+                    'outra-ies-sp',
+                    'unicamp-campinas',
+                    'puc-campinas-campus1',
+                    'puc-campinas-campus2',
+                    'usp-cidade-universitaria',
+                    'unesp-rio-claro',
+                    'univesp-ead',
+                ]);
+                hits = catalogo.filter((i) => prioridade.has(i.valor));
+            }
+
+            if (!hits.length) {
+                const vazio = document.createElement('p');
+                vazio.className = 'faculdade-lista-vazia';
+                vazio.textContent = 'Nenhuma faculdade encontrada. Tente outra busca ou “Outra em SP”.';
+                lista.append(vazio);
+                return;
+            }
+
+            const limite = q ? 40 : hits.length;
+            const selecionado = selectEl.value;
+            hits.slice(0, limite).forEach((item) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'faculdade-item';
+                btn.dataset.valor = item.valor;
+                btn.setAttribute('role', 'option');
+                const ativo = item.valor === selecionado;
+                btn.classList.toggle('ativo', ativo);
+                btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
+                const titulo = document.createElement('span');
+                titulo.className = 'faculdade-item-titulo';
+                titulo.textContent = item.grupo || item.rotulo;
+                btn.append(titulo);
+                if (item.grupo) {
+                    const sub = document.createElement('span');
+                    sub.className = 'faculdade-item-sub';
+                    sub.textContent = item.rotulo;
+                    btn.append(sub);
+                }
+                lista.append(btn);
+            });
+            if (q && hits.length > limite) {
+                const mais = document.createElement('p');
+                mais.className = 'faculdade-lista-vazia';
+                mais.textContent = `Mostrando ${limite} de ${hits.length}. Refine a busca.`;
+                lista.append(mais);
+            }
+            indiceAtivo = -1;
+        }
+
+        function abrirComFiltro(filtro) {
+            pintarLista(filtro);
+            abrirLista();
+        }
+
+        atalhos.addEventListener('click', (ev) => {
+            const b = ev.target.closest('.faculdade-atalho');
+            if (!b) return;
+            aplicarValor(b.dataset.valor);
+        });
+
+        lista.addEventListener('mousedown', (ev) => {
+            // Evita blur do input antes do click na opção.
+            ev.preventDefault();
+        });
+
+        lista.addEventListener('click', (ev) => {
+            const item = ev.target.closest('.faculdade-item');
+            if (!item) return;
+            aplicarValor(item.dataset.valor);
+        });
+
+        seta.addEventListener('mousedown', (ev) => ev.preventDefault());
+        seta.addEventListener('click', () => {
+            if (aberta) {
+                fecharLista();
+                if (!editando) textoNoCampo();
+                return;
+            }
+            editando = true;
+            input.value = '';
+            abrirComFiltro('');
+            input.focus();
+        });
+
+        input.addEventListener('focus', () => {
+            window.clearTimeout(blurTimer);
+            if (!aberta) {
+                editando = true;
+                const selecionado = rotuloSelecionado(selectEl.value);
+                if (input.value === selecionado) input.value = '';
+                abrirComFiltro(input.value);
+            }
+        });
+
+        input.addEventListener('blur', () => {
+            window.clearTimeout(blurTimer);
+            blurTimer = window.setTimeout(() => {
+                fecharLista();
+                editando = false;
+                textoNoCampo();
+            }, 140);
+        });
+
+        let debounce = 0;
+        input.addEventListener('input', () => {
+            editando = true;
+            window.clearTimeout(debounce);
+            debounce = window.setTimeout(() => {
+                abrirComFiltro(input.value);
+            }, 80);
+        });
+
+        input.addEventListener('keydown', (ev) => {
+            const itens = [...lista.querySelectorAll('.faculdade-item')];
+            if (ev.key === 'Escape') {
+                ev.preventDefault();
+                fecharLista();
+                editando = false;
+                textoNoCampo();
+                input.blur();
+                return;
+            }
+            if (ev.key === 'ArrowDown') {
+                ev.preventDefault();
+                if (!aberta) abrirComFiltro(editando ? input.value : '');
+                marcarTeclado(indiceAtivo + 1);
+                return;
+            }
+            if (ev.key === 'ArrowUp') {
+                ev.preventDefault();
+                if (!aberta) abrirComFiltro(editando ? input.value : '');
+                marcarTeclado(indiceAtivo <= 0 ? itens.length - 1 : indiceAtivo - 1);
+                return;
+            }
+            if (ev.key === 'Enter') {
+                if (!aberta || !itens.length) return;
+                ev.preventDefault();
+                const alvo = indiceAtivo >= 0 ? itens[indiceAtivo] : itens[0];
+                if (alvo) aplicarValor(alvo.dataset.valor);
+            }
+        });
+
+        selectEl.addEventListener('change', () => {
+            if (!editando) textoNoCampo();
+            atualizarAtalhos();
+        });
+
+        document.addEventListener('click', (ev) => {
+            if (!host.contains(ev.target)) {
+                fecharLista();
+                editando = false;
+                textoNoCampo();
+            }
+        });
+
+        textoNoCampo();
+        atualizarAtalhos();
+        fecharLista();
+    }
+
     global.RoomMatchUniversidadesSp = {
         GRUPOS,
         UNIVERSIDADES_SP: listaPlana(),
         normalizar,
-        preencherSelect
+        preencherSelect,
+        montarBusca,
+        rotuloSelecionado,
     };
 }(window));

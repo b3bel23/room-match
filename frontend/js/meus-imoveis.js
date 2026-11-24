@@ -26,7 +26,12 @@ function pedirExclusao(imovel) {
 document.getElementById('excluir-cancelar').addEventListener('click', () => confirmacao.close());
 
 botaoConfirmar.addEventListener('click', async () => {
-    botaoConfirmar.disabled = true;
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.botaoEspera(botaoConfirmar, true, 'Excluindo…');
+        RoomMatchLoading.mostrar('Excluindo anúncio…');
+    } else {
+        botaoConfirmar.disabled = true;
+    }
     try {
         await RoomMatchApi.excluirImovel(imovelParaExcluir.id);
         confirmacao.close();
@@ -35,7 +40,12 @@ botaoConfirmar.addEventListener('click', async () => {
         confirmacaoErro.textContent = erro.detail || erro.message;
         confirmacaoErro.hidden = false;
     } finally {
-        botaoConfirmar.disabled = false;
+        if (typeof RoomMatchLoading !== 'undefined') {
+            RoomMatchLoading.forcarEsconder();
+            RoomMatchLoading.botaoEspera(botaoConfirmar, false);
+        } else {
+            botaoConfirmar.disabled = false;
+        }
     }
 });
 
@@ -100,6 +110,20 @@ function montarCard(imovel) {
 }
 
 async function carregar() {
+    contagem.textContent = 'Carregando…';
+    lista.hidden = false;
+    vazia.hidden = true;
+    if (typeof RoomMatchLoading !== 'undefined') {
+        RoomMatchLoading.preencherSkeleton(lista, 3);
+        await RoomMatchLoading.durante(async () => {
+            const { items } = await RoomMatchApi.meusImoveis();
+            contagem.textContent = `${items.length} ${items.length === 1 ? 'anúncio ativo' : 'anúncios ativos'}`;
+            vazia.hidden = items.length > 0;
+            lista.hidden = items.length === 0;
+            lista.replaceChildren(...items.map(montarCard));
+        }, 'Carregando seus anúncios…');
+        return;
+    }
     try {
         const { items } = await RoomMatchApi.meusImoveis();
         contagem.textContent = `${items.length} ${items.length === 1 ? 'anúncio ativo' : 'anúncios ativos'}`;
@@ -111,4 +135,7 @@ async function carregar() {
     }
 }
 
-carregar();
+carregar().catch((erro) => {
+    contagem.textContent = erro.message || 'Não foi possível carregar.';
+    lista.replaceChildren();
+});
