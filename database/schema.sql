@@ -418,4 +418,12 @@ ALTER TABLE "notificacoes" ENABLE ROW LEVEL SECURITY;
 
 UPDATE alembic_version SET version_num='3654f88a6b5c' WHERE alembic_version.version_num = '9fe30732904e';
 
+-- Running upgrade 3654f88a6b5c -> aca7d178206c
+
+DROP INDEX ix_recusas_id_recusa;
+
+DROP TABLE recusas;
+
+UPDATE alembic_version SET version_num='aca7d178206c' WHERE alembic_version.version_num = '3654f88a6b5c';
+
 COMMIT;

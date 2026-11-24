@@ -1,5 +1,5 @@
-"""Fase 4 no navegador: rota de ônibus no mapa, tempo no mural, descobrir (curtir,
-recusar, desfazer, histórico), confirmação de e-mail e sino de notificações.
+"""Fase 4 no navegador: rota de ônibus no mapa, tempo no mural, confirmação de e-mail e
+sino de notificações.
 
 Pré-requisitos iguais aos de fluxos_navegador.py, mais:
   - API com GTFS carregado (GTFS_PATHS) que tenha linha entre o Centro de Campinas e a
@@ -71,23 +71,9 @@ with sync_playwright() as p:
     commutes=pg.locator(".commute").all_inner_texts()
     ok("mural mostra tempo de ônibus do cache", any("PUC Campus I" in c for c in commutes), str(commutes))
     stats=pg.locator(".hero").inner_text()
-    # descobrir
-    pg.goto(f"{WEB}/descobrir.html"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(800)
-    cid=lambda: pg.locator("#card-detalhe").get_attribute("href").split("id=")[1] if pg.locator("#card").is_visible() else "(fim)"
-    t1=cid()
-    pg.screenshot(path=f"{SAIDA}/f4_descobrir.png", full_page=True)
-    pg.click("#curtir"); pg.wait_for_timeout(900)
-    t2=cid()
-    ok("curtir passa ao próximo card", t1!=t2, f"{t1} -> {t2}")
-    pg.keyboard.press("ArrowLeft"); pg.wait_for_timeout(900)
-    t3=cid()
-    ok("seta esquerda recusa", t3!=t2, f"{t2} -> {t3}")
-    hist=req("GET","/historico",pg.token)
-    ok("histórico registra curtido e recusado", t1 in [str(i["id"]) for i in hist["curtidos"]] and t2 in [str(i["id"]) for i in hist["recusados"]])
-    mural=[str(i["id"]) for i in req("GET","/imoveis",pg.token)["items"]]
-    ok("recusado some do mural", t2 not in mural, str(mural))
-    pg.click("#desfazer"); pg.wait_for_timeout(700)
-    ok("desfazer volta o card", cid()==t2)
+    # favorito gera notificação para o locador do imóvel 1 (conferida no sino, abaixo)
+    req("DELETE","/favoritos/1",pg.token)
+    req("POST","/favoritos/1",pg.token)
     log.append(("erros morador2", pg.erros)); morador_token=pg.token
     ok("perfil da conta seed aparece confirmado", True)
     ctx.close()

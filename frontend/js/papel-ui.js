@@ -32,23 +32,8 @@
     function personalizarMeusImoveis() {
         if (path() !== 'meus-imoveis.html') return;
         setText('.page-bar h1', 'Painel do locador');
-        setText('.page-bar-sub, .conteudo-sub', 'Gerencie anúncios, visitas e interessados');
+        setText('.page-bar-sub, .conteudo-sub', 'Gerencie anúncios e interessados');
         setText('.conteudo h2', 'Meus anúncios');
-    }
-
-    function personalizarCalendario() {
-        if (path() !== 'calendario-visitas.html') return;
-        if (typeof ehLocador === 'function' && ehLocador()) {
-            setText('.page-bar h1', 'Agenda do locador');
-            setText('.page-bar-sub', 'Pedidos de visita nos seus imóveis');
-            setText('.conteudo h2', 'Visitas recebidas');
-            setText('.conteudo-sub', 'Confirme horários com quem tem interesse nos seus anúncios');
-        } else if (typeof ehMorador === 'function' && ehMorador()) {
-            setText('.page-bar h1', 'Agenda do morador');
-            setText('.page-bar-sub', 'Horários que você pediu');
-            setText('.conteudo h2', 'Minhas visitas');
-            setText('.conteudo-sub', 'Acompanhe pedidos enviados aos locadores');
-        }
     }
 
     function personalizarMensagens() {
@@ -59,12 +44,6 @@
             document.title = 'Interessados · Room Match';
             if (tituloLista) tituloLista.textContent = 'Interessados';
             if (infoH2) infoH2.textContent = 'Seu anúncio';
-            const agendar = document.getElementById('chat-agendar-link');
-            if (agendar) {
-                agendar.textContent = 'Ver agenda de visitas';
-                agendar.href = 'calendario-visitas.html';
-                agendar.hidden = false;
-            }
         } else if (typeof ehMorador === 'function' && ehMorador()) {
             document.title = 'Mensagens · Room Match';
             if (tituloLista) tituloLista.textContent = 'Conversas com locadores';
@@ -119,27 +98,16 @@
         }
     }
 
-    function personalizarAgendar() {
-        if (path() !== 'agendar-visita.html') return;
-        if (typeof ehLocador === 'function' && ehLocador()) {
-            window.location.replace('calendario-visitas.html');
-        }
-        setText('.page-bar h1', 'Agendar visita');
-        setText('.page-bar-sub', 'Pedido enviado ao locador do anúncio');
-    }
-
     function aplicar() {
         if (typeof estaLogado === 'function' && !estaLogado()) return;
         personalizarHome();
         personalizarMeusImoveis();
-        personalizarCalendario();
         personalizarMensagens();
         personalizarPreferencias();
         personalizarPerfil();
         personalizarFavoritos();
         personalizarSegurancaTermos();
         personalizarPublicarEditar();
-        personalizarAgendar();
     }
 
     window.RoomMatchPapelUi = { aplicar };

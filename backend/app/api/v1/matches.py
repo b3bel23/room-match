@@ -154,18 +154,11 @@ def listar_imoveis(
     q: str = "",
     preco_max: float = Query(0, ge=0),
     tag: str = "",
-    incluir_recusados: bool = False,
     usuario: Optional[Usuario] = Depends(usuario_opcional),
     db: Session = Depends(get_db),
 ):
     locatario, user_tags = _contexto_usuario(db, usuario)
-    posts = _anuncios_ativos(db)
-    if locatario is not None and not incluir_recusados:  # RF14: recusado some do mural
-        from app.api.v1.descobrir import ids_recusados
-
-        recusados = ids_recusados(db, locatario.id_locatario)
-        posts = [p for p in posts if p.id_post not in recusados]
-    itens = _montar_todos(db, posts, locatario, user_tags)
+    itens = _montar_todos(db, _anuncios_ativos(db), locatario, user_tags)
     itens = mural_service.filtrar_imoveis(
         itens, tipo=tipo, bairro=bairro or q, tag=tag, preco_max=preco_max
     )

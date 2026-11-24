@@ -1,4 +1,4 @@
-"""Favoritos, visitas, chat e senha, pela API (contrato de frontend/js/mock-api.js)."""
+"""Favoritos, chat e senha, pela API (contrato de frontend/js/mock-api.js)."""
 
 from datetime import date, timedelta
 
@@ -60,49 +60,6 @@ def test_favorito_some_quando_anuncio_e_removido(client, cenario):
     client.post(f"{API}/favoritos/{i}", headers=mor)
     assert client.delete(f"{API}/imoveis/{i}", headers=cenario["loc"]).status_code == 204
     assert client.get(f"{API}/favoritos", headers=mor).json()["ids"] == []
-
-
-# --- visitas -----------------------------------------------------------------
-
-
-def test_morador_pede_visita_e_locador_ve(client, cenario):
-    mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
-    r = client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i, "horario": "Amanhã, 16h"})
-    assert r.status_code == 201, r.text
-    v = r.json()
-    assert v["data"] == (date.today() + timedelta(days=1)).isoformat()
-    assert v["hora"] == "16h" and v["status"] == "pendente"
-    assert v["imovel_titulo"] == "Quarto Cambuí" and v["nome"] == "Ana Souza"
-    assert [x["id"] for x in client.get(f"{API}/visitas", headers=mor).json()["items"]] == [v["id"]]
-    assert [x["id"] for x in client.get(f"{API}/visitas", headers=loc).json()["items"]] == [v["id"]]
-    # mesmo horário de novo: 409
-    assert client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i, "horario": "Amanhã, 16h"}).status_code == 409
-
-
-def test_sabado_vai_para_o_proximo_sabado(client, cenario):
-    v = client.post(
-        f"{API}/visitas", headers=cenario["mor"], json={"imovel_id": cenario["imovel"], "horario": "Sábado, 11h"}
-    ).json()
-    dia = date.fromisoformat(v["data"])
-    assert dia.weekday() == 5 and 0 < (dia - date.today()).days <= 7 and v["hora"] == "11h"
-
-
-def test_visita_regras_de_papel_e_status(client, cenario):
-    mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
-    assert client.post(f"{API}/visitas", headers=loc, json={"imovel_id": i}).status_code == 403
-    v = client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i}).json()
-    assert client.patch(f"{API}/visitas/{v['id']}", headers=mor, json={"status": "confirmada"}).status_code == 403
-    assert client.patch(f"{API}/visitas/{v['id']}", headers=loc, json={"status": "confirmada"}).json()["status"] == "confirmada"
-    outro = cadastrar(client, "outro@x.com")
-    assert client.patch(f"{API}/visitas/{v['id']}", headers=outro, json={"status": "cancelada"}).status_code == 404
-    assert client.patch(f"{API}/visitas/{v['id']}", headers=mor, json={"status": "cancelada"}).json()["status"] == "cancelada"
-
-
-def test_remover_anuncio_apaga_visitas_futuras(client, cenario):
-    mor, i = cenario["mor"], cenario["imovel"]
-    client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i})
-    client.delete(f"{API}/imoveis/{i}", headers=cenario["loc"])
-    assert client.get(f"{API}/visitas", headers=mor).json()["items"] == []
 
 
 # --- chat --------------------------------------------------------------------

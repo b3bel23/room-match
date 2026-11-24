@@ -2,7 +2,7 @@
 
 Percorre os fluxos principais pelo HTTP, como o site faz em modo `live`:
 cadastro, login, perfil, publicar anúncio com foto, mural com afinidade, detalhe,
-favoritar, agendar e confirmar visita, chat nos dois sentidos, pausar e remover.
+favoritar, chat nos dois sentidos, pausar e remover.
 
 Só roda com a variável SMOKE_API_URL (ex.: http://127.0.0.1:8000). Cria contas
 `fumaca-<timestamp>@example.com` e um anúncio de teste, que é removido no fim.
@@ -87,11 +87,6 @@ def test_fluxo_completo(http):
         # favoritar
         assert _ok(http.post(f"/favoritos/{iid}", headers=H_MOR))["favorito"] is True
         assert iid in _ok(http.get("/favoritos", headers=H_MOR))["ids"]
-
-        # visita: morador pede, locador confirma
-        visita = _ok(http.post("/visitas", headers=H_MOR, json={"imovel_id": iid, "horario": "Amanhã, 10h"}), 201)
-        assert visita["id"] in [v["id"] for v in _ok(http.get("/visitas", headers=H_LOC))["items"]]
-        assert _ok(http.patch(f"/visitas/{visita['id']}", headers=H_LOC, json={"status": "confirmada"}))["status"] == "confirmada"
 
         # chat nos dois sentidos
         conversa = _ok(http.post("/conversas", headers=H_MOR, json={"imovel_id": iid, "texto": "Oi!"}))

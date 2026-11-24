@@ -1,4 +1,4 @@
-"""Notificações, descobrir/recusar, histórico, verificação de e-mail e rota pela API."""
+"""Notificações, verificação de e-mail e rota pela API."""
 
 import pytest
 
@@ -15,29 +15,26 @@ def _notificacoes(client, h):
     return client.get(f"{API}/notificacoes", headers=h).json()
 
 
-def test_avisos_de_favorito_visita_e_mensagem(client, cenario):
+def test_avisos_de_favorito_e_mensagem(client, cenario):
     mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
     client.post(f"{API}/favoritos/{i}", headers=mor)
-    v = client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i, "horario": "Amanhã, 16h"}).json()
     conv = client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i, "texto": "Oi, tudo bem?"}).json()
 
     avisos = _notificacoes(client, loc)
-    assert avisos["nao_lidas"] == 3
-    assert [n["tipo"] for n in avisos["items"]] == ["mensagem", "visita", "favorito"]
+    assert avisos["nao_lidas"] == 2
+    assert [n["tipo"] for n in avisos["items"]] == ["mensagem", "favorito"]
     assert avisos["items"][0]["link"] == f"mensagens.html?id={conv['id']}"
     assert "Oi, tudo bem?" in avisos["items"][0]["texto"]
 
     client.post(f"{API}/conversas/{conv['id']}/mensagens", headers=loc, json={"texto": "Tudo!"})
-    client.patch(f"{API}/visitas/{v['id']}", headers=loc, json={"status": "confirmada"})
     do_morador = _notificacoes(client, mor)["items"]
-    assert {n["tipo"] for n in do_morador} == {"mensagem", "visita"}
-    assert any("confirmada" in n["texto"] for n in do_morador)
+    assert [n["tipo"] for n in do_morador] == ["mensagem"] and "Tudo!" in do_morador[0]["texto"]
 
 
 def test_marcar_lidas(client, cenario):
     mor, loc, i = cenario["mor"], cenario["loc"], cenario["imovel"]
     client.post(f"{API}/favoritos/{i}", headers=mor)
-    client.post(f"{API}/visitas", headers=mor, json={"imovel_id": i})
+    client.post(f"{API}/conversas", headers=mor, json={"imovel_id": i})
     itens = _notificacoes(client, loc)["items"]
     client.post(f"{API}/notificacoes/lidas", headers=loc, json={"ids": [itens[0]["id"]]})
     assert _notificacoes(client, loc)["nao_lidas"] == 1
@@ -45,38 +42,6 @@ def test_marcar_lidas(client, cenario):
     assert _notificacoes(client, loc)["nao_lidas"] == 0
     # ninguém marca as notificações de outra pessoa
     assert client.post(f"{API}/notificacoes/lidas", headers=mor, json={"ids": [itens[1]["id"]]}).json()["marcadas"] == 0
-
-
-# --- descobrir / recusar / histórico -------------------------------------------
-
-
-def test_recusar_tira_do_mural_e_do_descobrir(client, cenario):
-    mor, i = cenario["mor"], cenario["imovel"]
-    assert [x["id"] for x in client.get(f"{API}/descobrir", headers=mor).json()["items"]] == [i]
-    client.post(f"{API}/favoritos/{i}", headers=mor)
-    assert client.post(f"{API}/imoveis/{i}/recusar", headers=mor).json()["recusado"] is True
-    assert client.get(f"{API}/favoritos", headers=mor).json()["ids"] == []  # recusar tira o favorito
-    assert client.get(f"{API}/imoveis", headers=mor).json()["items"] == []
-    assert [x["id"] for x in client.get(f"{API}/imoveis?incluir_recusados=true", headers=mor).json()["items"]] == [i]
-    assert client.get(f"{API}/descobrir", headers=mor).json()["items"] == []
-    # visitante e outros moradores continuam vendo
-    assert len(client.get(f"{API}/imoveis").json()["items"]) == 1
-    hist = client.get(f"{API}/historico", headers=mor).json()
-    assert hist["curtidos"] == [] and [x["id"] for x in hist["recusados"]] == [i]
-    client.delete(f"{API}/imoveis/{i}/recusar", headers=mor)
-    assert len(client.get(f"{API}/imoveis", headers=mor).json()["items"]) == 1
-
-
-def test_curtido_sai_do_descobrir_e_entra_no_historico(client, cenario):
-    mor, i = cenario["mor"], cenario["imovel"]
-    client.post(f"{API}/favoritos/{i}", headers=mor)
-    assert client.get(f"{API}/descobrir", headers=mor).json()["items"] == []
-    assert [x["id"] for x in client.get(f"{API}/historico", headers=mor).json()["curtidos"]] == [i]
-
-
-def test_descobrir_so_morador(client, cenario):
-    assert client.get(f"{API}/descobrir", headers=cenario["loc"]).status_code == 403
-    assert client.post(f"{API}/imoveis/{cenario['imovel']}/recusar", headers=cenario["loc"]).status_code == 403
 
 
 # --- verificação de e-mail ---------------------------------------------------------

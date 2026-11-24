@@ -5,7 +5,7 @@ from app.core.database import Base
 
 
 class Notificacao(Base):
-    """Aviso dentro do site (RF17/RF35): mensagem nova, interesse no anúncio, visita."""
+    """Aviso dentro do site (RF17/RF35): mensagem nova e interesse no anúncio."""
 
     __tablename__ = "notificacoes"
 
@@ -13,7 +13,7 @@ class Notificacao(Base):
     id_usuario = Column(
         Integer, ForeignKey("usuarios.id_usuario", ondelete="CASCADE"), nullable=False, index=True
     )
-    tipo = Column(String(30), nullable=False)  # mensagem, conversa, favorito, visita
+    tipo = Column(String(30), nullable=False)  # mensagem, favorito
     texto = Column(String(255), nullable=False)
     link = Column(String(255))  # caminho relativo a frontend/pages (ex.: mensagens.html?id=3)
     lida = Column(Boolean, nullable=False, default=False)

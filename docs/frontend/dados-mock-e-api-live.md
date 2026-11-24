@@ -74,8 +74,7 @@ Mapa JSON ↔ tabelas:
 | `aluguel`, `condominio`, `iptu`, `contas` | `imovel.valor_*` |
 | `cep`, `rua`, `numero`, `complemento?`, `bairro`, `cidade`, `estado` | `enderecos_imovel` / `EnderecoImovel` |
 | favoritos / curtidas | `likes` |
-| recusados (descobrir) | `recusas` |
-| visitas / conversas / mensagens / notificações | tabelas homônimas (plural) |
+| conversas / mensagens / notificações | tabelas homônimas (plural) |
 | `destino` (perfil) | `locatarios.preferencias_moradia.destino` |
 
 **Riscos de conflito (backend deve espelhar):**
@@ -84,7 +83,7 @@ Mapa JSON ↔ tabelas:
 - Query mural: `tipo`, `bairro`, `preco_max`, `tag` (não inventar `precoMax` / `max_price`).
 - Preferências: sempre `orcamento_maximo` e `limiar_compatibilidade` no JSON.
 - `PATCH /me` com `papel`: migrar entidade locatario↔locador; nunca aceitar `id`/`senha` nesse body.
-- Visitas: `POST /visitas` só locatário; front agenda a partir do chat (`?id=`).
+- Visitas: não existem no site; são combinadas pelo chat.
 - Auth: `Authorization: Bearer` + `{ access_token, user }` no login/register.
 - Fotos imóvel: `capa` + `fotos[]` (URLs); front ainda tem fallback estático.
 

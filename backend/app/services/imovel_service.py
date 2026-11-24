@@ -186,13 +186,7 @@ def atualizar_anuncio(db: Session, post: Post, dados: AnuncioUpdate) -> Post:
 
 def remover_anuncio(db: Session, post: Post) -> None:
     """Remoção lógica: preserva likes e conversas (somem das listas porque o anúncio não
-    está mais ativo) e apaga as visitas que ainda iam acontecer, como no mock."""
-    from app.models.visita import Visita
-
-    db.query(Visita).filter(
-        Visita.id_imovel == post.id_imovel,
-        Visita.status_visita.in_(("pendente", "confirmada", "agendada")),
-    ).delete(synchronize_session=False)
+    está mais ativo)."""
     post.status_anuncio = "removido"
     post.imovel.status_disponibilidade = "indisponivel"
     locador = db.get(Locador, post.id_locador)
