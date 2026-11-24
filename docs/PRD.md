@@ -335,6 +335,32 @@ fotos, classificação e tags) e o publica.
 
 **Telas:** `frontend/pages/publicar-imovel.html`.
 
+### Layout das telas de formulário no computador
+
+**Status:** concluída.
+
+**O que faz:** em telas de computador (a partir de 1100 px de largura), os formulários
+longos usam a largura da tela em vez de uma coluna estreita. Abaixo disso (notebook pequeno,
+tablet e celular) tudo continua uma coisa embaixo da outra.
+
+**Regras de negócio e decisões**
+- Preferências: Orçamento, Compatibilidade mínima e Meio de transporte à esquerda; Meus
+  destinos à direita; "O que combina comigo" e "Meus limites" lado a lado embaixo. Para o
+  Locador (que só vê os hábitos), os dois blocos de hábitos ficam lado a lado.
+- Perfil: foto, nome, telefone, gênero e e-mail à esquerda; Ocupação, Situação de emprego e
+  Faculdade à direita; Tipo de perfil embaixo, na largura toda. No celular o E-mail passou
+  a vir logo depois de Gênero.
+- Publicar anúncio: título, descrição, tipo e valores à esquerda; endereço à direita; fotos e
+  tags com a mesma largura do formulário.
+- Largura máxima dos formulários: 1180 px. Os campos e seus nomes não mudaram, então o
+  envio continua igual.
+- Favoritos, Meus anúncios e Mensagens já usavam a largura toda; Segurança e Termos são
+  curtas e ficam mais legíveis estreitas; Editar anúncio é um cartão centralizado. Essas
+  não mudaram.
+
+**Telas:** `preferencias.html`, `perfil.html`, `publicar-imovel.html`
+(`css/config.css`, `css/publicar-imovel.css`).
+
 ### Tela "Conta criada" (pós-cadastro)
 
 **Status:** concluída.

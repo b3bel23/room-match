@@ -277,3 +277,34 @@ html:has(body.publicar-page) {
 .fotos .foto-adicionar[hidden] {
     display: none;
 }
+
+/* Computador: dados e valores à esquerda, endereço à direita; tags mais largas. */
+@media (min-width: 1100px) {
+    .campos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-rows: repeat(6, auto) 1fr;
+        column-gap: 40px;
+        row-gap: 20px;
+        max-width: 1180px;
+    }
+
+    .campos > .campo {
+        grid-column: 1;
+    }
+
+    .campos > .campo:last-child {
+        align-self: start;
+    }
+
+    .campos > .endereco-bloco {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        align-self: start;
+    }
+
+    .tags-secao,
+    .fotos {
+        max-width: 1180px;
+    }
+}
