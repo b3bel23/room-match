@@ -706,3 +706,25 @@
     line-height: 1.35;
     color: var(--color-text-muted);
 }
+
+/* Tags de convivência: grade alinhada, cartões da mesma largura e altura por linha. */
+#tags-adesao,
+#tags-restricao {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: 8px;
+}
+
+#tags-adesao .pilula,
+#tags-restricao .pilula {
+    display: flex;
+    min-width: 0;
+}
+
+#tags-adesao .pilula .pilula-corpo,
+#tags-restricao .pilula .pilula-corpo {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}

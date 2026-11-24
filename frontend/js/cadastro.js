@@ -451,7 +451,7 @@ function parseReais(texto) {
 const orcamento = document.getElementById('orcamento');
 const orcamentoValor = document.getElementById('orcamento-valor');
 const ORCAMENTO_MIN = Number(orcamento?.min) || 0;
-const ORCAMENTO_MAX = Number(orcamento?.max) || 100000;
+const ORCAMENTO_MAX = Number(orcamento?.max) || 30000;
 
 function limitarOrcamento(n) {
     if (!Number.isFinite(n)) return ORCAMENTO_MIN;
