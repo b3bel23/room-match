@@ -1,9 +1,10 @@
 """
 Dados fictícios para desenvolvimento e demonstração (KAN-30).
 
-Espelha o catálogo do front (frontend/js/mock-api.js e tags-catalogo.js): mesmos usuários
-de demonstração, os 4 anúncios que têm fotos em frontend/assets/imoveis/, tags de
-convivência e comodidades de anúncio (Wi-Fi etc. — fora do match).
+Espelha o catálogo do front (frontend/js/mock-api.js e tags-catalogo.js): usuários
+de demonstração, anúncios com fotos em frontend/assets/imoveis/{slug}/ (4 fotos cada),
+tags de convivência e comodidades de anúncio (Wi-Fi etc. — fora do match).
+Anúncios novos: 1 locador por vaga; sem lista de residentes no anúncio.
 
 É idempotente: cada registro é buscado pela chave natural (e-mail, nome da tag, título do
 anúncio...) e só criado se não existir, então rodar duas vezes não duplica nada.
@@ -11,12 +12,21 @@ anúncio...) e só criado se não existir, então rodar duas vezes não duplica 
 
 from __future__ import annotations
 
+import logging
 from datetime import date
+from pathlib import Path
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.security import hash_password
+from app.services import storage_service
+
+log = logging.getLogger("roommatch.seed")
+
+# frontend/assets/imoveis/{slug}/1.jpg … (repo root = parents[3] from this file)
+_ASSETS_IMOVEIS = Path(__file__).resolve().parents[3] / "frontend" / "assets" / "imoveis"
 from app.models.carrossel_imagem import CarrosselImagem
 from app.models.endereco_imovel import EnderecoImovel
 from app.models.imovel import Imovel
@@ -127,6 +137,97 @@ USUARIOS = [
         "foto": "perfil-pedro.jpg",
         "tags": ["Sem Festas", "Organizado"],
     },
+    # Locadores extras — 1 anúncio novo cada (demo realista RMC).
+    {
+        "email": "locador3@demo.com", "nome": "Fernanda Dias", "papel": "locador", "cpf_cnpj": "33333333333",
+        "telefone": "(19) 99120-4410", "genero": "Mulher Cisgênero", "ocupacao": "cbo-2",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1988, 2, 14),
+        "bio": "Locadora de quartos em Barão Geraldo, perto da UNICAMP.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Sem Fumo", "Silêncio Noturno", "Organizado"],
+    },
+    {
+        "email": "locador4@demo.com", "nome": "Patrícia Nogueira", "papel": "locador", "cpf_cnpj": "44444444444",
+        "telefone": "(19) 99231-5521", "genero": "Mulher Cisgênero", "ocupacao": "cbo-4",
+        "emprego": "autonomo", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1979, 8, 21),
+        "bio": "Administro pensionato feminino em Barão. Contas inclusas e casa organizada.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Sem Festas", "Organizado", "Silêncio Noturno"],
+    },
+    {
+        "email": "locador5@demo.com", "nome": "Ricardo Almeida", "papel": "locador", "cpf_cnpj": "55555555555",
+        "telefone": "(19) 98342-6632", "genero": "Homem Cisgênero", "ocupacao": "cbo-1",
+        "emprego": "empregador", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1984, 5, 9),
+        "bio": "Studios e kitnets mobiliados no Cambuí para profissionais e pós-graduação.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Trabalho em Casa", "Silêncio Noturno", "Sem Fumo"],
+    },
+    {
+        "email": "locador6@demo.com", "nome": "Sofia Martins", "papel": "locador", "cpf_cnpj": "66666666666",
+        "telefone": "(19) 98453-7743", "genero": "Mulher Cisgênero", "ocupacao": "cbo-2",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1990, 11, 30),
+        "bio": "Quarto em apartamento no Centro, bom para quem trabalha em plantão ou comércio.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Trabalho em Casa", "LGBTQIA+ Acolhedor", "Sem Festas"],
+    },
+    {
+        "email": "locador7@demo.com", "nome": "Eduardo Pires", "papel": "locador", "cpf_cnpj": "77777777777",
+        "telefone": "(19) 98564-8854", "genero": "Homem Cisgênero", "ocupacao": "cbo-5",
+        "emprego": "autonomo", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1987, 3, 17),
+        "bio": "Casa compartilhada em bairro residencial com custo mais acessível.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Aceita Animais", "Sem Festas", "Organizado"],
+    },
+    {
+        "email": "locador8@demo.com", "nome": "Camila Ferreira", "papel": "locador", "cpf_cnpj": "88888888888",
+        "telefone": "(19) 98675-9965", "genero": "Mulher Cisgênero", "ocupacao": "cbo-2",
+        "emprego": "autonomo", "faculdade": "puc-campinas-campus1",
+        "cidade_atual": "Campinas", "data_nascimento": date(1991, 7, 4),
+        "bio": "Suítes perto do Shopping Dom Pedro e da região da Nova Campinas.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Trabalho em Casa", "Silêncio Noturno", "LGBTQIA+ Acolhedor"],
+    },
+    {
+        "email": "locador9@demo.com", "nome": "Bruno Teixeira", "papel": "locador", "cpf_cnpj": "99999999999",
+        "telefone": "(19) 98786-1076", "genero": "Homem Cisgênero", "ocupacao": "cbo-3",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1985, 12, 12),
+        "bio": "Kitnets compactas em Barão Geraldo para quem quer privacidade perto do campus.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Trabalho em Casa", "Sem Fumo", "Organizado"],
+    },
+    {
+        "email": "locador10@demo.com", "nome": "Larissa Moura", "papel": "locador", "cpf_cnpj": "10101010101",
+        "telefone": "(19) 98897-2187", "genero": "Mulher Cisgênero", "ocupacao": "cbo-4",
+        "emprego": "servidor", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1983, 9, 25),
+        "bio": "República mista no Taquaral, perto do parque e do comércio.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa"],
+    },
+    {
+        "email": "locador11@demo.com", "nome": "Gustavo Ramos", "papel": "locador", "cpf_cnpj": "12121212121",
+        "telefone": "(19) 98908-3298", "genero": "Homem Cisgênero", "ocupacao": "cbo-7",
+        "emprego": "clt", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1982, 1, 8),
+        "bio": "Quarto em casa no Parque Via Norte / Costa e Silva — opção econômica.",
+        "foto": "perfil-carlos.jpg",
+        "tags": ["Sem Festas", "Aceita Animais", "Organizado"],
+    },
+    {
+        "email": "locador12@demo.com", "nome": "Isabela Duarte", "papel": "locador", "cpf_cnpj": "13131313131",
+        "telefone": "(19) 99019-4309", "genero": "Mulher Cisgênero", "ocupacao": "cbo-2",
+        "emprego": "autonomo", "faculdade": "",
+        "cidade_atual": "Campinas", "data_nascimento": date(1989, 6, 16),
+        "bio": "Suíte em apartamento no Cambuí com foco em silêncio e home office.",
+        "foto": "perfil-ana.jpg",
+        "tags": ["Silêncio Noturno", "Trabalho em Casa", "Sem Fumo"],
+    },
 ]
 
 # `slug` é a pasta em frontend/assets/imoveis/ (4 fotos cada); `moradores` são e-mails de USUARIOS.
@@ -136,9 +237,9 @@ IMOVEIS = [
      "tipo": "República", "classificacao": "Mista",
      "rua": "Rua Benedito Alves Aranha", "numero": "450", "bairro": "Barão Geraldo",
      "cep": "13083-050", "lat": -22.8190, "lng": -47.0760,
-     "aluguel": 650, "condominio": 0, "iptu": 45, "contas": 120, "area_m2": 14,
+     "aluguel": 950, "condominio": 0, "iptu": 45, "contas": 120, "area_m2": 14,
      "tags": ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa", "Sem Festas", "Wi-Fi", "Mobiliado"],
-     "moradores": ["residente1@demo.com", "residente2@demo.com"],
+     "moradores": [],
      "descricao": (
          "Quarto individual mobiliado em república estudantil a ~8 minutos a pé da PUC Campinas (Campus I). "
          "Casa com 4 quartos, sala, cozinha completa e área de serviço. Wi-Fi fibra, limpeza da área comum "
@@ -149,12 +250,12 @@ IMOVEIS = [
      "tipo": "Kitnet", "classificacao": "Mista",
      "rua": "Rua Coronel Quirino", "numero": "200", "bairro": "Cambuí",
      "cep": "13025-001", "lat": -22.8930, "lng": -47.0480,
-     "aluguel": 1100, "condominio": 280, "iptu": 55, "contas": 90, "area_m2": 28,
+     "aluguel": 2400, "condominio": 350, "iptu": 80, "contas": 0, "area_m2": 28,
      "tags": ["Trabalho em Casa", "Mobiliado", "Silêncio Noturno", "LGBTQIA+ Acolhedor", "Ar-condicionado", "Wi-Fi"],
      "moradores": [],
      "descricao": (
          "Kitnet independente de 28 m² no Cambuí, 100% mobiliada com ar-condicionado e varanda. "
-         "Prédio com portaria 24h e elevador. Perto do comércio e a ~12 min de ônibus da UNICAMP."
+         "Prédio com portaria 24h e elevador. Contas básicas inclusas no pacote. Perto do comércio."
      )},
     {"slug": "casa-sousas", "locador": "locador@demo.com",
      "titulo": "Quarto em casa com quintal · Sousas",
@@ -163,10 +264,10 @@ IMOVEIS = [
      "cep": "13106-000", "lat": -22.8770, "lng": -47.0080,
      "aluguel": 580, "condominio": 0, "iptu": 70, "contas": 110, "area_m2": 16,
      "tags": ["Aceita Animais", "Sem Festas", "Trabalho em Casa", "Wi-Fi", "Mobiliado"],
-     "moradores": ["residente3@demo.com"],
+     "moradores": [],
      "descricao": (
          "Quarto arejado em casa térrea em Sousas com quintal, churrasqueira e garagem. "
-         "Divide com mais 2 pessoas; pet friendly; sem festas. Contas divididas em 3."
+         "Casa compartilhada; pet friendly; sem festas. Contas divididas entre os moradores."
      )},
     {"slug": "suite-taquaral", "locador": "locador@demo.com",
      "titulo": "Suíte com banheiro privativo · Taquaral",
@@ -179,6 +280,136 @@ IMOVEIS = [
      "descricao": (
          "Suíte (quarto + banheiro + closet) em apartamento no Taquaral, república feminina. "
          "Perto do Parque Portugal; condomínio com academia e portaria. Contas já estimadas no rateio."
+     )},
+    {"slug": "republica-masc-barao", "locador": "locador3@demo.com",
+     "titulo": "Quarto em república masculina · Barão Geraldo",
+     "tipo": "República", "classificacao": "Masculina",
+     "rua": "Rua Salvador de Toledo Piza Júnior", "numero": "312", "bairro": "Barão Geraldo",
+     "cep": "13083-200", "lat": -22.8165, "lng": -47.0690,
+     "aluguel": 750, "condominio": 0, "iptu": 40, "contas": 130, "area_m2": 12,
+     "tags": ["Silêncio Noturno", "Trabalho em Casa", "Sem Fumo", "Wi-Fi", "Mobiliado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto individual em república só masculina a ~10 min a pé da UNICAMP. "
+         "Casa com 5 quartos, cozinha completa, lavanderia e Wi-Fi fibra. Silêncio após 23h; "
+         "contas (água, luz, internet) no rateio. Ideal para graduação ou mestrado."
+     )},
+    {"slug": "pensionato-fem-barao", "locador": "locador4@demo.com",
+     "titulo": "Quarto em pensionato feminino · Barão Geraldo",
+     "tipo": "República", "classificacao": "Feminina",
+     "rua": "Rua José Cantusio", "numero": "88", "bairro": "Barão Geraldo",
+     "cep": "13084-010", "lat": -22.8210, "lng": -47.0725,
+     "aluguel": 1100, "condominio": 0, "iptu": 0, "contas": 0, "area_m2": 14,
+     "tags": ["Sem Festas", "Organizado", "Silêncio Noturno", "Wi-Fi", "Mobiliado", "Sem Fumo"],
+     "moradores": [],
+     "descricao": (
+         "Quarto grande em pensionato feminino em Barão Geraldo. Água, energia, gás e internet "
+         "inclusos no valor. Casa administrada, mobiliada, limpeza das áreas comuns incluída. "
+         "Ambiente tranquilo para estudo; visitas com horário."
+     )},
+    {"slug": "kitnet-studio-cambui", "locador": "locador5@demo.com",
+     "titulo": "Studio mobiliado 20 m² · Cambuí",
+     "tipo": "Kitnet", "classificacao": "Mista",
+     "rua": "Avenida Benjamin Constant", "numero": "1540", "bairro": "Cambuí",
+     "cep": "13025-245", "lat": -22.8965, "lng": -47.0510,
+     "aluguel": 3000, "condominio": 0, "iptu": 0, "contas": 0, "area_m2": 20,
+     "tags": ["Mobiliado", "Ar-condicionado", "Wi-Fi", "Trabalho em Casa", "Silêncio Noturno"],
+     "moradores": [],
+     "descricao": (
+         "Studio de 20 m² no Cambuí, mobiliado com ar-condicionado, cama de casal, cooktop e "
+         "micro-ondas. Pacote com água, luz, internet, condomínio e IPTU inclusos. "
+         "Perto do Bosque dos Jequitibás e do comércio da região."
+     )},
+    {"slug": "quarto-apto-centro", "locador": "locador6@demo.com",
+     "titulo": "Quarto em apartamento · Centro",
+     "tipo": "Apartamento", "classificacao": "Mista",
+     "rua": "Rua Barão de Jaguara", "numero": "980", "bairro": "Centro",
+     "cep": "13015-001", "lat": -22.9058, "lng": -47.0605,
+     "aluguel": 900, "condominio": 220, "iptu": 50, "contas": 100, "area_m2": 13,
+     "tags": ["Trabalho em Casa", "Wi-Fi", "Mobiliado", "LGBTQIA+ Acolhedor", "Sem Festas"],
+     "moradores": [],
+     "descricao": (
+         "Quarto mobiliado em apartamento no Centro de Campinas, perto de pontos de ônibus e "
+         "comércio. Bom para quem trabalha em plantão ou no centro expandido. "
+         "Áreas comuns organizadas; sem festas."
+     )},
+    {"slug": "casa-jardim-eulina", "locador": "locador7@demo.com",
+     "titulo": "Quarto em casa compartilhada · Jardim Eulina",
+     "tipo": "Casa", "classificacao": "Mista",
+     "rua": "Rua Doutor Antônio Carlos Couto de Barros", "numero": "245", "bairro": "Jardim Eulina",
+     "cep": "13063-010", "lat": -22.9280, "lng": -47.0900,
+     "aluguel": 600, "condominio": 0, "iptu": 45, "contas": 0, "area_m2": 11,
+     "tags": ["Aceita Animais", "Sem Festas", "Wi-Fi", "Mobiliado", "Organizado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto em casa térrea no Jardim Eulina — opção mais acessível longe do Barão. "
+         "Água, luz e internet inclusas. Pet pequeno ok; ambiente familiar e sem festas. "
+         "Acesso a ônibus para o Centro e UNICAMP."
+     )},
+    {"slug": "suite-nova-campinas", "locador": "locador8@demo.com",
+     "titulo": "Suíte perto do Dom Pedro · Nova Campinas",
+     "tipo": "Apartamento", "classificacao": "Mista",
+     "rua": "Rua Dr. Romeu Tortima", "numero": "510", "bairro": "Nova Campinas",
+     "cep": "13092-310", "lat": -22.8520, "lng": -47.0250,
+     "aluguel": 1050, "condominio": 250, "iptu": 70, "contas": 90, "area_m2": 17,
+     "tags": ["Trabalho em Casa", "Silêncio Noturno", "Ar-condicionado", "Wi-Fi", "Mobiliado", "LGBTQIA+ Acolhedor"],
+     "moradores": [],
+     "descricao": (
+         "Suíte com banheiro privativo em apartamento perto do Shopping Dom Pedro. "
+         "Escrivania para home office, ar-condicionado e Wi-Fi. Condomínio com portaria. "
+         "Perfil misto, foco em silêncio e estudo."
+     )},
+    {"slug": "kitnet-barao", "locador": "locador9@demo.com",
+     "titulo": "Kitnet compacta · Barão Geraldo",
+     "tipo": "Kitnet", "classificacao": "Mista",
+     "rua": "Avenida 1", "numero": "720", "bairro": "Barão Geraldo",
+     "cep": "13083-750", "lat": -22.8240, "lng": -47.0780,
+     "aluguel": 1600, "condominio": 180, "iptu": 40, "contas": 80, "area_m2": 22,
+     "tags": ["Mobiliado", "Wi-Fi", "Trabalho em Casa", "Sem Fumo", "Ar-condicionado"],
+     "moradores": [],
+     "descricao": (
+         "Kitnet compacta de 22 m² em Barão Geraldo, independente, mobiliada com ar-condicionado. "
+         "Privacidade total (não é quarto compartilhado). Boa para quem quer ficar perto do campus "
+         "sem viver em república."
+     )},
+    {"slug": "republica-taquaral", "locador": "locador10@demo.com",
+     "titulo": "Quarto em república mista · Taquaral",
+     "tipo": "República", "classificacao": "Mista",
+     "rua": "Rua Coronel Quirino", "numero": "1850", "bairro": "Taquaral",
+     "cep": "13025-002", "lat": -22.8755, "lng": -47.0500,
+     "aluguel": 680, "condominio": 0, "iptu": 35, "contas": 120, "area_m2": 12,
+     "tags": ["Aceita Animais", "Silêncio Noturno", "Trabalho em Casa", "Wi-Fi", "Mobiliado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto individual em república mista no Taquaral, perto do Parque Portugal. "
+         "Casa com cozinha equipada, sala e Wi-Fi. Pet pequeno sob combinado. "
+         "Contas no rateio; silêncio noturno combinado entre os moradores."
+     )},
+    {"slug": "casa-costa-silva", "locador": "locador11@demo.com",
+     "titulo": "Quarto econômico em casa · Costa e Silva",
+     "tipo": "Casa", "classificacao": "Mista",
+     "rua": "Rua Cirilo Chiavegato", "numero": "64", "bairro": "Parque Via Norte",
+     "cep": "13088-120", "lat": -22.8650, "lng": -47.0350,
+     "aluguel": 550, "condominio": 0, "iptu": 30, "contas": 0, "area_m2": 10,
+     "tags": ["Sem Festas", "Aceita Animais", "Wi-Fi", "Mobiliado", "Organizado"],
+     "moradores": [],
+     "descricao": (
+         "Quarto mobiliado em casa no Parque Via Norte / região Costa e Silva. "
+         "Valor acessível com água, luz e internet inclusas. Ambiente organizado, "
+         "sem festas; pet sob conversa. Opção econômica com acesso à Dom Pedro."
+     )},
+    {"slug": "suite-apto-cambui", "locador": "locador12@demo.com",
+     "titulo": "Suíte silenciosa em apartamento · Cambuí",
+     "tipo": "Apartamento", "classificacao": "Feminina",
+     "rua": "Rua Maria Monteiro", "numero": "810", "bairro": "Cambuí",
+     "cep": "13025-151", "lat": -22.8910, "lng": -47.0460,
+     "aluguel": 1350, "condominio": 320, "iptu": 75, "contas": 85, "area_m2": 16,
+     "tags": ["Silêncio Noturno", "Trabalho em Casa", "Sem Fumo", "Ar-condicionado", "Mobiliado", "Wi-Fi"],
+     "moradores": [],
+     "descricao": (
+         "Suíte em apartamento no Cambuí (república feminina), com ar-condicionado e escrivaninha. "
+         "Prédio silencioso, portaria e elevador. Foco em home office e descanso. "
+         "Contas rateadas; sem fumantes."
      )},
 ]
 
@@ -330,6 +561,34 @@ def _usuario(db: Session, dados: dict, senha_hash: str) -> Usuario:
     return usuario
 
 
+def _url_foto_seed(slug: str, ordem: int, id_imovel: int) -> str:
+    """Sobe o JPG local para o Storage (se configurado) ou usa o caminho do Pages."""
+    relativo_pages = f"../assets/imoveis/{slug}/{ordem}.jpg"
+    arquivo = _ASSETS_IMOVEIS / slug / f"{ordem}.jpg"
+    if not arquivo.is_file():
+        log.warning("Foto seed ausente: %s", arquivo)
+        return relativo_pages
+    if settings.storage_backend.lower() == "supabase":
+        try:
+            return storage_service.salvar(
+                f"imoveis/seed/{slug}/{ordem}.jpg",
+                arquivo.read_bytes(),
+                upsert=True,
+            )
+        except storage_service.ErroStorage:
+            log.exception("Falha ao subir foto seed %s/%s.jpg; mantém URL do Pages", slug, ordem)
+            return relativo_pages
+    # Dev local: espelha em uploads/ para a API servir; senão URL do Pages.
+    try:
+        return storage_service.salvar(
+            f"imoveis/{id_imovel}/{ordem}.jpg",
+            arquivo.read_bytes(),
+            upsert=True,
+        )
+    except Exception:
+        return relativo_pages
+
+
 def _imovel(db: Session, dados: dict, usuarios: dict[str, Usuario]) -> Post:
     locador = usuarios[dados["locador"]]
     post = (
@@ -398,17 +657,34 @@ def _imovel(db: Session, dados: dict, usuarios: dict[str, Usuario]) -> Post:
         if db.get(ImovelTag, (id_imovel, id_tag)) is None:
             db.add(ImovelTag(id_imovel=id_imovel, id_tag=id_tag))
 
-    for ordem in range(1, 5):  # mesmos caminhos que o front usa (relativos a /pages/*.html)
-        url = f"../assets/imoveis/{dados['slug']}/{ordem}.jpg"
+    for ordem in range(1, 5):
+        url = _url_foto_seed(dados["slug"], ordem, id_imovel)
         existe = (
             db.query(CarrosselImagem)
-            .filter(CarrosselImagem.id_imovel == id_imovel, CarrosselImagem.url_imagem == url)
+            .filter(
+                CarrosselImagem.id_imovel == id_imovel,
+                CarrosselImagem.ordem_exibicao == ordem,
+            )
             .first()
         )
         if existe is None:
             db.add(CarrosselImagem(id_imovel=id_imovel, url_imagem=url, ordem_exibicao=ordem))
+        elif existe.url_imagem != url:
+            # Re-seed: troca caminho relativo antigo por URL do Storage (ou vice-versa).
+            existe.url_imagem = url
 
-    for email in dados["moradores"]:
+    emails_moradores = set(dados.get("moradores") or [])
+    # Remove integrantes que não estão mais no catálogo (anúncios sem residentes).
+    for liga in (
+        db.query(IntegranteImovel).filter(IntegranteImovel.id_imovel == id_imovel).all()
+    ):
+        email = next(
+            (e for e, u in usuarios.items() if u.id_usuario == liga.id_pessoa),
+            None,
+        )
+        if email not in emails_moradores:
+            db.delete(liga)
+    for email in emails_moradores:
         morador = usuarios[email]
         ja_mora = (
             db.query(IntegranteImovel)

@@ -609,15 +609,18 @@ telas e a afinidade funcionarem sem cadastro manual.
 - Se `DB_HOST` não for local (ex.: Supabase), exige `--confirmar-banco-remoto`.
 
 **O que cria**
-- 14 tags do catálogo do front (`frontend/js/tags-catalogo.js`).
-- 8 usuários `@demo.com` com perfil completo (schema `usuarios`): nome, telefone realista,
-  gênero, ocupação/emprego (CBO), faculdade, cidade, data de nascimento, bio e foto de
-  perfil. Papéis: 2 locadores, 3 moradores (orçamento, limiar, destino, tags) e 3
-  residentes nos imóveis. Fotos em `frontend/assets/perfis/` e no Storage
-  (`perfis/demo/{slug}.jpg`).
-- 4 anúncios com as fotos que já existem em `frontend/assets/imoveis/` (república Barão
-  Geraldo, kitnet Cambuí, casa Sousas, suíte Taquaral), com endereço, tags, 4 fotos cada,
-  moradores atuais e os mesmos preços totais do mock (850, 1200, 720, 980).
+- Tags do catálogo do front (`frontend/js/tags-catalogo.js`).
+- 18 usuários `@demo.com` com perfil completo (schema `usuarios`): nome, telefone realista,
+  gênero, ocupação/emprego, faculdade, cidade, data de nascimento, bio e foto de perfil.
+  Papéis: **12 locadores** (1 por anúncio novo + os 2 originais), **3 moradores**
+  (orçamento, limiar, destinos, tags) e 3 contas `residente*` sem papel de busca (legado;
+  anúncios **não** listam residentes).
+- **14 anúncios** com 4 fotos cada em `frontend/assets/imoveis/{slug}/`: 4 originais
+  (preços alinhados ao mercado — kitnet Cambuí ~R$ 2.400) + 10 novos realistas
+  (república masculina / pensionato feminino em Barão, studio Cambuí, quarto Centro,
+  casa Jardim Eulina, suíte Nova Campinas, kitnet Barão, república Taquaral, casa
+  Costa e Silva / Via Norte, suíte Cambuí). Textos e nomes fictícios; faixas de preço
+  inspiradas em anúncios reais da RMC.
 - 2 favoritos.
 
 **Regras e decisões**
@@ -628,10 +631,11 @@ telas e a afinidade funcionarem sem cadastro manual.
 - Fotos de imóvel: caminho relativo do front (`../assets/imoveis/{slug}/{n}.jpg`) ou URL
   pública do Storage. Fotos de perfil: URL do Storage (live) ou
   `../assets/perfis/perfil-*.jpg` (mock).
+- Sem nomes de residentes no anúncio (`moradores: []`).
 
 **Pendências**
-- Executar no banco real e conferir com o front em modo `live`.
-- Só há fotos para 4 imóveis; mais anúncios exigem novos arquivos em `frontend/assets/`.
+- Executar o seed no banco real (Supabase) com `--confirmar-banco-remoto` e conferir o
+  mural em modo `live` / Render.
 
 ### Login e cadastro no contrato do front
 

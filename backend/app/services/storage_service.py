@@ -34,7 +34,7 @@ def _supabase() -> bool:
     return settings.storage_backend.lower() == "supabase"
 
 
-def _requisicao(metodo: str, url: str, corpo: bytes | None, tipo: str) -> None:
+def _requisicao(metodo: str, url: str, corpo: bytes | None, tipo: str, *, upsert: bool = False) -> None:
     pedido = urllib.request.Request(
         url,
         data=corpo,
@@ -43,11 +43,11 @@ def _requisicao(metodo: str, url: str, corpo: bytes | None, tipo: str) -> None:
             "Authorization": f"Bearer {settings.supabase_service_key}",
             "apikey": settings.supabase_service_key,
             "Content-Type": tipo,
-            "x-upsert": "false",
+            "x-upsert": "true" if upsert else "false",
         },
     )
     try:
-        with urllib.request.urlopen(pedido, timeout=20) as resposta:
+        with urllib.request.urlopen(pedido, timeout=60) as resposta:
             resposta.read()
     except urllib.error.HTTPError as erro:
         raise ErroStorage(f"Supabase Storage respondeu {erro.code}: {erro.read()[:200]!r}") from erro
@@ -55,13 +55,19 @@ def _requisicao(metodo: str, url: str, corpo: bytes | None, tipo: str) -> None:
         raise ErroStorage(f"Supabase Storage fora do ar: {erro}") from erro
 
 
-def salvar(caminho_relativo: str, conteudo: bytes) -> str:
+def salvar(caminho_relativo: str, conteudo: bytes, *, upsert: bool = False) -> str:
     """Grava o arquivo e devolve a URL que vai para carrossel_imagens.url_imagem."""
     if _supabase():
         base = settings.supabase_url.rstrip("/")
         bucket = settings.supabase_bucket
         tipo = mimetypes.guess_type(caminho_relativo)[0] or "application/octet-stream"
-        _requisicao("POST", f"{base}/storage/v1/object/{bucket}/{caminho_relativo}", conteudo, tipo)
+        _requisicao(
+            "POST",
+            f"{base}/storage/v1/object/{bucket}/{caminho_relativo}",
+            conteudo,
+            tipo,
+            upsert=upsert,
+        )
         return f"{base}/storage/v1/object/public/{bucket}/{caminho_relativo}"
     destino = UPLOAD_DIR / caminho_relativo
     destino.parent.mkdir(parents=True, exist_ok=True)

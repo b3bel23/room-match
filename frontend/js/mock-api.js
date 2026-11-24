@@ -6,7 +6,7 @@
  * docs/frontend/papeis-e-rotas-api-v1.md
  */
 (function (global) {
-    const CHAVE_DB = 'roommatch-mock-db-v10';
+    const CHAVE_DB = 'roommatch-mock-db-v11';
 
     function fotosSeed(id) {
         const base = `../assets/imoveis/${id}`;
@@ -28,18 +28,14 @@
                 'Mesa de estudo compartilhada',
                 'Cozinha e área de refeições'
             ],
-            moradores_atuais: [
-                { iniciais: 'M1', nome: 'Morador Fake 01', linha: 'Ocupação mock · 28 anos', estilo: 'foto-1' },
-                { iniciais: 'M2', nome: 'Morador Fake 02', linha: 'Ocupação mock · 24 anos', estilo: 'foto-2' },
-                { iniciais: 'M3', nome: 'Morador Fake 03', linha: 'Estudante mock · 22 anos', estilo: 'foto-3' }
-            ]
+            moradores_atuais: []
         },
         'kitnet-cambui': {
             descricao: 'Kitnet mobiliada no Cambuí, ideal para quem estuda na UNICAMP ou trabalha no centro. Ambiente silencioso, prédio com portaria e elevador. Uso individual — sem divisão de quarto.',
             distancia_km: '2,4',
             vagas: 1,
             mobiliado: true,
-            contas_detalhe: 'Contas estimadas incluem internet fibra, energia e condomínio de água/gás.',
+            contas_detalhe: 'Pacote com contas básicas inclusas (água, luz, internet).',
             comodidades: ['Cama box', 'Cooktop + micro-ondas', 'Ar condicionado', 'Armários planejados', 'Portaria 24h'],
             foto_legendas: [
                 'Ambiente integrado sala/cozinha',
@@ -62,17 +58,14 @@
                 'Sala de TV compartilhada',
                 'Quintal e área verde'
             ],
-            moradores_atuais: [
-                { iniciais: 'M4', nome: 'Morador Fake 04', linha: 'Ocupação mock · 26 anos', estilo: 'foto-2' },
-                { iniciais: 'M5', nome: 'Morador Fake 05', linha: 'Estudante mock · 23 anos', estilo: 'foto-3' }
-            ]
+            moradores_atuais: []
         },
         'suite-taquaral': {
             descricao: 'Suíte em apartamento no Taquaral, república feminina com foco em estudo e home office. Banheiro privativo, closet e varanda. Condomínio com academia e salão de festas (uso moderado).',
             distancia_km: '4,1',
             vagas: 1,
             mobiliado: true,
-            contas_detalhe: 'Condomínio já inclui água; demais contas rateadas entre 3 moradoras.',
+            contas_detalhe: 'Condomínio já inclui água; demais contas rateadas entre as moradoras.',
             comodidades: ['Suíte com banheiro', 'Escrivania', 'Ar condicionado', 'Academia no prédio', 'Garagem opcional'],
             foto_legendas: [
                 'Suíte mobiliada (16 m²)',
@@ -80,10 +73,7 @@
                 'Sala compartilhada',
                 'Varanda do apartamento'
             ],
-            moradores_atuais: [
-                { iniciais: 'M6', nome: 'Morador Fake 06', linha: 'Ocupação mock · 25 anos', estilo: 'foto-2' },
-                { iniciais: 'M7', nome: 'Morador Fake 07', linha: 'Ocupação mock · 24 anos', estilo: 'foto-3' }
-            ]
+            moradores_atuais: []
         }
     };
 
@@ -121,7 +111,7 @@
             tipo: 'Kitnet',
             bairro: 'Cambuí',
             cidade: 'Campinas',
-            preco: 1200,
+            preco: 2830,
             match_percent: 78,
             tags: ['LGBTQIA+ Acolhedor', 'Vegetariano', 'Trabalho em Casa'],
             badge: 'Kitnet',
@@ -129,10 +119,10 @@
             deslocamento_min: 18,
             destino: 'UNICAMP',
             locador_id: 'u-locador',
-            aluguel: 980,
-            condominio: 150,
-            iptu: 40,
-            contas: 30,
+            aluguel: 2400,
+            condominio: 350,
+            iptu: 80,
+            contas: 0,
             classificacao: 'Mista',
             endereco: 'R. Coronel Quirino, 200 · Cambuí'
         }),
@@ -177,6 +167,216 @@
             contas: 40,
             classificacao: 'Feminina',
             endereco: 'Av. José Bonifácio, 890 · Taquaral'
+        }),
+        imovelSeed({
+            id: 'republica-masc-barao',
+            titulo: 'Quarto em república masculina · Barão Geraldo',
+            tipo: 'República',
+            bairro: 'Barão Geraldo',
+            cidade: 'Campinas',
+            preco: 880,
+            match_percent: 74,
+            tags: ['Silêncio Noturno', 'Trabalho em Casa', 'Sem Fumo'],
+            badge: 'República',
+            area_m2: 12,
+            deslocamento_min: 15,
+            destino: 'UNICAMP',
+            locador_id: 'u-locador3',
+            aluguel: 750,
+            condominio: 0,
+            iptu: 40,
+            contas: 130,
+            classificacao: 'Masculina',
+            endereco: 'R. Salvador de Toledo Piza Júnior, 312 · Barão Geraldo'
+        }),
+        imovelSeed({
+            id: 'pensionato-fem-barao',
+            titulo: 'Quarto em pensionato feminino · Barão Geraldo',
+            tipo: 'República',
+            bairro: 'Barão Geraldo',
+            cidade: 'Campinas',
+            preco: 1100,
+            match_percent: 85,
+            tags: ['Sem Festas', 'Organizado', 'Silêncio Noturno'],
+            badge: 'República',
+            area_m2: 14,
+            deslocamento_min: 18,
+            destino: 'UNICAMP',
+            locador_id: 'u-locador4',
+            aluguel: 1100,
+            condominio: 0,
+            iptu: 0,
+            contas: 0,
+            classificacao: 'Feminina',
+            endereco: 'R. José Cantusio, 88 · Barão Geraldo'
+        }),
+        imovelSeed({
+            id: 'kitnet-studio-cambui',
+            titulo: 'Studio mobiliado 20 m² · Cambuí',
+            tipo: 'Kitnet',
+            bairro: 'Cambuí',
+            cidade: 'Campinas',
+            preco: 3000,
+            match_percent: 70,
+            tags: ['Mobiliado', 'Trabalho em Casa', 'Silêncio Noturno'],
+            badge: 'Kitnet',
+            area_m2: 20,
+            deslocamento_min: 20,
+            destino: 'Centro',
+            locador_id: 'u-locador5',
+            aluguel: 3000,
+            condominio: 0,
+            iptu: 0,
+            contas: 0,
+            classificacao: 'Mista',
+            endereco: 'Av. Benjamin Constant, 1540 · Cambuí'
+        }),
+        imovelSeed({
+            id: 'quarto-apto-centro',
+            titulo: 'Quarto em apartamento · Centro',
+            tipo: 'Apartamento',
+            bairro: 'Centro',
+            cidade: 'Campinas',
+            preco: 1270,
+            match_percent: 76,
+            tags: ['Trabalho em Casa', 'LGBTQIA+ Acolhedor', 'Sem Festas'],
+            badge: 'Apartamento',
+            area_m2: 13,
+            deslocamento_min: 12,
+            destino: 'Centro',
+            locador_id: 'u-locador6',
+            aluguel: 900,
+            condominio: 220,
+            iptu: 50,
+            contas: 100,
+            classificacao: 'Mista',
+            endereco: 'R. Barão de Jaguara, 980 · Centro'
+        }),
+        imovelSeed({
+            id: 'casa-jardim-eulina',
+            titulo: 'Quarto em casa compartilhada · Jardim Eulina',
+            tipo: 'Casa',
+            bairro: 'Jardim Eulina',
+            cidade: 'Campinas',
+            preco: 645,
+            match_percent: 68,
+            tags: ['Aceita Animais', 'Sem Festas', 'Organizado'],
+            badge: 'Casa',
+            area_m2: 11,
+            deslocamento_min: 40,
+            destino: 'UNICAMP',
+            locador_id: 'u-locador7',
+            aluguel: 600,
+            condominio: 0,
+            iptu: 45,
+            contas: 0,
+            classificacao: 'Mista',
+            endereco: 'R. Dr. Antônio Carlos Couto de Barros, 245 · Jardim Eulina'
+        }),
+        imovelSeed({
+            id: 'suite-nova-campinas',
+            titulo: 'Suíte perto do Dom Pedro · Nova Campinas',
+            tipo: 'Apartamento',
+            bairro: 'Nova Campinas',
+            cidade: 'Campinas',
+            preco: 1460,
+            match_percent: 79,
+            tags: ['Trabalho em Casa', 'Silêncio Noturno', 'LGBTQIA+ Acolhedor'],
+            badge: 'Apartamento',
+            area_m2: 17,
+            deslocamento_min: 25,
+            destino: 'Shopping Dom Pedro',
+            locador_id: 'u-locador8',
+            aluguel: 1050,
+            condominio: 250,
+            iptu: 70,
+            contas: 90,
+            classificacao: 'Mista',
+            endereco: 'R. Dr. Romeu Tortima, 510 · Nova Campinas'
+        }),
+        imovelSeed({
+            id: 'kitnet-barao',
+            titulo: 'Kitnet compacta · Barão Geraldo',
+            tipo: 'Kitnet',
+            bairro: 'Barão Geraldo',
+            cidade: 'Campinas',
+            preco: 1900,
+            match_percent: 72,
+            tags: ['Mobiliado', 'Trabalho em Casa', 'Sem Fumo'],
+            badge: 'Kitnet',
+            area_m2: 22,
+            deslocamento_min: 12,
+            destino: 'UNICAMP',
+            locador_id: 'u-locador9',
+            aluguel: 1600,
+            condominio: 180,
+            iptu: 40,
+            contas: 80,
+            classificacao: 'Mista',
+            endereco: 'Av. 1, 720 · Barão Geraldo'
+        }),
+        imovelSeed({
+            id: 'republica-taquaral',
+            titulo: 'Quarto em república mista · Taquaral',
+            tipo: 'República',
+            bairro: 'Taquaral',
+            cidade: 'Campinas',
+            preco: 835,
+            match_percent: 80,
+            tags: ['Aceita Animais', 'Silêncio Noturno', 'Trabalho em Casa'],
+            badge: 'República',
+            area_m2: 12,
+            deslocamento_min: 22,
+            destino: 'PUC-Campinas',
+            locador_id: 'u-locador10',
+            aluguel: 680,
+            condominio: 0,
+            iptu: 35,
+            contas: 120,
+            classificacao: 'Mista',
+            endereco: 'R. Coronel Quirino, 1850 · Taquaral'
+        }),
+        imovelSeed({
+            id: 'casa-costa-silva',
+            titulo: 'Quarto econômico em casa · Costa e Silva',
+            tipo: 'Casa',
+            bairro: 'Parque Via Norte',
+            cidade: 'Campinas',
+            preco: 580,
+            match_percent: 65,
+            tags: ['Sem Festas', 'Aceita Animais', 'Organizado'],
+            badge: 'Casa',
+            area_m2: 10,
+            deslocamento_min: 35,
+            destino: 'Centro',
+            locador_id: 'u-locador11',
+            aluguel: 550,
+            condominio: 0,
+            iptu: 30,
+            contas: 0,
+            classificacao: 'Mista',
+            endereco: 'R. Cirilo Chiavegato, 64 · Parque Via Norte'
+        }),
+        imovelSeed({
+            id: 'suite-apto-cambui',
+            titulo: 'Suíte silenciosa em apartamento · Cambuí',
+            tipo: 'Apartamento',
+            bairro: 'Cambuí',
+            cidade: 'Campinas',
+            preco: 1830,
+            match_percent: 77,
+            tags: ['Silêncio Noturno', 'Trabalho em Casa', 'Sem Fumo'],
+            badge: 'Apartamento',
+            area_m2: 16,
+            deslocamento_min: 18,
+            destino: 'Cambuí',
+            locador_id: 'u-locador12',
+            aluguel: 1350,
+            condominio: 320,
+            iptu: 75,
+            contas: 85,
+            classificacao: 'Feminina',
+            endereco: 'R. Maria Monteiro, 810 · Cambuí'
         })
     ];
 
