@@ -13,7 +13,6 @@ const imovelLink = document.getElementById('chat-imovel-link');
 
 // Sem tela anterior no site, o Voltar leva à página principal do papel.
 document.getElementById('chat-voltar').href = paginaInicial();
-const agendarLink = document.getElementById('chat-agendar-link');
 const imovelFoto = document.getElementById('chat-imovel-foto');
 
 let conversaAtiva = null;
@@ -57,17 +56,7 @@ function renderThread(conv) {
         ? `${conv.imovel_bairro} · R$ ${Number(conv.imovel_preco || 0).toLocaleString('pt-BR')}/mês`
         : '';
     imovelLink.href = `detalhe.html?id=${encodeURIComponent(conv.imovel_id)}`;
-    if (typeof ehLocador === 'function' && ehLocador()) {
-        agendarLink.href = 'calendario-visitas.html';
-        agendarLink.textContent = 'Ver agenda de visitas';
-        agendarLink.hidden = false;
-        imovelLink.textContent = 'Abrir meu anúncio';
-    } else {
-        agendarLink.href = `agendar-visita.html?id=${encodeURIComponent(conv.imovel_id)}`;
-        agendarLink.textContent = 'Agendar visita';
-        agendarLink.hidden = false;
-        imovelLink.textContent = 'Ver anúncio';
-    }
+    imovelLink.textContent = typeof ehLocador === 'function' && ehLocador() ? 'Abrir meu anúncio' : 'Ver anúncio';
     if (imovelFoto) {
         if (typeof ImovelFotos !== 'undefined' && conv.imovel_id) {
             ImovelFotos.iniciarCarrossel(

@@ -4,7 +4,7 @@ O front usa `user.papel`: **`Morador`** ou **`Locador`**. No banco/modelo atual:
 
 | Front (`papel`) | Backend (entidade) | Papel na plataforma |
 |-----------------|--------------------|---------------------|
-| Morador         | `locatarios`       | Busca moradia, favorita, agenda visita |
+| Morador         | `locatarios`       | Busca moradia, favorita, conversa com o locador |
 | Locador         | `locadores`        | Publica e edita anúncios (`posts` / imóveis) |
 
 UI (nav/destinos) pode diferir por papel. **Campos e JSON = schema do banco**
@@ -14,7 +14,7 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 | | Locatário (UI: Morador) | Locador |
 |---|-------------------------|---------|
 | Home pós-login | `home.html` | `meus-imoveis.html` |
-| Nav | Explorar · Favoritos · Visitas · Mensagens | Meus anúncios · Publicar · Visitas · Mensagens |
+| Nav | Explorar · Favoritos · Mensagens | Meus anúncios · Publicar · Mensagens |
 | Preferências | mesmos campos `locatario.*` | mesmos campos (labels iguais) |
 
 ## Morador (locatário)
@@ -24,8 +24,6 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 | GET | `/imoveis` | Mural (match se autenticado). Query opcional: `tipo`, `bairro`, `preco_max`, `tag` |
 | GET | `/imoveis/{id}` | Detalhe (`capa`, `fotos[]` — URLs ou paths) |
 | GET/POST | `/favoritos`, `/favoritos/{id}` | Lista e toggle (≈ `likes`) |
-| POST | `/visitas` | Solicitar visita |
-| GET | `/visitas` | Próprios pedidos |
 | GET/POST | `/conversas`, `/conversas/{id}/mensagens` | Chat com locador |
 | GET/PATCH | `/me` | Perfil (nome, telefone, gênero, ocupação, emprego, faculdade, foto_url, e-mail; `papel` opcional) |
 
@@ -41,11 +39,10 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 | GET | `/imoveis/meus` | Anúncios da conta |
 | POST | `/imoveis` | Publicar (body inclui endereço: `cep`, `rua`, `numero`, `complemento?`, `bairro`, `cidade`, `estado`) |
 | PATCH | `/imoveis/{id}` | Editar (dono) |
-| GET | `/visitas` | Visitas nos imóveis dele |
 | GET/POST | `/conversas`, … | Chat com interessados |
 | GET/PATCH | `/me` | Mesmos campos do morador (incl. troca de `papel` com migração no banco) |
 
-**Não usa:** `/favoritos` (403 no mock). **Não** POST `/visitas` (quem agenda é o morador). Visita só via fluxo do chat no front.
+**Não usa:** `/favoritos` (403 no mock). Visitas não existem como rota: são combinadas pelo chat.
 
 ## Visitante (sem token)
 
@@ -61,7 +58,6 @@ Ver também `docs/frontend/dados-mock-e-api-live.md`.
 - Reutilizar os mesmos paths acima; retornar **403** quando o papel não bate
   (o front já trata redirect/UI).
 - Favoritos: escopo `id_locatario` (modelo `likes`).
-- Visitas POST: apenas `locatario`; GET filtra por locatário ou imóveis do locador.
 
 O mock em `frontend/js/mock-api.js` segue esta tabela para facilitar trocar
 `roommatch-api-mode` para `live` sem mudar `api.js`.

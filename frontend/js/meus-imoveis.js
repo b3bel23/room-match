@@ -63,7 +63,6 @@ function montarCard(imovel) {
             <p class="meu-tags">${(imovel.tags || []).slice(0, 4).join(' · ')}</p>
         </div>
         <div class="meu-acoes">
-            <a class="btn btn-secondary" href="calendario-visitas.html">Visitas</a>
             <a class="btn btn-editar" href="editar-anuncio.html?id=${encodeURIComponent(imovel.id)}">Editar</a>
             <div class="meu-menu">
                 <button class="btn btn-secondary btn-mais" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Mais ações">

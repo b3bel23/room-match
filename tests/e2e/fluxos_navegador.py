@@ -103,12 +103,6 @@ with sync_playwright() as p:
     pg.fill("#chat-texto", "Posso visitar no sábado? <b>teste</b>"); pg.press("#chat-texto", "Enter"); pg.wait_for_timeout(800)
     bolhas = pg.locator(".bolha").all_inner_texts()
     ok("mensagem enviada e escapada", any("<b>teste</b>" in b for b in bolhas), bolhas[-1:] )
-    pg.goto(f"{WEB}/agendar-visita.html?id=1"); pg.wait_for_load_state("networkidle")
-    pg.click("text=Sábado, 11h"); pg.click("#agendar-confirmar"); pg.wait_for_timeout(800)
-    visitas = api("/visitas", pg.token)["items"]
-    ok("visita criada", any(v["hora"] == "11h" for v in visitas), json.dumps(visitas, ensure_ascii=False)[:200])
-    pg.goto(f"{WEB}/calendario-visitas.html"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(400)
-    pg.screenshot(path=f"{SAIDA}/fluxo_calendario_morador.png")
     pg.goto(f"{WEB}/favoritos.html"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(400)
     pg.screenshot(path=f"{SAIDA}/fluxo_favoritos.png")
     pg.goto(f"{WEB}/preferencias.html"); pg.wait_for_load_state("networkidle")
@@ -126,9 +120,6 @@ with sync_playwright() as p:
     ok("locador vê a mensagem do morador", any("sábado" in b for b in bolhas), str(bolhas[-1:]))
     pg.fill("#chat-texto", "Pode sim!"); pg.press("#chat-texto", "Enter"); pg.wait_for_timeout(700)
     pg.screenshot(path=f"{SAIDA}/fluxo_chat_locador.png")
-    pg.goto(f"{WEB}/calendario-visitas.html"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(400)
-    ok("locador vê visita", len(api("/visitas", pg.token)["items"]) >= 1)
-    pg.screenshot(path=f"{SAIDA}/fluxo_calendario_locador.png")
 
     pg.goto(f"{WEB}/publicar-imovel.html"); pg.wait_for_load_state("networkidle")
     titulo_novo = f"Quarto teste E2E {int(time.time())} · Centro"

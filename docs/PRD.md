@@ -14,8 +14,9 @@ este arquivo registra o que foi de fato implementado.
 papel e o "Sair" ficam agrupados à esquerda da foto de perfil, e a foto fica no canto direito.
 
 **Regras de negócio e decisões**
-- Locatário: Explorar, Descobrir, Favoritos, Minhas visitas, Mensagens, sino, Sair, foto.
-  Locador: Meus anúncios, Publicar, Visitas, Mensagens, sino, Sair, foto.
+- Locatário: Explorar, Favoritos, Mensagens, sino, Sair, foto.
+  Locador: Meus anúncios, Publicar, Mensagens, sino, Sair, foto.
+  (Descobrir e Visitas saíram do produto; ver "Removidos do produto".)
 - O sino de notificações (RF17/RF35) fica antes do "Sair"; mostra a contagem de não lidas e
   abre a lista. Ver "Notificações no site".
 - "Sobre nós", "FAQ" e "Contato" saem do menu de quem está logado; continuam no menu do
@@ -126,10 +127,9 @@ afinidade enche até o valor e o número conta a cada hábito ligado ou desligad
 **O que faz:** o menu lateral das telas de Configurações lista os atalhos do papel do usuário.
 
 **Regras de negócio e decisões**
-- Locador: Perfil, Preferências, Meus anúncios, Calendário de visitas, Mensagens, Segurança,
-  Termos. "Publicar anúncio" saiu do menu lateral porque a tela Meus anúncios já tem o botão
+- Locador: Perfil, Preferências, Meus anúncios, Mensagens, Segurança, Termos. "Publicar anúncio" saiu do menu lateral porque a tela Meus anúncios já tem o botão
   "Novo anúncio"; o atalho "Publicar" continua no menu do topo.
-- Locatário: Perfil, Preferências, Favoritos, Calendário de visitas, Mensagens, Segurança, Termos.
+- Locatário: Perfil, Preferências, Favoritos, Mensagens, Segurança, Termos.
 
 **Telas:** `frontend/js/config-shell.js` (usado em todas as telas com `aside.sidebar`).
 
@@ -171,7 +171,7 @@ alternativas, passo a passo e link para abrir a rota no site do OpenStreetMap.
 - Botão "Ônibus" ligado ao servidor (antes desativado com "Em breve"), com campo "Saindo às".
 - Morador pode salvar o destino ("Salvar … como meu destino"); ao abrir o mapa de novo, o
   destino salvo vira o padrão no lugar do Centro.
-- `detalhe.html` passou a carregar `detalhe.css`, `detalhe.js` e `mapa-rota.js` com `?v=3`.
+- `detalhe.html` carrega CSS e JS com número de versão (ver "Cache dos arquivos do site").
 
 **Pendências:** os serviços públicos do OpenStreetMap têm limite de uso; com muito tráfego,
 será preciso um servidor próprio.
@@ -258,15 +258,13 @@ tela em que ele estava imediatamente antes (mural, favoritos, meus anúncios etc
 **Regras de negócio e decisões**
 - O botão usa o histórico do navegador; se a página foi aberta direto (link externo ou nova
   aba, sem tela anterior no site), ele leva à página inicial.
-- Presente em: Detalhe do imóvel (visitante, morador e "ver como locador"), Agendar visita e
-  Mensagens (no topo da conversa, para morador e locador).
+- Presente em: Detalhe do imóvel (visitante, morador e "ver como locador") e Mensagens (no topo da conversa, para morador e locador).
 - Em Mensagens, sem tela anterior no site, o Voltar leva à página principal do papel: Explorar
   para o morador, Meus anúncios para o locador.
 - O comportamento fica em `frontend/js/chrome.js` e é ativado pelo atributo `data-voltar`
   no link; outras telas podem usá-lo da mesma forma.
 
-**Telas:** `frontend/pages/detalhe.html`, `frontend/pages/agendar-visita.html`,
-`frontend/pages/mensagens.html`.
+**Telas:** `frontend/pages/detalhe.html`, `frontend/pages/mensagens.html`.
 
 ### Anúncios do locador e fotos (KAN-34)
 
@@ -293,7 +291,7 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
   contas; no PATCH, `""` também zera o valor, como no mock.
 - Endereço: rua e bairro são obrigatórios (422). Cidade e estado assumem Campinas/SP quando
   não informados, porque o produto só atende Campinas por enquanto.
-- Remoção é lógica: preserva favoritos, conversas e visitas. Reduz o contador de anúncios
+- Remoção é lógica: preserva favoritos e conversas. Reduz o contador de anúncios
   do locador e marca o imóvel como indisponível.
 - Fotos: JPEG, PNG ou WebP identificados pelo conteúdo do arquivo (não pelo Content-Type);
   até 5 MB cada e 10 por imóvel; falha em qualquer arquivo não grava nenhum.
@@ -318,19 +316,18 @@ tags) e envia fotos. O anúncio publicado aparece no mural (KAN-35).
 **Status:** parcial. Lista os anúncios do locador; a publicação em si está em KAN-34.
 
 **O que faz:** o locador vê seus anúncios e a contagem de anúncios ativos, cria um novo pelo
-botão "Novo anúncio" no topo da tela e, em cada cartão, vê as visitas, edita, abre o anúncio
-como locador ou o exclui.
+botão "Novo anúncio" no topo da tela e, em cada cartão, edita, abre o anúncio como locador ou
+o exclui.
 
 **Regras de negócio e decisões**
 - Sem anúncios, a tela mostra só a mensagem "Você ainda não publicou nenhum imóvel."; o botão
   "Publicar anúncio" do estado vazio foi retirado por duplicar o "Novo anúncio" do topo.
-- Ações do cartão: "Visitas" e "Editar" (contorno verde) ficam à vista; "Ver como locador" e
+- Ações do cartão: "Editar" (contorno verde) fica à vista; "Ver como locador" e
   "Excluir anúncio" ficam no menu "⋯" do cartão. Clicar no nome do imóvel também abre a visão
   de locador (`detalhe.html`).
 - Excluir pede confirmação ("Você tem certeza que quer excluir este anúncio?") e não pode ser
   desfeito. Só o locador dono do anúncio exclui (`DELETE /imoveis/{id}`, já existente no
-  servidor; resposta 204). Ao excluir, o anúncio some do mural e dos favoritos dos moradores e
-  as visitas agendadas dele são removidas.
+  servidor; resposta 204). Ao excluir, o anúncio some do mural e dos favoritos dos moradores.
 - No modo de demonstração (mock), um anúncio de exemplo excluído não volta ao recarregar.
 
 **Telas:** `frontend/pages/meus-imoveis.html`.
@@ -419,7 +416,7 @@ sem papel, tags, orçamento, limiar ou foto, e não devolvia token.
 **Endpoints:** `POST /api/v1/auth/login`, `POST /api/v1/auth/register`.
 **Telas:** `login.html`, `cadastro.html`.
 
-### Favoritos, visitas, chat e senha no servidor
+### Favoritos, chat e senha no servidor
 
 **Status:** concluída no servidor e testada (SQLite e Postgres local). Antes só existiam no
 modo demonstração; com o site ligado ao servidor, essas telas davam 404.
@@ -428,17 +425,6 @@ modo demonstração; com o site ligado ao servidor, essas telas davam 404.
 liga/desliga (como o mock); `DELETE /favoritos/{id_imovel}` só desliga → `{ favorito, ids }`.
 - Só Morador (403 para Locador). Usa a tabela `likes`. Anúncio pausado ou removido some da
   lista, mas o like fica guardado.
-
-**Visitas** — `POST /visitas` `{ imovel_id, horario }`; `GET /visitas`; `PATCH /visitas/{id}`
-`{ status }`.
-- Só Morador pede. O rótulo da tela vira data e hora como no mock ("Amanhã, 16h" → amanhã
-  16:00; "Sábado, 11h" → próximo sábado). Aceita também `data` e `hora` explícitas.
-- Pedido repetido (mesmo imóvel, dia e hora, ainda pendente ou confirmado): 409. Data no
-  passado: 400.
-- Morador vê os próprios pedidos; Locador vê os pedidos nos seus imóveis.
-- Novo: o Locador dono confirma ou recusa (`confirmada`/`recusada`); quem pediu cancela
-  (`cancelada`). A tela do calendário ainda não tem esses botões.
-- Remover um anúncio apaga as visitas pendentes e confirmadas dele.
 
 **Chat (RF27/RF34)** — `GET /conversas`, `GET /conversas/{id}`, `POST /conversas`
 `{ imovel_id, texto? }`, `POST /conversas/{id}/mensagens` `{ texto }`.
@@ -460,8 +446,7 @@ liga/desliga (como o mock); `DELETE /favoritos/{id_imovel}` só desliga → `{ f
   servidor) e leva à nova tela `redefinir-senha.html`. Vale 30 minutos e uma única vez (deixa
   de valer quando a senha muda). Não serve como login.
 
-**Telas:** `favoritos.html`, `detalhe.html`, `agendar-visita.html`, `calendario-visitas.html`,
-`mensagens.html`, `seguranca.html`, `recuperar-senha.html`, `redefinir-senha.html` (nova).
+**Telas:** `favoritos.html`, `detalhe.html`, `mensagens.html`, `seguranca.html`, `recuperar-senha.html`, `redefinir-senha.html` (nova).
 
 ### Integração ponta a ponta (site em modo `live` + API + Postgres)
 
@@ -472,12 +457,12 @@ Chrome headless). Falta repetir contra o Supabase e a API publicada.
 - Banco zerado → `alembic upgrade head` → `python -m scripts.seed`.
 - `tests/e2e/fluxos_navegador.py` (Playwright) percorre no navegador, com o site em `live`:
   login de morador e locador, mural, favoritar, conversar com o locador (mensagem com HTML
-  aparece como texto), agendar visita, preferências, locador lendo e respondendo, calendário,
+  aparece como texto), preferências, locador lendo e respondendo,
   publicar anúncio com 3 fotos e classificação, editar removendo 1 foto e enviando 2, e o
   cadastro completo de Morador e de Locador. Resultado: todos os passos OK, nenhum erro de
   JavaScript e nenhuma resposta 4xx/5xx inesperada da API.
 - `backend/tests/fumaca/test_fumaca_api.py` faz o mesmo percurso só pela API (inclui
-  confirmar visita, pausar e remover). Roda com `SMOKE_API_URL=...`; sem ela, é pulado.
+  pausar e remover). Roda com `SMOKE_API_URL=...`; sem ela, é pulado.
 - O modo demonstração (mock) foi varrido de novo: todas as telas abrem sem erro.
 
 **Divergências encontradas e corrigidas**
@@ -488,12 +473,8 @@ Chrome headless). Falta repetir contra o Supabase e a API publicada.
 - Conversa aberta por link (`mensagens.html?id=1`) não era selecionada porque o ID da API é
   número e o da URL é texto; mesma correção na checagem de favorito.
 - A lista de conversas não atualizava a última mensagem depois de enviar.
-- Calendário: nova lista "Próximas visitas" abaixo do mês. O Locador confirma ou recusa e o
-  Morador cancela (usa `PATCH /visitas/{id}`; também no mock). Legenda ganhou "Recusada ou
-  cancelada".
 
-**Telas:** todas; em especial `publicar-imovel.html`, `detalhe.html`, `mensagens.html`,
-`calendario-visitas.html`.
+**Telas:** todas; em especial `publicar-imovel.html`, `detalhe.html`, `mensagens.html`.
 
 ### Rota de ônibus com GTFS (RF28, RF29, RF31; KAN-40)
 
@@ -539,26 +520,6 @@ card de trajeto e, se o destino estiver salvo, para o mural e para o "deslocamen
   repetições.
 - RF30 (vários destinos) fica para depois: hoje é um destino salvo.
 
-### Descobrir em cards (RF12, RF13, RF14, RF18)
-
-**Status:** concluída (servidor, mock e tela), testada no navegador.
-
-**O que faz:** nova tela `descobrir.html` (menu do Morador). Mostra um imóvel por vez, do
-mais para o menos compatível; o morador curte (vai para os favoritos) ou recusa (some do
-mural). Dá para desfazer a última decisão, e o histórico lista curtidos e recusados, com
-"Voltar ao mural" para os recusados.
-
-**Regras de negócio e decisões**
-- Curtir é o mesmo que favoritar (`likes`); não há "dupla curtida", como no README.
-- Recusar grava em `recusas` (nova tabela) e tira o favorito, se houver. O imóvel recusado
-  some de `GET /imoveis` para esse morador (`?incluir_recusados=true` mostra todos); visitante
-  e outros moradores continuam vendo.
-- Ordem dos cards: maior afinidade primeiro; empate, menor preço. Já curtidos e recusados não
-  aparecem.
-- Controles: botões, setas ← (recusar) e → (curtir) e arrastar o card no celular.
-
-**Endpoints:** `GET /descobrir`, `POST|DELETE /imoveis/{id}/recusar`, `GET /historico`.
-
 ### Notificações no site (RF17, RF35)
 
 **Status:** concluída (servidor e tela). No mock, a lista vem vazia.
@@ -568,8 +529,7 @@ cada aviso leva à tela certa. Atualiza a cada minuto com a aba aberta.
 
 **Regras de negócio e decisões**
 - Geram aviso: mensagem nova (para o outro participante; inclui a primeira mensagem de uma
-  conversa nova), favorito no anúncio (para o locador), pedido de visita (para o locador),
-  visita confirmada ou recusada (para o morador) e visita cancelada (para o locador).
+  conversa nova) e favorito no anúncio (para o locador).
 - O aviso é gravado na mesma transação da ação; não existe aviso de algo que falhou.
 - Abrir um aviso marca como lido; "Marcar todas como lidas" zera a contagem. Ninguém marca
   avisos de outra pessoa.
@@ -597,7 +557,8 @@ mostra se o e-mail está confirmado e tem "Reenviar link de confirmação". A te
 `email_verificado`.
 
 **Migração:** `3654f88a6b5c` cria `recusas` e `notificacoes` (com RLS, como as demais) e
-acrescenta `detalhes` e `calculado_em` em `rotas_mobilidade`.
+acrescenta `detalhes` e `calculado_em` em `rotas_mobilidade`. `recusas` saiu depois, na
+`aca7d178206c` (ver "Removidos do produto").
 
 ### Deploy e configuração
 
@@ -634,3 +595,33 @@ Supabase), que não estão no repositório.
 - Configurar SMTP para os e-mails de recuperação de senha e confirmação.
 - Foto de perfil continua guardada no banco como data URL; levar para o Storage também.
 - Plano gratuito do Render dorme sem uso; a primeira requisição depois disso demora.
+
+### Removidos do produto: Descobrir e visitas
+
+**Status:** removidos a pedido do grupo (23/11).
+
+**O que saiu**
+- **Descobrir em cards** (curtir/recusar um imóvel por vez, desfazer e histórico; RF12–14 e
+  RF18): tela `descobrir.html`, rotas `GET /descobrir`, `POST|DELETE /imoveis/{id}/recusar`,
+  `GET /historico` e o filtro que escondia recusados do mural. A tabela `recusas` é apagada
+  pela migração `aca7d178206c`. Favoritar continua igual.
+- **Visitas** (agendar, calendário, confirmar/recusar/cancelar): telas `agendar-visita.html` e
+  `calendario-visitas.html`, rotas `/visitas`, itens "Minhas visitas"/"Visitas" do menu e do
+  menu de Configurações, botão "Agendar visita" no chat, botões "Visitas" e "Agenda de
+  visitas" do locador e as notificações de visita.
+
+**Decisões**
+- A visita passa a ser combinada pelo chat. Os textos de Como funciona, FAQ, Termos e do aceite
+  do cadastro foram ajustados para não prometer agendamento na plataforma.
+- A tabela `visitas` continua no banco: ela existe desde a migração inicial e consta no
+  dicionário de dados; apagá-la perderia dados já gravados. O model `Visita` fica, sem rotas.
+- A tag de convivência "Visitas Restritas" continua: é uma preferência, não a função de agenda.
+
+### Cache dos arquivos do site
+
+**Status:** concluída.
+
+Todas as páginas carregam CSS e JS com `?v=20261123`. Sem isso, o navegador podia misturar o
+HTML novo com um JS antigo guardado em cache (por exemplo, o campo de CPF do cadastro do
+Locador não aparecia). Ao mudar CSS ou JS, troque o número em todas as páginas (o
+`detalhe.html` antes usava `?v=3`).

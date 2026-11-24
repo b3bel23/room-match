@@ -11,7 +11,6 @@ function montarSidebarConfig(ativo) {
             ['perfil.html', 'Perfil'],
             ['preferencias.html', 'Preferências'],
             ['meus-imoveis.html', 'Meus anúncios'],
-            ['calendario-visitas.html', 'Calendário de visitas'],
             ['mensagens.html', 'Mensagens'],
             ['seguranca.html', 'Segurança'],
             ['termos.html', 'Termos']
@@ -21,7 +20,6 @@ function montarSidebarConfig(ativo) {
             ['perfil.html', 'Perfil'],
             ['preferencias.html', 'Preferências'],
             ['favoritos.html', 'Favoritos'],
-            ['calendario-visitas.html', 'Calendário de visitas'],
             ['mensagens.html', 'Mensagens'],
             ['seguranca.html', 'Segurança'],
             ['termos.html', 'Termos']

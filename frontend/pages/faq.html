@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ · Room Match</title>
-    <link rel="stylesheet" href="../design-tokens.css">
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/favoritos.css">
-    <link rel="stylesheet" href="../css/config.css">
-    <link rel="stylesheet" href="../css/faq.css">
+    <link rel="stylesheet" href="../design-tokens.css?v=20261123">
+    <link rel="stylesheet" href="../css/base.css?v=20261123">
+    <link rel="stylesheet" href="../css/favoritos.css?v=20261123">
+    <link rel="stylesheet" href="../css/config.css?v=20261123">
+    <link rel="stylesheet" href="../css/faq.css?v=20261123">
 </head>
 <body class="auth-page favoritos-page faq-page">
     <header class="site-header">
@@ -52,8 +52,8 @@
                     <details class="faq-item">
                         <summary>Qual a diferença entre Morador e Locador?</summary>
                         <div class="faq-resposta">
-                            <p><strong>Morador</strong> busca anúncios, favorita, conversa e agenda visita.</p>
-                            <p><strong>Locador</strong> publica e edita anúncios, recebe interessados e gerencia visitas.</p>
+                            <p><strong>Morador</strong> busca anúncios, favorita e conversa com o locador.</p>
+                            <p><strong>Locador</strong> publica e edita anúncios e conversa com os interessados.</p>
                             <p>Você escolhe o tipo no cadastro e pode alterar depois em Perfil.</p>
                         </div>
                     </details>
@@ -75,9 +75,9 @@
                     </details>
 
                     <details class="faq-item">
-                        <summary>Como agendar uma visita?</summary>
+                        <summary>Como combinar uma visita?</summary>
                         <div class="faq-resposta">
-                            <p>Só o Morador agenda, e apenas a partir do chat com o locador (quando o match permite conversar). Abra a conversa e use o atalho de agendar visita.</p>
+                            <p>Pelo chat com o locador, que fica disponível quando o match permite conversar. Combinem ali o dia e o horário.</p>
                         </div>
                     </details>
 
@@ -91,7 +91,7 @@
                     <details class="faq-item">
                         <summary>Preciso de conta para ver anúncios?</summary>
                         <div class="faq-resposta">
-                            <p>Não. Visitantes veem o mural. Para favoritar, conversar, agendar visita ou publicar, é preciso cadastrar e entrar.</p>
+                            <p>Não. Visitantes veem o mural. Para favoritar, conversar ou publicar, é preciso cadastrar e entrar.</p>
                         </div>
                     </details>
 
@@ -129,13 +129,13 @@
         <small>© 2026 RoomMatch</small>
     </footer>
 
-    <script src="../js/mock-api.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/sessao.js"></script>
-    <script src="../js/papel-ui.js"></script>
-    <script src="../js/config-shell.js"></script>
-    <script src="../js/chrome.js"></script>
-    <script src="../js/page-motion.js"></script>
+    <script src="../js/mock-api.js?v=20261123"></script>
+    <script src="../js/api.js?v=20261123"></script>
+    <script src="../js/sessao.js?v=20261123"></script>
+    <script src="../js/papel-ui.js?v=20261123"></script>
+    <script src="../js/config-shell.js?v=20261123"></script>
+    <script src="../js/chrome.js?v=20261123"></script>
+    <script src="../js/page-motion.js?v=20261123"></script>
     <script>
         if (estaLogado()) montarSidebarConfig('faq.html');
         else document.querySelector('.sidebar').innerHTML = '<p class="sidebar-rotulo">Menu</p><a href="home.html">Explorar</a><a href="como-funciona.html">Como funciona</a><a class="ativo" href="faq.html">FAQ</a><a href="login.html">Entrar</a>';

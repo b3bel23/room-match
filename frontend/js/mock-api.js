@@ -291,26 +291,6 @@
             favoritos: {
                 'u-morador': ['republica-barao', 'kitnet-cambui', 'casa-sousas', 'suite-taquaral']
             },
-            visitas: [
-                {
-                    id: 'v1',
-                    imovel_id: 'republica-barao',
-                    usuario_id: 'u-morador',
-                    nome: 'Morador Exemplo Mock',
-                    data: offsetIso(1),
-                    hora: '18h',
-                    status: 'confirmada'
-                },
-                {
-                    id: 'v2',
-                    imovel_id: 'kitnet-cambui',
-                    usuario_id: 'u-morador',
-                    nome: 'Morador Exemplo Mock',
-                    data: offsetIso(1),
-                    hora: '10h',
-                    status: 'pendente'
-                }
-            ],
             conversas: [
                 {
                     id: 'c1',
@@ -345,12 +325,6 @@
                 }
             ]
         };
-    }
-
-    function offsetIso(dias) {
-        const d = new Date();
-        d.setDate(d.getDate() + dias);
-        return d.toISOString().slice(0, 10);
     }
 
     function sincronizarCatalogoDemo(db) {
@@ -413,7 +387,6 @@
     function normalizar(db) {
         if (!db.conversas) db.conversas = dbPadrao().conversas;
         if (!db.favoritos) db.favoritos = {};
-        if (!db.visitas) db.visitas = [];
         if (!db.imoveis) db.imoveis = [];
         if (!db.imoveis_excluidos) db.imoveis_excluidos = [];
         if (!db.users) db.users = [];
@@ -529,7 +502,7 @@
         return db.users.find((u) => u.id === id) || null;
     }
 
-    /** Morador no front = locatario no backend (likes, visitas solicitadas). */
+    /** Morador no front = locatario no backend (likes). */
     function exigirMorador(user) {
         if (!user) throw erro(401, 'Não autenticado.');
         if (user.papel !== 'Morador') {
@@ -580,20 +553,6 @@
         const query = {};
         new URLSearchParams(path.slice(i + 1)).forEach((v, k) => { query[k] = v; });
         return { pathname, query };
-    }
-
-    function parseHorario(rotulo) {
-        const hoje = new Date();
-        let data = new Date(hoje);
-        let hora = '10h';
-        if (/amanh/i.test(rotulo)) data.setDate(data.getDate() + 1);
-        if (/s[aá]bado/i.test(rotulo)) {
-            const dia = data.getDay();
-            data.setDate(data.getDate() + ((6 - dia + 7) % 7 || 7));
-        }
-        const m = rotulo.match(/(\d{1,2})h/i);
-        if (m) hora = `${m[1]}h`;
-        return { data: data.toISOString().slice(0, 10), hora };
     }
 
     async function handle(method, path, body, token) {
@@ -654,45 +613,7 @@
         }
 
         if (m === 'GET' && pathname === '/imoveis') {
-            const recusados = user && user.papel === 'Morador' && query.incluir_recusados !== 'true'
-                ? (db.recusas || {})[user.id] || []
-                : [];
-            return {
-                items: filtrarImoveis(db.imoveis.filter((i) => !recusados.includes(i.id)), query, user)
-            };
-        }
-
-        // Descobrir em cards (RF12–14): curtir = favoritar; recusar some do mural.
-        if (m === 'GET' && pathname === '/descobrir') {
-            exigirMorador(user);
-            const vistos = new Set([...(db.favoritos[user.id] || []), ...((db.recusas || {})[user.id] || [])]);
-            const items = db.imoveis.filter((i) => !vistos.has(i.id)).map((i) => comMatch(i, user))
-                .sort((a, b) => b.match - a.match || a.preco - b.preco);
-            return { items, restantes: 0 };
-        }
-
-        const recusar = pathname.match(/^\/imoveis\/([^/]+)\/recusar$/);
-        if (recusar && (m === 'POST' || m === 'DELETE')) {
-            exigirMorador(user);
-            db.recusas = db.recusas || {};
-            const lista = (db.recusas[user.id] || []).filter((id) => id !== recusar[1]);
-            if (m === 'POST') {
-                lista.push(recusar[1]);
-                db.favoritos[user.id] = (db.favoritos[user.id] || []).filter((id) => id !== recusar[1]);
-            }
-            db.recusas[user.id] = lista;
-            salvarDb(db);
-            return { recusado: m === 'POST', imovel_id: recusar[1] };
-        }
-
-        if (m === 'GET' && pathname === '/historico') {
-            exigirMorador(user);
-            const montar = (ids) => ids.map((id) => db.imoveis.find((i) => i.id === id))
-                .filter(Boolean).map((i) => comMatch(i, user));
-            return {
-                curtidos: montar(db.favoritos[user.id] || []),
-                recusados: montar((db.recusas || {})[user.id] || [])
-            };
+            return { items: filtrarImoveis(db.imoveis, query, user) };
         }
 
         if (m === 'GET' && pathname === '/notificacoes') {
@@ -813,7 +734,6 @@
             Object.keys(db.favoritos).forEach((uid) => {
                 db.favoritos[uid] = db.favoritos[uid].filter((fav) => fav !== id);
             });
-            db.visitas = db.visitas.filter((v) => v.imovel_id !== id);
             salvarDb(db);
             return null;
         }
@@ -842,64 +762,6 @@
             db.favoritos[user.id] = novos;
             salvarDb(db);
             return { favorito: novos.includes(id), ids: novos };
-        }
-
-        if (m === 'GET' && pathname === '/visitas') {
-            if (!user) throw erro(401, 'Não autenticado.');
-            const items = db.visitas
-                .filter((v) => {
-                    if (user.papel === 'Locador') {
-                        const imovel = db.imoveis.find((i) => i.id === v.imovel_id);
-                        return imovel && imovel.locador_id === user.id;
-                    }
-                    return v.usuario_id === user.id;
-                })
-                .map((v) => {
-                    const imovel = db.imoveis.find((i) => i.id === v.imovel_id);
-                    return {
-                        ...v,
-                        imovel_titulo: imovel ? imovel.titulo : v.imovel_id
-                    };
-                });
-            return { items };
-        }
-
-        if (m === 'POST' && pathname === '/visitas') {
-            exigirMorador(user);
-            const imovel = db.imoveis.find((i) => i.id === body.imovel_id);
-            if (!imovel) throw erro(404, 'Imóvel não encontrado.');
-            const parsed = parseHorario(body.horario || 'Amanhã, 10h');
-            const visita = {
-                id: `v-${Date.now()}`,
-                imovel_id: imovel.id,
-                usuario_id: user.id,
-                nome: user.nome,
-                data: body.data || parsed.data,
-                hora: body.hora || parsed.hora,
-                status: 'pendente',
-                horario_rotulo: body.horario || ''
-            };
-            db.visitas.push(visita);
-            salvarDb(db);
-            return visita;
-        }
-
-        const patchVisita = pathname.match(/^\/visitas\/([^/]+)$/);
-        if (m === 'PATCH' && patchVisita) {
-            if (!user) throw erro(401, 'Não autenticado.');
-            const visita = db.visitas.find((v) => String(v.id) === patchVisita[1]);
-            if (!visita) throw erro(404, 'Visita não encontrada.');
-            const imovel = db.imoveis.find((i) => i.id === visita.imovel_id);
-            const dono = imovel && imovel.locador_id === user.id;
-            const quemPediu = visita.usuario_id === user.id;
-            const status = String(body.status || '').toLowerCase();
-            if (!['confirmada', 'recusada', 'cancelada'].includes(status)) throw erro(400, 'Status inválido.');
-            if ((status === 'cancelada' && !quemPediu) || (status !== 'cancelada' && !dono)) {
-                throw erro(403, 'Sem permissão para esta mudança.');
-            }
-            visita.status = status;
-            salvarDb(db);
-            return { ...visita, imovel_titulo: imovel ? imovel.titulo : visita.imovel_id };
         }
 
         if (m === 'GET' && pathname === '/stats') {

@@ -283,9 +283,6 @@
         removerFoto: (id, idImagem) => request(`/imoveis/${id}/fotos/${idImagem}`, { method: 'DELETE' }),
         listarFavoritos: () => request('/favoritos'),
         alternarFavorito: (id) => request(`/favoritos/${id}`, { method: 'POST' }),
-        listarVisitas: () => request('/visitas'),
-        criarVisita: (payload) => request('/visitas', { method: 'POST', body: payload }),
-        atualizarVisita: (id, status) => request(`/visitas/${id}`, { method: 'PATCH', body: { status } }),
         stats: () => request('/stats', {
             auth: Boolean(lerToken()),
             silencioso: true
@@ -311,10 +308,6 @@
             body: ids ? { ids } : {},
             silencioso: true
         }),
-        descobrir: () => request('/descobrir'),
-        recusarImovel: (id) => request(`/imoveis/${id}/recusar`, { method: 'POST' }),
-        desfazerRecusa: (id) => request(`/imoveis/${id}/recusar`, { method: 'DELETE' }),
-        historico: () => request('/historico'),
         rotaOnibus: (params) => request(`/mobilidade/rota?${new URLSearchParams(params)}`),
         reenviarVerificacao: () => request('/me/verificacao', { method: 'POST' }),
         verificarEmail: (token) => request('/auth/verificar', {

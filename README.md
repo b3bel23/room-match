@@ -289,8 +289,8 @@ completo, gerado das migrações, está em [`database/schema.sql`](./database/sc
 | Pessoas e papéis | `pessoas`, `usuarios`, `locatarios` (Morador), `locadores`, `administradores` |
 | Convivência | `tags`, `usuario_tags`, `imovel_tags` |
 | Anúncios | `imoveis`, `enderecos_imovel`, `posts` (o anúncio publicado), `carrossel_imagens` (fotos), `integrantes_imovel` (moradores atuais) |
-| Matching | `likes` (favoritos/curtidas), `recusas`, `matches` |
-| Contato | `conversas`, `mensagens`, `visitas`, `notificacoes` |
+| Matching | `likes` (favoritos), `matches` |
+| Contato | `conversas`, `mensagens`, `notificacoes` (`visitas` existe no banco, sem uso no site) |
 | Mobilidade | `rotas_mobilidade` (cache das rotas de ônibus) |
 | Moderação | `denuncias`, `avaliacoes` |
 
@@ -474,7 +474,7 @@ Desenvolvimento modular, priorizando as funcionalidades essenciais do MVP e expa
 Ações prioritárias do grupo de trabalho:
 
 - [x] **Modelo Relacional:** tabelas no PostgreSQL via Alembic
-- [x] **Desenvolvimento do MVP:** cadastro, perfil, mural com afinidade, descobrir, favoritos, chat, visitas, notificações, anúncios com fotos, rotas a pé/bicicleta/carro/ônibus
+- [x] **Desenvolvimento do MVP:** cadastro, perfil, mural com afinidade, favoritos, chat, notificações, anúncios com fotos, rotas a pé/bicicleta/carro/ônibus
 - [x] **Integração GTFS:** roteirizador pronto; falta carregar o GTFS real da EMDEC/EMTU
 - [ ] **Deploy da API** (Render + Supabase) e ligar o site a ela (`API_PRODUCAO`)
 - [ ] Validação dos requisitos com usuários do público-alvo

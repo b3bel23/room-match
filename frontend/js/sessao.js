@@ -75,7 +75,6 @@ function linksNavPorPapel() {
         return [
             { href: 'meus-imoveis.html', texto: 'Meus anúncios', className: ativo('meus-imoveis.html') },
             { href: 'publicar-imovel.html', texto: 'Publicar', className: ativo('publicar-imovel.html') },
-            { href: 'calendario-visitas.html', texto: 'Visitas', className: ativo('calendario-visitas.html') },
             { href: 'mensagens.html', texto: 'Mensagens', className: ativo('mensagens.html') },
             { href: 'perfil.html', texto: null, className: `nav-usuario${ativo('perfil.html')}`, aria: 'Minha conta' }
         ];
@@ -84,9 +83,7 @@ function linksNavPorPapel() {
     if (ehMorador()) {
         return [
             { href: 'home.html', texto: 'Explorar', className: ativo('home.html') },
-            { href: 'descobrir.html', texto: 'Descobrir', className: ativo('descobrir.html') },
             { href: 'favoritos.html', texto: 'Favoritos', className: ativo('favoritos.html') },
-            { href: 'calendario-visitas.html', texto: 'Minhas visitas', className: ativo('calendario-visitas.html') },
             { href: 'mensagens.html', texto: 'Mensagens', className: ativo('mensagens.html') },
             { href: 'perfil.html', texto: null, className: `nav-usuario${ativo('perfil.html')}`, aria: 'Minha conta' }
         ];

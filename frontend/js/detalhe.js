@@ -45,15 +45,6 @@ function montarAcoesPorPapel(imovel) {
             }
             editar.href = `editar-anuncio.html?id=${encodeURIComponent(imovel.id)}`;
 
-            let visitas = acoes.querySelector('a[data-acao="visitas"]');
-            if (!visitas) {
-                visitas = document.createElement('a');
-                visitas.className = 'btn btn-secondary';
-                visitas.dataset.acao = 'visitas';
-                visitas.textContent = 'Agenda de visitas';
-                acoes.append(visitas);
-            }
-            visitas.href = 'calendario-visitas.html';
         } else if (linkConversar) {
             linkConversar.hidden = true;
         }
