@@ -125,12 +125,32 @@
     padding-right: 2.75rem;
 }
 
-.campo input::placeholder {
+/* Bio: mesmo retângulo do campo Faculdade / Universidade. */
+.campo textarea {
+    width: 100%;
+    height: 44px;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13.2px;
+    line-height: 1.3;
+    color: var(--color-text-primary);
+    outline: none;
+    resize: vertical;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
     color: var(--color-neutral);
 }
 
 .campo input:focus,
-.campo select:focus {
+.campo select:focus,
+.campo textarea:focus {
     border-color: var(--color-primary);
 }
 
@@ -671,4 +691,18 @@
         width: 100%;
         min-height: var(--tap-min);
     }
+}
+
+/* Títulos dos campos em negrito (o texto de ajuda do "?" continua normal). */
+.cadastro-card .label-com-tip,
+.cadastro-card .foto-rotulo {
+    font-weight: var(--fw-bold);
+}
+
+/* Textos de ajuda abaixo do campo (ex.: contador da bio): pequenos e cinza. */
+.cadastro-card .campo-ajuda {
+    margin: 0;
+    font-size: var(--fs-xsmall);
+    line-height: 1.35;
+    color: var(--color-text-muted);
 }
