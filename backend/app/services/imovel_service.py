@@ -21,8 +21,14 @@ from app.models.tag import Tag
 from app.models.usuario import Usuario
 from app.schemas.anuncio import AnuncioCreate, AnuncioUpdate
 
+from app.core import cache_resposta
 from app.services import storage_service
 from app.services.storage_service import UPLOAD_DIR, URL_UPLOADS  # noqa: F401  (usados por main.py e testes)
+
+
+def _invalidar_caches_mural() -> None:
+    cache_resposta.invalidate_prefix("mural:")
+    cache_resposta.invalidate_prefix("stats:")
 
 MAX_FOTOS = 10
 MAX_BYTES_FOTO = 5 * 1024 * 1024
@@ -146,6 +152,7 @@ def criar_anuncio(db: Session, locador: Locador, dados: AnuncioCreate) -> Post:
     locador.quantidade_imoveis_anunciados = (locador.quantidade_imoveis_anunciados or 0) + 1
     db.commit()
     db.refresh(post)
+    _invalidar_caches_mural()
     return post
 
 
@@ -183,6 +190,7 @@ def atualizar_anuncio(db: Session, post: Post, dados: AnuncioUpdate) -> Post:
 
     db.commit()
     db.refresh(post)
+    _invalidar_caches_mural()
     return post
 
 
@@ -195,6 +203,7 @@ def remover_anuncio(db: Session, post: Post) -> None:
     if locador is not None and (locador.quantidade_imoveis_anunciados or 0) > 0:
         locador.quantidade_imoveis_anunciados -= 1
     db.commit()
+    _invalidar_caches_mural()
 
 
 def anuncios_do_locador(db: Session, usuario: Usuario) -> list[Post]:
@@ -262,6 +271,7 @@ def adicionar_fotos(db: Session, post: Post, arquivos: list[bytes]) -> Post:
             storage_service.apagar(url)
         raise
     db.refresh(post)
+    _invalidar_caches_mural()
     return post
 
 
@@ -274,4 +284,5 @@ def remover_foto(db: Session, post: Post, id_imagem: int) -> Post:
     db.commit()
     storage_service.apagar(url)
     db.refresh(post)
+    _invalidar_caches_mural()
     return post

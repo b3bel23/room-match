@@ -172,6 +172,11 @@ def atualizar_perfil(db: Session, usuario: Usuario, dados: PerfilUpdate) -> dict
 
     db.commit()
     db.refresh(usuario)
+    from app.core import cache_resposta
+
+    # Match, destino e orçamento mudam o mural/stats personalizados.
+    cache_resposta.invalidate_prefix("mural:")
+    cache_resposta.invalidate_prefix("stats:")
     return montar_perfil(db, usuario)
 
 

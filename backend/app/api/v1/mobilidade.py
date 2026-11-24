@@ -74,6 +74,7 @@ def rota_onibus(
 
 
 def _guardar_cache(db, imovel_id, lat, lng, nome, hora, resultado) -> None:
+    from app.core import cache_resposta
     from app.models.imovel import Imovel
 
     if db.get(Imovel, imovel_id) is None:
@@ -93,6 +94,8 @@ def _guardar_cache(db, imovel_id, lat, lng, nome, hora, resultado) -> None:
     linha.detalhes = {"nome_destino": nome, "dia": resultado["dia"], "baldeacoes": resultado["baldeacoes"]}
     linha.calculado_em = datetime.now(timezone.utc)
     db.commit()
+    cache_resposta.invalidate_prefix("mural:")
+    cache_resposta.invalidate_prefix("stats:")
 
 
 def deslocamentos_salvos(db: Session, ids_imovel: list[int], destino: Optional[dict]) -> dict[int, dict]:

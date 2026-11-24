@@ -2,10 +2,10 @@
  * Cliente HTTP central (KAN-49).
  *
  * Modo:
- *  - Site publicado (fora de localhost) com API_PRODUCAO preenchida: fala com a API real.
- *  - Sem API_PRODUCAO, ou em localhost: modo demonstração (mock, dados no navegador).
+ *  - Padrão: `live` (API real + banco). Mock só com `?api=mock` explícito.
  *  - `?api=mock` ou `?api=live` na URL troca e guarda a escolha neste navegador.
  *  - Manual: localStorage 'roommatch-api-mode' ('mock'|'live') e 'roommatch-api-base'.
+ *  - Em localhost a base padrão é http://127.0.0.1:8000.
  *
  * Contrato: docs/frontend/papeis-e-rotas-api-v1.md
  * Deploy: frontend/README.md
@@ -90,12 +90,22 @@
     });
 
     function modoPadrao() {
-        return API_PRODUCAO && !EM_DESENVOLVIMENTO ? 'live' : 'mock';
+        // RoomMatch usa dados reais (API + banco). Mock só com ?api=mock explícito.
+        return 'live';
     }
 
     function modo() {
         try {
-            return localStorage.getItem(CHAVE_MODE) || modoPadrao();
+            const salvo = localStorage.getItem(CHAVE_MODE);
+            // Migra quem ainda tinha mock gravado por padrão antigo do localhost.
+            if (salvo === 'mock') {
+                const pedido = new URLSearchParams(global.location.search).get('api');
+                if (pedido !== 'mock') {
+                    localStorage.setItem(CHAVE_MODE, 'live');
+                    return 'live';
+                }
+            }
+            return salvo || modoPadrao();
         } catch (erro) {
             return modoPadrao();
         }

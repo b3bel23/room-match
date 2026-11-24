@@ -14,6 +14,7 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.core import cache_resposta
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.models.conversa import Conversa
@@ -26,6 +27,10 @@ from app.services import matching_service, mural_service
 from app.services.auth_service import get_usuario_by_id
 
 router = APIRouter(tags=["mural"])
+
+# Pooler remoto: cache curto evita repetir 5+ queries a cada reload do mural.
+_TTL_MURAL_S = 20.0
+_TTL_STATS_S = 20.0
 
 # Mural e detalhe são públicos: sem token (ou token inválido) o usuário é visitante.
 oauth2_opcional = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
@@ -116,22 +121,46 @@ def _contexto_usuario(db: Session, usuario: Optional[Usuario]):
     return locatario, matching_service.tags_do_usuario(db, usuario, locatario)
 
 
-def _anuncios_ativos(db: Session) -> List[Post]:
+def _anuncios_ativos(db: Session, *, com_moradores: bool = False) -> List[Post]:
     return (
-        mural_service.query_posts(db)
+        mural_service.query_posts(db, com_moradores=com_moradores)
         .filter(Post.status_anuncio == "ativo")
         .order_by(Post.data_publicacao.desc())
         .all()
     )
 
 
-def _montar_todos(db: Session, posts: List[Post], locatario, user_tags) -> List[dict]:
+def _montar_todos(
+    db: Session,
+    posts: List[Post],
+    locatario,
+    user_tags,
+    *,
+    incluir_moradores: bool = False,
+) -> List[dict]:
     tags = matching_service.tags_por_imovel(db, [p.id_imovel for p in posts])
     itens = [
-        mural_service.montar_imovel(p, tags[p.id_imovel], user_tags, locatario) for p in posts
+        mural_service.montar_imovel(
+            p,
+            tags[p.id_imovel],
+            user_tags,
+            locatario,
+            incluir_moradores=incluir_moradores,
+        )
+        for p in posts
     ]
     _com_deslocamento(db, itens, locatario)
     return itens
+
+
+def _chave_mural(usuario_id: Optional[int], tipo: str, bairro: str, preco_max: float, tag: str) -> str:
+    return "mural:{uid}:{tipo}:{bairro}:{preco}:{tag}".format(
+        uid=usuario_id or 0,
+        tipo=(tipo or "").lower(),
+        bairro=(bairro or "").lower(),
+        preco=preco_max or 0,
+        tag=(tag or "").lower(),
+    )
 
 
 def _destino_salvo(locatario) -> Optional[dict]:
@@ -157,12 +186,28 @@ def listar_imoveis(
     usuario: Optional[Usuario] = Depends(usuario_opcional),
     db: Session = Depends(get_db),
 ):
-    locatario, user_tags = _contexto_usuario(db, usuario)
-    itens = _montar_todos(db, _anuncios_ativos(db), locatario, user_tags)
-    itens = mural_service.filtrar_imoveis(
-        itens, tipo=tipo, bairro=bairro or q, tag=tag, preco_max=preco_max
+    bairro_q = bairro or q
+    chave = _chave_mural(
+        usuario.id_usuario if usuario else None, tipo, bairro_q, preco_max, tag
     )
-    return {"items": itens}
+    cached = cache_resposta.get(chave)
+    if cached is not None:
+        return cached
+
+    locatario, user_tags = _contexto_usuario(db, usuario)
+    itens = _montar_todos(
+        db,
+        _anuncios_ativos(db, com_moradores=False),
+        locatario,
+        user_tags,
+        incluir_moradores=False,
+    )
+    itens = mural_service.filtrar_imoveis(
+        itens, tipo=tipo, bairro=bairro_q, tag=tag, preco_max=preco_max
+    )
+    corpo = {"items": itens}
+    cache_resposta.set(chave, corpo, _TTL_MURAL_S)
+    return corpo
 
 
 @router.get("/imoveis/{id_imovel}", response_model=ImovelMural)
@@ -172,7 +217,7 @@ def detalhe_imovel(
     db: Session = Depends(get_db),
 ):
     post = (
-        mural_service.query_posts(db)
+        mural_service.query_posts(db, com_moradores=True)
         .filter(Post.id_imovel == id_imovel, Post.status_anuncio != "removido")
         .first()
     )
@@ -181,18 +226,32 @@ def detalhe_imovel(
     if post is None or (post.status_anuncio != "ativo" and not dono):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Imóvel não encontrado.")
     locatario, user_tags = _contexto_usuario(db, usuario)
-    return _montar_todos(db, [post], locatario, user_tags)[0]
+    return _montar_todos(
+        db, [post], locatario, user_tags, incluir_moradores=True
+    )[0]
 
 
 @router.get("/stats", response_model=Stats)
 def stats(
     usuario: Optional[Usuario] = Depends(usuario_opcional), db: Session = Depends(get_db)
 ):
+    uid = usuario.id_usuario if usuario else 0
+    chave = "stats:{uid}".format(uid=uid)
+    cached = cache_resposta.get(chave)
+    if cached is not None:
+        return cached
+
     locatario, user_tags = _contexto_usuario(db, usuario)
-    posts = _anuncios_ativos(db)
-    tags = matching_service.tags_por_imovel(db, [p.id_imovel for p in posts])
+    # Sem eager de fotos/moradores: stats só precisa de ids + tags + counts.
+    posts = (
+        db.query(Post.id_imovel, Post.id_locador)
+        .filter(Post.status_anuncio == "ativo")
+        .all()
+    )
+    ids = [p.id_imovel for p in posts]
+    tags = matching_service.tags_por_imovel(db, ids)
     match_medio = matching_service.match_medio(
-        user_tags, [{"tags": tags[p.id_imovel]} for p in posts]
+        user_tags, [{"tags": tags[i]} for i in ids]
     )
 
     favoritos = conversas = meus_anuncios = 0
@@ -208,15 +267,16 @@ def stats(
 
     tempos = [
         t["deslocamento_min"]
-        for t in deslocamentos_salvos(db, [p.id_imovel for p in posts], _destino_salvo(locatario)).values()
+        for t in deslocamentos_salvos(db, ids, _destino_salvo(locatario)).values()
         if t["deslocamento_min"] is not None
     ]
-    return Stats(
+    corpo = Stats(
         imoveis_ativos=len(posts),
         match_medio=match_medio,
-        # média do tempo de ônibus até o destino salvo, entre os anúncios já calculados
         deslocamento_medio=round(sum(tempos) / len(tempos)) if tempos else 0,
         favoritos=favoritos,
         meus_anuncios=meus_anuncios,
         conversas=conversas,
     )
+    cache_resposta.set(chave, corpo, _TTL_STATS_S)
+    return corpo

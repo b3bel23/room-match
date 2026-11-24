@@ -199,10 +199,11 @@ async function carregarNotificacoes() {
 
 function iniciarNotificacoes() {
     if (!estaLogado()) return;
-    carregarNotificacoes();
+    // Adia o primeiro fetch para não competir com mural/stats no carregamento.
+    window.setTimeout(carregarNotificacoes, 800);
     window.setInterval(() => {
         if (document.visibilityState === 'visible') carregarNotificacoes();
-    }, 60000);
+    }, 90000);
 }
 
 function atualizarNavPorPapel() {

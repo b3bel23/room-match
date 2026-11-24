@@ -24,25 +24,34 @@ from app.services.matching_service import (
 )
 
 
-def opcoes_carga_anuncio():
-    """Evita N+1 no mural/detalhe: imóvel, endereço, fotos e moradores numa leva."""
+def opcoes_carga_anuncio(*, com_moradores: bool = True):
+    """Evita N+1: imóvel, endereço e fotos; moradores só no detalhe (mural não usa)."""
+    extras = []
+    if com_moradores:
+        extras.append(
+            selectinload(Imovel.integrantes).selectinload(IntegranteImovel.pessoa)
+        )
     return (
         selectinload(Post.imovel).options(
             joinedload(Imovel.endereco),
             selectinload(Imovel.imagens),
-            selectinload(Imovel.integrantes).selectinload(IntegranteImovel.pessoa),
+            *extras,
         ),
     )
 
 
-def query_posts(db: Session) -> Query:
+def query_posts(db: Session, *, com_moradores: bool = True) -> Query:
     """Query base de anúncios já com relacionamentos usados em `montar_imovel`."""
-    return db.query(Post).options(*opcoes_carga_anuncio())
+    return db.query(Post).options(*opcoes_carga_anuncio(com_moradores=com_moradores))
 
 
-def recarregar_post(db: Session, post: Post) -> Post:
+def recarregar_post(db: Session, post: Post, *, com_moradores: bool = True) -> Post:
     """Rebusca o post com carga eager (após criar/editar/fotos)."""
-    return query_posts(db).filter(Post.id_post == post.id_post).one()
+    return (
+        query_posts(db, com_moradores=com_moradores)
+        .filter(Post.id_post == post.id_post)
+        .one()
+    )
 
 
 
@@ -64,6 +73,8 @@ def montar_imovel(
     tags: Sequence[str],
     user_tags: Sequence[str],
     locatario: Optional[Locatario],
+    *,
+    incluir_moradores: bool = True,
 ) -> dict:
     """Serializa um anúncio (post + imóvel + endereço + fotos) com match e elegibilidade."""
     imovel = post.imovel
@@ -122,7 +133,7 @@ def montar_imovel(
         "latitude": _num_ou_none(getattr(endereco, "latitude", None)),
         "longitude": _num_ou_none(getattr(endereco, "longitude", None)),
         "badge": imovel.tipo_imovel,
-        "moradores_atuais": moradores_atuais(imovel),
+        "moradores_atuais": moradores_atuais(imovel) if incluir_moradores else [],
         "locador_id": post.id_locador,
         "classificacao": imovel.classificacao or "Mista",
         "status_anuncio": post.status_anuncio,

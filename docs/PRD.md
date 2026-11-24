@@ -77,18 +77,20 @@ explicando mil vs dez mil.
 **Status:** concluída (parcial quanto à região do banco).
 
 **O que faz:** reduz a lentidão do `GET /imoveis` e telas ligadas quando o Postgres
-está no pooler remoto (RTT alto).
+está no pooler remoto (RTT alto). Sem modo mock no fluxo padrão: só API live.
 
 **Regras / decisões**
-- Carga eager (`selectinload`/`joinedload`) de imóvel, endereço, fotos e moradores
-  evita N+1 por anúncio (`mural_service.query_posts`).
-- Pool SQLAlchemy com `pool_size=5`, `pool_recycle=280` e `pool_pre_ping`.
-- `/health` cacheia o ping do banco por 30s.
-- Home carrega mural e stats em paralelo (`Promise.all`).
-- Limite restante: latência geográfica (`us-west-2`); ideal migrar para `sa-east-1`.
+- Carga eager (`selectinload`/`joinedload`) de imóvel, endereço e fotos; moradores
+  só no detalhe (mural não lista moradores).
+- Cache em memória TTL ~20s para mural/stats; invalida ao criar/editar/remover/fotos.
+- Stats sem carregar fotos (só ids + tags + counts).
+- Pool SQLAlchemy (`pool_size=5`, `pool_recycle=280`, `pool_pre_ping`); `/health`
+  cache 30s; `GZipMiddleware`.
+- Front: `modoPadrao = live`; home em `Promise.all`; sino atrasa 800ms.
+- Limite restante: latência geográfica (`us-west-2`).
 
 **Arquivos:** `mural_service.py`, `matches.py`, `imovel_service.py`, `contexto.py`,
-`database.py`, `main.py`, `home.js`.
+`cache_resposta.py`, `database.py`, `main.py`, `home.js`, `api.js`, `sessao.js`.
 
 ### Afinidade e mural de imóveis (KAN-35)
 

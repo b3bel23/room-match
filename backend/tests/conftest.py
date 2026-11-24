@@ -26,6 +26,15 @@ def _storage_local_nos_testes(monkeypatch):
     monkeypatch.setattr(settings, "supabase_service_key", "")
 
 
+@pytest.fixture(autouse=True)
+def _limpar_cache_resposta():
+    from app.core import cache_resposta
+
+    cache_resposta.clear()
+    yield
+    cache_resposta.clear()
+
+
 @pytest.fixture()
 def db():
     engine = create_engine(
