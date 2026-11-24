@@ -438,28 +438,24 @@ brasileiro válido — com feedback na tela e rejeição no servidor.
 
 **Telas:** cadastro, perfil, publicar anúncio.
 
-### Verificação rigorosa de foto de perfil
+### Verificação de foto de perfil (convenções comuns)
 
-**Status:** concluída (front).
+**Status:** concluída (front); limiares afrouxados para selfie/avatar típico.
 
-**O que faz:** no cadastro e no perfil, a foto só é aceita se for um retrato individual
-de pessoa em boas condições — um rosto nítido, de frente, bem iluminado e enquadrado.
+**O que faz:** no cadastro e no perfil, a foto precisa ter **um rosto detectável**
+(padrão selfie / LinkedIn / WhatsApp) — sem exigir studio nem enquadramento perfeito.
 
 **Regras de negócio e decisões**
-- Motor principal: BlazeFace (TensorFlow.js via CDN); `FaceDetector` nativo só como reserva.
-- Exatamente **1** rosto; vários rostos → rejeita (sem foto de grupo).
-- Confiança BlazeFace ≥ **0,88**; abaixo disso → rejeita (rosto fraco / borrado / oblíquo).
-- Geometria: área do rosto ≥ 10% da imagem; largura ≥ 22% da largura; centro na faixa
-  22–78%; aspecto do box entre 0,55 e 1,45; margem mínima nas bordas (evita corte de
-  testa/queixo).
-- Arquivo: JPG/PNG, ≤ 5 MB, lado mínimo **400×400**, proporção entre 0,45 e 2,2
-  (retrato/quase quadrado; rejeita faixas panorâmicas).
-- Mensagens de erro orientam o usuário (sem grupo, sem filtro pesado, sem óculos escuros
-  ou máscara, luz boa, de frente).
-- A verificação roda **antes** de gravar; cadastro/perfil usam `RoomMatchFaceCheck`.
+- Motor: BlazeFace (CDN); `FaceDetector` nativo só como reserva.
+- Rosto principal obrigatório; 2º rosto só rejeita se for quase do mesmo tamanho
+  (ignora fundo pequeno).
+- Confiança BlazeFace ≥ **0,50** (antes ~0,85–0,88).
+- Geometria folgada: área ≥ ~1,8%; largura ≥ 7%; centro 8–92%; aspecto 0,4–1,85.
+- Arquivo: JPG/PNG, ≤ 5 MB, lado mínimo **200×200**, proporção 0,35–2,6.
+- A verificação roda **antes** de gravar (`RoomMatchFaceCheck`).
 
 **Telas / arquivos:** `frontend/js/face-check.js`, `cadastro.html`/`cadastro.js`,
-`perfil.html`/`perfil.js`, aquecimento via `chrome.js`.
+`perfil.html`/`perfil.js`.
 
 ### Perfil do usuário e troca de modo (KAN-33)
 

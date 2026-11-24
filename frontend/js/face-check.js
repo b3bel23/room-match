@@ -1,7 +1,7 @@
 /**
- * Verificação rigorosa de foto de perfil (data-face-perfil).
- * Aceita só retrato de uma pessoa, de frente, nítido e bem enquadrado.
- * Motor principal: BlazeFace (confiança + geometria). Fallback: FaceDetector.
+ * Verificação de foto de perfil (data-face-perfil) — convenções comuns de selfie/avatar.
+ * Exige um rosto detectável (sem grupo óbvio). Não exige studio / enquadramento perfeito.
+ * Motor: BlazeFace; fallback FaceDetector.
  */
 (function (global) {
     const SCRIPTS_BLAZE = [
@@ -10,19 +10,20 @@
     ];
 
     const TAMANHO_MAXIMO = 5 * 1024 * 1024;
-    const LADO_MINIMO = 400;
-    /** Confiança mínima BlazeFace (0–1). */
-    const PROB_MIN = 0.85;
-    /** Rosto precisa ocupar pelo menos esta fração da área da imagem. */
-    const AREA_MIN = 0.055;
-    /** Largura do rosto ≥ fração da largura da imagem. */
-    const LARGURA_MIN = 0.14;
-    /** Centro do rosto deve ficar nesta faixa horizontal/vertical (0–1). */
-    const CENTRO_MIN = 0.18;
-    const CENTRO_MAX = 0.82;
-    /** Proporção largura/altura do box do rosto. */
-    const ASPECTO_MIN = 0.55;
-    const ASPECTO_MAX = 1.45;
+    /** Celular antigo / crop leve ainda passa (antes 400px era rígido demais). */
+    const LADO_MINIMO = 200;
+    /** Confiança BlazeFace — alinhada a selfie comum (~0,5–0,6), não “documento”. */
+    const PROB_MIN = 0.5;
+    /** Rosto pode ser menor na foto (selfie de meio-corpo). */
+    const AREA_MIN = 0.018;
+    const LARGURA_MIN = 0.07;
+    /** Centro folgado: selfie levemente deslocada ok. */
+    const CENTRO_MIN = 0.08;
+    const CENTRO_MAX = 0.92;
+    const ASPECTO_MIN = 0.4;
+    const ASPECTO_MAX = 1.85;
+    /** 2º rosto só conta como “grupo” se for quase do mesmo tamanho. */
+    const AREA_SECUNDARIA_MAX = 0.35;
 
     let blazeModelPromise = null;
     const scriptsPendentes = new Map();
@@ -113,7 +114,7 @@
     }
 
     function avaliarGeometria(box, imgW, imgH) {
-        if (!box || box.width < 28 || box.height < 28) {
+        if (!box || box.width < 16 || box.height < 16) {
             return erroFoto(
                 'ROSTO_PEQUENO',
                 'Rosto pequeno demais. Aproxime um pouco a câmera.'
@@ -125,13 +126,13 @@
         if (areaImg > 0 && areaRosto / areaImg < AREA_MIN) {
             return erroFoto(
                 'ROSTO_DISTANTE',
-                'Rosto um pouco longe. Aproxime a câmera ou recorte a foto deixando o rosto mais no centro.'
+                'Rosto muito longe. Aproxime a câmera ou recorte mais perto do rosto.'
             );
         }
         if (box.width / imgW < LARGURA_MIN) {
             return erroFoto(
                 'ROSTO_ESTREITO',
-                'Enquadre melhor: o rosto precisa aparecer com mais destaque na foto.'
+                'Rosto pouco visível. Tente uma foto mais de perto.'
             );
         }
 
@@ -139,7 +140,7 @@
         if (aspecto < ASPECTO_MIN || aspecto > ASPECTO_MAX) {
             return erroFoto(
                 'ENQUADRAMENTO',
-                'Enquadramento inválido. Foto de frente, sem corte estranho na cabeça ou no queixo.'
+                'Enquadramento estranho. Prefira foto de frente (selfie ou retrato).'
             );
         }
 
@@ -148,12 +149,12 @@
         if (cx < CENTRO_MIN || cx > CENTRO_MAX || cy < CENTRO_MIN || cy > CENTRO_MAX) {
             return erroFoto(
                 'FORA_DO_CENTRO',
-                'Centralize o rosto na foto. Evite cantos e margens.'
+                'Rosto muito na borda. Deixe-o mais para o meio da foto.'
             );
         }
 
-        // Margem: box não pode colar nas bordas (corta testa/queixo).
-        const margem = 0.02;
+        // Só rejeita se o rosto estiver claramente cortado (quase sem margem).
+        const margem = 0.005;
         if (
             box.x / imgW < margem
             || box.y / imgH < margem
@@ -162,7 +163,7 @@
         ) {
             return erroFoto(
                 'CORTADO',
-                'Rosto cortado nas bordas. Deixe um pouco de espaço acima da cabeça e abaixo do queixo.'
+                'Rosto cortado na borda. Inclua a cabeça inteira na foto.'
             );
         }
 
@@ -197,7 +198,8 @@
                 await tf.setBackend('cpu');
             }
             await tf.ready();
-            return api.load({ maxFaces: 3, scoreThreshold: PROB_MIN * 0.85 });
+            // Threshold baixo na detecção; filtramos depois com PROB_MIN.
+            return api.load({ maxFaces: 5, scoreThreshold: Math.min(0.4, PROB_MIN * 0.75) });
         })().catch((erro) => {
             blazeModelPromise = null;
             throw erro;
@@ -264,34 +266,42 @@
         if (!confiaveis.length) {
             throw erroFoto(
                 'SEM_ROSTO',
-                'Não detectamos um rosto nítido. Use foto sua, de frente, bem iluminada, sem óculos escuros nem máscara.'
+                'Não encontramos um rosto. Use uma selfie ou retrato seu, com boa luz.'
             );
         }
 
-        if (confiaveis.length > 1) {
+        // Aceita o rosto maior; só rejeita se houver outro quase tão grande (foto de grupo).
+        const boxes = confiaveis.map(boxDePredicao).sort(
+            (a, b) => (b.width * b.height) - (a.width * a.height)
+        );
+        const principal = boxes[0];
+        const areaPrincipal = principal.width * principal.height;
+        const rival = boxes.slice(1).find(
+            (b) => (b.width * b.height) >= areaPrincipal * AREA_SECUNDARIA_MAX
+        );
+        if (rival) {
             throw erroFoto(
                 'VARIOS_ROSTOS',
-                'Detectamos mais de uma pessoa. Envie só a sua foto (retrato individual).'
+                'Parece foto com mais de uma pessoa em destaque. Envie só a sua.'
             );
         }
 
-        const box = boxDePredicao(confiaveis[0]);
-        if (motor === 'BlazeFace' && box.prob < PROB_MIN) {
+        if (motor === 'BlazeFace' && principal.prob < PROB_MIN) {
             throw erroFoto(
                 'BAIXA_CONFIANCA',
-                'Qualidade insuficiente. Foto mais nítida, boa luz e rosto de frente.'
+                'Rosto pouco nítido. Melhore a luz ou tire outra selfie de frente.'
             );
         }
 
-        const geo = avaliarGeometria(box, imgW, imgH);
+        const geo = avaliarGeometria(principal, imgW, imgH);
         if (geo) throw geo;
 
         return {
             ok: true,
             rostos: 1,
             motor,
-            confianca: box.prob,
-            cobertura: (box.width * box.height) / (imgW * imgH),
+            confianca: principal.prob,
+            cobertura: (principal.width * principal.height) / (imgW * imgH),
         };
     }
 
@@ -333,8 +343,8 @@
         }
         // Retratos muito panorâmicos / faixa estreita costumam ser ruins.
         const razao = img.naturalWidth / img.naturalHeight;
-        if (razao < 0.45 || razao > 2.2) {
-            throw new Error('Proporção inválida. Use uma foto vertical ou quadrada de retrato.');
+        if (razao < 0.35 || razao > 2.6) {
+            throw new Error('Proporção muito extrema. Use uma foto de retrato ou selfie comum.');
         }
         await exigirRosto(dataUrlBruto);
         const comprimida = comprimirParaEnvio(img);
@@ -367,10 +377,10 @@
     }
 
     const DICA =
-        'Só foto sua, sozinha, de frente, nítida e bem iluminada. Sem grupo, filtro pesado, óculos escuros ou máscara.';
+        'Selfie ou retrato seu (uma pessoa). Luz razoável basta — não precisa ser foto profissional.';
 
     /**
-     * Liga um <input type=file data-face-perfil> com verificação rigorosa.
+     * Liga um <input type=file data-face-perfil> com verificação (convenções comuns).
      */
     function ligarEntrada(input, opts = {}) {
         if (!input || input.dataset.rmFaceBound === '1') return;
@@ -396,7 +406,7 @@
             try {
                 const dataUrl = await processarArquivo(arquivo);
                 input.setCustomValidity('');
-                pintarStatus(statusEl, 'Foto aprovada: rosto único, nítido e bem enquadrado.', 'ok');
+                pintarStatus(statusEl, 'Foto aprovada.', 'ok');
                 if (typeof opts.onAceita === 'function') opts.onAceita(dataUrl);
                 input.dispatchEvent(new CustomEvent('rm-face-ok', { detail: { dataUrl }, bubbles: true }));
             } catch (erro) {
