@@ -84,6 +84,7 @@ function linksNavPorPapel() {
     if (ehMorador()) {
         return [
             { href: 'home.html', texto: 'Explorar', className: ativo('home.html') },
+            { href: 'descobrir.html', texto: 'Descobrir', className: ativo('descobrir.html') },
             { href: 'favoritos.html', texto: 'Favoritos', className: ativo('favoritos.html') },
             { href: 'calendario-visitas.html', texto: 'Minhas visitas', className: ativo('calendario-visitas.html') },
             { href: 'mensagens.html', texto: 'Mensagens', className: ativo('mensagens.html') },
@@ -115,6 +116,96 @@ function montarNavPorPapel(nav) {
     sairLink.href = '#';
     sairLink.textContent = 'Sair';
     nav.insertBefore(sairLink, nav.querySelector('.nav-usuario'));
+    nav.insertBefore(criarSino(), sairLink);
+}
+
+/* ---------- Notificações (RF17/RF35): sino no menu, com contagem de não lidas ---------- */
+
+const SINO_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
+let notificacoesCache = { items: [], nao_lidas: 0 };
+
+function criarSino() {
+    const caixa = document.createElement('div');
+    caixa.className = 'nav-sino';
+    caixa.innerHTML = `<button type="button" class="nav-sino-botao" aria-haspopup="true" aria-expanded="false" aria-label="Notificações">${SINO_SVG}<span class="nav-sino-contagem" hidden></span></button>
+        <div class="nav-sino-painel" role="region" aria-label="Notificações" hidden>
+            <div class="nav-sino-topo"><strong>Notificações</strong><button type="button" class="nav-sino-lidas">Marcar todas como lidas</button></div>
+            <ul class="nav-sino-lista"></ul>
+        </div>`;
+    const botao = caixa.querySelector('.nav-sino-botao');
+    const painel = caixa.querySelector('.nav-sino-painel');
+    botao.addEventListener('click', (evento) => {
+        evento.stopPropagation();
+        const abrir = painel.hidden;
+        painel.hidden = !abrir;
+        botao.setAttribute('aria-expanded', String(abrir));
+        if (abrir) carregarNotificacoes();
+    });
+    caixa.querySelector('.nav-sino-lidas').addEventListener('click', async () => {
+        try {
+            await RoomMatchApi.marcarNotificacoesLidas();
+            await carregarNotificacoes();
+        } catch (erro) { /* tenta de novo no próximo ciclo */ }
+    });
+    document.addEventListener('click', (evento) => {
+        if (!caixa.contains(evento.target)) {
+            painel.hidden = true;
+            botao.setAttribute('aria-expanded', 'false');
+        }
+    });
+    desenharSino(caixa);
+    return caixa;
+}
+
+function desenharSino(caixa) {
+    const { items, nao_lidas: naoLidas } = notificacoesCache;
+    const contagem = caixa.querySelector('.nav-sino-contagem');
+    contagem.hidden = !naoLidas;
+    contagem.textContent = naoLidas > 9 ? '9+' : String(naoLidas);
+    caixa.querySelector('.nav-sino-botao').setAttribute(
+        'aria-label', naoLidas ? `Notificações: ${naoLidas} não lidas` : 'Notificações'
+    );
+    const lista = caixa.querySelector('.nav-sino-lista');
+    lista.replaceChildren();
+    if (!items.length) {
+        const vazio = document.createElement('li');
+        vazio.className = 'nav-sino-vazio';
+        vazio.textContent = 'Nenhuma notificação por enquanto.';
+        lista.append(vazio);
+    }
+    items.forEach((n) => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = n.link || '#';
+        link.className = n.lida ? '' : 'nao-lida';
+        link.textContent = n.texto;
+        const quando = document.createElement('small');
+        quando.textContent = n.criada_em
+            ? new Date(n.criada_em).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+            : '';
+        link.append(quando);
+        link.addEventListener('click', () => {
+            if (!n.lida) RoomMatchApi.marcarNotificacoesLidas([n.id]).catch(() => {});
+        });
+        item.append(link);
+        lista.append(item);
+    });
+}
+
+async function carregarNotificacoes() {
+    if (!estaLogado() || typeof RoomMatchApi === 'undefined') return;
+    try {
+        notificacoesCache = await RoomMatchApi.listarNotificacoes();
+        document.querySelectorAll('.nav-sino').forEach(desenharSino);
+    } catch (erro) { /* sem rede: mantém o que já tinha */ }
+}
+
+function iniciarNotificacoes() {
+    if (!estaLogado()) return;
+    carregarNotificacoes();
+    window.setInterval(() => {
+        if (document.visibilityState === 'visible') carregarNotificacoes();
+    }, 60000);
 }
 
 function atualizarNavPorPapel() {
@@ -201,4 +292,5 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarNavPorPapel();
     atualizarChromeSessao();
     ligarSair();
+    iniciarNotificacoes();
 });

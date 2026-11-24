@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova senha · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/config.css">
+</head>
+<body class="auth-page">
+
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+
+    <main class="login-main">
+        <a class="btn-voltar" href="login.html">← Voltar</a>
+        <div class="login-split">
+            <section class="login-hero login-hero-rua" aria-label="Rua de Campinas">
+                <img class="login-hero-logo" src="../assets/logo.svg" alt="RoomMatch">
+                <h2>Recuperação de senha</h2>
+                <p>Escolha uma nova senha para sua conta.</p>
+            </section>
+            <section class="login-card">
+                <h1>Criar nova senha</h1>
+                <p class="login-subtitle">Mínimo de 8 caracteres</p>
+                <form id="redefinir-form" class="login-form">
+                    <div class="field">
+                        <label for="redefinir-senha">Nova senha</label>
+                        <input id="redefinir-senha" type="password" required minlength="8" autocomplete="new-password">
+                    </div>
+                    <div class="field">
+                        <label for="redefinir-confirma">Confirmar nova senha</label>
+                        <input id="redefinir-confirma" type="password" required minlength="8" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn-entrar">Salvar nova senha</button>
+                    <p id="redefinir-retorno" class="config-retorno" role="status" hidden></p>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script>
+        const token = new URLSearchParams(window.location.search).get('token') || '';
+        const retorno = document.getElementById('redefinir-retorno');
+        function mostrar(texto, erro) {
+            retorno.textContent = texto;
+            retorno.classList.toggle('erro', Boolean(erro));
+            retorno.hidden = false;
+        }
+        if (!token) mostrar('Link incompleto. Peça um novo em "Esqueci minha senha".', true);
+        document.getElementById('redefinir-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const senha = document.getElementById('redefinir-senha').value;
+            if (senha !== document.getElementById('redefinir-confirma').value) {
+                mostrar('As senhas não coincidem.', true);
+                return;
+            }
+            try {
+                const dados = await RoomMatchApi.redefinirSenha(token, senha);
+                mostrar(`${dados.message} Indo para a tela de entrar…`, false);
+                setTimeout(() => window.location.replace('login.html'), 2500);
+            } catch (erro) {
+                mostrar(erro.detail || erro.message, true);
+            }
+        });
+    </script>
+</body>
+</html>

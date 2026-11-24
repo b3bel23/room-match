@@ -16,7 +16,8 @@ class Usuario(Pessoa):
     senha_hash = Column(String(255), nullable=False)
     telefone = Column(String(20))
     data_nascimento = Column(Date)
-    foto_perfil = Column(String(255))
+    # Text: o front envia a foto como data URL (base64); pode passar de 255 caracteres.
+    foto_perfil = Column(Text)
     data_cadastro = Column(DateTime(timezone=True), server_default=func.now())
     bio = Column(Text)
     cidade_atual = Column(String(100))
@@ -24,5 +25,10 @@ class Usuario(Pessoa):
     # Lista de tags nativa do Postgres (ex: ["Pet Friendly", "Silêncio Noturno"]),
     # em vez de uma string CSV - ver observações no chat.
     tags_convivencia = Column(ARRAY(String))
+    # Dados de perfil do cadastro (opcionais, exceto gênero no site).
+    genero = Column(String(40))
+    ocupacao = Column(String(120))
+    emprego = Column(String(80))
+    faculdade = Column(String(200))
 
     __mapper_args__ = {"polymorphic_identity": "usuario"}

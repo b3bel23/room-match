@@ -243,3 +243,30 @@
         max-width: 100%;
     }
 }
+
+.email-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    color: var(--color-secondary-text, #8a5a0a);
+}
+
+.email-status.ok {
+    color: var(--color-primary, #3f8f7a);
+}
+
+.email-status[hidden] {
+    display: none;
+}
+
+.link-botao {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-primary, #3f8f7a);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}

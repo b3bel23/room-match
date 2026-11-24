@@ -718,3 +718,114 @@ html.js-motion body.pagina-saindo {
         transform: none;
     }
 }
+
+/* Notificações no menu (sessao.js) */
+.nav-sino {
+    position: relative;
+    display: inline-flex;
+}
+
+.nav-sino-botao {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.nav-sino-botao:hover,
+.nav-sino-botao:focus-visible {
+    background: rgba(94, 163, 143, 0.14);
+}
+
+.nav-sino-contagem {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: #D9534F;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+}
+
+.nav-sino-painel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 50;
+    width: min(340px, 90vw);
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid #D5DDE0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(20, 29, 34, 0.18);
+    text-align: left;
+}
+
+.nav-sino-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #E3E8EA;
+}
+
+.nav-sino-lidas {
+    border: 0;
+    background: none;
+    color: #3F8F7A;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.nav-sino-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-header nav .nav-sino-lista a {
+    display: block;
+    padding: 10px 14px;
+    border-bottom: 1px solid #F0F3F4;
+    color: #1E2A30;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.site-header nav .nav-sino-lista a.nao-lida {
+    background: #F1F8F5;
+    font-weight: 600;
+}
+
+.site-header nav .nav-sino-lista a:hover,
+.site-header nav .nav-sino-lista a:focus-visible {
+    background: #E6F2EE;
+}
+
+.nav-sino-lista small {
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.nav-sino-vazio {
+    padding: 14px;
+    font-size: 0.875rem;
+    opacity: 0.75;
+}

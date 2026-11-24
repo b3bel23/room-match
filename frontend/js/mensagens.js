@@ -42,8 +42,8 @@ function renderLista() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = `chat-item${conversaAtiva && conversaAtiva.id === c.id ? ' ativo' : ''}`;
-        btn.innerHTML = `<strong>${c.outro?.nome || 'Contato'} · ${c.imovel_titulo}</strong>
-            <span>${c.ultima_mensagem || 'Sem mensagens'}</span>`;
+        btn.innerHTML = `<strong>${escHtml(c.outro?.nome || 'Contato')} · ${escHtml(c.imovel_titulo)}</strong>
+            <span>${escHtml(c.ultima_mensagem || 'Sem mensagens')}</span>`;
         btn.addEventListener('click', () => abrir(c.id));
         listaEl.append(btn);
     });
@@ -91,7 +91,7 @@ function renderThread(conv) {
     (conv.mensagens || []).forEach((m) => {
         const bolha = document.createElement('div');
         bolha.className = `bolha ${m.minha ? 'minha' : 'deles'}`;
-        bolha.innerHTML = `${m.texto}<small>${m.autor_nome} · ${horaCurta(m.em)}</small>`;
+        bolha.innerHTML = `${escHtml(m.texto)}<small>${escHtml(m.autor_nome)} · ${horaCurta(m.em)}</small>`;
         msgsEl.append(bolha);
     });
     msgsEl.scrollTop = msgsEl.scrollHeight;
@@ -111,7 +111,7 @@ async function carregar() {
     conversas = items;
     renderLista();
     const id = new URLSearchParams(window.location.search).get('id');
-    if (id && conversas.some((c) => c.id === id)) {
+    if (id && conversas.some((c) => String(c.id) === String(id))) {
         await abrir(id);
     } else if (conversas[0]) {
         await abrir(conversas[0].id);
@@ -129,8 +129,9 @@ form.addEventListener('submit', async (evento) => {
     if (idx >= 0) conversas[idx] = conv;
     else conversas.unshift(conv);
     renderThread(conv);
+    renderLista();
 });
 
 carregar().catch((erro) => {
-    msgsEl.innerHTML = `<p class="chat-vazio">${erro.message}</p>`;
+    msgsEl.innerHTML = `<p class="chat-vazio">${escHtml(erro.message)}</p>`;
 });

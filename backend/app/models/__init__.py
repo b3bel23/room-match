@@ -22,10 +22,12 @@ from app.models.avaliacao import Avaliacao
 from app.models.visita import Visita
 from app.models.rota_mobilidade import RotaMobilidade
 from app.models.denuncia import Denuncia
+from app.models.recusa import Recusa
+from app.models.notificacao import Notificacao
 
 __all__ = [
     "Pessoa", "Usuario", "Administrador", "Locador", "Locatario", "Tag", "UsuarioTag",
     "Imovel", "ImovelTag", "EnderecoImovel", "IntegranteImovel", "CarrosselImagem",
     "CarrosselMorador", "Post", "Like", "Match", "Conversa", "Mensagem", "Avaliacao",
-    "Visita", "RotaMobilidade", "Denuncia",
+    "Visita", "RotaMobilidade", "Denuncia", "Recusa", "Notificacao",
 ]

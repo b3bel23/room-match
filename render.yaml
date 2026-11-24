@@ -1,0 +1,49 @@
+# Blueprint do Render para a API (Render → New → Blueprint → este repositório).
+# O site continua no GitHub Pages; depois do primeiro deploy, coloque a URL do serviço em
+# API_PRODUCAO (frontend/js/api.js). Variáveis com sync: false são preenchidas no painel.
+services:
+  - type: web
+    name: roommatch-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # Aplica as migrações a cada deploy e sobe a API.
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "6543"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: postgres
+      - key: DB_SSLMODE
+        value: require
+      - key: FRONTEND_URL
+        value: https://silverwying.github.io/room-match/frontend/pages
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: imoveis
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      # GTFS relativo à pasta backend (ex.: data/gtfs/emdec.zip), se houver.
+      - key: GTFS_PATHS
+        sync: false

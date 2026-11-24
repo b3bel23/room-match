@@ -10,27 +10,61 @@ const FOTOS_MINIMO = 3;
 const entradaFotos = document.getElementById('fotos-entrada');
 const grade = document.getElementById('fotos-grade');
 const botaoAdicionar = grade.querySelector('.foto-adicionar');
-let totalFotos = 0;
+/* Fotos escolhidas: { url (data URL), arquivo (File JPEG reduzido) }. */
+let fotos = [];
 
 function validarFotos() {
     entradaFotos.setCustomValidity(
-        totalFotos < FOTOS_MINIMO ? `Adicione no mínimo ${FOTOS_MINIMO} fotos.` : ''
+        fotos.length < FOTOS_MINIMO ? `Adicione no mínimo ${FOTOS_MINIMO} fotos.` : ''
     );
+    botaoAdicionar.hidden = fotos.length >= RoomMatchFotosUpload.FOTOS_MAX;
 }
 
-entradaFotos.addEventListener('change', () => {
-    [...entradaFotos.files].forEach((arquivo) => {
+function desenharFotos() {
+    grade.querySelectorAll('.foto-slot:not(.foto-adicionar)').forEach((slot) => slot.remove());
+    fotos.forEach((foto, indice) => {
         const slot = document.createElement('div');
         slot.className = 'foto-slot';
         const imagem = document.createElement('img');
-        imagem.src = URL.createObjectURL(arquivo);
-        imagem.alt = arquivo.name;
-        slot.append(imagem);
+        imagem.src = foto.url;
+        imagem.alt = indice === 0 ? 'Foto de capa' : `Foto ${indice + 1}`;
+        const remover = document.createElement('button');
+        remover.type = 'button';
+        remover.className = 'foto-remover';
+        remover.textContent = '×';
+        remover.setAttribute('aria-label', `Remover foto ${indice + 1}`);
+        remover.addEventListener('click', () => {
+            fotos.splice(indice, 1);
+            desenharFotos();
+        });
+        slot.append(imagem, remover);
         grade.insertBefore(slot, botaoAdicionar);
-        totalFotos += 1;
     });
-    entradaFotos.value = '';
     validarFotos();
+}
+
+entradaFotos.addEventListener('change', async () => {
+    const problemas = [];
+    for (const arquivo of entradaFotos.files) {
+        if (fotos.length >= RoomMatchFotosUpload.FOTOS_MAX) {
+            problemas.push(`Máximo de ${RoomMatchFotosUpload.FOTOS_MAX} fotos por anúncio.`);
+            break;
+        }
+        const invalido = RoomMatchFotosUpload.validar(arquivo);
+        if (invalido) {
+            problemas.push(invalido);
+            continue;
+        }
+        try {
+            fotos.push(await RoomMatchFotosUpload.reduzir(arquivo));
+        } catch (erro) {
+            problemas.push(erro.message);
+        }
+    }
+    entradaFotos.value = '';
+    desenharFotos();
+    retorno.textContent = problemas.join(' ');
+    retorno.hidden = !problemas.length;
 });
 
 validarFotos();
@@ -104,6 +138,13 @@ form.addEventListener('submit', async (evento) => {
             tags: tagsMarcadas,
             classificacao
         });
+        // Fotos: multipart no servidor; no mock ficam no próprio anúncio (data URL).
+        if (RoomMatchApi.modo() === 'live') {
+            await RoomMatchApi.enviarFotos(criado.id, fotos.map((f) => f.arquivo));
+        } else {
+            const urls = fotos.map((f) => f.url);
+            await RoomMatchApi.atualizarImovel(criado.id, { fotos: urls, capa: urls[0] });
+        }
         retorno.textContent = 'Anúncio publicado.';
         retorno.hidden = false;
         window.setTimeout(() => {

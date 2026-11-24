@@ -48,25 +48,28 @@ function montarCard(imovel) {
     const logado = typeof estaLogado === 'function' && estaLogado();
     const match = imovel.match_percent ?? imovel.match;
     const tags = (imovel.tags || []).slice(0, 3)
-        .map((t) => `<span class="tag">${t}</span>`)
+        .map((t) => `<span class="tag">${escHtml(t)}</span>`)
         .join('');
 
     const badgeMatch = logado
         ? `<span class="badge-match" title="${match}% de afinidade">${match}%</span>`
         : '';
-    const rodapeExtra = logado
-        ? `<span class="commute">${busSvg()} ${imovel.deslocamento_min || '—'} min · ${imovel.destino || ''}</span>`
-        : '';
+    // Tempo de ônibus até o destino salvo (calculado no mapa do detalhe). Sem ele, um convite.
+    const rodapeExtra = !logado
+        ? ''
+        : imovel.deslocamento_min != null
+            ? `<span class="commute">${busSvg()} ${imovel.deslocamento_min} min · ${escHtml(imovel.destino || '')}</span>`
+            : `<span class="commute commute-vazio">${busSvg()} Veja o tempo no mapa</span>`;
 
     const fotos = typeof ImovelFotos !== 'undefined' ? ImovelFotos.lista(imovel) : [];
     card.innerHTML = `
         <div class="card-image" aria-hidden="true">
-            <span class="badge">${imovel.badge || imovel.tipo || ''}</span>
+            <span class="badge">${escHtml(imovel.badge || imovel.tipo || '')}</span>
             ${badgeMatch}
         </div>
         <div class="card-body">
-            <div class="card-title">${imovel.titulo}</div>
-            <div class="card-location">${pinSvg()} ${imovel.bairro}, ${imovel.cidade || 'Campinas'}</div>
+            <div class="card-title">${escHtml(imovel.titulo)}</div>
+            <div class="card-location">${pinSvg()} ${escHtml(imovel.bairro)}, ${escHtml(imovel.cidade || 'Campinas')}</div>
             <div class="card-price">R$ ${formatarPreco(imovel.preco)}<span>/mês total</span></div>
             <div class="amenities">${tags}</div>
             <div class="card-footer">
@@ -140,7 +143,7 @@ async function carregar() {
         }
         grade.replaceChildren(...items.map(montarCard));
     } catch (erro) {
-        grade.innerHTML = `<p class="cta-banner filtro-status" style="grid-column:1/-1">Erro ao carregar: ${erro.message}</p>`;
+        grade.innerHTML = `<p class="cta-banner filtro-status" style="grid-column:1/-1">Erro ao carregar: ${escHtml(erro.message)}</p>`;
     }
 }
 

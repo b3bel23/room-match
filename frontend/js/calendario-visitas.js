@@ -7,7 +7,9 @@ const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const STATUS = {
     pendente: 'Pendente de aprovação',
     confirmada: 'Confirmada',
-    remarcada: 'Remarcada / alterada'
+    remarcada: 'Remarcada / alterada',
+    recusada: 'Recusada',
+    cancelada: 'Cancelada'
 };
 
 const hoje = new Date();
@@ -100,12 +102,69 @@ function popularFiltro() {
     filtroImovel.value = valorAtual;
 }
 
+/* Lista abaixo do calendário: Locador confirma/recusa; Morador cancela. */
+function desenharLista() {
+    const lista = document.getElementById('visitas-itens');
+    const vazio = document.getElementById('visitas-vazio');
+    if (!lista) return;
+    const locador = typeof ehLocador === 'function' && ehLocador();
+    const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    const proximas = visitas
+        .filter((v) => dataDaVisita(v) >= inicioHoje && ['pendente', 'confirmada'].includes(v.status))
+        .sort((a, b) => dataDaVisita(a) - dataDaVisita(b));
+    lista.replaceChildren();
+    vazio.hidden = proximas.length > 0;
+    proximas.forEach((v) => {
+        const item = document.createElement('li');
+        item.className = 'visita-item';
+        const texto = document.createElement('div');
+        const quando = dataDaVisita(v).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+        const strong = document.createElement('strong');
+        strong.textContent = `${quando} · ${v.hora}`;
+        const detalhe = document.createElement('span');
+        detalhe.textContent = `${locador ? v.nome : v.imovel_titulo} · ${STATUS[v.status] || v.status}`;
+        texto.append(strong, detalhe);
+        const acoes = document.createElement('div');
+        acoes.className = 'visita-acoes';
+        const botoes = locador
+            ? [v.status === 'pendente' && ['confirmada', 'Confirmar', 'btn-primary'], ['recusada', 'Recusar', 'btn-secondary']]
+            : [['cancelada', 'Cancelar visita', 'btn-secondary']];
+        botoes.filter(Boolean).forEach(([status, rotulo, classe]) => {
+            const botao = document.createElement('button');
+            botao.type = 'button';
+            botao.className = `btn ${classe}`;
+            botao.textContent = rotulo;
+            botao.addEventListener('click', () => mudarStatus(v, status));
+            acoes.append(botao);
+        });
+        item.append(texto, acoes);
+        lista.append(item);
+    });
+}
+
+async function mudarStatus(visita, status) {
+    const retorno = document.getElementById('visitas-retorno');
+    try {
+        const atualizada = await RoomMatchApi.atualizarVisita(visita.id, status);
+        Object.assign(visita, atualizada);
+        retorno.textContent = `Visita ${STATUS[status].toLowerCase()}.`;
+        retorno.classList.remove('erro');
+        desenhar();
+        desenharLista();
+    } catch (erro) {
+        retorno.textContent = erro.detail || erro.message;
+        retorno.classList.add('erro');
+    }
+    retorno.hidden = false;
+}
+
 async function carregar() {
     try {
         const dados = await RoomMatchApi.listarVisitas();
         visitas = dados.items || [];
         popularFiltro();
         desenhar();
+        desenharLista();
     } catch (erro) {
         titulo.textContent = erro.message;
     }

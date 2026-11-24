@@ -1,6 +1,11 @@
 # RoomMatch · Frontend (demo publicável)
 
-Site **estático** (HTML/CSS/JS). Roda **sem backend**: `api.js` usa mock + `localStorage` por padrão.
+Site **estático** (HTML/CSS/JS). Funciona de dois jeitos:
+
+- **Com a API** (modo `live`): fala com o FastAPI em `/api/v1`. É o padrão do site publicado
+  quando `API_PRODUCAO` (topo de `js/api.js`) está preenchida.
+- **Demonstração** (modo `mock`): sem servidor, dados no `localStorage`. É o padrão em
+  localhost e enquanto `API_PRODUCAO` estiver vazia. `?api=mock` força esse modo.
 
 ## Publicar agora (GitHub Pages)
 
@@ -24,7 +29,8 @@ cd frontend && python3 -m http.server 8765 --bind 127.0.0.1
 
 ### Contas de teste (mock)
 
-Só no front estático — **não** são credenciais de produção.
+Só no modo demonstração — **não** são credenciais de produção. Com a API, as contas vêm do
+seed (`python -m scripts.seed`), com a senha passada a ele (padrão `demo12345`).
 
 | Papel   | E-mail             | Senha   |
 |---------|--------------------|---------|
@@ -54,9 +60,10 @@ Fonte da verdade das rotas:
 7. Match: `|∩ tags| / |tags_usuario| × 100` — chat se match ≥ limiar **e** preço ≤ orçamento
 8. Papel errado → **403** (o front redireciona)
 
-### Ligar API real (quando existir)
+### Ligar a API real
 
-No console do site publicado:
+Depois do deploy, coloque a URL em `API_PRODUCAO` em `js/api.js`. Para testar sem mexer no
+código, use `?api=live` na URL ou, no console:
 
 ```js
 localStorage.setItem('roommatch-api-mode', 'live');

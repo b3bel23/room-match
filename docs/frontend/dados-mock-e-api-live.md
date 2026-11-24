@@ -4,9 +4,9 @@
 
 | Pergunta | Resposta |
 |----------|----------|
-| Os dados da demo já vão para o MySQL/Postgres? | **Não.** |
-| Onde ficam login, anúncios, favoritos, chat? | No **navegador**: `localStorage` (`roommatch-mock-db-v5`). |
-| O FastAPI já está ligado? | **Não.** `api.js` usa modo `mock` por padrão. |
+| Os dados vão para o Postgres? | **Sim, no modo `live`.** No modo `mock` (demonstração), ficam no navegador. |
+| Onde ficam login, anúncios, favoritos, chat no mock? | No **navegador**: `localStorage` (`roommatch-mock-db-v5`). |
+| O FastAPI já está ligado? | **Sim.** Todas as rotas de `api.js` existem em `/api/v1`. O site publicado usa a API quando `API_PRODUCAO` (topo de `api.js`) está preenchida; em localhost, use `?api=live`. |
 | Personalizar telas quebra o backend? | **Não**, se variáveis/campos seguirem o schema. |
 | Dá para publicar o front agora? | **Sim** — site estático; ver `frontend/README.md`. |
 
@@ -58,14 +58,12 @@ Não há deploy automático de API neste estado: o backend ainda está incomplet
 
 ---
 
-## Como ligar o banco depois (simples)
+## Como o front fala com o banco
 
-Objetivo: **não reescrever as telas** — só trocar o transporte.
+As telas não mudam entre os modos; só o transporte. O FastAPI implementa as mesmas rotas de
+`api.js` (ver `docs/frontend/papeis-e-rotas-api-v1.md`) e o PRD registra cada uma.
 
-1. Implementar no FastAPI as mesmas rotas de `api.js`  
-   (`/api/v1/auth/login`, `/imoveis`, `/favoritos`, `/visitas`, `/conversas`, `/me`, …).  
-   Ver `docs/frontend/papeis-e-rotas-api-v1.md`.
-2. Mapear JSON ↔ tabelas (nomes do schema):
+Mapa JSON ↔ tabelas:
 
 | JSON (API / front) | Tabela / coluna |
 |--------------------|-----------------|
@@ -75,8 +73,10 @@ Objetivo: **não reescrever as telas** — só trocar o transporte.
 | `tags` | `usuario_tag` / tags do imóvel |
 | `aluguel`, `condominio`, `iptu`, `contas` | `imovel.valor_*` |
 | `cep`, `rua`, `numero`, `complemento?`, `bairro`, `cidade`, `estado` | `enderecos_imovel` / `EnderecoImovel` |
-| favoritos | `interesse` (`tipo_interesse`) ou likes |
-| visitas / conversas / mensagens | tabelas homônimas |
+| favoritos / curtidas | `likes` |
+| recusados (descobrir) | `recusas` |
+| visitas / conversas / mensagens / notificações | tabelas homônimas (plural) |
+| `destino` (perfil) | `locatarios.preferencias_moradia.destino` |
 
 **Riscos de conflito (backend deve espelhar):**
 
@@ -88,15 +88,11 @@ Objetivo: **não reescrever as telas** — só trocar o transporte.
 - Auth: `Authorization: Bearer` + `{ access_token, user }` no login/register.
 - Fotos imóvel: `capa` + `fotos[]` (URLs); front ainda tem fallback estático.
 
-3. No browser (ou config de deploy), uma vez:
+Ligar ou desligar a API no navegador:
 
-```js
-localStorage.setItem('roommatch-api-mode', 'live');
-localStorage.setItem('roommatch-api-base', 'https://sua-api.exemplo.com');
-location.reload();
-```
-
-4. `api.js` passa a chamar a API real; o mock deixa de ser usado.
+- `?api=live` ou `?api=mock` em qualquer página (a escolha fica guardada);
+- ou, no console: `localStorage.setItem('roommatch-api-mode', 'live')` e
+  `localStorage.setItem('roommatch-api-base', 'https://sua-api.exemplo.com')`.
 
 Aliases aceitos no mock: `orcamento` ≡ `orcamento_maximo`,  
 `limiar` ≡ `limiar_compatibilidade`. Preferir os nomes do schema na API nova.
@@ -115,7 +111,8 @@ Aliases aceitos no mock: `orcamento` ≡ `orcamento_maximo`,
 ## Checklist “mostra o que precisa” na demo
 
 - [ ] Servir `frontend/` por HTTP (não `file://`).
-- [ ] Login teste: `morador@demo.com` / `locador@demo.com` · `demo123` (ou criar conta).
+- [ ] Login teste: `morador@demo.com` / `locador@demo.com` · `demo123` no mock; com a API,
+      a senha passada ao seed (padrão `demo12345`).
 - [ ] Locatário → mural; locador → meus anúncios (só chrome/UI).
 - [ ] Se algo parecer “velho”: `RoomMatchMock.reset()` + hard refresh.
 - [ ] Fotos: pasta `assets/imoveis/{id}/1.jpg`…`4.jpg` presentes no deploy.

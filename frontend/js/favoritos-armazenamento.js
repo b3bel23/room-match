@@ -10,7 +10,8 @@ async function listarFavoritosDetalhados() {
 
 async function ehFavorito(id) {
     const dados = await RoomMatchApi.listarFavoritos();
-    return (dados.ids || []).includes(id);
+    // IDs numéricos na API real e texto no mock/URL: compara como texto.
+    return (dados.ids || []).map(String).includes(String(id));
 }
 
 async function alternarFavorito(id) {

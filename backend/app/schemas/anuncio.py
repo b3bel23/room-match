@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, StringConstraints, field_validator
 Tag = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
 
 STATUS_EDITAVEIS = ("ativo", "pausado")
+CLASSIFICACOES = ("Mista", "Masculina", "Feminina")
 
 
 def _vazio_vira_zero(valor: Any) -> Any:
@@ -36,13 +37,22 @@ class _Campos(BaseModel):
     quartos: Optional[int] = Field(None, ge=1)
     vagas: Optional[int] = Field(None, ge=0)
     tags: Optional[List[Tag]] = None
-    # Aceito (o front envia), mas o banco ainda não tem coluna: não é persistido.
-    classificacao: Optional[str] = None
+    classificacao: Optional[str] = None  # Mista, Masculina ou Feminina
 
     @field_validator("condominio", "iptu", "contas", "area_m2", mode="before")
     @classmethod
     def _opcionais_em_branco(cls, valor):
         return None if isinstance(valor, str) and not valor.strip() else valor
+
+    @field_validator("classificacao")
+    @classmethod
+    def _classificacao_valida(cls, valor):
+        if valor is None or not valor.strip():
+            return None
+        normal = valor.strip().capitalize()
+        if normal not in CLASSIFICACOES:
+            raise ValueError("Use Mista, Masculina ou Feminina.")
+        return normal
 
 
 class AnuncioCreate(_Campos):

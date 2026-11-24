@@ -265,12 +265,12 @@ A interface segue abordagem **mobile-first**, minimalista e responsiva.
 |---|---|
 | 🌐 Plataforma | Aplicação Web · Responsiva · Mobile-first |
 | 🎨 Front-end | HTML5, CSS3, JavaScript |
-| ⚙️ Back-end | FastAPI (Python) |
-| 🗃️ Banco de Dados | MySQL (relacional) |
-| 🧪 Testes | Jest |
+| ⚙️ Back-end | FastAPI (Python), SQLAlchemy, Alembic |
+| 🗃️ Banco de Dados | PostgreSQL (Supabase em produção) |
+| 🧪 Testes | pytest (API) e Playwright (fluxos no navegador) |
 | 🗺️ Mapas | OpenStreetMap |
 | 🚌 Mobilidade | GTFS · EMDEC · EMTU |
-| 🔐 Segurança | Hash de senhas com bcrypt ou Argon2 |
+| 🔐 Segurança | Hash de senhas com bcrypt, JWT |
 | 🔒 Comunicação | TLS |
 | 🏗️ Arquitetura | Modular |
 | ♿ Acessibilidade | WCAG 2.1 AA |
@@ -281,47 +281,20 @@ A interface segue abordagem **mobile-first**, minimalista e responsiva.
 
 ## 🗃️ Modelo de Dados
 
-Modelo relacional conceitual com **13 entidades**, mantendo integridade entre usuários, imóveis, matches, mensagens, rotas e auxílios.
+Banco **PostgreSQL** criado pelas migrações Alembic (`backend/alembic/versions/`). O SQL
+completo, gerado das migrações, está em [`database/schema.sql`](./database/schema.sql).
 
-```text
-Usuario
-   │
-   ├── Usuario_Tag ───── Tag
-   │
-   ├── Imovel
-   │      ├── Imovel_Tag ───── Tag
-   │      ├── MoradorAtual
-   │      └── RotaMobilidade
-   │
-   ├── Match
-   │      └── Mensagem
-   │
-   ├── Destino
-   │      └── RotaMobilidade
-   │
-   ├── ElegibilidadeUsuario
-   │      └── ProgramaAuxilio
-   │
-   └── Denuncia
-```
-
-### Principais entidades
-
-| Entidade | Responsabilidade |
+| Grupo | Tabelas |
 |---|---|
-| `Usuario` | Dados de perfil, renda e orçamento |
-| `Tag` | Preferências de convivência |
-| `Usuario_Tag` | Relação entre usuários e preferências |
-| `Imovel` | Dados dos anúncios |
-| `Imovel_Tag` | Preferências associadas ao imóvel |
-| `MoradorAtual` | Moradores associados ao anúncio |
-| `Match` | Compatibilidade e conexão entre usuários |
-| `Mensagem` | Comunicação interna |
-| `Destino` | Faculdade, trabalho ou outro destino |
-| `RotaMobilidade` | Distância e tempo de deslocamento |
-| `ProgramaAuxilio` | Programas habitacionais cadastrados |
-| `ElegibilidadeUsuario` | Resultado das simulações |
-| `Denuncia` | Registro de denúncias |
+| Pessoas e papéis | `pessoas`, `usuarios`, `locatarios` (Morador), `locadores`, `administradores` |
+| Convivência | `tags`, `usuario_tags`, `imovel_tags` |
+| Anúncios | `imoveis`, `enderecos_imovel`, `posts` (o anúncio publicado), `carrossel_imagens` (fotos), `integrantes_imovel` (moradores atuais) |
+| Matching | `likes` (favoritos/curtidas), `recusas`, `matches` |
+| Contato | `conversas`, `mensagens`, `visitas`, `notificacoes` |
+| Mobilidade | `rotas_mobilidade` (cache das rotas de ônibus) |
+| Moderação | `denuncias`, `avaliacoes` |
+
+Mudanças no banco: altere o model e gere uma migração (ver [`database/README.md`](./database/README.md)).
 
 ---
 
@@ -345,37 +318,26 @@ Usuário comum
 
 ---
 
-## 📁 Estrutura Sugerida do Repositório
+## 📁 Estrutura do Repositório
 
 ```text
-RoomMatch/
-│
-├── 📂 docs/
-│   ├── README.md
-│   ├── design/
-│   │   └── figma/              # Kit editável para Figma (SVG + HTML + tokens)
-│   ├── requisitos-funcionais.md
-│   ├── requisitos-nao-funcionais.md
-│   ├── modelo-de-dados.md
-│   ├── ui-ux.md
-│   └── arquitetura.md
-│
-├── 📂 assets/
-│   ├── logo/
-│   ├── diagrams/
-│   └── screenshots/
-│
-├── 📂 frontend/               # HTML, CSS e JavaScript
-│
-├── 📂 backend/                # API FastAPI e regras de negócio
-│
-├── 📂 database/                # Scripts MySQL e modelo relacional
-│
-├── 📂 tests/                  # Testes com Jest
-│
-├── .gitignore
-├── README.md
-└── LICENSE
+room-match/
+├── frontend/              # site estático (HTML, CSS, JS); roda no GitHub Pages
+│   ├── pages/             # telas
+│   ├── js/api.js          # cliente da API (modo servidor ou demonstração)
+│   └── js/mock-api.js     # modo demonstração: dados no navegador
+├── backend/               # API FastAPI
+│   ├── app/api/v1/        # rotas (/api/v1/...)
+│   ├── app/models/        # tabelas (SQLAlchemy)
+│   ├── app/services/      # regras de negócio (afinidade, chat, rotas de ônibus...)
+│   ├── alembic/           # migrações do banco
+│   ├── scripts/seed.py    # dados de demonstração
+│   └── tests/             # pytest (inclui tests/fumaca, contra uma API rodando)
+├── database/              # schema.sql gerado das migrações
+├── tests/e2e/             # fluxos no navegador (Playwright)
+├── docs/                  # PRD (documento vivo), requisitos, design
+├── render.yaml            # deploy da API no Render
+└── .env.example           # variáveis de ambiente
 ```
 
 ---
@@ -388,15 +350,81 @@ A documentação técnica do projeto é mantida na pasta [`docs/`](./docs) e inc
 
 ## 🚀 Como Executar
 
-> 🚧 **Projeto em desenvolvimento**
+### Só o site (modo demonstração, sem servidor)
 
-1. Clonar o repositório
-2. Instalar as dependências do back-end (FastAPI) e do front-end
-3. Configurar as variáveis de ambiente
-4. Configurar o banco de dados MySQL
-5. Inicializar o back-end (`uvicorn`)
-6. Servir o front-end (HTML/CSS/JS)
-7. Rodar a suíte de testes com Jest
+```bash
+python3 -m http.server 8765 --bind 127.0.0.1
+# abra http://127.0.0.1:8765/frontend/pages/home.html
+```
+
+Contas de demonstração: `morador@demo.com` / `locador@demo.com`, senha `demo123`.
+
+### Site + API + banco
+
+Requisitos: Python 3.11+ e PostgreSQL (local ou Supabase).
+
+```bash
+# 1. variáveis (na raiz do repositório)
+cp .env.example .env          # preencha DB_*, SECRET_KEY e o resto
+
+# 2. dependências e banco
+cd backend
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+alembic upgrade head                                  # cria/atualiza as tabelas
+python -m scripts.seed --senha demo12345              # dados de demonstração
+#   banco remoto (Supabase): acrescente --confirmar-banco-remoto
+
+# 3. API em http://127.0.0.1:8000 (documentação em /docs)
+uvicorn app.main:app --reload --port 8000
+
+# 4. site, em outro terminal, na raiz do repositório
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+Abra `http://127.0.0.1:8765/frontend/pages/login.html?api=live` (o `?api=live` liga o site
+à API local; `?api=mock` volta ao modo demonstração). Contas do seed: `morador@demo.com`,
+`morador2@demo.com`, `locador@demo.com`, senha `demo12345`.
+
+### Testes
+
+```bash
+cd backend
+python -m pytest -q                                          # API (SQLite em memória)
+SMOKE_API_URL=http://127.0.0.1:8000 python -m pytest tests/fumaca -q   # contra a API rodando
+
+# fluxos no navegador (API + site rodando, seed aplicado)
+pip install playwright pillow && playwright install chromium
+python3 ../tests/e2e/fluxos_navegador.py
+E2E_API_LOG=/caminho/do/log/da/api python3 ../tests/e2e/fase4_navegador.py
+```
+
+### Rotas de ônibus (GTFS)
+
+A rota de ônibus usa arquivos GTFS. Coloque os `.zip` em `backend/data/gtfs/` e aponte
+`GTFS_PATHS` para eles (vírgula para mais de um, ex.: EMDEC + EMTU). Sem GTFS, o resto
+funciona e o modo "Ônibus" avisa que não há horários. Situação `GET /api/v1/mobilidade/status`.
+
+De onde tirar os dados:
+- **EMTU** (linhas metropolitanas da RMC): portal de dados abertos da EMTU.
+- **EMDEC** (linhas municipais de Campinas): não há feed oficial publicado; o projeto
+  comunitário [`paulo-raca/emdec-gtfs`](https://github.com/paulo-raca/emdec-gtfs) gera o GTFS
+  a partir do site da EMDEC, ou peça o arquivo à EMDEC (Lei de Acesso à Informação).
+
+---
+
+## ☁️ Deploy
+
+- **Site**: GitHub Pages (Settings → Pages → branch `main`, pasta `/`). O `index.html` da raiz
+  leva a `frontend/pages/home.html`.
+- **API**: Render, pelo [`render.yaml`](./render.yaml) (New → Blueprint). Preencha no painel
+  `DB_HOST`/`DB_USER`/`DB_PASSWORD` (pooler do Supabase), `SUPABASE_URL` e
+  `SUPABASE_SERVICE_KEY` (fotos no Supabase Storage, bucket público `imoveis`) e o SMTP, se
+  houver. As migrações rodam a cada deploy.
+- **Ligar o site à API**: coloque a URL do serviço em `API_PRODUCAO`, no topo de
+  `frontend/js/api.js`. A partir daí o site publicado usa a API por padrão; `?api=mock`
+  continua abrindo o modo demonstração.
+- **CORS**: a API já aceita `https://silverwying.github.io`; outras origens vão em `CORS_ORIGINS`.
 
 ---
 
@@ -445,13 +473,14 @@ Desenvolvimento modular, priorizando as funcionalidades essenciais do MVP e expa
 
 Ações prioritárias do grupo de trabalho:
 
-- [ ] **Wireframes (Figma):** importar kit em `docs/design/figma/` e evoluir protótipos mobile-first
-- [ ] **Modelo Relacional:** validar entidades, chaves e relacionamentos do banco
-- [ ] **Integração GTFS:** mapear linhas da EMDEC/EMTU para testes de rotas
+- [x] **Modelo Relacional:** tabelas no PostgreSQL via Alembic
+- [x] **Desenvolvimento do MVP:** cadastro, perfil, mural com afinidade, descobrir, favoritos, chat, visitas, notificações, anúncios com fotos, rotas a pé/bicicleta/carro/ônibus
+- [x] **Integração GTFS:** roteirizador pronto; falta carregar o GTFS real da EMDEC/EMTU
+- [ ] **Deploy da API** (Render + Supabase) e ligar o site a ela (`API_PRODUCAO`)
 - [ ] Validação dos requisitos com usuários do público-alvo
-- [ ] Desenvolvimento do MVP
 - [ ] Testes de usabilidade e de segurança
-- [ ] Deploy da aplicação
+
+O andamento de cada funcionalidade está no [PRD](./docs/PRD.md).
 
 ---
 

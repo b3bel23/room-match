@@ -126,7 +126,7 @@ def _usuario(db: Session, dados: dict, senha_hash: str) -> Usuario:
                 id_locatario=usuario.id_usuario,
                 orcamento_maximo=dados["orcamento"],
                 tags_estilo_vida=dados["tags"],
-                preferencias_moradia={"limiar_compatibilidade": dados["limiar"]},
+                limiar_compatibilidade=dados["limiar"],
             )
         )
     db.flush()

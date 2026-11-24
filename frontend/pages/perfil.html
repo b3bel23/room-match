@@ -84,6 +84,10 @@
 
                     <label for="perfil-email">E-mail *
                         <input id="perfil-email" name="email" type="email" autocomplete="email" required>
+                        <span id="perfil-email-status" class="campo-ajuda email-status" hidden>
+                            <span id="perfil-email-texto"></span>
+                            <button id="perfil-email-reenviar" type="button" class="link-botao" hidden>Reenviar link de confirmação</button>
+                        </span>
                     </label>
 
                     <label for="perfil-papel">Tipo de perfil *
@@ -92,6 +96,11 @@
                             <option value="Locador">Locador</option>
                         </select>
                         <span class="campo-ajuda">Pode trocar a qualquer momento. O menu e as funções da conta acompanham o tipo escolhido.</span>
+                    </label>
+
+                    <label for="perfil-cpf" id="perfil-cpf-campo" hidden>CPF ou CNPJ *
+                        <input id="perfil-cpf" name="cpf_cnpj" type="text" inputmode="numeric" maxlength="18" pattern="[0-9./\- ]{11,18}" placeholder="000.000.000-00" autocomplete="off">
+                        <span class="campo-ajuda">Obrigatório para anunciar. Não aparece para outros usuários.</span>
                     </label>
 
                     <p class="perfil-atalhos">

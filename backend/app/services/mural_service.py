@@ -7,6 +7,7 @@ mensal (aluguel + condomínio + IPTU + contas), igual ao mock.
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Any, Mapping, Optional, Sequence
 
 from app.models.locatario import Locatario
@@ -18,18 +19,18 @@ from app.services.matching_service import (
     tags_correspondentes,
 )
 
-# O banco ainda não tem a coluna locatarios.limiar_compatibilidade (o front usa).
-# Enquanto não houver migração, o valor vem de locatarios.preferencias_moradia (JSONB).
-CHAVE_LIMIAR = "limiar_compatibilidade"
 
 
 def _num(valor: Any) -> float:
     return float(valor) if valor is not None else 0.0
 
 
+def _num_ou_none(valor: Any) -> Optional[float]:
+    return float(valor) if valor is not None else None
+
+
 def limiar_do_locatario(locatario: Optional[Locatario]) -> Optional[float]:
-    prefs = (locatario.preferencias_moradia if locatario else None) or {}
-    limiar = prefs.get(CHAVE_LIMIAR, prefs.get("limiar"))
+    limiar = locatario.limiar_compatibilidade if locatario else None
     return float(limiar) if limiar is not None else None
 
 
@@ -89,12 +90,61 @@ def montar_imovel(
         "capa": fotos[0] if fotos else None,
         "fotos": fotos,
         "fotos_ids": [i.id_imagem for i in imagens],  # para DELETE /imoveis/{id}/fotos/{id_imagem}
+        "rua": getattr(endereco, "rua", None),
+        "numero": getattr(endereco, "numero", None),
+        "cep": getattr(endereco, "cep", None),
+        "estado": getattr(endereco, "estado", None),
+        "latitude": _num_ou_none(getattr(endereco, "latitude", None)),
+        "longitude": _num_ou_none(getattr(endereco, "longitude", None)),
+        "badge": imovel.tipo_imovel,
+        "moradores_atuais": moradores_atuais(imovel),
         "locador_id": post.id_locador,
+        "classificacao": imovel.classificacao or "Mista",
+        "status_anuncio": post.status_anuncio,
         "match_percent": match,
         "match": match,
         "tags_correspondentes": tags_correspondentes(user_tags, tags),
         "elegibilidade": elegibilidade,
     }
+
+
+ESTILOS_FOTO = ("foto-1", "foto-2", "foto-3")
+
+
+def _idade(nascimento: Optional[date]) -> Optional[int]:
+    if nascimento is None:
+        return None
+    hoje = date.today()
+    return hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
+
+
+def moradores_atuais(imovel) -> list[dict]:
+    """Resumo de quem já mora no imóvel (RF23), no formato do mock:
+    `{ nome, iniciais, linha, estilo, foto_url }`. Só primeiro nome, sem contato."""
+    from app.services.perfil_service import iniciais
+
+    ativos = [
+        i for i in (getattr(imovel, "integrantes", None) or [])
+        if (i.status_moradia or "ativo") == "ativo" and i.data_saida is None
+    ]
+    resumo = []
+    for n, integrante in enumerate(sorted(ativos, key=lambda i: i.id_integrante)):
+        pessoa = integrante.pessoa
+        nome = (pessoa.nome or "Morador").split()[0] if pessoa else "Morador"
+        partes = [
+            getattr(pessoa, "ocupacao", None) or getattr(pessoa, "faculdade", None),
+            (f"{idade} anos" if (idade := _idade(getattr(pessoa, "data_nascimento", None))) else None),
+        ]
+        resumo.append(
+            {
+                "nome": nome,
+                "iniciais": iniciais(pessoa.nome if pessoa else nome) or "?",
+                "linha": " · ".join(p for p in partes if p) or "Mora no imóvel",
+                "estilo": ESTILOS_FOTO[n % len(ESTILOS_FOTO)],
+                "foto_url": getattr(pessoa, "foto_perfil", None) or "",
+            }
+        )
+    return resumo
 
 
 def _endereco_texto(endereco) -> Optional[str]:

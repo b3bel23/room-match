@@ -9,14 +9,14 @@
         const s = String(valor || '');
         if (!s) return { nivel: '', rotulo: '' };
         let pontos = 0;
-        if (s.length >= 6) pontos += 1;
+        if (s.length >= 8) pontos += 1;
         if (s.length >= 10) pontos += 1;
         if (/[a-z]/.test(s) && /[A-Z]/.test(s)) pontos += 1;
         if (/\d/.test(s)) pontos += 1;
         if (/[^A-Za-z0-9]/.test(s)) pontos += 1;
 
-        if (s.length < 6 || pontos <= 1) {
-            return { nivel: 'fraca', rotulo: 'Senha fraca — use ao menos 6 caracteres.' };
+        if (s.length < 8 || pontos <= 1) {
+            return { nivel: 'fraca', rotulo: 'Senha fraca — use ao menos 8 caracteres.' };
         }
         if (pontos <= 3) {
             return {
@@ -35,11 +35,11 @@
         if (nivel) forcaBox.classList.add(nivel);
         forcaTexto.textContent = rotulo || 'Força da senha';
 
-        if (input.value && input.value.length < 6) {
-            input.setCustomValidity('A senha deve ter ao menos 6 caracteres.');
+        if (input.value && input.value.length < 8) {
+            input.setCustomValidity('A senha deve ter ao menos 8 caracteres.');
         } else if (input.value && nivel === 'fraca') {
             input.setCustomValidity(
-                'Escolha uma senha um pouco mais forte (mínimo 6 caracteres, com mais variedade).'
+                'Escolha uma senha um pouco mais forte (mínimo 8 caracteres, com mais variedade).'
             );
         } else {
             input.setCustomValidity('');

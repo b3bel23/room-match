@@ -28,7 +28,7 @@ from app.services.auth_service import get_usuario_by_id
 router = APIRouter(tags=["mural"])
 
 # Mural e detalhe são públicos: sem token (ou token inválido) o usuário é visitante.
-oauth2_opcional = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
+oauth2_opcional = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 
 def usuario_opcional(
@@ -74,7 +74,21 @@ class ImovelMural(BaseModel):
     capa: Optional[str] = None
     fotos: List[str]
     fotos_ids: List[int] = []
+    rua: Optional[str] = None
+    numero: Optional[str] = None
+    cep: Optional[str] = None
+    estado: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    badge: Optional[str] = None
+    moradores_atuais: List[dict] = []
+    # Preenchidos quando o usuário tem destino salvo (mobilidade, RF28/29).
+    deslocamento_min: Optional[int] = None
+    distancia_km: Optional[float] = None
+    destino: Optional[str] = None
     locador_id: int
+    classificacao: str = "Mista"
+    status_anuncio: str = "ativo"
     match_percent: int
     match: int
     tags_correspondentes: List[str]
@@ -113,9 +127,24 @@ def _anuncios_ativos(db: Session) -> List[Post]:
 
 def _montar_todos(db: Session, posts: List[Post], locatario, user_tags) -> List[dict]:
     tags = matching_service.tags_por_imovel(db, [p.id_imovel for p in posts])
-    return [
+    itens = [
         mural_service.montar_imovel(p, tags[p.id_imovel], user_tags, locatario) for p in posts
     ]
+    _com_deslocamento(db, itens, locatario)
+    return itens
+
+
+def _destino_salvo(locatario) -> Optional[dict]:
+    return (locatario.preferencias_moradia or {}).get("destino") if locatario is not None else None
+
+
+def _com_deslocamento(db: Session, itens: List[dict], locatario) -> None:
+    """Tempo de ônibus até o destino salvo do morador, se já calculado (cache)."""
+    from app.api.v1.mobilidade import deslocamentos_salvos
+
+    tempos = deslocamentos_salvos(db, [i["id"] for i in itens], _destino_salvo(locatario))
+    for item in itens:
+        item.update(tempos.get(item["id"], {}))
 
 
 @router.get("/imoveis", response_model=ListaImoveis)
@@ -125,11 +154,18 @@ def listar_imoveis(
     q: str = "",
     preco_max: float = Query(0, ge=0),
     tag: str = "",
+    incluir_recusados: bool = False,
     usuario: Optional[Usuario] = Depends(usuario_opcional),
     db: Session = Depends(get_db),
 ):
     locatario, user_tags = _contexto_usuario(db, usuario)
-    itens = _montar_todos(db, _anuncios_ativos(db), locatario, user_tags)
+    posts = _anuncios_ativos(db)
+    if locatario is not None and not incluir_recusados:  # RF14: recusado some do mural
+        from app.api.v1.descobrir import ids_recusados
+
+        recusados = ids_recusados(db, locatario.id_locatario)
+        posts = [p for p in posts if p.id_post not in recusados]
+    itens = _montar_todos(db, posts, locatario, user_tags)
     itens = mural_service.filtrar_imoveis(
         itens, tipo=tipo, bairro=bairro or q, tag=tag, preco_max=preco_max
     )
@@ -144,10 +180,12 @@ def detalhe_imovel(
 ):
     post = (
         db.query(Post)
-        .filter(Post.id_imovel == id_imovel, Post.status_anuncio == "ativo")
+        .filter(Post.id_imovel == id_imovel, Post.status_anuncio != "removido")
         .first()
     )
-    if post is None:
+    # Pausado: só o dono vê (para editar e "ver como locador").
+    dono = usuario is not None and post is not None and post.id_locador == usuario.id_usuario
+    if post is None or (post.status_anuncio != "ativo" and not dono):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Imóvel não encontrado.")
     locatario, user_tags = _contexto_usuario(db, usuario)
     return _montar_todos(db, [post], locatario, user_tags)[0]
@@ -173,10 +211,18 @@ def stats(
     elif usuario is not None and db.get(Locador, usuario.id_usuario) is not None:
         meus_anuncios = sum(1 for p in posts if p.id_locador == usuario.id_usuario)
 
+    from app.api.v1.mobilidade import deslocamentos_salvos
+
+    tempos = [
+        t["deslocamento_min"]
+        for t in deslocamentos_salvos(db, [p.id_imovel for p in posts], _destino_salvo(locatario)).values()
+        if t["deslocamento_min"] is not None
+    ]
     return Stats(
         imoveis_ativos=len(posts),
         match_medio=match_medio,
-        deslocamento_medio=0,  # sem dado de deslocamento no banco ainda (vem do GTFS, KAN-40)
+        # média do tempo de ônibus até o destino salvo, entre os anúncios já calculados
+        deslocamento_medio=round(sum(tempos) / len(tempos)) if tempos else 0,
         favoritos=favoritos,
         meus_anuncios=meus_anuncios,
         conversas=conversas,

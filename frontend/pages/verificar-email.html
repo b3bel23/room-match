@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar e-mail · Room Match</title>
+    <link rel="stylesheet" href="../design-tokens.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/config.css">
+</head>
+<body class="auth-page">
+
+    <header class="site-header">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav class="nav-visitante">
+            <a href="como-funciona.html">Como funciona</a>
+            <a class="btn btn-secondary" href="login.html">Entrar</a>
+            <a class="btn btn-primary" href="escolha-papel.html">Cadastrar</a>
+        </nav>
+    </header>
+
+    <main class="login-main">
+        <a class="btn-voltar" href="login.html">← Voltar</a>
+        <div class="login-split">
+            <section class="login-hero login-hero-rua" aria-label="Rua de Campinas">
+                <img class="login-hero-logo" src="../assets/logo.svg" alt="RoomMatch">
+                <h2>Confirmação de e-mail</h2>
+                <p>Confirmar o e-mail ajuda a proteger sua conta e a recuperar a senha.</p>
+            </section>
+            <section class="login-card">
+                <h1>Confirmando seu e-mail…</h1>
+                <p id="verificar-retorno" class="login-subtitle" role="status">Aguarde um instante.</p>
+                <a class="btn-entrar" href="perfil.html">Ir para o meu perfil</a>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="logo" href="home.html"><img src="../assets/logo.svg" alt="RoomMatch"></a>
+        <nav>
+            <a href="como-funciona.html">Como funciona</a>
+            <a href="termos.html">Termos e privacidade</a>
+        </nav>
+        <small>© 2026 RoomMatch · região metropolitana de Campinas</small>
+    </footer>
+
+    <script src="../js/mock-api.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/papel-ui.js"></script>
+    <script src="../js/chrome.js"></script>
+    <script src="../js/page-motion.js"></script>
+    <script>
+        (async () => {
+            const token = new URLSearchParams(window.location.search).get('token') || '';
+            const titulo = document.querySelector('.login-card h1');
+            const retorno = document.getElementById('verificar-retorno');
+            if (!token) {
+                titulo.textContent = 'Link incompleto';
+                retorno.textContent = 'Abra o link do e-mail de novo ou peça outro no seu perfil.';
+                return;
+            }
+            try {
+                await RoomMatchApi.verificarEmail(token);
+                titulo.textContent = 'E-mail confirmado';
+                retorno.textContent = 'Tudo certo. Você já pode continuar usando o RoomMatch.';
+                const user = typeof usuarioAtual === 'function' ? usuarioAtual() : null;
+                if (user) entrar(RoomMatchApi.lerToken(), { ...user, email_verificado: true });
+            } catch (erro) {
+                titulo.textContent = 'Não foi possível confirmar';
+                retorno.textContent = erro.detail || erro.message;
+            }
+        })();
+    </script>
+</body>
+</html>

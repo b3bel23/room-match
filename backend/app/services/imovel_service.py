@@ -21,8 +21,9 @@ from app.models.tag import Tag
 from app.models.usuario import Usuario
 from app.schemas.anuncio import AnuncioCreate, AnuncioUpdate
 
-UPLOAD_DIR = Path(__file__).resolve().parents[2] / "uploads"
-URL_UPLOADS = "/uploads"
+from app.services import storage_service
+from app.services.storage_service import UPLOAD_DIR, URL_UPLOADS  # noqa: F401  (usados por main.py e testes)
+
 MAX_FOTOS = 10
 MAX_BYTES_FOTO = 5 * 1024 * 1024
 
@@ -115,6 +116,7 @@ def _valores_do_imovel(campos: dict) -> dict:
         "vagas": "vagas_disponiveis",
         "area_m2": "area_m2",
         "descricao": "descricao",
+        "classificacao": "classificacao",
     }
     return {coluna: campos[campo] for campo, coluna in mapa.items() if campo in campos}
 
@@ -183,7 +185,14 @@ def atualizar_anuncio(db: Session, post: Post, dados: AnuncioUpdate) -> Post:
 
 
 def remover_anuncio(db: Session, post: Post) -> None:
-    """Remoção lógica: preserva likes, conversas e visitas que apontam para o anúncio."""
+    """Remoção lógica: preserva likes e conversas (somem das listas porque o anúncio não
+    está mais ativo) e apaga as visitas que ainda iam acontecer, como no mock."""
+    from app.models.visita import Visita
+
+    db.query(Visita).filter(
+        Visita.id_imovel == post.id_imovel,
+        Visita.status_visita.in_(("pendente", "confirmada", "agendada")),
+    ).delete(synchronize_session=False)
     post.status_anuncio = "removido"
     post.imovel.status_disponibilidade = "indisponivel"
     locador = db.get(Locador, post.id_locador)
@@ -236,27 +245,23 @@ def adicionar_fotos(db: Session, post: Post, arquivos: list[bytes]) -> Post:
             )
         extensoes.append(extensao)
 
-    pasta = UPLOAD_DIR / "imoveis" / str(post.id_imovel)
-    pasta.mkdir(parents=True, exist_ok=True)
     proxima_ordem = max((i.ordem_exibicao or 0 for i in existentes), default=0) + 1
-    gravados: list[Path] = []
+    gravados: list[str] = []
     try:
         for ordem, (conteudo, extensao) in enumerate(zip(arquivos, extensoes), start=proxima_ordem):
-            caminho = pasta / f"{uuid.uuid4().hex}.{extensao}"
-            caminho.write_bytes(conteudo)
-            gravados.append(caminho)
-            db.add(
-                CarrosselImagem(
-                    id_imovel=post.id_imovel,
-                    url_imagem=f"{URL_UPLOADS}/imoveis/{post.id_imovel}/{caminho.name}",
-                    ordem_exibicao=ordem,
-                )
-            )
+            url = storage_service.salvar(f"imoveis/{post.id_imovel}/{uuid.uuid4().hex}.{extensao}", conteudo)
+            gravados.append(url)
+            db.add(CarrosselImagem(id_imovel=post.id_imovel, url_imagem=url, ordem_exibicao=ordem))
         db.commit()
+    except storage_service.ErroStorage as erro:
+        db.rollback()
+        for url in gravados:
+            storage_service.apagar(url)
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, "Não foi possível guardar as fotos agora.") from erro
     except Exception:
         db.rollback()
-        for caminho in gravados:
-            caminho.unlink(missing_ok=True)
+        for url in gravados:
+            storage_service.apagar(url)
         raise
     db.refresh(post)
     return post
@@ -266,10 +271,9 @@ def remover_foto(db: Session, post: Post, id_imagem: int) -> Post:
     imagem = db.get(CarrosselImagem, id_imagem)
     if imagem is None or imagem.id_imovel != post.id_imovel:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Foto não encontrada.")
-    caminho = UPLOAD_DIR / Path(imagem.url_imagem.removeprefix(URL_UPLOADS).lstrip("/"))
+    url = imagem.url_imagem
     db.delete(imagem)
     db.commit()
-    if UPLOAD_DIR in caminho.resolve().parents:  # nunca apaga fora da pasta de uploads
-        caminho.unlink(missing_ok=True)
+    storage_service.apagar(url)
     db.refresh(post)
     return post

@@ -64,8 +64,10 @@ def test_patch_ignora_id_e_senha(db):
 
 
 def test_patch_aceita_campos_sem_coluna_mas_nao_persiste(db):
-    perfil = patch(db, novo_usuario(db), genero="F", faculdade="PUC")
-    assert perfil["genero"] == "" and perfil["faculdade"] == ""
+    perfil = patch(db, novo_usuario(db), genero="F", faculdade="PUC", ocupacao="Estudante", emprego="Estágio")
+    assert (perfil["genero"], perfil["faculdade"], perfil["ocupacao"], perfil["emprego"]) == (
+        "F", "PUC", "Estudante", "Estágio",
+    )
 
 
 def test_email_em_minusculas_e_conflito(db):
@@ -123,15 +125,15 @@ def test_preferencias_so_valem_para_morador(db):
     assert patch(db, u, orcamento_maximo=500)["orcamento_maximo"] == 0
 
 
-def test_limiar_preserva_outras_preferencias(db):
+def test_limiar_vai_para_a_coluna_e_preserva_outras_preferencias(db):
     u = novo_usuario(db)
     patch(db, u, papel="Morador")
     db.get(Locatario, u.id_usuario).preferencias_moradia = {"fumante": False}
     db.commit()
-    patch(db, u, limiar_compatibilidade=60)
-    assert db.get(Locatario, u.id_usuario).preferencias_moradia == {
-        "fumante": False, "limiar_compatibilidade": 60,
-    }
+    assert patch(db, u, limiar_compatibilidade=60)["limiar_compatibilidade"] == 60
+    locatario = db.get(Locatario, u.id_usuario)
+    assert locatario.limiar_compatibilidade == 60
+    assert locatario.preferencias_moradia == {"fumante": False}
 
 
 def test_morador_vira_locador_troca_o_registro(db):

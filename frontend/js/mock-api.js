@@ -257,6 +257,7 @@
             faculdade: user.faculdade || '',
             foto_url: user.foto_url || '',
             tags: user.tags || [],
+            destino: user.destino || null,
             orcamento: orcamento_maximo,
             limiar: limiar_compatibilidade,
             orcamento_maximo,
@@ -609,8 +610,8 @@
             if (!email || !email.includes('@')) {
                 throw erro(400, 'Informe um e-mail válido.');
             }
-            if (senha.length < 6) {
-                throw erro(400, 'A senha deve ter ao menos 6 caracteres.');
+            if (senha.length < 8) {
+                throw erro(400, 'A senha deve ter ao menos 8 caracteres.');
             }
             if (!nome) throw erro(400, 'Informe o nome.');
             if (!PAPEIS_UI.includes(papel)) {
@@ -653,7 +654,65 @@
         }
 
         if (m === 'GET' && pathname === '/imoveis') {
-            return { items: filtrarImoveis(db.imoveis, query, user) };
+            const recusados = user && user.papel === 'Morador' && query.incluir_recusados !== 'true'
+                ? (db.recusas || {})[user.id] || []
+                : [];
+            return {
+                items: filtrarImoveis(db.imoveis.filter((i) => !recusados.includes(i.id)), query, user)
+            };
+        }
+
+        // Descobrir em cards (RF12–14): curtir = favoritar; recusar some do mural.
+        if (m === 'GET' && pathname === '/descobrir') {
+            exigirMorador(user);
+            const vistos = new Set([...(db.favoritos[user.id] || []), ...((db.recusas || {})[user.id] || [])]);
+            const items = db.imoveis.filter((i) => !vistos.has(i.id)).map((i) => comMatch(i, user))
+                .sort((a, b) => b.match - a.match || a.preco - b.preco);
+            return { items, restantes: 0 };
+        }
+
+        const recusar = pathname.match(/^\/imoveis\/([^/]+)\/recusar$/);
+        if (recusar && (m === 'POST' || m === 'DELETE')) {
+            exigirMorador(user);
+            db.recusas = db.recusas || {};
+            const lista = (db.recusas[user.id] || []).filter((id) => id !== recusar[1]);
+            if (m === 'POST') {
+                lista.push(recusar[1]);
+                db.favoritos[user.id] = (db.favoritos[user.id] || []).filter((id) => id !== recusar[1]);
+            }
+            db.recusas[user.id] = lista;
+            salvarDb(db);
+            return { recusado: m === 'POST', imovel_id: recusar[1] };
+        }
+
+        if (m === 'GET' && pathname === '/historico') {
+            exigirMorador(user);
+            const montar = (ids) => ids.map((id) => db.imoveis.find((i) => i.id === id))
+                .filter(Boolean).map((i) => comMatch(i, user));
+            return {
+                curtidos: montar(db.favoritos[user.id] || []),
+                recusados: montar((db.recusas || {})[user.id] || [])
+            };
+        }
+
+        if (m === 'GET' && pathname === '/notificacoes') {
+            if (!user) throw erro(401, 'Não autenticado.');
+            return { items: [], nao_lidas: 0 };
+        }
+        if (m === 'POST' && pathname === '/notificacoes/lidas') {
+            return { ok: true, marcadas: 0 };
+        }
+        if (m === 'GET' && pathname === '/mobilidade/rota') {
+            return {
+                disponivel: false,
+                motivo: 'No modo demonstração não há horários de ônibus. Ligue o site ao servidor para ver a rota.'
+            };
+        }
+        if (m === 'POST' && pathname === '/me/verificacao') {
+            return { ok: true, message: 'No modo demonstração não enviamos e-mails.' };
+        }
+        if (m === 'POST' && pathname === '/auth/verificar') {
+            throw erro(400, 'No modo demonstração não há confirmação de e-mail.');
         }
 
         if (m === 'GET' && pathname === '/imoveis/meus') {
@@ -825,6 +884,24 @@
             return visita;
         }
 
+        const patchVisita = pathname.match(/^\/visitas\/([^/]+)$/);
+        if (m === 'PATCH' && patchVisita) {
+            if (!user) throw erro(401, 'Não autenticado.');
+            const visita = db.visitas.find((v) => String(v.id) === patchVisita[1]);
+            if (!visita) throw erro(404, 'Visita não encontrada.');
+            const imovel = db.imoveis.find((i) => i.id === visita.imovel_id);
+            const dono = imovel && imovel.locador_id === user.id;
+            const quemPediu = visita.usuario_id === user.id;
+            const status = String(body.status || '').toLowerCase();
+            if (!['confirmada', 'recusada', 'cancelada'].includes(status)) throw erro(400, 'Status inválido.');
+            if ((status === 'cancelada' && !quemPediu) || (status !== 'cancelada' && !dono)) {
+                throw erro(403, 'Sem permissão para esta mudança.');
+            }
+            visita.status = status;
+            salvarDb(db);
+            return { ...visita, imovel_titulo: imovel ? imovel.titulo : visita.imovel_id };
+        }
+
         if (m === 'GET' && pathname === '/stats') {
             const n = db.imoveis.length;
             const matches = db.imoveis.map((i) => matchPercent(user, i));
@@ -895,6 +972,7 @@
             });
 
             if (Array.isArray(body.tags)) db.users[idx].tags = body.tags;
+            if (body.destino && typeof body.destino === 'object') db.users[idx].destino = body.destino;
             // Schema: orcamento_maximo / limiar_compatibilidade (aliases legados: orcamento / limiar)
             if (body.orcamento_maximo !== undefined || body.orcamento !== undefined) {
                 const v = Number(body.orcamento_maximo ?? body.orcamento);
@@ -917,8 +995,8 @@
             if (String(body.senha_atual || '') !== db.users[idx].senha) {
                 throw erro(400, 'Senha atual incorreta.');
             }
-            if (!body.senha_nova || String(body.senha_nova).length < 6) {
-                throw erro(400, 'Nova senha deve ter ao menos 6 caracteres.');
+            if (!body.senha_nova || String(body.senha_nova).length < 8) {
+                throw erro(400, 'Nova senha deve ter ao menos 8 caracteres.');
             }
             db.users[idx].senha = String(body.senha_nova);
             salvarDb(db);
@@ -926,14 +1004,15 @@
         }
 
         if (m === 'POST' && pathname === '/auth/recuperar') {
-            const email = String(body.email || '').trim().toLowerCase();
-            const existe = db.users.some((u) => u.email === email);
+            // Mesma resposta exista ou não a conta (igual à API real).
             return {
                 ok: true,
-                message: existe
-                    ? 'Enviamos um link de recuperação para o e-mail informado.'
-                    : 'Se o e-mail existir, enviaremos o link de recuperação.'
+                message: 'Se o e-mail estiver cadastrado, enviaremos um link para redefinir a senha.'
             };
+        }
+
+        if (m === 'POST' && pathname === '/auth/redefinir') {
+            throw erro(400, 'No modo demonstração não há e-mail de recuperação.');
         }
 
         function enriquecerConversa(c) {

@@ -7,6 +7,14 @@ let atual = 0;
 const papel = new URLSearchParams(window.location.search).get('papel') === 'locador' ? 'Locador' : 'Morador';
 document.querySelectorAll('[data-papel]').forEach((trecho) => { trecho.textContent = papel; });
 
+// CPF/CNPJ só para quem anuncia (o backend exige para criar o perfil de Locador).
+const campoCpf = document.getElementById('campo-cpf');
+const inputCpf = document.getElementById('cpf-cnpj');
+if (campoCpf && inputCpf && papel === 'Locador') {
+    campoCpf.hidden = false;
+    inputCpf.required = true;
+}
+
 function mostrarEtapa(indice) {
     atual = indice;
     etapas.forEach((etapa, i) => { etapa.hidden = i !== indice; });
@@ -74,7 +82,8 @@ async function finalizarCadastro() {
         foto_url,
         tags,
         orcamento_maximo: orcamento,
-        limiar_compatibilidade: limiar
+        limiar_compatibilidade: limiar,
+        cpf_cnpj: papel === 'Locador' ? (inputCpf?.value || '').trim() : undefined
     };
 
     try {

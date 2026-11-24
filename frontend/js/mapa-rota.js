@@ -17,7 +17,7 @@ const SERVIDORES = {
     bike: 'https://routing.openstreetmap.de/routed-bike/route/v1/bike',
     car: 'https://routing.openstreetmap.de/routed-car/route/v1/driving'
 };
-const NOME_MODO = { foot: 'a pé', bike: 'de bicicleta', car: 'de carro' };
+const NOME_MODO = { foot: 'a pé', bike: 'de bicicleta', car: 'de carro', bus: 'de ônibus' };
 
 const botaoAbrir = document.getElementById('rota-abrir');
 const painel = document.getElementById('rota-painel');
@@ -29,6 +29,9 @@ const passos = document.getElementById('rota-passos');
 const listaPassos = document.getElementById('rota-passos-lista');
 const linkOsm = document.getElementById('rota-osm');
 const modos = [...document.querySelectorAll('.rota-modo:not([disabled])')];
+const botaoSalvarDestino = document.getElementById('rota-salvar-destino');
+const opcoesOnibus = document.getElementById('rota-onibus-opcoes');
+const campoHora = document.getElementById('rota-hora');
 
 let mapa = null;
 let marcadorOrigem = null;
@@ -232,8 +235,12 @@ function mostrarPassos(rota) {
 }
 
 function mostrarResumo() {
+    if (modoAtual === 'bus') {
+        desenharRota(); // refaz com o nome do lugar (o servidor guarda em cache)
+        return;
+    }
     const rota = rotas[0];
-    if (!rota) return;
+    if (!rota || rota.onibus) return;
     const tempo = formatarTempo(rota.duration);
     const distancia = formatarDistancia(rota.distance);
     resumo.textContent = `${tempo} ${NOME_MODO[modoAtual]} · ${distancia} até ${DESTINO.nome}`;
@@ -251,7 +258,7 @@ function mostrarResumo() {
 }
 
 function pintarRotas() {
-    camadasRota.forEach((camada) => camada.remove());
+    limparCamadas();
     // Alternativas em cinza por baixo; a escolhida por cima, na cor do RoomMatch.
     camadasRota = rotas.map((rota, i) => L.geoJSON(rota.geometry, {
         style: i === 0
@@ -277,6 +284,11 @@ async function desenharRota() {
     if (!ORIGEM) return;
     const pedido = ++pedidoRota;
     resumo.textContent = 'Calculando rota…';
+    opcoesOnibus.hidden = modoAtual !== 'bus';
+    if (modoAtual === 'bus') {
+        await desenharOnibus(pedido);
+        return;
+    }
 
     const coordenadas = `${ORIGEM.lng},${ORIGEM.lat};${DESTINO.lng},${DESTINO.lat}`;
     try {
@@ -292,10 +304,122 @@ async function desenharRota() {
         mapa.fitBounds(camadasRota[0].getBounds(), { padding: [40, 40] });
         mostrarResumo();
         mostrarPassos(rotas[0]);
+        mostrarBotaoSalvar();
     } catch (erro) {
         if (pedido === pedidoRota) resumo.textContent = 'Não foi possível calcular a rota agora. Tente de novo.';
     }
 }
+
+/* ---------- Ônibus (GTFS EMDEC/EMTU, calculado no servidor) ---------- */
+
+function limparCamadas() {
+    camadasRota.forEach((camada) => camada.remove());
+    camadasRota = [];
+}
+
+function textoTrecho(t) {
+    if (t.tipo === 'a_pe') {
+        return `Caminhe ${t.minutos} min (${formatarDistancia(t.distancia_m)}) até ${t.para.nome}`;
+    }
+    const linha = [t.linha, t.nome_linha].filter(Boolean).join(' · ');
+    const sentido = t.sentido ? ` (sentido ${t.sentido})` : '';
+    return `${t.partida}: pegue a linha ${linha}${sentido} em ${t.de.nome}; desça em ${t.para.nome} às ${t.chegada}`
+        + ` · ${t.paradas} parada${t.paradas === 1 ? '' : 's'}`;
+}
+
+async function desenharOnibus(pedido) {
+    const imovel = typeof imovelAtual !== 'undefined' ? imovelAtual : null;
+    const params = {
+        destino_lat: DESTINO.lat,
+        destino_lng: DESTINO.lng,
+        destino_nome: DESTINO.nome,
+        origem_lat: ORIGEM.lat,
+        origem_lng: ORIGEM.lng,
+        hora: campoHora.value || '07:30'
+    };
+    if (imovel && /^\d+$/.test(String(imovel.id))) params.imovel_id = imovel.id;
+    let dados;
+    try {
+        dados = await RoomMatchApi.rotaOnibus(params);
+    } catch (erro) {
+        if (pedido === pedidoRota) resumo.textContent = erro.detail || 'Não foi possível calcular a rota de ônibus agora.';
+        return;
+    }
+    if (pedido !== pedidoRota) return;
+    limparCamadas();
+    linkOsm.hidden = true;
+    if (!dados.disponivel) {
+        rotas = [];
+        passos.hidden = true;
+        resumo.textContent = dados.motivo;
+        return;
+    }
+
+    rotas = [{ onibus: true }];
+    dados.trechos.forEach((t) => {
+        if (t.tipo === 'a_pe') {
+            camadasRota.push(L.polyline([[t.de.lat, t.de.lng], [t.para.lat, t.para.lng]], {
+                color: '#5c6b78', weight: 4, dashArray: '6 8', opacity: 0.9
+            }).bindTooltip(textoTrecho(t), { sticky: true }));
+        } else {
+            camadasRota.push(L.polyline(t.caminho, { color: '#3f8f7a', weight: 6, opacity: 0.95 })
+                .bindTooltip(`Linha ${t.linha}`, { sticky: true }));
+            [t.de, t.para].forEach((ponto) => camadasRota.push(
+                L.circleMarker([ponto.lat, ponto.lng], { radius: 6, color: '#3f8f7a', fillColor: '#fff', fillOpacity: 1, weight: 3 })
+                    .bindTooltip(ponto.nome, { direction: 'top' })
+            ));
+        }
+    });
+    camadasRota.forEach((camada) => camada.addTo(mapa));
+    mapa.fitBounds(L.featureGroup(camadasRota).getBounds(), { padding: [40, 40] });
+
+    const baldeacao = dados.baldeacoes ? ` · ${dados.baldeacoes} baldeação${dados.baldeacoes > 1 ? 'ões' : ''}` : '';
+    resumo.textContent = dados.somente_caminhada
+        ? `A pé é mais rápido: ${dados.tempo_min} min até ${DESTINO.nome}.`
+        : `${dados.tempo_min} min de ônibus até ${DESTINO.nome} · sai ${dados.partida}, chega ${dados.chegada}`
+            + `${baldeacao} · ${dados.caminhada_min} min a pé`;
+    listaPassos.replaceChildren(...dados.trechos.map((t) => {
+        const item = document.createElement('li');
+        item.textContent = textoTrecho(t);
+        return item;
+    }));
+    passos.hidden = false;
+
+    const forte = document.querySelector('.trajeto strong');
+    const detalhe = document.querySelector('.trajeto span');
+    if (forte) forte.textContent = `${dados.tempo_min} min · ${DESTINO.nome}`;
+    if (detalhe) detalhe.textContent = `${dados.distancia_km.toLocaleString('pt-BR')} km de ônibus e a pé · ${dados.fonte}`;
+    mostrarBotaoSalvar();
+}
+
+/* ---------- Destino salvo do morador (faculdade/trabalho) ---------- */
+
+function mostrarBotaoSalvar() {
+    if (!botaoSalvarDestino) return;
+    const morador = typeof ehMorador === 'function' && ehMorador();
+    const salvo = (typeof usuarioAtual === 'function' ? usuarioAtual() : null)?.destino;
+    const mesmo = salvo && Math.abs(salvo.lat - DESTINO.lat) < 1e-4 && Math.abs(salvo.lng - DESTINO.lng) < 1e-4;
+    botaoSalvarDestino.hidden = !morador;
+    botaoSalvarDestino.disabled = Boolean(mesmo);
+    botaoSalvarDestino.textContent = mesmo ? 'Este é o seu destino salvo' : `Salvar “${DESTINO.nome}” como meu destino`;
+}
+
+botaoSalvarDestino?.addEventListener('click', async () => {
+    try {
+        const user = await RoomMatchApi.atualizarPerfil({
+            destino: { nome: DESTINO.nome.slice(0, 100), lat: DESTINO.lat, lng: DESTINO.lng }
+        });
+        if (typeof entrar === 'function') entrar(RoomMatchApi.lerToken(), user);
+        mostrarBotaoSalvar();
+        resumo.textContent = `${resumo.textContent} · Destino salvo: o mural mostra o tempo até aqui.`;
+    } catch (erro) {
+        resumo.textContent = erro.detail || erro.message;
+    }
+});
+
+campoHora?.addEventListener('change', () => {
+    if (modoAtual === 'bus') desenharRota();
+});
 
 /* ---------- Sugestões da busca ---------- */
 
@@ -403,6 +527,10 @@ botaoAbrir.addEventListener('click', async () => {
     if (!abrir) return;
 
     if (mapa === null) {
+        const salvo = (typeof usuarioAtual === 'function' ? usuarioAtual() : null)?.destino;
+        if (salvo && Number.isFinite(Number(salvo.lat))) {
+            DESTINO = { nome: salvo.nome, lat: Number(salvo.lat), lng: Number(salvo.lng) };
+        }
         criarMapa();
         resumo.textContent = 'Localizando o imóvel…';
         origemPronta = localizarImovel().then((origem) => {

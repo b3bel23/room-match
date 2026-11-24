@@ -11,10 +11,19 @@
         return [1, 2, 3, 4].map((n) => `${BASE}/${id}/${n}.jpg`);
     }
 
+    /** Fotos enviadas ao servidor vêm como "/uploads/..." e vivem no domínio da API. */
+    function resolver(url) {
+        if (typeof url !== 'string' || !url.startsWith('/uploads/')) return url;
+        const base = global.RoomMatchApi && global.RoomMatchApi.modo() === 'live'
+            ? global.RoomMatchApi.baseUrl()
+            : '';
+        return `${base}${url}`;
+    }
+
     function lista(imovel) {
         if (!imovel) return [`${BASE}/placeholder/1.jpg`];
-        if (Array.isArray(imovel.fotos) && imovel.fotos.length) return imovel.fotos;
-        if (imovel.capa) return [imovel.capa];
+        if (Array.isArray(imovel.fotos) && imovel.fotos.length) return imovel.fotos.map(resolver);
+        if (imovel.capa) return [resolver(imovel.capa)];
         if (imovel.id) return caminhosPadrao(imovel.id);
         return [`${BASE}/placeholder/1.jpg`];
     }

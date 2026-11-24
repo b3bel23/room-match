@@ -13,5 +13,7 @@ class Locatario(Base):
     tags_estilo_vida = Column(ARRAY(String))
     preferencias_moradia = Column(JSONB)
     raio_busca_km = Column(Numeric(5, 2))
+    # % mínima de afinidade para liberar o chat (0–100); antes ficava em preferencias_moradia.
+    limiar_compatibilidade = Column(Integer)
 
     usuario = relationship("Usuario", backref="perfil_locatario")
