@@ -67,6 +67,8 @@
             if (select.multiple || select.size > 1) return;
             if (select.closest('.rm-select-wrap')) return;
             if (select.dataset.rmSelectSkip === '1') return;
+            // Select escondido que só guarda o valor dos chips/busca: sem seta visível.
+            if (select.classList.contains('escolha-select-sync')) return;
 
             const wrap = document.createElement('span');
             wrap.className = 'rm-select-wrap';
