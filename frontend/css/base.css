@@ -1127,7 +1127,8 @@ html > .rm-loading {
 .nav-sino-painel {
     position: absolute;
     top: calc(100% + 8px);
-    right: 0;
+    /* O sino é o primeiro item do menu: o painel abre para a direita, sobre os outros itens. */
+    left: 0;
     z-index: 50;
     width: min(340px, 90vw);
     max-height: 420px;
