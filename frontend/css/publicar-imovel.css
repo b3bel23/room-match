@@ -278,33 +278,86 @@ html:has(body.publicar-page) {
     display: none;
 }
 
-/* Computador: dados e valores à esquerda, endereço à direita; tags mais largas. */
+/* Seções do formulário (cartões no computador). No celular ficam uma embaixo da outra. */
+.pub-card,
+.pub-valores-grade {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    min-width: 0;
+}
+
+.pub-card-titulo {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--fw-bold);
+    color: var(--color-text-primary);
+}
+
+/* Computador: cartões alinhados em grade.
+   Linha 1: Sobre o imóvel | Endereço (mesma altura). Linha 2: Valores (4 lado a lado).
+   Depois Fotos, Classificação e Tags, todos com a mesma largura. */
 @media (min-width: 1100px) {
+    .publicar-form {
+        max-width: 1180px;
+        gap: 18px;
+    }
+
     .campos {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        grid-template-rows: repeat(6, auto) 1fr;
-        column-gap: 40px;
-        row-gap: 20px;
-        max-width: 1180px;
+        gap: 18px;
+        max-width: none;
+        align-items: stretch;
     }
 
-    .campos > .campo {
-        grid-column: 1;
+    .pub-card,
+    .publicar-form > .fotos,
+    .publicar-form > .classificacao,
+    .publicar-form > .tags-secao {
+        max-width: none;
+        padding: 20px 22px;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 16px;
+        box-shadow: 0 1px 2px rgba(20, 29, 34, 0.04);
     }
 
-    .campos > .campo:last-child {
-        align-self: start;
+    .publicar-form > .fotos {
+        border-style: dashed;
     }
 
-    .campos > .endereco-bloco {
-        grid-column: 2;
-        grid-row: 1 / -1;
-        align-self: start;
+    /* Legenda do fieldset dentro do cartão (e não em cima da borda). */
+    .publicar-form > .classificacao > legend {
+        float: left;
+        width: 100%;
+        padding: 0;
     }
 
-    .tags-secao,
-    .fotos {
-        max-width: 1180px;
+    .publicar-form > .classificacao > .pilulas {
+        clear: both;
+    }
+
+    .pub-card--valores {
+        grid-column: 1 / -1;
+    }
+
+    .pub-valores-grade {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        align-items: end;
+    }
+
+    .pub-card--endereco .endereco-bloco > legend {
+        font-size: 15px;
+        font-weight: var(--fw-bold);
+        color: var(--color-text-primary);
+    }
+
+    .publicar-form > .btn-publicar {
+        align-self: flex-start;
     }
 }
+

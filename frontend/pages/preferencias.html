@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../design-tokens.css?v=20261123">
     <link rel="stylesheet" href="../css/base.css?v=20261124rg">
     <link rel="stylesheet" href="../css/favoritos.css?v=20261124rf">
-    <link rel="stylesheet" href="../css/config.css?v=20261124hk">
+    <link rel="stylesheet" href="../css/config.css?v=20261124cc2">
 </head>
 <body class="favoritos-page">
     <header class="site-header">
@@ -118,6 +118,7 @@
                     </div>
 
                     <div id="pref-destino-bloco" class="pref-destino">
+                        <div class="pref-destino-col pref-destino-col--salvos">
                         <p class="label-com-tip pref-destino-titulo">
                             Meus destinos
                             <span class="tip">
@@ -128,7 +129,9 @@
                         <p class="pref-destino-ajuda">Até 3 lugares; o marcado como <strong>Principal</strong> aparece no mural.</p>
                         <ul id="pref-destinos-salvos" class="pref-destinos-salvos" aria-label="Destinos salvos"></ul>
                         <p id="pref-destinos-vazio" class="pref-destino-ajuda">Nenhum destino ainda: escolha o tipo e busque o lugar abaixo.</p>
+                        </div>
 
+                        <div class="pref-destino-col pref-destino-col--novo">
                         <p class="pref-destino-subtitulo">1. Que tipo de destino?</p>
                         <div id="pref-destino-tipos" class="pref-destino-opcoes" role="group" aria-label="Tipo do destino">
                             <button type="button" class="pref-destino-pill pref-destino-pill--trabalho" data-tipo="trabalho" aria-pressed="false">Trabalho</button>
@@ -162,10 +165,11 @@
                         <button id="pref-destino-add" class="btn btn-secondary pref-destino-add" type="button" disabled>
                             Adicionar à lista
                         </button>
+                        </div>
                     </div>
 
                     <div class="pref-tags-blocos">
-                        <div>
+                        <div class="pref-tags-card">
                             <p id="pref-adesao-titulo" class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
                                 O que combina comigo
                                 <span class="tip">
@@ -175,7 +179,7 @@
                             </p>
                             <div id="pref-tags-adesao" class="config-tags"></div>
                         </div>
-                        <div style="margin-top:1rem">
+                        <div class="pref-tags-card" style="margin-top:1rem">
                             <p id="pref-restricao-titulo" class="label-com-tip" style="font-size:13px;font-weight:600;margin-bottom:8px">
                                 Meus limites
                                 <span class="tip">

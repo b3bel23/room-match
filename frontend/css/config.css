@@ -949,72 +949,31 @@
     margin-top: 8px;
 }
 
-/* Preferências no computador: ajustes à esquerda, destinos à direita, hábitos embaixo
-   em duas colunas (O que combina comigo | Meus limites). A grade de cima só existe
-   quando os destinos aparecem (Morador); o Locador vê só os hábitos, lado a lado. */
-@media (min-width: 1100px) {
-    #pref-form {
-        max-width: 1180px;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        grid-template-rows: auto auto 1fr;
-        column-gap: 40px;
-        row-gap: 22px;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-orcamento-bloco {
-        grid-column: 1;
-        grid-row: 1;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-limiar-bloco {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-modo-bloco {
-        grid-column: 1;
-        grid-row: 3;
-        align-self: start;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) > #pref-destino-bloco {
-        grid-column: 2;
-        grid-row: 1 / span 3;
-        align-self: start;
-    }
-
-    #pref-form:has(#pref-destino-bloco:not([hidden])) > :not(#pref-orcamento-bloco):not(#pref-limiar-bloco):not(#pref-modo-bloco):not(#pref-destino-bloco) {
-        grid-column: 1 / -1;
-    }
-
-    #pref-form .pref-tags-blocos {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: 40px;
-        row-gap: 1.25rem;
-        align-items: start;
-    }
-
-    #pref-form .pref-tags-blocos > :not(:has(.config-tags)) {
-        grid-column: 1 / -1;
-    }
-
-    /* Os dois títulos de hábitos ficam na mesma linha. */
-    #pref-form .pref-tags-blocos > div:has(.config-tags) {
-        margin-top: 0 !important;
-    }
-
-    #pref-form > button[type="submit"] {
-        justify-self: start;
-    }
+/* Colunas internas dos destinos e cartões de hábitos/perfil: no celular ficam empilhados. */
+.pref-destino-col,
+.perfil-papel-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
 }
 
-/* Perfil: dados pessoais à esquerda, ocupação/emprego/faculdade à direita (computador).
-   No celular as duas colunas ficam uma embaixo da outra, como antes. */
+.perfil-papel-card {
+    gap: 14px;
+}
+
+.perfil-papel-card > .perfil-papel-campo {
+    width: 100%;
+    max-width: none;
+    align-self: stretch;
+}
+
+.perfil-papel-card > label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .perfil-colunas,
 .perfil-col {
     display: flex;
@@ -1029,20 +988,95 @@
     gap: 6px;
 }
 
+.perfil-card-titulo {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text-primary, #142126);
+}
+
+/* Computador (1100 px ou mais): cada assunto é um cartão, em grade alinhada.
+   Cartões lado a lado têm a mesma altura e as mesmas bordas. */
 @media (min-width: 1100px) {
+    #pref-form,
     .perfil-form {
         max-width: 1180px;
     }
 
-    .perfil-colunas {
+    #pref-orcamento-bloco,
+    #pref-limiar-bloco,
+    #pref-modo-bloco,
+    #pref-destino-bloco,
+    #pref-form .pref-tags-card,
+    .perfil-col,
+    .perfil-papel-card {
+        margin: 0;
+        padding: 20px 22px;
+        background: #fff;
+        border: 1px solid var(--color-border, #dbe4e3);
+        border-radius: 16px;
+        box-shadow: 0 1px 2px rgba(20, 29, 34, 0.04);
+    }
+
+    /* Preferências: Orçamento | Compatibilidade; Transporte; Destinos; Combina | Limites. */
+    #pref-form:has(#pref-destino-bloco:not([hidden])) {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: 40px;
+        gap: 18px;
+        align-items: stretch;
+    }
+
+    #pref-form:has(#pref-destino-bloco:not([hidden])) > :not(#pref-orcamento-bloco):not(#pref-limiar-bloco) {
+        grid-column: 1 / -1;
+    }
+
+    #pref-destino-bloco {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 0 32px;
         align-items: start;
     }
 
+    #pref-form .pref-tags-blocos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 18px;
+        align-items: stretch;
+    }
+
+    #pref-form .pref-tags-blocos > .pref-tags-card {
+        margin-top: 0 !important;
+    }
+
+    #pref-form .pref-tags-blocos > :not(.pref-tags-card) {
+        grid-column: 1 / -1;
+    }
+
+    #pref-form > button[type="submit"],
     .perfil-form > button[type="submit"] {
+        justify-self: start;
         align-self: flex-start;
-        min-width: 240px;
+        min-width: 200px;
+    }
+
+    /* Perfil: Dados pessoais (campos curtos lado a lado), Rotina e Tipo de perfil. */
+    .perfil-colunas {
+        gap: 18px;
+    }
+
+    .perfil-col--dados {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px 24px;
+        align-items: start;
+    }
+
+    .perfil-col--dados > .perfil-card-titulo,
+    .perfil-col--dados > .perfil-foto-campo {
+        grid-column: 1 / -1;
+    }
+
+    .perfil-form {
+        gap: 18px;
     }
 }

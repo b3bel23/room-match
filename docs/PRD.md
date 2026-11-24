@@ -340,24 +340,21 @@ fotos, classificação e tags) e o publica.
 
 **Status:** concluída.
 
-**O que faz:** em telas de computador (a partir de 1100 px de largura), os formulários
-longos usam a largura da tela em vez de uma coluna estreita. Abaixo disso (notebook pequeno,
-tablet e celular) tudo continua uma coisa embaixo da outra.
+**O que faz:** em telas de computador (a partir de 1100 px de largura), os formulários longos
+são organizados em cartões (versão B escolhida entre 3 propostas). Abaixo disso (notebook
+pequeno, tablet e celular) tudo continua uma coisa embaixo da outra.
 
 **Regras de negócio e decisões**
-- Preferências: Orçamento, Compatibilidade mínima e Meio de transporte à esquerda; Meus
-  destinos à direita; "O que combina comigo" e "Meus limites" lado a lado embaixo. Para o
-  Locador (que só vê os hábitos), os dois blocos de hábitos ficam lado a lado.
-- Perfil: foto, nome, telefone, gênero e e-mail à esquerda; Ocupação, Situação de emprego e
-  Faculdade à direita; Tipo de perfil embaixo, na largura toda. No celular o E-mail passou
-  a vir logo depois de Gênero.
-- Publicar anúncio: título, descrição, tipo e valores à esquerda; endereço à direita; fotos e
-  tags com a mesma largura do formulário.
-- Largura máxima dos formulários: 1180 px. Os campos e seus nomes não mudaram, então o
-  envio continua igual.
-- Favoritos, Meus anúncios e Mensagens já usavam a largura toda; Segurança e Termos são
-  curtas e ficam mais legíveis estreitas; Editar anúncio é um cartão centralizado. Essas
-  não mudaram.
+- Cartões com o mesmo estilo (fundo branco, borda, cantos de 16 px, espaçamento interno
+  igual); cartões lado a lado têm a mesma altura e as bordas alinhadas na largura de 1180 px.
+- Preferências: Orçamento | Compatibilidade; Meio de transporte; Meus destinos (salvos à
+  esquerda, adicionar à direita); O que combina comigo | Meus limites. Para o Locador, que
+  só vê os hábitos, os dois cartões de hábitos ficam lado a lado.
+- Perfil: cartões "Dados pessoais" (foto; nome | telefone; gênero | e-mail), "Rotina"
+  (ocupação, emprego, faculdade) e "Tipo de perfil". Os títulos aparecem também no celular.
+- Publicar anúncio: "Sobre o imóvel" | "Endereço"; "Valores mensais" (4 valores numa linha);
+  depois Fotos, Classificação e Tags, cada um em seu cartão.
+- Os campos e seus nomes não mudaram, então salvar e publicar continuam iguais.
 
 **Telas:** `preferencias.html`, `perfil.html`, `publicar-imovel.html`
 (`css/config.css`, `css/publicar-imovel.css`).
