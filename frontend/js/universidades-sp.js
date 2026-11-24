@@ -588,21 +588,6 @@
         host.replaceChildren();
         host.classList.add('faculdade-busca');
 
-        const atalhos = document.createElement('div');
-        atalhos.className = 'faculdade-atalhos';
-        [
-            { valor: 'nao-aplica', curto: 'Nenhuma' },
-            { valor: 'outra-ies-sp', curto: 'Outra em SP' },
-            { valor: '', curto: 'Limpar seleção' },
-        ].forEach((a) => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'faculdade-atalho';
-            b.dataset.valor = a.valor;
-            b.textContent = a.curto;
-            atalhos.append(b);
-        });
-
         const campo = document.createElement('div');
         campo.className = 'faculdade-busca-campo';
 
@@ -634,7 +619,7 @@
         lista.setAttribute('aria-label', 'Sugestões de faculdade');
 
         campo.append(input, seta, lista);
-        host.append(atalhos, campo);
+        host.append(campo);
 
         let aberta = false;
         let indiceAtivo = -1;
@@ -671,21 +656,41 @@
             input.placeholder = 'Digite ou selecione a faculdade…';
         }
 
-        function atualizarAtalhos() {
-            const v = selectEl.value;
-            atalhos.querySelectorAll('.faculdade-atalho').forEach((b) => {
-                b.classList.toggle('ativo', b.dataset.valor === v);
-            });
-        }
-
         function aplicarValor(valor) {
             selectEl.value = valor;
             selectEl.dispatchEvent(new Event('change', { bubbles: true }));
             editando = false;
             filtroAtual = '';
             textoNoCampo();
-            atualizarAtalhos();
             fecharLista();
+        }
+
+        function appendItemLista(item) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'faculdade-item';
+            btn.dataset.valor = item.valor;
+            btn.setAttribute('role', 'option');
+            const ativo = item.valor === selectEl.value;
+            btn.classList.toggle('ativo', ativo);
+            btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
+            if (item.especial) btn.classList.add('faculdade-item--especial');
+            const titulo = document.createElement('span');
+            titulo.className = 'faculdade-item-titulo';
+            titulo.textContent = item.grupo || item.rotulo;
+            btn.append(titulo);
+            if (item.grupo) {
+                const sub = document.createElement('span');
+                sub.className = 'faculdade-item-sub';
+                sub.textContent = item.rotulo;
+                btn.append(sub);
+            } else if (item.sub) {
+                const sub = document.createElement('span');
+                sub.className = 'faculdade-item-sub';
+                sub.textContent = item.sub;
+                btn.append(sub);
+            }
+            lista.append(btn);
         }
 
         function marcarTeclado(i) {
@@ -705,13 +710,39 @@
             const q = semAcento(filtro).trim();
             filtroAtual = filtro;
             lista.replaceChildren();
-            let hits = catalogo;
+
+            const especiais = [
+                {
+                    valor: '',
+                    rotulo: 'Limpar seleção',
+                    sub: 'Remove a faculdade escolhida',
+                    especial: true,
+                    busca: 'limpar selecao limpar',
+                },
+                {
+                    valor: 'nao-aplica',
+                    rotulo: 'Nenhuma — não estou estudando',
+                    especial: true,
+                    busca: 'nenhuma nao estou estudando',
+                },
+                {
+                    valor: 'outra-ies-sp',
+                    rotulo: 'Outra faculdade / universidade em SP',
+                    especial: true,
+                    busca: 'outra faculdade universidade sp',
+                },
+            ];
+            especiais
+                .filter((e) => !q || e.busca.includes(q))
+                .forEach((e) => appendItemLista(e));
+
+            let hits = catalogo.filter(
+                (i) => i.valor !== 'nao-aplica' && i.valor !== 'outra-ies-sp'
+            );
             if (q) {
-                hits = catalogo.filter((i) => i.busca.includes(q));
+                hits = hits.filter((i) => i.busca.includes(q));
             } else {
                 const prioridade = new Set([
-                    'nao-aplica',
-                    'outra-ies-sp',
                     'unicamp-campinas',
                     'puc-campinas-campus1',
                     'puc-campinas-campus2',
@@ -719,40 +750,20 @@
                     'unesp-rio-claro',
                     'univesp-ead',
                 ]);
-                hits = catalogo.filter((i) => prioridade.has(i.valor));
+                hits = hits.filter((i) => prioridade.has(i.valor));
             }
 
-            if (!hits.length) {
+            if (!hits.length && !lista.querySelector('.faculdade-item')) {
                 const vazio = document.createElement('p');
                 vazio.className = 'faculdade-lista-vazia';
                 vazio.textContent = 'Nenhuma faculdade encontrada. Tente outra busca ou “Outra em SP”.';
                 lista.append(vazio);
+                indiceAtivo = -1;
                 return;
             }
 
             const limite = q ? 40 : hits.length;
-            const selecionado = selectEl.value;
-            hits.slice(0, limite).forEach((item) => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'faculdade-item';
-                btn.dataset.valor = item.valor;
-                btn.setAttribute('role', 'option');
-                const ativo = item.valor === selecionado;
-                btn.classList.toggle('ativo', ativo);
-                btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
-                const titulo = document.createElement('span');
-                titulo.className = 'faculdade-item-titulo';
-                titulo.textContent = item.grupo || item.rotulo;
-                btn.append(titulo);
-                if (item.grupo) {
-                    const sub = document.createElement('span');
-                    sub.className = 'faculdade-item-sub';
-                    sub.textContent = item.rotulo;
-                    btn.append(sub);
-                }
-                lista.append(btn);
-            });
+            hits.slice(0, limite).forEach((item) => appendItemLista(item));
             if (q && hits.length > limite) {
                 const mais = document.createElement('p');
                 mais.className = 'faculdade-lista-vazia';
@@ -766,12 +777,6 @@
             pintarLista(filtro);
             abrirLista();
         }
-
-        atalhos.addEventListener('click', (ev) => {
-            const b = ev.target.closest('.faculdade-atalho');
-            if (!b) return;
-            aplicarValor(b.dataset.valor);
-        });
 
         lista.addEventListener('mousedown', (ev) => {
             // Evita blur do input antes do click na opção.
@@ -857,7 +862,6 @@
 
         selectEl.addEventListener('change', () => {
             if (!editando) textoNoCampo();
-            atualizarAtalhos();
         });
 
         document.addEventListener('click', (ev) => {
@@ -869,7 +873,6 @@
         });
 
         textoNoCampo();
-        atualizarAtalhos();
         fecharLista();
     }
 

@@ -57,14 +57,6 @@
         inputEl.setAttribute('aria-haspopup', 'listbox');
         inputEl.maxLength = Math.min(Number(inputEl.maxLength) || 100, 100);
 
-        const atalhos = document.createElement('div');
-        atalhos.className = 'faculdade-atalhos';
-        const btnLimpar = document.createElement('button');
-        btnLimpar.type = 'button';
-        btnLimpar.className = 'faculdade-atalho';
-        btnLimpar.textContent = 'Limpar seleção';
-        atalhos.append(btnLimpar);
-
         const campo = document.createElement('div');
         campo.className = 'faculdade-busca-campo';
 
@@ -82,13 +74,8 @@
         lista.setAttribute('role', 'listbox');
         lista.setAttribute('aria-label', 'Sugestões de cidade');
 
-        // Reparent: host > atalhos + campo(input, seta, lista)
-        const pai = inputEl.parentElement;
         campo.append(inputEl, seta, lista);
-        host.append(atalhos, campo);
-        if (pai && pai !== host) {
-            /* input already moved into host */
-        }
+        host.append(campo);
 
         let aberta = false;
         let indiceAtivo = -1;
@@ -116,32 +103,54 @@
             fecharLista();
         }
 
+        function appendItem(nome, opts) {
+            const especial = Boolean(opts?.especial);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'faculdade-item';
+            if (especial) btn.classList.add('faculdade-item--especial');
+            btn.dataset.cidade = nome;
+            btn.setAttribute('role', 'option');
+            const ativo = especial
+                ? !String(inputEl.value || '').trim()
+                : semAcento(inputEl.value) === semAcento(nome);
+            btn.classList.toggle('ativo', ativo);
+            btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
+            const titulo = document.createElement('span');
+            titulo.className = 'faculdade-item-titulo';
+            titulo.textContent = opts?.rotulo || nome;
+            btn.append(titulo);
+            if (opts?.sub) {
+                const sub = document.createElement('span');
+                sub.className = 'faculdade-item-sub';
+                sub.textContent = opts.sub;
+                btn.append(sub);
+            }
+            lista.append(btn);
+        }
+
         function pintar(filtro) {
             const q = semAcento(filtro).trim();
             lista.replaceChildren();
+
+            if (!q || semAcento('limpar selecao').startsWith(q) || semAcento('limpar').startsWith(q)) {
+                appendItem('', {
+                    especial: true,
+                    rotulo: 'Limpar seleção',
+                    sub: 'Remove a cidade escolhida',
+                });
+            }
+
             const hits = CIDADES_RMC.filter((c) => !q || semAcento(c).includes(q));
-            if (!hits.length) {
+            if (!hits.length && !lista.querySelector('.faculdade-item')) {
                 const vazio = document.createElement('p');
                 vazio.className = 'faculdade-lista-vazia';
                 vazio.textContent = 'Nenhuma cidade na lista. Você pode manter o que digitou.';
                 lista.append(vazio);
+                indiceAtivo = -1;
                 return;
             }
-            hits.forEach((nome) => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'faculdade-item';
-                btn.dataset.cidade = nome;
-                btn.setAttribute('role', 'option');
-                const ativo = semAcento(inputEl.value) === semAcento(nome);
-                btn.classList.toggle('ativo', ativo);
-                btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
-                const titulo = document.createElement('span');
-                titulo.className = 'faculdade-item-titulo';
-                titulo.textContent = nome;
-                btn.append(titulo);
-                lista.append(btn);
-            });
+            hits.forEach((nome) => appendItem(nome));
             indiceAtivo = -1;
         }
 
@@ -155,13 +164,11 @@
             el.scrollIntoView({ block: 'nearest' });
         }
 
-        btnLimpar.addEventListener('click', () => aplicar(''));
-
         lista.addEventListener('mousedown', (ev) => ev.preventDefault());
         lista.addEventListener('click', (ev) => {
             const item = ev.target.closest('.faculdade-item');
             if (!item) return;
-            aplicar(item.dataset.cidade || '');
+            aplicar(item.dataset.cidade ?? '');
         });
 
         seta.addEventListener('mousedown', (ev) => ev.preventDefault());

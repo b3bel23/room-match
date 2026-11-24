@@ -169,10 +169,14 @@
     min-width: 0;
 }
 
+.faculdade-item--especial {
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    margin-bottom: 2px;
+    padding-bottom: 10px;
+}
+
 .faculdade-atalhos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: none;
 }
 
 .faculdade-atalho {
